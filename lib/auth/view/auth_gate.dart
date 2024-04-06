@@ -1,0 +1,24 @@
+import 'package:assigngo_rewrite/auth/view/auth_screen.dart';
+import 'package:assigngo_rewrite/tabs/tabview.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+final currentSessionProvider = FutureProvider<Session?>((ref) async {
+  return Supabase.instance.client.auth.currentSession;
+});
+
+class AuthGate extends ConsumerWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentSessionAsync = ref.watch(currentSessionProvider);
+
+    return currentSessionAsync.when(
+      data: (session) => session != null ? const TabView() : const AuthScreen(),
+      loading: () => const CircularProgressIndicator(),
+      error: (error, _) => Text('Error: $error'),
+    );
+  }
+}
