@@ -1,3 +1,4 @@
+import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/widgets/assignments_list.dart';
 import 'package:assigngo_rewrite/assignments/widgets/sliver_assignments_list.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.assignments});
 
-  final List<Map<String, dynamic>> assignments;
+  final List<Assignment> assignments;
 
   static const colors = [
     Colors.deepPurple,

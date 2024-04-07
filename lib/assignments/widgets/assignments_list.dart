@@ -1,3 +1,4 @@
+import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:flutter/material.dart';
 
 enum AssignmentsFilter { all, starred, completed }
@@ -6,7 +7,7 @@ class AssignmentsList extends StatelessWidget {
   const AssignmentsList(
       {super.key, required this.assignments, required this.filter});
 
-  final List<Map<String, dynamic>> assignments;
+  final List<Assignment> assignments;
   final AssignmentsFilter filter;
 
   @override
@@ -15,12 +16,12 @@ class AssignmentsList extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           if (filter == AssignmentsFilter.starred &&
-              !assignments[index]['starred']) {
+              !assignments[index].starred) {
             return const SizedBox.shrink();
           }
 
           if (filter == AssignmentsFilter.completed &&
-              !assignments[index]['completed']) {
+              !assignments[index].completed) {
             return const SizedBox.shrink();
           }
 
@@ -32,7 +33,7 @@ class AssignmentsList extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    assignments[index]['title'],
+                    assignments[index].title,
                     style: const TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
@@ -40,7 +41,7 @@ class AssignmentsList extends StatelessWidget {
                   ),
                   const SizedBox(height: 8.0),
                   Text(
-                    assignments[index]['description'],
+                    assignments[index].description,
                     style: const TextStyle(fontSize: 16.0),
                   ),
                 ],

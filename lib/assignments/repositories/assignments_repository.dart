@@ -1,3 +1,4 @@
+import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AssignmentsRepository {
@@ -5,12 +6,19 @@ class AssignmentsRepository {
 
   AssignmentsRepository();
 
-  Future<List<Map<String, dynamic>>> getAssignments() async {
-    return await supabase.from('assignments').select();
+  Future<List<Assignment>> getAssignments() async {
+    final List<Assignment> assignmentList;
+    final assignments = await supabase.from('assignments').select();
+
+    assignmentList = assignments.map((e) => Assignment.fromJson(e)).toList();
+    return assignmentList;
   }
 
-  Future<Map<String, dynamic>> getAssignment(int id) async {
-    return await supabase.from('assignments').select().eq('id', id).single();
+  Future<Assignment> getAssignment(int id) async {
+    final assignment =
+        await supabase.from('assignments').select().eq('id', id).single();
+
+    return Assignment.fromJson(assignment);
   }
 
   Future<Map<String, dynamic>> createOrUpdateAssignment(
