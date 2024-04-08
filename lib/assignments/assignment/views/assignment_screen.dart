@@ -186,9 +186,9 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           icon: const Icon(Icons.delete),
           color: Colors.red,
           onPressed: () {
-            widget.ref.read(assignmentsProvider.notifier).deleteAssignment(
-                  widget.currentAssignment!.id!,
-                );
+            widget.ref
+                .read(assignmentsProvider.notifier)
+                .deleteAssignment(widget.currentAssignment!);
           },
         ),
       ],

@@ -8,10 +8,15 @@ class AssignmentsRepository {
   AssignmentsRepository();
 
   Future<List<Assignment>> getAssignments() async {
-    final List<Assignment> assignmentList;
-    final assignments = await supabase.from('assignments').select();
+    final assignments =
+        await supabase.from('assignments').select().eq("deleted", false).order(
+              'dueDate',
+              ascending: true,
+            );
 
-    assignmentList = assignments.map((e) => Assignment.fromJson(e)).toList();
+    final List<Assignment> assignmentList =
+        assignments.map((e) => Assignment.fromJson(e)).toList();
+
     return assignmentList;
   }
 
@@ -64,6 +69,21 @@ class AssignmentsRepository {
     } catch (error) {
       return ReturnModel(
           message: "Error completing assignment",
+          success: false,
+          error: error.toString());
+    }
+  }
+
+  Future<ReturnModel> deleteAssignment(Assignment assignment) async {
+    try {
+      await supabase
+          .from("assignments")
+          .update({"deleted": true}).eq("id", assignment.id!);
+      return ReturnModel(
+          message: "Successfully deleted ${assignment.title}", success: true);
+    } catch (error) {
+      return ReturnModel(
+          message: "Error deleting assignment",
           success: false,
           error: error.toString());
     }
