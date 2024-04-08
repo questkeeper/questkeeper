@@ -31,86 +31,80 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
   @override
   Widget build(BuildContext context) {
     final Assignment assignment = widget.assignment;
-    return InkWell(
-      radius: 16.0,
-      onTap: () => {
-        ref
-            .read(currentAssignmentProvider.notifier)
-            .setCurrentAssignment(widget.assignment),
-        if (MediaQuery.of(context).size.width < 800)
-          {
-            // modal for mobile
-            showModalBottomSheet(
-              enableDrag: true,
-              isScrollControlled: true,
-              useSafeArea: true,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.0),
-                  topRight: Radius.circular(16.0),
-                ),
-              ),
-              showDragHandle: true,
-              context: context,
-              builder: (context) {
-                return const AssignmentScreen();
-              },
-            )
-          }
+    return Dismissible(
+      key: ValueKey(widget.assignment.id),
+      confirmDismiss: (direction) {
+        if (direction == DismissDirection.startToEnd) {
+          ref.read(assignmentsProvider.notifier).toggleStar(widget.assignment);
+          return widget.filter == AssignmentsFilter.starred
+              ? Future.value(true)
+              : Future.value(false);
+        } else {
+          ref
+              .read(assignmentsProvider.notifier)
+              .toggleComplete(widget.assignment);
+          return Future.value(true);
+        }
       },
-      child: Dismissible(
-        key: ValueKey(widget.assignment.id),
-        confirmDismiss: (direction) {
-          if (direction == DismissDirection.startToEnd) {
-            ref
-                .read(assignmentsProvider.notifier)
-                .toggleStar(widget.assignment);
-            return widget.filter == AssignmentsFilter.starred
-                ? Future.value(true)
-                : Future.value(false);
-          } else {
-            ref
-                .read(assignmentsProvider.notifier)
-                .toggleComplete(widget.assignment);
-            return Future.value(true);
-          }
+      background: Container(
+        color: Colors.amber,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(assignment.starred ? Icons.star : Icons.star_outline,
+                color: Colors.black, size: 32.0),
+            const Text(
+              "Star",
+              style: TextStyle(color: Colors.black, fontSize: 16.0),
+            ),
+          ],
+        ),
+      ),
+      secondaryBackground: Container(
+        color: assignment.completed ? Colors.red : Colors.green,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(assignment.completed ? Icons.cancel_presentation : Icons.check,
+                color: Colors.black, size: 32.0),
+            Text(
+              assignment.completed ? "Incomplete" : "Complete",
+              style: const TextStyle(color: Colors.black, fontSize: 16.0),
+            ),
+          ],
+        ),
+      ),
+      child: InkWell(
+        radius: 16.0,
+        onTap: () => {
+          ref
+              .read(currentAssignmentProvider.notifier)
+              .setCurrentAssignment(widget.assignment),
+          if (MediaQuery.of(context).size.width < 800)
+            {
+              // modal for mobile
+              showModalBottomSheet(
+                enableDrag: true,
+                isScrollControlled: true,
+                useSafeArea: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
+                  ),
+                ),
+                showDragHandle: true,
+                context: context,
+                builder: (context) {
+                  return const AssignmentScreen();
+                },
+              )
+            }
         },
-        background: Container(
-          color: Colors.amber,
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(left: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(assignment.starred ? Icons.star : Icons.star_outline,
-                  color: Colors.black, size: 32.0),
-              const Text(
-                "Star",
-                style: TextStyle(color: Colors.black, fontSize: 16.0),
-              ),
-            ],
-          ),
-        ),
-        secondaryBackground: Container(
-          color: assignment.completed ? Colors.red : Colors.green,
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.only(right: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                  assignment.completed
-                      ? Icons.cancel_presentation
-                      : Icons.check,
-                  color: Colors.black,
-                  size: 32.0),
-              Text(
-                assignment.completed ? "Incomplete" : "Complete",
-                style: const TextStyle(color: Colors.black, fontSize: 16.0),
-              ),
-            ],
-          ),
-        ),
         child: SizedBox(
           // height: 150,
           width: double.infinity,
