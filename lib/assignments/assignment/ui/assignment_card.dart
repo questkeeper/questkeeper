@@ -1,6 +1,6 @@
 import 'package:assigngo_rewrite/assignments/assignment/views/assignment_screen.dart';
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
-import 'package:assigngo_rewrite/assignments/providers/assignment_provider.dart';
+import 'package:assigngo_rewrite/assignments/providers/current_assignment_provider.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
