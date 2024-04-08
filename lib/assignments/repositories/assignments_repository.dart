@@ -1,4 +1,5 @@
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
+import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AssignmentsRepository {
@@ -21,63 +22,49 @@ class AssignmentsRepository {
     return Assignment.fromJson(assignment);
   }
 
-  Future<Map<String, dynamic>> createAssignment(Assignment assignment) async {
+  Future<ReturnModel> createAssignment(Assignment assignment) async {
     final Map<String, dynamic> jsonAssignment = assignment.toJson();
     jsonAssignment.remove('id');
     jsonAssignment.remove('createdAt');
     jsonAssignment.remove('updatedAt');
     try {
       await supabase.from('assignments').insert(jsonAssignment);
-      return {
-        "success": true,
-        "message": "Assignment created successfully",
-        "error": false,
-      };
+      return const ReturnModel(
+          message: "Assignment created successfully", success: true);
     } catch (error) {
-      return {
-        "error": true,
-        "message": "Error creating assignment",
-        "success": false
-      };
+      return ReturnModel(
+          message: "Error creating assignment",
+          success: false,
+          error: error.toString());
     }
   }
 
-  Future<Map<String, dynamic>> starAssignment(int id) async {
+  Future<ReturnModel> starAssignment(int id) async {
     try {
       await supabase.from('assignments').update({'starred': true}).eq('id', id);
-      return {
-        "success": true,
-        "message": "Assignment prioritized successfully",
-        "error": false,
-      };
+      return const ReturnModel(
+          message: "Assignment starred successfully", success: true);
     } catch (error) {
-      return {
-        "error": true,
-        "message": "Error prioritized assignment",
-        "success": false
-      };
+      return ReturnModel(
+          message: "Error starring assignment",
+          success: false,
+          error: error.toString());
     }
   }
 
-  Future<Map<String, dynamic>> completeAssignment(int id) async {
+  Future<ReturnModel> completeAssignment(int id) async {
     try {
-      print("Completing assignment with id: $id");
       await supabase
           .from('assignments')
           .update({'completed': true}).eq('id', id);
 
-      print("Assignment completed successfully");
-      return {
-        "success": true,
-        "message": "Assignment completed successfully",
-        "error": false,
-      };
+      return const ReturnModel(
+          message: "Assignment completed successfully", success: true);
     } catch (error) {
-      return {
-        "error": true,
-        "message": "Error completing assignment",
-        "success": false
-      };
+      return ReturnModel(
+          message: "Error completing assignment",
+          success: false,
+          error: error.toString());
     }
   }
 }
