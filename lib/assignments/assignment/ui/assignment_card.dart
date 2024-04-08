@@ -30,14 +30,12 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
       key: ValueKey(widget.assignment.id),
       confirmDismiss: (direction) {
         if (direction == DismissDirection.startToEnd) {
-          ref
-              .read(assignmentsProvider.notifier)
-              .starAssignment(widget.assignment.id!);
+          ref.read(assignmentsProvider.notifier).toggleStar(widget.assignment);
           return Future.value(true);
         } else {
           ref
               .read(assignmentsProvider.notifier)
-              .completeAssignment(widget.assignment.id!);
+              .toggleComplete(widget.assignment);
           return Future.value(false);
         }
       },

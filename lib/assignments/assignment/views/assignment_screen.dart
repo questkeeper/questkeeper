@@ -165,8 +165,8 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               : const Icon(Icons.star_outline),
           color: Colors.amber,
           onPressed: () {
-            widget.ref.read(assignmentsProvider.notifier).starAssignment(
-                  widget.currentAssignment!.id!,
+            widget.ref.read(assignmentsProvider.notifier).toggleStar(
+                  widget.currentAssignment!,
                 );
           },
         ),
@@ -177,8 +177,8 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           color:
               widget.currentAssignment!.completed ? Colors.red : Colors.green,
           onPressed: () {
-            widget.ref.read(assignmentsProvider.notifier).completeAssignment(
-                  widget.currentAssignment!.id!,
+            widget.ref.read(assignmentsProvider.notifier).toggleComplete(
+                  widget.currentAssignment!,
                 );
           },
         ),

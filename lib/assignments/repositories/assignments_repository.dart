@@ -39,9 +39,11 @@ class AssignmentsRepository {
     }
   }
 
-  Future<ReturnModel> starAssignment(int id) async {
+  Future<ReturnModel> toggleStar(Assignment assignment) async {
     try {
-      await supabase.from('assignments').update({'starred': true}).eq('id', id);
+      await supabase
+          .from('assignments')
+          .update({'starred': !assignment.starred}).eq('id', assignment.id!);
       return const ReturnModel(
           message: "Assignment starred successfully", success: true);
     } catch (error) {
@@ -52,11 +54,10 @@ class AssignmentsRepository {
     }
   }
 
-  Future<ReturnModel> completeAssignment(int id) async {
+  Future<ReturnModel> toggleComplete(Assignment assignment) async {
     try {
-      await supabase
-          .from('assignments')
-          .update({'completed': true}).eq('id', id);
+      await supabase.from('assignments').update(
+          {'completed': !assignment.completed}).eq('id', assignment.id!);
 
       return const ReturnModel(
           message: "Assignment completed successfully", success: true);
