@@ -39,7 +39,7 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
 
       state = state.map((a) {
         if (a.id == assignment.id) {
-          return a.copyWith(starred: !a.starred);
+          return a.copyWith(starred: assignment.starred);
         }
         return a;
       }).toList();
@@ -55,7 +55,7 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
 
       state = state.map((a) {
         if (a.id == assignment.id) {
-          return a.copyWith(completed: !a.completed);
+          return a.copyWith(completed: assignment.completed);
         }
         return a;
       }).toList();
