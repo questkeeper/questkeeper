@@ -16,6 +16,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   Widget build(BuildContext context) {
     final currentAssignment = ref.watch(currentAssignmentProvider).assignment;
     final platformBrightness = MediaQuery.of(context).platformBrightness;
+    final size = MediaQuery.of(context).size;
 
     if (currentAssignment == null) {
       return Container(
@@ -35,8 +36,12 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
 
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.all(16.0),
-        margin: const EdgeInsets.all(16.0),
+        padding: size.width > 800
+            ? const EdgeInsets.all(32.0)
+            : const EdgeInsets.all(8),
+        margin: size.width > 800
+            ? const EdgeInsets.all(32.0)
+            : const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: platformBrightness == Brightness.dark
               ? CupertinoColors.darkBackgroundGray

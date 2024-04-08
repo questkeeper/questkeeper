@@ -1,3 +1,4 @@
+import 'package:assigngo_rewrite/assignments/assignment/views/assignment_screen.dart';
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignment_provider.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
@@ -74,9 +75,31 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
       ),
       child: InkWell(
         radius: 16.0,
-        onTap: () => ref
-            .read(currentAssignmentProvider.notifier)
-            .setCurrentAssignment(widget.assignment),
+        onTap: () => {
+          ref
+              .read(currentAssignmentProvider.notifier)
+              .setCurrentAssignment(widget.assignment),
+          if (MediaQuery.of(context).size.width < 800)
+            {
+              // modal for mobile
+              showModalBottomSheet(
+                enableDrag: true,
+                isScrollControlled: true,
+                useSafeArea: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
+                  ),
+                ),
+                showDragHandle: true,
+                context: context,
+                builder: (context) {
+                  return const AssignmentScreen();
+                },
+              )
+            }
+        },
         child: SizedBox(
           height: 120.0,
           width: double.infinity,
