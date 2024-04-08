@@ -1,5 +1,6 @@
 // freezed classes for assignments model
 
+import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'assignments_model.freezed.dart';
@@ -14,6 +15,8 @@ class Assignment with _$Assignment {
     required String title,
     required DateTime dueDate,
     String? description,
+    int? subjectId,
+    Subject? subject,
     @Default(false) bool completed,
     @Default(false) bool starred,
     @Default(false) bool deleted,

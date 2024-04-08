@@ -26,6 +26,8 @@ mixin _$Assignment {
   String get title => throw _privateConstructorUsedError;
   DateTime get dueDate => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  int? get subjectId => throw _privateConstructorUsedError;
+  Subject? get subject => throw _privateConstructorUsedError;
   bool get completed => throw _privateConstructorUsedError;
   bool get starred => throw _privateConstructorUsedError;
   bool get deleted => throw _privateConstructorUsedError;
@@ -49,9 +51,13 @@ abstract class $AssignmentCopyWith<$Res> {
       String title,
       DateTime dueDate,
       String? description,
+      int? subjectId,
+      Subject? subject,
       bool completed,
       bool starred,
       bool deleted});
+
+  $SubjectCopyWith<$Res>? get subject;
 }
 
 /// @nodoc
@@ -73,6 +79,8 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
     Object? title = null,
     Object? dueDate = null,
     Object? description = freezed,
+    Object? subjectId = freezed,
+    Object? subject = freezed,
     Object? completed = null,
     Object? starred = null,
     Object? deleted = null,
@@ -102,6 +110,14 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      subjectId: freezed == subjectId
+          ? _value.subjectId
+          : subjectId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      subject: freezed == subject
+          ? _value.subject
+          : subject // ignore: cast_nullable_to_non_nullable
+              as Subject?,
       completed: null == completed
           ? _value.completed
           : completed // ignore: cast_nullable_to_non_nullable
@@ -115,6 +131,18 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
           : deleted // ignore: cast_nullable_to_non_nullable
               as bool,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $SubjectCopyWith<$Res>? get subject {
+    if (_value.subject == null) {
+      return null;
+    }
+
+    return $SubjectCopyWith<$Res>(_value.subject!, (value) {
+      return _then(_value.copyWith(subject: value) as $Val);
+    });
   }
 }
 
@@ -133,9 +161,14 @@ abstract class _$$AssignmentImplCopyWith<$Res>
       String title,
       DateTime dueDate,
       String? description,
+      int? subjectId,
+      Subject? subject,
       bool completed,
       bool starred,
       bool deleted});
+
+  @override
+  $SubjectCopyWith<$Res>? get subject;
 }
 
 /// @nodoc
@@ -155,6 +188,8 @@ class __$$AssignmentImplCopyWithImpl<$Res>
     Object? title = null,
     Object? dueDate = null,
     Object? description = freezed,
+    Object? subjectId = freezed,
+    Object? subject = freezed,
     Object? completed = null,
     Object? starred = null,
     Object? deleted = null,
@@ -184,6 +219,14 @@ class __$$AssignmentImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      subjectId: freezed == subjectId
+          ? _value.subjectId
+          : subjectId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      subject: freezed == subject
+          ? _value.subject
+          : subject // ignore: cast_nullable_to_non_nullable
+              as Subject?,
       completed: null == completed
           ? _value.completed
           : completed // ignore: cast_nullable_to_non_nullable
@@ -210,6 +253,8 @@ class _$AssignmentImpl implements _Assignment {
       required this.title,
       required this.dueDate,
       this.description,
+      this.subjectId,
+      this.subject,
       this.completed = false,
       this.starred = false,
       this.deleted = false});
@@ -230,6 +275,10 @@ class _$AssignmentImpl implements _Assignment {
   @override
   final String? description;
   @override
+  final int? subjectId;
+  @override
+  final Subject? subject;
+  @override
   @JsonKey()
   final bool completed;
   @override
@@ -241,7 +290,7 @@ class _$AssignmentImpl implements _Assignment {
 
   @override
   String toString() {
-    return 'Assignment(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, dueDate: $dueDate, description: $description, completed: $completed, starred: $starred, deleted: $deleted)';
+    return 'Assignment(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, dueDate: $dueDate, description: $description, subjectId: $subjectId, subject: $subject, completed: $completed, starred: $starred, deleted: $deleted)';
   }
 
   @override
@@ -258,6 +307,9 @@ class _$AssignmentImpl implements _Assignment {
             (identical(other.dueDate, dueDate) || other.dueDate == dueDate) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.subjectId, subjectId) ||
+                other.subjectId == subjectId) &&
+            (identical(other.subject, subject) || other.subject == subject) &&
             (identical(other.completed, completed) ||
                 other.completed == completed) &&
             (identical(other.starred, starred) || other.starred == starred) &&
@@ -267,7 +319,7 @@ class _$AssignmentImpl implements _Assignment {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, createdAt, updatedAt, title,
-      dueDate, description, completed, starred, deleted);
+      dueDate, description, subjectId, subject, completed, starred, deleted);
 
   @JsonKey(ignore: true)
   @override
@@ -291,6 +343,8 @@ abstract class _Assignment implements Assignment {
       required final String title,
       required final DateTime dueDate,
       final String? description,
+      final int? subjectId,
+      final Subject? subject,
       final bool completed,
       final bool starred,
       final bool deleted}) = _$AssignmentImpl;
@@ -310,6 +364,10 @@ abstract class _Assignment implements Assignment {
   DateTime get dueDate;
   @override
   String? get description;
+  @override
+  int? get subjectId;
+  @override
+  Subject? get subject;
   @override
   bool get completed;
   @override
