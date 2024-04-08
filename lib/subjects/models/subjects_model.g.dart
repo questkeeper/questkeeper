@@ -12,7 +12,7 @@ _$SubjectImpl _$$SubjectImplFromJson(Map<String, dynamic> json) =>
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       name: json['name'] as String,
-      color: json['color'] as String,
+      color: json['color'] as String?,
       archived: json['archived'] as bool? ?? false,
       deleted: json['deleted'] as bool? ?? false,
     );

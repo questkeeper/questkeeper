@@ -24,7 +24,7 @@ mixin _$Subject {
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get color => throw _privateConstructorUsedError;
+  String? get color => throw _privateConstructorUsedError;
   bool get archived => throw _privateConstructorUsedError;
   bool get deleted => throw _privateConstructorUsedError;
 
@@ -43,7 +43,7 @@ abstract class $SubjectCopyWith<$Res> {
       DateTime createdAt,
       DateTime updatedAt,
       String name,
-      String color,
+      String? color,
       bool archived,
       bool deleted});
 }
@@ -65,7 +65,7 @@ class _$SubjectCopyWithImpl<$Res, $Val extends Subject>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? name = null,
-    Object? color = null,
+    Object? color = freezed,
     Object? archived = null,
     Object? deleted = null,
   }) {
@@ -86,10 +86,10 @@ class _$SubjectCopyWithImpl<$Res, $Val extends Subject>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      color: null == color
+      color: freezed == color
           ? _value.color
           : color // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       archived: null == archived
           ? _value.archived
           : archived // ignore: cast_nullable_to_non_nullable
@@ -114,7 +114,7 @@ abstract class _$$SubjectImplCopyWith<$Res> implements $SubjectCopyWith<$Res> {
       DateTime createdAt,
       DateTime updatedAt,
       String name,
-      String color,
+      String? color,
       bool archived,
       bool deleted});
 }
@@ -134,7 +134,7 @@ class __$$SubjectImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? name = null,
-    Object? color = null,
+    Object? color = freezed,
     Object? archived = null,
     Object? deleted = null,
   }) {
@@ -155,10 +155,10 @@ class __$$SubjectImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      color: null == color
+      color: freezed == color
           ? _value.color
           : color // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       archived: null == archived
           ? _value.archived
           : archived // ignore: cast_nullable_to_non_nullable
@@ -179,7 +179,7 @@ class _$SubjectImpl implements _Subject {
       required this.createdAt,
       required this.updatedAt,
       required this.name,
-      required this.color,
+      this.color,
       this.archived = false,
       this.deleted = false});
 
@@ -195,7 +195,7 @@ class _$SubjectImpl implements _Subject {
   @override
   final String name;
   @override
-  final String color;
+  final String? color;
   @override
   @JsonKey()
   final bool archived;
@@ -250,7 +250,7 @@ abstract class _Subject implements Subject {
       required final DateTime createdAt,
       required final DateTime updatedAt,
       required final String name,
-      required final String color,
+      final String? color,
       final bool archived,
       final bool deleted}) = _$SubjectImpl;
 
@@ -265,7 +265,7 @@ abstract class _Subject implements Subject {
   @override
   String get name;
   @override
-  String get color;
+  String? get color;
   @override
   bool get archived;
   @override

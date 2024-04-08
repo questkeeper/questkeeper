@@ -12,7 +12,7 @@ class Subject with _$Subject {
     required DateTime createdAt,
     required DateTime updatedAt,
     required String name,
-    required String color,
+    String? color,
     @Default(false) bool archived,
     @Default(false) bool deleted,
   }) = _Subject;
