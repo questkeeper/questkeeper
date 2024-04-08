@@ -8,30 +8,17 @@ part 'assignments_model.g.dart';
 @freezed
 class Assignment with _$Assignment {
   const factory Assignment({
-    required int id,
+    int? id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
     required String title,
-    required String description,
     required DateTime dueDate,
-    required bool completed,
-    required bool starred,
-    required bool deleted,
+    String? description,
+    @Default(false) bool completed,
+    @Default(false) bool starred,
+    @Default(false) bool deleted,
   }) = _Assignment;
 
   factory Assignment.fromJson(Map<String, dynamic> json) =>
-      _$AssignmentFromJson({
-        ...json
-          ..addAll({
-            'dueDate': json['due_date'],
-          })
-          ..remove('due_date')
-      });
-
-  @override
-  Map<String, dynamic> toJson() => {
-        ...super.toJson()
-          ..addAll({
-            'due_date': dueDate.toIso8601String(),
-          })
-          ..remove('dueDate')
-      };
+      _$AssignmentFromJson(json);
 }
