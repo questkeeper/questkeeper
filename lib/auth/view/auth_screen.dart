@@ -45,21 +45,26 @@ class AuthScreen extends ConsumerWidget {
                 ref
                     .read(authProvider.notifier)
                     .signIn()
-                    .then(
-                      (_) => ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              authState.otpSent ? 'OTP verified' : 'OTP sent'),
-                        ),
-                      ),
-                    )
-                    .catchError(
-                      (error) => ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Error: Check your OTP code?'),
-                        ),
-                      ),
-                    );
+                    .then((_) => {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(authState.otpSent
+                                  ? 'OTP verified'
+                                  : 'OTP sent'),
+                            ),
+                          ),
+                          if (authState.otpSent)
+                            Navigator.of(context).pushNamed(
+                              '/home',
+                            ),
+                        })
+                    .catchError((error) => {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Error: Check your OTP code?'),
+                            ),
+                          ),
+                        });
               },
               child: const Text('Sign In'),
             ),
