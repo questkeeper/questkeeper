@@ -1,3 +1,4 @@
+import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/widgets/assignments_list.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,7 @@ class SliverAssignmentsList extends StatelessWidget {
       required this.colors,
       required this.title});
 
-  final List<Map<String, dynamic>> assignments;
+  final List<Assignment> assignments;
   final AssignmentsFilter filter;
   final List<Color> colors;
   final String title;

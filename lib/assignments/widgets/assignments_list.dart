@@ -16,13 +16,17 @@ class AssignmentsList extends StatelessWidget {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          if (filter == AssignmentsFilter.starred &&
-              !assignments[index].starred) {
+          if (filter == AssignmentsFilter.completed &&
+              !assignments[index].completed) {
             return const SizedBox.shrink();
           }
 
-          if (filter == AssignmentsFilter.completed &&
-              !assignments[index].completed) {
+          if (filter == AssignmentsFilter.starred &&
+              (!assignments[index].starred || assignments[index].completed)) {
+            return const SizedBox.shrink();
+          }
+
+          if (filter == AssignmentsFilter.all && assignments[index].completed) {
             return const SizedBox.shrink();
           }
 
