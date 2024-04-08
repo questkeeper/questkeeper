@@ -53,7 +53,7 @@ class AuthScreen extends ConsumerWidget {
                                   : 'OTP sent'),
                             ),
                           ),
-                          if (authState.otpSent)
+                          if (authState.otpSent && authState.error == null)
                             Navigator.of(context).pushNamed(
                               '/home',
                             ),
