@@ -1,3 +1,4 @@
+import 'package:assigngo_rewrite/assignments/assignment/ui/assignment_card.dart';
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:flutter/material.dart';
 
@@ -25,29 +26,9 @@ class AssignmentsList extends StatelessWidget {
             return const SizedBox.shrink();
           }
 
-          return Card(
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              margin: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    assignments[index].title,
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    assignments[index].description,
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ],
-              ),
-            ),
-          );
+          return Container(
+              padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
+              child: AssignmentCard(assignment: assignments[index]));
         },
         childCount: assignments.length,
       ),
