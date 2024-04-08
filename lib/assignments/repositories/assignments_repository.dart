@@ -21,17 +21,17 @@ class AssignmentsRepository {
     return Assignment.fromJson(assignment);
   }
 
-  Future<Map<String, dynamic>> createOrUpdateAssignment(
-      Map<String, dynamic> assignment) async {
-    print(assignment);
-    // Convert datetime obj to datetime for supabase
-    assignment['due_date'] = assignment['due_date'].toIso8601String();
+  Future<Map<String, dynamic>> createAssignment(Assignment assignment) async {
+    final Map<String, dynamic> jsonAssignment = assignment.toJson();
+    jsonAssignment.remove('id');
+    jsonAssignment.remove('createdAt');
+    jsonAssignment.remove('updatedAt');
     try {
-      await supabase.from('assignments').upsert(assignment);
+      await supabase.from('assignments').insert(jsonAssignment);
       return {
         "success": true,
         "message": "Assignment created successfully",
-        "error": false
+        "error": false,
       };
     } catch (error) {
       return {

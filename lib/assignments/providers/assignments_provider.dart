@@ -1,5 +1,6 @@
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/repositories/assignments_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final assignmentsProvider =
@@ -17,11 +18,12 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
     state = assignments;
   }
 
-  Future<void> createOrUpdateAssignment(Assignment assignment) async {
-    final updatedAssignment =
-        await _repository.createOrUpdateAssignment(assignment.toJson());
-    state = [...state, Assignment.fromJson(updatedAssignment)];
+  Future<void> createAssignment(Assignment assignment) async {
+    try {
+      await _repository.createAssignment(assignment);
+      await fetchAssignments();
+    } catch (error) {
+      debugPrint("Error creating assignment: $error");
+    }
   }
-
-  // ... other methods for CRUD operations
 }
