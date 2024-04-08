@@ -36,6 +36,13 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
     try {
       await _repository.starAssignment(id);
       await fetchAssignments();
+
+      state = state.map((a) {
+        if (a.id == id) {
+          return a.copyWith(starred: !a.starred);
+        }
+        return a;
+      }).toList();
     } catch (error) {
       debugPrint("Error starring assignment: $error");
     }
@@ -45,6 +52,13 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
     try {
       await _repository.completeAssignment(id);
       await fetchAssignments();
+
+      state = state.map((a) {
+        if (a.id == id) {
+          return a.copyWith(completed: true);
+        }
+        return a;
+      }).toList();
     } catch (error) {
       debugPrint("Error completing assignment: $error");
     }
@@ -57,4 +71,6 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
       debugPrint("Error getting assignment: $error");
     }
   }
+
+  void deleteAssignment(int i) {}
 }
