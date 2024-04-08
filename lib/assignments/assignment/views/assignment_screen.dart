@@ -1,6 +1,7 @@
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/providers/current_assignment_provider.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
+import 'package:assigngo_rewrite/assignments/subtasks/repositories/subtasks_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,6 +42,8 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
 
     final currentAssignment = assignments.firstWhere(
         (a) => a.id == ref.watch(currentAssignmentProvider).assignment?.id);
+    final subtasks =
+        SubtasksRepository().getAssignmentSubtasks(currentAssignment.id!);
 
     return Scaffold(
       body: Container(
@@ -94,6 +97,38 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                 "Subtasks",
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
+            ),
+            FutureBuilder(
+              future: subtasks,
+              builder: (context, snapshot) =>
+                  snapshot.connectionState == ConnectionState.waiting
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: snapshot.data?.length,
+                          itemBuilder: (context, index) {
+                            final subtask = snapshot.data![index];
+                            return CheckboxListTile(
+                              subtitle: subtask.priority != null
+                                  ? Text(
+                                      "Priority: ${subtask.priority}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(color: Colors.amber),
+                                    )
+                                  : null,
+                              value: subtask.completed,
+                              title: Text(
+                                subtask.title,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              onChanged: (bool? value) {
+                                SubtasksRepository().toggleComplete(subtask);
+                              },
+                            );
+                          },
+                        ),
             ),
             const Spacer(
               flex: 2,
