@@ -18,12 +18,43 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
     state = assignments;
   }
 
+  Future<void> fetchAssignment(int id) async {
+    final assignment = await _repository.getAssignment(id);
+    state = [assignment];
+  }
+
   Future<void> createAssignment(Assignment assignment) async {
     try {
       await _repository.createAssignment(assignment);
       await fetchAssignments();
     } catch (error) {
       debugPrint("Error creating assignment: $error");
+    }
+  }
+
+  Future<void> starAssignment(int id) async {
+    try {
+      await _repository.starAssignment(id);
+      await fetchAssignments();
+    } catch (error) {
+      debugPrint("Error starring assignment: $error");
+    }
+  }
+
+  Future<void> completeAssignment(int id) async {
+    try {
+      await _repository.completeAssignment(id);
+      await fetchAssignments();
+    } catch (error) {
+      debugPrint("Error completing assignment: $error");
+    }
+  }
+
+  Future<void> getAssignment(int id) async {
+    try {
+      await _repository.getAssignment(id);
+    } catch (error) {
+      debugPrint("Error getting assignment: $error");
     }
   }
 }

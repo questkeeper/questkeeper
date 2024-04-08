@@ -41,4 +41,43 @@ class AssignmentsRepository {
       };
     }
   }
+
+  Future<Map<String, dynamic>> starAssignment(int id) async {
+    try {
+      await supabase.from('assignments').update({'starred': true}).eq('id', id);
+      return {
+        "success": true,
+        "message": "Assignment prioritized successfully",
+        "error": false,
+      };
+    } catch (error) {
+      return {
+        "error": true,
+        "message": "Error prioritized assignment",
+        "success": false
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> completeAssignment(int id) async {
+    try {
+      print("Completing assignment with id: $id");
+      await supabase
+          .from('assignments')
+          .update({'completed': true}).eq('id', id);
+
+      print("Assignment completed successfully");
+      return {
+        "success": true,
+        "message": "Assignment completed successfully",
+        "error": false,
+      };
+    } catch (error) {
+      return {
+        "error": true,
+        "message": "Error completing assignment",
+        "success": false
+      };
+    }
+  }
 }
