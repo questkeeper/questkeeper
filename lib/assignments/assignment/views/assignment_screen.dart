@@ -1,4 +1,6 @@
-import 'package:assigngo_rewrite/assignments/providers/assignment_provider.dart';
+import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
+import 'package:assigngo_rewrite/assignments/providers/current_assignment_provider.dart';
+import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,11 +16,14 @@ class AssignmentScreen extends ConsumerStatefulWidget {
 class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   @override
   Widget build(BuildContext context) {
-    final currentAssignment = ref.watch(currentAssignmentProvider).assignment;
+    final assignments = ref.watch(assignmentsProvider);
+    final currentAssignmentRef =
+        ref.watch(currentAssignmentProvider).assignment;
+
     final platformBrightness = MediaQuery.of(context).platformBrightness;
     final size = MediaQuery.of(context).size;
 
-    if (currentAssignment == null) {
+    if (currentAssignmentRef == null) {
       return Container(
         padding: const EdgeInsets.all(16.0),
         margin: const EdgeInsets.all(16.0),
@@ -33,6 +38,9 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
         ),
       );
     }
+
+    final currentAssignment = assignments.firstWhere(
+        (a) => a.id == ref.watch(currentAssignmentProvider).assignment?.id);
 
     return Scaffold(
       body: Container(
@@ -51,46 +59,10 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    ref
-                        .read(currentAssignmentProvider.notifier)
-                        .setCurrentAssignment(null);
-                  },
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    ref.read(currentAssignmentProvider.notifier);
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.star),
-                  color: Colors.amber,
-                  onPressed: () {
-                    ref.read(currentAssignmentProvider.notifier);
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.check_box),
-                  color: Colors.green,
-                  onPressed: () {
-                    ref.read(currentAssignmentProvider.notifier);
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  color: Colors.red,
-                  onPressed: () {
-                    ref.read(currentAssignmentProvider.notifier);
-                  },
-                ),
-              ],
-            ),
+            size.width < 800
+                ? const SizedBox()
+                : ActionButtons(
+                    ref: ref, currentAssignment: currentAssignment, size: size),
             Container(
               padding: const EdgeInsets.all(8.0),
               alignment: Alignment.centerLeft,
@@ -126,9 +98,100 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
             const Spacer(
               flex: 2,
             ),
+            size.width > 800 ? const SizedBox() : const Divider(),
+            size.width > 800
+                ? const SizedBox()
+                : ActionButtons(
+                    ref: ref, currentAssignment: currentAssignment, size: size),
+            SizedBox(height: MediaQuery.of(context).padding.top + 10),
           ],
         ),
       ),
+    );
+  }
+}
+
+class ActionButtons extends ConsumerStatefulWidget {
+  const ActionButtons({
+    super.key,
+    required this.ref,
+    required this.currentAssignment,
+    required this.size,
+  });
+
+  final WidgetRef ref;
+  final Assignment? currentAssignment;
+  final Size size;
+
+  @override
+  ConsumerState<ActionButtons> createState() => _ActionButtonsState();
+}
+
+class _ActionButtonsState extends ConsumerState<ActionButtons> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      // space evenly to take up the full width
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Pop the screen when the back button is tapped
+            widget.size.width > 800 ? null : Navigator.of(context).pop();
+            widget.ref
+                .read(currentAssignmentProvider.notifier)
+                .setCurrentAssignment(null);
+          },
+        ),
+        Visibility(
+          maintainSize: false,
+          visible: widget.size.width > 800,
+          child: const Spacer(),
+        ),
+        IconButton(
+          icon: const Icon(Icons.edit),
+          onPressed: () {
+            widget.ref.read(currentAssignmentProvider.notifier);
+
+            widget.ref
+                .read(currentAssignmentProvider.notifier)
+                .setCurrentAssignment(widget.currentAssignment);
+          },
+        ),
+        IconButton(
+          icon: widget.currentAssignment!.starred
+              ? const Icon(Icons.star)
+              : const Icon(Icons.star_outline),
+          color: Colors.amber,
+          onPressed: () {
+            widget.ref.read(assignmentsProvider.notifier).starAssignment(
+                  widget.currentAssignment!.id!,
+                );
+          },
+        ),
+        IconButton(
+          icon: widget.currentAssignment!.completed
+              ? const Icon(Icons.cancel_presentation)
+              : const Icon(Icons.check),
+          color:
+              widget.currentAssignment!.completed ? Colors.red : Colors.green,
+          onPressed: () {
+            widget.ref.read(assignmentsProvider.notifier).completeAssignment(
+                  widget.currentAssignment!.id!,
+                );
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.delete),
+          color: Colors.red,
+          onPressed: () {
+            widget.ref.read(assignmentsProvider.notifier).deleteAssignment(
+                  widget.currentAssignment!.id!,
+                );
+          },
+        ),
+      ],
     );
   }
 }
