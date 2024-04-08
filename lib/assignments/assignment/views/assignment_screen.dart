@@ -186,9 +186,29 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           icon: const Icon(Icons.delete),
           color: Colors.red,
           onPressed: () {
-            widget.ref
-                .read(assignmentsProvider.notifier)
-                .deleteAssignment(widget.currentAssignment!);
+            showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                      content: Text(
+                        "Are you sure you want to delete ${widget.currentAssignment!.title}?",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      actions: [
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("Cancel")),
+                        ElevatedButton(
+                            onPressed: () {
+                              widget.ref
+                                  .read(assignmentsProvider.notifier)
+                                  .deleteAssignment(widget.currentAssignment!);
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("Delete")),
+                      ],
+                    ));
           },
         ),
       ],
