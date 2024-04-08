@@ -2,16 +2,21 @@ import 'package:assigngo_rewrite/assignments/assignment/views/assignment_screen.
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/providers/current_assignment_provider.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
+import 'package:assigngo_rewrite/assignments/widgets/assignments_list.dart';
+import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 class AssignmentCard extends ConsumerStatefulWidget {
   const AssignmentCard({
     super.key,
     required this.assignment,
+    required this.filter,
   });
 
   final Assignment assignment;
+  final AssignmentsFilter filter;
 
   @override
   ConsumerState<AssignmentCard> createState() => _AssignmentCardState();
@@ -26,82 +31,95 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
   @override
   Widget build(BuildContext context) {
     final Assignment assignment = widget.assignment;
-    return Dismissible(
-      key: ValueKey(widget.assignment.id),
-      confirmDismiss: (direction) {
-        if (direction == DismissDirection.startToEnd) {
-          ref.read(assignmentsProvider.notifier).toggleStar(widget.assignment);
-          return Future.value(true);
-        } else {
-          ref
-              .read(assignmentsProvider.notifier)
-              .toggleComplete(widget.assignment);
-          return Future.value(false);
-        }
-      },
-      background: Container(
-        color: Colors.amber,
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(assignment.starred ? Icons.star : Icons.star_outline,
-                color: Colors.black, size: 32.0),
-            const Text(
-              "Star",
-              style: TextStyle(color: Colors.black, fontSize: 16.0),
-            ),
-          ],
-        ),
-      ),
-      secondaryBackground: Container(
-        color: assignment.completed ? Colors.red : Colors.green,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(assignment.completed ? Icons.cancel_presentation : Icons.check,
-                color: Colors.black, size: 32.0),
-            Text(
-              assignment.completed ? "Incomplete" : "Complete",
-              style: const TextStyle(color: Colors.black, fontSize: 16.0),
-            ),
-          ],
-        ),
-      ),
-      child: InkWell(
-        radius: 16.0,
-        onTap: () => {
-          ref
-              .read(currentAssignmentProvider.notifier)
-              .setCurrentAssignment(widget.assignment),
-          if (MediaQuery.of(context).size.width < 800)
-            {
-              // modal for mobile
-              showModalBottomSheet(
-                enableDrag: true,
-                isScrollControlled: true,
-                useSafeArea: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                  ),
+    return InkWell(
+      radius: 16.0,
+      onTap: () => {
+        ref
+            .read(currentAssignmentProvider.notifier)
+            .setCurrentAssignment(widget.assignment),
+        if (MediaQuery.of(context).size.width < 800)
+          {
+            // modal for mobile
+            showModalBottomSheet(
+              enableDrag: true,
+              isScrollControlled: true,
+              useSafeArea: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.0),
+                  topRight: Radius.circular(16.0),
                 ),
-                showDragHandle: true,
-                context: context,
-                builder: (context) {
-                  return const AssignmentScreen();
-                },
-              )
-            }
+              ),
+              showDragHandle: true,
+              context: context,
+              builder: (context) {
+                return const AssignmentScreen();
+              },
+            )
+          }
+      },
+      child: Dismissible(
+        key: ValueKey(widget.assignment.id),
+        confirmDismiss: (direction) {
+          if (direction == DismissDirection.startToEnd) {
+            ref
+                .read(assignmentsProvider.notifier)
+                .toggleStar(widget.assignment);
+            return widget.filter == AssignmentsFilter.starred
+                ? Future.value(true)
+                : Future.value(false);
+          } else {
+            ref
+                .read(assignmentsProvider.notifier)
+                .toggleComplete(widget.assignment);
+            return Future.value(true);
+          }
         },
+        background: Container(
+          color: Colors.amber,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.only(left: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(assignment.starred ? Icons.star : Icons.star_outline,
+                  color: Colors.black, size: 32.0),
+              const Text(
+                "Star",
+                style: TextStyle(color: Colors.black, fontSize: 16.0),
+              ),
+            ],
+          ),
+        ),
+        secondaryBackground: Container(
+          color: assignment.completed ? Colors.red : Colors.green,
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                  assignment.completed
+                      ? Icons.cancel_presentation
+                      : Icons.check,
+                  color: Colors.black,
+                  size: 32.0),
+              Text(
+                assignment.completed ? "Incomplete" : "Complete",
+                style: const TextStyle(color: Colors.black, fontSize: 16.0),
+              ),
+            ],
+          ),
+        ),
         child: SizedBox(
-          height: 120.0,
+          // height: 150,
           width: double.infinity,
           child: Card(
+            color: assignment.subjectId != null &&
+                    assignment.subject != null &&
+                    assignment.subject?.color != null
+                ? HexColor(assignment.subject!.color!)
+                : Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0),
             ),
@@ -111,18 +129,27 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
               margin: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     widget.assignment.title,
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
+                  Text(
+                    "Due ${DateFormat('MMMM d, y hh:mm a').format(assignment.dueDate)}",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  assignment.subject != null
+                      ? Text(
+                          assignment.subject!.name,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      : const SizedBox.shrink(),
                   const SizedBox(height: 8.0),
                   Text(
+                    softWrap: true,
                     widget.assignment.description ?? "",
-                    style: const TextStyle(fontSize: 16.0),
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ],
               ),
