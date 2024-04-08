@@ -1,21 +1,39 @@
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/repositories/assignments_repository.dart';
+import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
+import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final assignmentsProvider =
     StateNotifierProvider<AssignmentsNotifier, List<Assignment>>(
-  (ref) => AssignmentsNotifier([]),
+  (ref) {
+    final subjectsNotifier = ref.watch(subjectsProvider.notifier);
+    return AssignmentsNotifier([], subjectsNotifier);
+  },
 );
 
 class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
   final AssignmentsRepository _repository = AssignmentsRepository();
+  final SubjectsNotifier _subjectsNotifier;
 
-  AssignmentsNotifier(super._state);
+  AssignmentsNotifier(super._state, this._subjectsNotifier);
 
   Future<void> fetchAssignments() async {
+    await _subjectsNotifier.fetchSubjects();
     final assignments = await _repository.getAssignments();
-    state = assignments;
+    final subjects = _subjectsNotifier.state;
+
+    state = assignments.map((assignment) {
+      final subject = subjects.firstWhere(
+        (subject) => subject.id == assignment.subjectId,
+        orElse: () => Subject(
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+            name: "Uncategorized"),
+      );
+      return assignment.copyWith(subject: subject);
+    }).toList();
   }
 
   Future<void> fetchAssignment(int id) async {
