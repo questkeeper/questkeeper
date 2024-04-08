@@ -35,11 +35,10 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
   Future<void> toggleStar(Assignment assignment) async {
     try {
       await _repository.toggleStar(assignment);
-      await fetchAssignments();
 
       state = state.map((a) {
         if (a.id == assignment.id) {
-          return a.copyWith(starred: assignment.starred);
+          return a.copyWith(starred: !a.starred);
         }
         return a;
       }).toList();
@@ -51,11 +50,10 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
   Future<void> toggleComplete(Assignment assignment) async {
     try {
       await _repository.toggleComplete(assignment);
-      await fetchAssignments();
 
       state = state.map((a) {
         if (a.id == assignment.id) {
-          return a.copyWith(completed: assignment.completed);
+          return a.copyWith(completed: !a.completed);
         }
         return a;
       }).toList();
