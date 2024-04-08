@@ -4,6 +4,7 @@ import 'package:assigngo_rewrite/assignments/views/home_screen.dart';
 import 'package:assigngo_rewrite/assignments/views/priority_screen.dart';
 import 'package:assigngo_rewrite/assignments/views/completed_screen.dart';
 import 'package:assigngo_rewrite/assignments/widgets/assignments_modal.dart';
+import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,6 +21,7 @@ class _TabViewState extends ConsumerState<TabView> {
     super.initState();
     // Fetch the assignments when the screen is initialized
     ref.read(assignmentsProvider.notifier).fetchAssignments();
+    ref.read(subjectsProvider.notifier).fetchSubjects();
   }
 
   int _selectedIndex = 0;
