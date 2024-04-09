@@ -80,6 +80,11 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
       ),
       child: InkWell(
         radius: 16.0,
+        customBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        splashColor: Colors.transparent,
+        enableFeedback: true,
         onTap: () => {
           ref
               .read(currentAssignmentProvider.notifier)
