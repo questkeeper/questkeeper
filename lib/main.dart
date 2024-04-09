@@ -1,6 +1,7 @@
 import 'package:assigngo_rewrite/auth/view/auth_screen.dart';
 import 'package:assigngo_rewrite/auth/view/auth_gate.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
 import 'package:assigngo_rewrite/constants.dart';
@@ -34,8 +35,25 @@ class MyApp extends ConsumerWidget {
       ),
       darkTheme: ThemeData.dark(
         useMaterial3: true,
+      ).copyWith(
+        textTheme: ThemeData.dark().textTheme.apply(
+              fontFamily: GoogleFonts.poppins().fontFamily,
+            ),
+        primaryTextTheme: ThemeData.dark().textTheme.apply(
+              fontFamily: GoogleFonts.notoSerif().fontFamily,
+            ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: false,
+        ),
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          ),
+        ),
       ),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       home: const AuthGate(),
       routes: {
         '/signin': (context) => const AuthScreen(),
