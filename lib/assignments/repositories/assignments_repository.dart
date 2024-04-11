@@ -32,6 +32,7 @@ class AssignmentsRepository {
     jsonAssignment.remove('id');
     jsonAssignment.remove('createdAt');
     jsonAssignment.remove('updatedAt');
+    jsonAssignment.remove('subject');
     try {
       await supabase.from('assignments').insert(jsonAssignment);
       return const ReturnModel(

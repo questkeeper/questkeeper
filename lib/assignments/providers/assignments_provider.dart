@@ -1,5 +1,6 @@
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/repositories/assignments_repository.dart';
+import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
 import 'package:flutter/material.dart';
@@ -41,12 +42,38 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
     state = [assignment];
   }
 
-  Future<void> createAssignment(Assignment assignment) async {
+  Future<ReturnModel> createAssignment({
+    required String title,
+    String? description,
+    required DateTime dueDate,
+    int? subjectId,
+  }) async {
     try {
+      final assignment = Assignment(
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        title: title,
+        dueDate: dueDate,
+        description: description,
+        subjectId: subjectId,
+      );
+
+      debugPrint("Creating assignment: $assignment");
       await _repository.createAssignment(assignment);
       await fetchAssignments();
+
+      return const ReturnModel(
+        success: true,
+        message: "Assignment created successfully",
+      );
     } catch (error) {
       debugPrint("Error creating assignment: $error");
+
+      return ReturnModel(
+        success: false,
+        message: "Error creating assignment: $error",
+        error: error.toString(),
+      );
     }
   }
 
