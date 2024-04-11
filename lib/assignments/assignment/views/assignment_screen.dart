@@ -3,10 +3,10 @@ import 'package:assigngo_rewrite/assignments/providers/current_assignment_provid
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
 import 'package:assigngo_rewrite/assignments/subtasks/providers/subtasks_providers.dart';
 import 'package:assigngo_rewrite/assignments/subtasks/repositories/subtasks_repository.dart';
+import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 class AssignmentScreen extends ConsumerStatefulWidget {
   const AssignmentScreen({super.key});
@@ -89,7 +89,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
               padding: const EdgeInsets.all(8.0),
               alignment: Alignment.centerLeft,
               child: Text(
-                "Due ${DateFormat('MMMM d, y hh:mm a').format(currentAssignment.dueDate)}",
+                "Due ${formatDate(currentAssignment.dueDate)}",
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),

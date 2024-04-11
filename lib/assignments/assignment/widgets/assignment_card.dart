@@ -3,10 +3,10 @@ import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/providers/current_assignment_provider.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
 import 'package:assigngo_rewrite/assignments/widgets/assignments_list.dart';
+import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 class AssignmentCard extends ConsumerStatefulWidget {
   const AssignmentCard({
@@ -135,7 +135,7 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Text(
-                    "Due ${DateFormat('MMMM d, y hh:mm a').format(assignment.dueDate)}",
+                    "Due ${formatDate(widget.assignment.dueDate)}",
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   assignment.subject != null
