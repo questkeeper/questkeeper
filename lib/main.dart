@@ -40,7 +40,11 @@ class MyApp extends ConsumerWidget {
               fontFamily: GoogleFonts.poppins().fontFamily,
             ),
         primaryTextTheme: ThemeData.dark().textTheme.apply(
-              fontFamily: GoogleFonts.notoSerif().fontFamily,
+              fontFamily: GoogleFonts.poppins(
+                textStyle: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+              ).fontFamily,
             ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,

@@ -1,4 +1,4 @@
-import 'package:assigngo_rewrite/assignments/assignment/ui/assignment_card.dart';
+import 'package:assigngo_rewrite/assignments/assignment/widgets/assignment_card.dart';
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:flutter/material.dart';
 
