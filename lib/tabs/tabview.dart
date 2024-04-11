@@ -1,9 +1,9 @@
 import 'package:assigngo_rewrite/assignments/assignment/views/assignment_screen.dart';
+import 'package:assigngo_rewrite/assignments/assignment_form/views/assignment_form_screen.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
 import 'package:assigngo_rewrite/assignments/views/home_screen.dart';
 import 'package:assigngo_rewrite/assignments/views/priority_screen.dart';
 import 'package:assigngo_rewrite/assignments/views/completed_screen.dart';
-import 'package:assigngo_rewrite/assignments/widgets/assignments_modal.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,12 +29,13 @@ class _TabViewState extends ConsumerState<TabView> {
   void _onItemTapped(int index) async {
     if (index == 2) {
       // Call the assignModal function when the add button is tapped
-      // Call modal for adding new assignment
-      showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return const AssignmentsModal();
-          });
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AssignmentFormScreen(),
+          fullscreenDialog: true,
+        ),
+      );
     } else {
       // Update the selected index for other buttons
       setState(() {
