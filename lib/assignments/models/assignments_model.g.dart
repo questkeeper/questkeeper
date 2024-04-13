@@ -21,6 +21,10 @@ _$AssignmentImpl _$$AssignmentImplFromJson(Map<String, dynamic> json) =>
       completed: json['completed'] as bool? ?? false,
       starred: json['starred'] as bool? ?? false,
       deleted: json['deleted'] as bool? ?? false,
+      categories: (json['categories'] as List<dynamic>?)
+              ?.map((e) => $enumDecode(_$CategoriesEnumMap, e))
+              .toList() ??
+          const [Categories.homework],
     );
 
 Map<String, dynamic> _$$AssignmentImplToJson(_$AssignmentImpl instance) =>
@@ -36,4 +40,15 @@ Map<String, dynamic> _$$AssignmentImplToJson(_$AssignmentImpl instance) =>
       'completed': instance.completed,
       'starred': instance.starred,
       'deleted': instance.deleted,
+      'categories':
+          instance.categories?.map((e) => _$CategoriesEnumMap[e]!).toList(),
     };
+
+const _$CategoriesEnumMap = {
+  Categories.homework: 'homework',
+  Categories.quiz: 'quiz',
+  Categories.essay: 'essay',
+  Categories.exam: 'exam',
+  Categories.project: 'project',
+  Categories.presentation: 'presentation',
+};

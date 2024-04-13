@@ -31,6 +31,7 @@ mixin _$Assignment {
   bool get completed => throw _privateConstructorUsedError;
   bool get starred => throw _privateConstructorUsedError;
   bool get deleted => throw _privateConstructorUsedError;
+  List<Categories>? get categories => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -55,7 +56,8 @@ abstract class $AssignmentCopyWith<$Res> {
       Subject? subject,
       bool completed,
       bool starred,
-      bool deleted});
+      bool deleted,
+      List<Categories>? categories});
 
   $SubjectCopyWith<$Res>? get subject;
 }
@@ -84,6 +86,7 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
     Object? completed = null,
     Object? starred = null,
     Object? deleted = null,
+    Object? categories = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -130,6 +133,10 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
           ? _value.deleted
           : deleted // ignore: cast_nullable_to_non_nullable
               as bool,
+      categories: freezed == categories
+          ? _value.categories
+          : categories // ignore: cast_nullable_to_non_nullable
+              as List<Categories>?,
     ) as $Val);
   }
 
@@ -165,7 +172,8 @@ abstract class _$$AssignmentImplCopyWith<$Res>
       Subject? subject,
       bool completed,
       bool starred,
-      bool deleted});
+      bool deleted,
+      List<Categories>? categories});
 
   @override
   $SubjectCopyWith<$Res>? get subject;
@@ -193,6 +201,7 @@ class __$$AssignmentImplCopyWithImpl<$Res>
     Object? completed = null,
     Object? starred = null,
     Object? deleted = null,
+    Object? categories = freezed,
   }) {
     return _then(_$AssignmentImpl(
       id: freezed == id
@@ -239,6 +248,10 @@ class __$$AssignmentImplCopyWithImpl<$Res>
           ? _value.deleted
           : deleted // ignore: cast_nullable_to_non_nullable
               as bool,
+      categories: freezed == categories
+          ? _value._categories
+          : categories // ignore: cast_nullable_to_non_nullable
+              as List<Categories>?,
     ));
   }
 }
@@ -257,7 +270,9 @@ class _$AssignmentImpl implements _Assignment {
       this.subject,
       this.completed = false,
       this.starred = false,
-      this.deleted = false});
+      this.deleted = false,
+      final List<Categories>? categories = const [Categories.homework]})
+      : _categories = categories;
 
   factory _$AssignmentImpl.fromJson(Map<String, dynamic> json) =>
       _$$AssignmentImplFromJson(json);
@@ -287,10 +302,20 @@ class _$AssignmentImpl implements _Assignment {
   @override
   @JsonKey()
   final bool deleted;
+  final List<Categories>? _categories;
+  @override
+  @JsonKey()
+  List<Categories>? get categories {
+    final value = _categories;
+    if (value == null) return null;
+    if (_categories is EqualUnmodifiableListView) return _categories;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'Assignment(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, dueDate: $dueDate, description: $description, subjectId: $subjectId, subject: $subject, completed: $completed, starred: $starred, deleted: $deleted)';
+    return 'Assignment(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, dueDate: $dueDate, description: $description, subjectId: $subjectId, subject: $subject, completed: $completed, starred: $starred, deleted: $deleted, categories: $categories)';
   }
 
   @override
@@ -313,13 +338,27 @@ class _$AssignmentImpl implements _Assignment {
             (identical(other.completed, completed) ||
                 other.completed == completed) &&
             (identical(other.starred, starred) || other.starred == starred) &&
-            (identical(other.deleted, deleted) || other.deleted == deleted));
+            (identical(other.deleted, deleted) || other.deleted == deleted) &&
+            const DeepCollectionEquality()
+                .equals(other._categories, _categories));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, createdAt, updatedAt, title,
-      dueDate, description, subjectId, subject, completed, starred, deleted);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      createdAt,
+      updatedAt,
+      title,
+      dueDate,
+      description,
+      subjectId,
+      subject,
+      completed,
+      starred,
+      deleted,
+      const DeepCollectionEquality().hash(_categories));
 
   @JsonKey(ignore: true)
   @override
@@ -347,7 +386,8 @@ abstract class _Assignment implements Assignment {
       final Subject? subject,
       final bool completed,
       final bool starred,
-      final bool deleted}) = _$AssignmentImpl;
+      final bool deleted,
+      final List<Categories>? categories}) = _$AssignmentImpl;
 
   factory _Assignment.fromJson(Map<String, dynamic> json) =
       _$AssignmentImpl.fromJson;
@@ -374,6 +414,8 @@ abstract class _Assignment implements Assignment {
   bool get starred;
   @override
   bool get deleted;
+  @override
+  List<Categories>? get categories;
   @override
   @JsonKey(ignore: true)
   _$$AssignmentImplCopyWith<_$AssignmentImpl> get copyWith =>
