@@ -79,60 +79,32 @@ struct AssignGoWidgetsEntryView: View {
 
   @ViewBuilder
   var body: some View {
-    switch family {
-    case .systemMedium:
-      HStack {
-        VStack {
-          Text("\(entry.starred ? "⭐️" : "") \(entry.title)")
-          Text("Due " + entry.dueDate).font(Font.body.weight(.light))
-        }.padding(
-          EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-        ).background(
-          Color.purple.opacity(Double(0.5))
-        ).cornerRadius(10)
 
-        if #available(iOS 17.0, *) {
-          VStack(spacing: 0) {
-            Button(intent: WidgetScrollerUp()) {
-              Image(systemName: "arrow.up")
-            }.contentMargins(.vertical, 4)
-            Button(intent: WidgetScrollerDown()) {
-              Image(systemName: "arrow.down")
-            }
-          }
-          .buttonStyle(.bordered)
-          .foregroundColor(.white)
-          .tint(.white)
-        }
-      }.padding()
-    case .systemLarge:
-      HStack {
-        VStack {
-          Text("\(entry.starred ? "⭐️" : "") \(entry.title)").font(.title3)
-          Text("Due " + entry.dueDate).font(Font.body.weight(.light))
-        }.padding(
-          EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-        ).background(
-          Color.purple.opacity(Double(0.5))
-        ).cornerRadius(10)
-
-        if #available(iOS 17.0, *) {
-          VStack(spacing: 0) {
-            Button(intent: WidgetScrollerUp()) {
-              Image(systemName: "arrow.up")
-            }.contentMargins(.vertical, 4)
-            Button(intent: WidgetScrollerDown()) {
-              Image(systemName: "arrow.down")
-            }
-          }
-          .buttonStyle(.bordered)
-          .foregroundColor(.white)
-          .tint(.white)
-        }
-      }
-    default:
+    HStack {
       VStack {
-        Text("\(entry.title) \(entry.starred ? "⭐️" : "")")
+        Text("\(entry.starred ? "⭐️" : "") \(entry.title)")
+        Text("Due " + entry.dueDate).font(Font.body.weight(.light))
+      }.padding(
+        EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4)
+      ).background(
+        Color.purple.opacity(Double(0.5))
+      ).cornerRadius(12)
+
+      if #available(iOS 17.0, *) {
+        if family == .systemMedium || family == .systemLarge {
+
+          VStack(spacing: 4) {
+            Button(intent: WidgetScrollerUp()) {
+              Image(systemName: "arrow.up")
+            }
+            Button(intent: WidgetScrollerDown()) {
+              Image(systemName: "arrow.down")
+            }
+          }
+          .buttonStyle(.bordered)
+          .foregroundColor(.white)
+          .tint(.white)
+        }
       }
     }
   }
