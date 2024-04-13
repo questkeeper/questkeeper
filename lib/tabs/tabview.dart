@@ -61,7 +61,11 @@ class _TabViewState extends ConsumerState<TabView> {
         if (MediaQuery.of(context).size.width < 800) {
           // Mobile layout
           return Scaffold(
-            body: pages[_selectedIndex],
+            body: RefreshIndicator(
+                onRefresh: () => ref
+                    .refresh(assignmentsProvider.notifier)
+                    .fetchAssignments(),
+                child: pages[_selectedIndex]),
             persistentFooterButtons: [
               ElevatedButton(
                 onPressed: () {},
@@ -96,41 +100,45 @@ class _TabViewState extends ConsumerState<TabView> {
         } else {
           // Desktop layout
           return Scaffold(
-            body: Row(
-              children: [
-                NavigationRail(
-                  selectedIndex: _selectedIndex,
-                  onDestinationSelected: _onItemTapped,
-                  labelType: NavigationRailLabelType.all,
-                  destinations: const [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Home'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.star),
-                      label: Text("Prioritized"),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.add),
-                      label: Text("Add"),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.check_box),
-                      label: Text("Completed"),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.settings),
-                      label: Text("Settings"),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  flex: 3,
-                  child: pages[_selectedIndex],
-                ),
-                const Expanded(flex: 2, child: AssignmentScreen()),
-              ],
+            body: RefreshIndicator(
+              onRefresh: () =>
+                  ref.refresh(assignmentsProvider.notifier).fetchAssignments(),
+              child: Row(
+                children: [
+                  NavigationRail(
+                    selectedIndex: _selectedIndex,
+                    onDestinationSelected: _onItemTapped,
+                    labelType: NavigationRailLabelType.all,
+                    destinations: const [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.home),
+                        label: Text('Home'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.star),
+                        label: Text("Prioritized"),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.add),
+                        label: Text("Add"),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.check_box),
+                        label: Text("Completed"),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.settings),
+                        label: Text("Settings"),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: pages[_selectedIndex],
+                  ),
+                  const Expanded(flex: 2, child: AssignmentScreen()),
+                ],
+              ),
             ),
             persistentFooterButtons: [
               ElevatedButton(
