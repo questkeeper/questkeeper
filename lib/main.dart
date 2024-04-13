@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:assigngo_rewrite/auth/view/auth_screen.dart';
 import 'package:assigngo_rewrite/auth/view/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
 import 'package:assigngo_rewrite/constants.dart';
@@ -12,6 +15,10 @@ Future<void> main() async {
     url: supabaseUrl,
     anonKey: supabaseKey,
   );
+
+  if (Platform.isIOS) {
+    HomeWidget.setAppGroupId('group.assigngo');
+  }
 
   runApp(
     const ProviderScope(
@@ -37,7 +44,9 @@ class MyApp extends ConsumerWidget {
         useMaterial3: true,
       ).copyWith(
         textTheme: ThemeData.dark().textTheme.apply(
-              fontFamily: GoogleFonts.poppins().fontFamily,
+              fontFamily: GoogleFonts.poppins(
+                textStyle: const TextStyle(fontWeight: FontWeight.w500),
+              ).fontFamily,
             ),
         primaryTextTheme: ThemeData.dark().textTheme.apply(
               fontFamily: GoogleFonts.poppins(
@@ -56,6 +65,7 @@ class MyApp extends ConsumerWidget {
             borderRadius: BorderRadius.all(Radius.circular(12.0)),
           ),
         ),
+        primaryColor: const Color(0xFFa86fd1),
       ),
       themeMode: ThemeMode.dark,
       home: const AuthGate(),
