@@ -89,4 +89,26 @@ class AssignmentsRepository {
           error: error.toString());
     }
   }
+
+  Future<ReturnModel> updateAssignment(Assignment assignment) async {
+    final Map<String, dynamic> jsonAssignment = assignment.toJson();
+    jsonAssignment.remove('columns');
+    jsonAssignment.remove('subject');
+    jsonAssignment.remove('createdAt');
+
+    try {
+      await supabase
+          .from('assignments')
+          .update(jsonAssignment)
+          .eq('id', assignment.id!);
+
+      return const ReturnModel(
+          message: "Assignment updated successfully", success: true);
+    } catch (error) {
+      return ReturnModel(
+          message: "Error updating assignment",
+          success: false,
+          error: error.toString());
+    }
+  }
 }

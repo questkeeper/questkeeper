@@ -18,4 +18,10 @@ class CurrentAssignment extends ChangeNotifier {
     _assignment = assignment;
     notifyListeners();
   }
+
+  void updateAssignment(Assignment assignment) {
+    // Locally update the assignment
+    _assignment = assignment;
+    notifyListeners();
+  }
 }
