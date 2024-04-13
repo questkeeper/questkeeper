@@ -1,146 +1,152 @@
- import SwiftUI
- import WidgetKit
+import SwiftUI
+import WidgetKit
 
 struct Provider: TimelineProvider {
-    func placeholder(in context: Context) -> AssignmentEntry {
-        AssignmentEntry(date: Date(), dueDate: "No Date Set", title: "No Title Set", description: "No Description Set", starred: false)
-    }
+  func placeholder(in context: Context) -> AssignmentEntry {
+    AssignmentEntry(
+      date: Date(), dueDate: "No Date Set", title: "No Title Set",
+      description: "No Description Set", starred: false)
+  }
 
-    func getSnapshot(in context: Context, completion: @escaping (AssignmentEntry) -> ()) {
-        let entry: AssignmentEntry
-        if context.isPreview {
-            entry = placeholder(in: context)
-        } else {
-            let userDefaults = UserDefaults(suiteName: "group.assigngo")
-            let defaultData = """
-                [
-                    {
-                        "id": 1,
-                        "title": "Test Assignment",
-                        "description": "This is a test assignment",
-                        "dueDate": "2021-01-01",
-                        "starred": true
-                    }
-                ]
-                """
-            let data = userDefaults?.string(forKey: "assignments") ?? defaultData
+  func getSnapshot(in context: Context, completion: @escaping (AssignmentEntry) -> Void) {
+    let entry: AssignmentEntry
+    if context.isPreview {
+      entry = placeholder(in: context)
+    } else {
+      let userDefaults = UserDefaults(suiteName: "group.assigngo")
+      let defaultData = """
+        [
+            {
+                "id": 1,
+                "title": "Test Assignment",
+                "description": "This is a test assignment",
+                "dueDate": "2021-01-01",
+                "starred": true
+            }
+        ]
+        """
+      let data = userDefaults?.string(forKey: "assignments") ?? defaultData
 
-            let assignments = try! JSONDecoder().decode([AssignmentData].self, from: data.data(using: .utf8)!)
-            length = assignments.count
-            let assignment = assignments[index]
-            
-            entry = AssignmentEntry(date: Date(), dueDate: assignment.dueDate, title: assignment.title, description: assignment.description, starred: assignment.starred)
-        }
-        completion(entry)
-    }
+      let assignments = try! JSONDecoder().decode(
+        [AssignmentData].self, from: data.data(using: .utf8)!)
+      length = assignments.count
+      let assignment = assignments[index]
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<AssignmentEntry>) -> ()) {
-        getSnapshot(in: context, completion: { (entry) in
-            let timeline = Timeline(entries: [entry], policy: .atEnd)
-            completion(timeline)
-        })
+      entry = AssignmentEntry(
+        date: Date(), dueDate: assignment.dueDate, title: assignment.title,
+        description: assignment.description, starred: assignment.starred)
     }
+    completion(entry)
+  }
+
+  func getTimeline(in context: Context, completion: @escaping (Timeline<AssignmentEntry>) -> Void) {
+    getSnapshot(
+      in: context,
+      completion: { (entry) in
+        let timeline = Timeline(entries: [entry], policy: .atEnd)
+        completion(timeline)
+      })
+  }
 }
 
 struct AssignmentEntry: TimelineEntry {
-   let date: Date
-   let dueDate: String
-   let title: String
-   let description: String
-   let starred: Bool
+  let date: Date
+  let dueDate: String
+  let title: String
+  let description: String
+  let starred: Bool
 }
 
 struct Assignment: Codable {
-   let dueDate: String
-   let title: String
-   let description: String
-   let starred: Bool
+  let dueDate: String
+  let title: String
+  let description: String
+  let starred: Bool
 }
 
 struct AssignmentData: Decodable {
-   let id: Int
-   let title: String
-   let description: String
-   let dueDate: String
-   let starred: Bool
+  let id: Int
+  let title: String
+  let description: String
+  let dueDate: String
+  let starred: Bool
 }
 
- struct AssignGoWidgetsEntryView: View {
-     var entry: AssignmentEntry
+struct AssignGoWidgetsEntryView: View {
+  var entry: AssignmentEntry
 
-    @Environment(\.widgetFamily) var family
+  @Environment(\.widgetFamily) var family
 
-    @ViewBuilder
-    var body: some View {
-        switch family {
-        case .systemMedium:
-        HStack {
-            VStack {
-                Text("\(entry.starred ? "⭐️" : "") \(entry.title)")
-                Text("Due " + entry.dueDate).font(Font.body.weight(.light))
-            }.padding(
-                EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-            ).background(
-                Color.purple.opacity(Double(0.5))
-            ).cornerRadius(10)
+  @ViewBuilder
+  var body: some View {
+    switch family {
+    case .systemMedium:
+      HStack {
+        VStack {
+          Text("\(entry.starred ? "⭐️" : "") \(entry.title)")
+          Text("Due " + entry.dueDate).font(Font.body.weight(.light))
+        }.padding(
+          EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+        ).background(
+          Color.purple.opacity(Double(0.5))
+        ).cornerRadius(10)
 
-            if #available(iOS 17.0, *) {
-                    VStack {
-                        Button(
-                            intent: WidgetScrollerUp()) {
-                            Image(systemName: "arrow.up")
-                        }
-                        Spacer()
-                        Button(intent: WidgetScrollerDown()) {
-                            Image(systemName: "arrow.down")
-                        }
-                    }
-                    .tint(.white)
-                    .padding()
-                }
-        }.padding()
-        case .systemLarge:
-            HStack {
-                VStack {
-                    Text("\(entry.starred ? "⭐️" : "") \(entry.title)").font(.title3)
-                    Text("Due " + entry.dueDate).font(Font.body.weight(.light))
-                }.padding(
-                    EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-                ).background(
-                    Color.purple.opacity(Double(0.5))
-                ).cornerRadius(10)
-
-                if #available(iOS 17.0, *) {
-                    VStack(spacing: 0) {
-                        Button(
-                            intent: WidgetScrollerUp()) {
-                            Image(systemName: "arrow.up")
-                        }
-                        Button(intent: WidgetScrollerDown()) {
-                            Image(systemName: "arrow.down")
-                        }
-                    }
-                    .tint(.white)
-                    .padding()
-                }
+        if #available(iOS 17.0, *) {
+          VStack(spacing: 0) {
+            Button(intent: WidgetScrollerUp()) {
+              Image(systemName: "arrow.up")
+            }.contentMargins(.vertical, 4)
+            Button(intent: WidgetScrollerDown()) {
+              Image(systemName: "arrow.down")
             }
-        default:
-            VStack {
-                Text("\(entry.title) \(entry.starred ? "⭐️" : "")")
-            }
+          }
+          .buttonStyle(.bordered)
+          .foregroundColor(.white)
+          .tint(.white)
         }
+      }.padding()
+    case .systemLarge:
+      HStack {
+        VStack {
+          Text("\(entry.starred ? "⭐️" : "") \(entry.title)").font(.title3)
+          Text("Due " + entry.dueDate).font(Font.body.weight(.light))
+        }.padding(
+          EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+        ).background(
+          Color.purple.opacity(Double(0.5))
+        ).cornerRadius(10)
+
+        if #available(iOS 17.0, *) {
+          VStack(spacing: 0) {
+            Button(intent: WidgetScrollerUp()) {
+              Image(systemName: "arrow.up")
+            }.contentMargins(.vertical, 4)
+            Button(intent: WidgetScrollerDown()) {
+              Image(systemName: "arrow.down")
+            }
+          }
+          .buttonStyle(.bordered)
+          .foregroundColor(.white)
+          .tint(.white)
+        }
+      }
+    default:
+      VStack {
+        Text("\(entry.title) \(entry.starred ? "⭐️" : "")")
+      }
     }
- }
+  }
+}
 
 struct AssignGoWidgets: Widget {
-    let kind: String = "AssignGoWidgets"
+  let kind: String = "AssignGoWidgets"
 
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            AssignGoWidgetsEntryView(entry: entry)
-        }
-        .configurationDisplayName("AssignGo Widget")
-        .description("This is an example widget.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: kind, provider: Provider()) { entry in
+      AssignGoWidgetsEntryView(entry: entry)
     }
+    .configurationDisplayName("AssignGo Widget")
+    .description("This is an example widget.")
+    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+  }
 }
