@@ -1,84 +1,93 @@
-//
-//  AssignGoWidgets.swift
-//  AssignGoWidgets
-//
-//  Created by Ishan Misra on 4/12/24.
-//
+ import SwiftUI
+ import WidgetKit
 
-import WidgetKit
-import SwiftUI
-
-struct Provider: AppIntentTimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
+struct Provider: TimelineProvider {
+    func placeholder(in context: Context) -> AssignmentEntry {
+        AssignmentEntry(date: Date(), dueDate: "No Date Set", title: "No Title Set", description: "No Description Set", starred: false)
     }
 
-    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration)
-    }
-    
-    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        var entries: [SimpleEntry] = []
+    func getSnapshot(in context: Context, completion: @escaping (AssignmentEntry) -> ()) {
+        let entry: AssignmentEntry
+        if context.isPreview {
+            entry = placeholder(in: context)
+        } else {
+            let userDefaults = UserDefaults(suiteName: "group.assigngo")
+            let defaultData = """
+                [
+                    {
+                        "id": 1,
+                        "title": "Test Assignment",
+                        "description": "This is a test assignment",
+                        "dueDate": "2021-01-01",
+                        "starred": true
+                    }
+                ]
+                """
+            let data = userDefaults?.string(forKey: "assignments") ?? defaultData
 
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
-            entries.append(entry)
+            // print("Data: \(data)")
+            let assignments = try! JSONDecoder().decode([AssignmentData].self, from: data.data(using: .utf8)!)
+            let assignment = assignments[0]
+            entry = AssignmentEntry(date: Date(), dueDate: assignment.dueDate, title: assignment.title, description: assignment.description, starred: assignment.starred)
         }
+        completion(entry)
+    }
 
-        return Timeline(entries: entries, policy: .atEnd)
+    func getTimeline(in context: Context, completion: @escaping (Timeline<AssignmentEntry>) -> ()) {
+        getSnapshot(in: context, completion: { (entry) in
+            let timeline = Timeline(entries: [entry], policy: .atEnd)
+            completion(timeline)
+        })
     }
 }
 
-struct SimpleEntry: TimelineEntry {
-    let date: Date
-    let configuration: ConfigurationAppIntent
+struct AssignmentEntry: TimelineEntry {
+   let date: Date
+   let dueDate: String
+   let title: String
+   let description: String
+   let starred: Bool
 }
 
-struct AssignGoWidgetsEntryView : View {
-    var entry: Provider.Entry
-
-    var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
-
-            Text("Favorite Emoji:")
-            Text(entry.configuration.favoriteEmoji)
-        }
-    }
+struct Assignment: Codable {
+   let dueDate: String
+   let title: String
+   let description: String
+   let starred: Bool
 }
 
-struct AssignGoWidgets: Widget {
-    let kind: String = "AssignGoWidgets"
-
-    var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
-            AssignGoWidgetsEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
-        }
-    }
+struct AssignmentData: Decodable {
+   let id: Int
+   let title: String
+   let description: String
+   let dueDate: String
+   let starred: Bool
 }
 
-extension ConfigurationAppIntent {
-    fileprivate static var smiley: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "😀"
-        return intent
-    }
-    
-    fileprivate static var starEyes: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "🤩"
-        return intent
-    }
-}
+ struct AssignGoWidgetsEntryView: View {
+     var entry: AssignmentEntry
 
-#Preview(as: .systemSmall) {
-    AssignGoWidgets()
-} timeline: {
-    SimpleEntry(date: .now, configuration: .smiley)
-    SimpleEntry(date: .now, configuration: .starEyes)
-}
+     var body: some View {
+         VStack {
+             if entry.starred {
+                 Text("⭐️")
+             }
+             Text(entry.title)
+                 .font(.title)
+             Text("Due " + entry.dueDate)
+             Text(entry.description)
+         }
+     }
+ }
+
+  struct AssignGoWidgets: Widget {
+      let kind: String = "AssignGoWidgets"
+
+      var body: some WidgetConfiguration {
+          StaticConfiguration(kind: kind, provider: Provider()) { entry in
+              AssignGoWidgetsEntryView(entry: entry)
+          }
+          .configurationDisplayName("AssignGo Widget")
+          .description("This is an example widget.")
+      }
+  }

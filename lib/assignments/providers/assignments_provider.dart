@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/repositories/assignments_repository.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
+import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home_widget/home_widget.dart';
 
 final assignmentsProvider =
     StateNotifierProvider<AssignmentsNotifier, List<Assignment>>(
@@ -19,6 +23,28 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
   final SubjectsNotifier _subjectsNotifier;
 
   AssignmentsNotifier(super._state, this._subjectsNotifier);
+
+  void updateHomeWidget(List<Assignment> state) {
+    final assignemntJson = state
+        .map((assignment) => {
+              'id': assignment.id,
+              'title': assignment.title,
+              'description': assignment.description,
+              'dueDate': formatDate(assignment.dueDate),
+              'starred': assignment.starred,
+            })
+        .toList();
+
+    HomeWidget.saveWidgetData<String>(
+        "assignments", const JsonEncoder().convert(assignemntJson));
+
+    HomeWidget.updateWidget(
+      name: 'AssignGoWidgets',
+      iOSName: 'AssignGoWidgets',
+      androidName: 'AssignGo',
+      // androidPackageName: 'com.example.assigngo_rewrite',
+    );
+  }
 
   Future<void> fetchAssignments() async {
     await _subjectsNotifier.fetchSubjects();
@@ -35,6 +61,8 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
       );
       return assignment.copyWith(subject: subject);
     }).toList();
+
+    updateHomeWidget(assignments);
   }
 
   Future<void> fetchAssignment(int id) async {
