@@ -25,9 +25,10 @@ struct Provider: TimelineProvider {
                 """
             let data = userDefaults?.string(forKey: "assignments") ?? defaultData
 
-            // print("Data: \(data)")
             let assignments = try! JSONDecoder().decode([AssignmentData].self, from: data.data(using: .utf8)!)
-            let assignment = assignments[0]
+            length = assignments.count
+            let assignment = assignments[index]
+            
             entry = AssignmentEntry(date: Date(), dueDate: assignment.dueDate, title: assignment.title, description: assignment.description, starred: assignment.starred)
         }
         completion(entry)
@@ -67,27 +68,79 @@ struct AssignmentData: Decodable {
  struct AssignGoWidgetsEntryView: View {
      var entry: AssignmentEntry
 
-     var body: some View {
-         VStack {
-             if entry.starred {
-                 Text("⭐️")
-             }
-             Text(entry.title)
-                 .font(.title)
-             Text("Due " + entry.dueDate)
-             Text(entry.description)
-         }
-     }
+    @Environment(\.widgetFamily) var family
+
+    @ViewBuilder
+    var body: some View {
+        switch family {
+        case .systemMedium:
+        HStack {
+            VStack {
+                Text("\(entry.starred ? "⭐️" : "") \(entry.title)")
+                Text("Due " + entry.dueDate).font(Font.body.weight(.light))
+            }.padding(
+                EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+            ).background(
+                Color.purple.opacity(Double(0.5))
+            ).cornerRadius(10)
+
+            if #available(iOS 17.0, *) {
+                    VStack {
+                        Button(
+                            intent: WidgetScrollerUp()) {
+                            Image(systemName: "arrow.up")
+                        }
+                        Spacer()
+                        Button(intent: WidgetScrollerDown()) {
+                            Image(systemName: "arrow.down")
+                        }
+                    }
+                    .tint(.white)
+                    .padding()
+                }
+        }.padding()
+        case .systemLarge:
+            HStack {
+                VStack {
+                    Text("\(entry.starred ? "⭐️" : "") \(entry.title)").font(.title3)
+                    Text("Due " + entry.dueDate).font(Font.body.weight(.light))
+                }.padding(
+                    EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+                ).background(
+                    Color.purple.opacity(Double(0.5))
+                ).cornerRadius(10)
+
+                if #available(iOS 17.0, *) {
+                    VStack(spacing: 0) {
+                        Button(
+                            intent: WidgetScrollerUp()) {
+                            Image(systemName: "arrow.up")
+                        }
+                        Button(intent: WidgetScrollerDown()) {
+                            Image(systemName: "arrow.down")
+                        }
+                    }
+                    .tint(.white)
+                    .padding()
+                }
+            }
+        default:
+            VStack {
+                Text("\(entry.title) \(entry.starred ? "⭐️" : "")")
+            }
+        }
+    }
  }
 
-  struct AssignGoWidgets: Widget {
-      let kind: String = "AssignGoWidgets"
+struct AssignGoWidgets: Widget {
+    let kind: String = "AssignGoWidgets"
 
-      var body: some WidgetConfiguration {
-          StaticConfiguration(kind: kind, provider: Provider()) { entry in
-              AssignGoWidgetsEntryView(entry: entry)
-          }
-          .configurationDisplayName("AssignGo Widget")
-          .description("This is an example widget.")
-      }
-  }
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            AssignGoWidgetsEntryView(entry: entry)
+        }
+        .configurationDisplayName("AssignGo Widget")
+        .description("This is an example widget.")
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+    }
+}
