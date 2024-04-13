@@ -16,9 +16,19 @@ class AssignmentScreen extends ConsumerStatefulWidget {
 }
 
 class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
+  void _updateAssignment(Assignment assignment) {
+    ref.read(currentAssignmentProvider.notifier).updateAssignment(assignment);
+    ref.read(assignmentsProvider.notifier).updateAssignment(assignment);
+  }
+
+  void _deleteAssignment(Assignment assignment) {
+    ref.read(assignmentsProvider.notifier).deleteAssignment(assignment);
+    ref.read(currentAssignmentProvider.notifier).setCurrentAssignment(null);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final assignments = ref.watch(assignmentsProvider);
     final currentAssignmentRef =
         ref.watch(currentAssignmentProvider).assignment;
 
@@ -41,8 +51,12 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
       );
     }
 
-    final currentAssignment = assignments.firstWhere(
-        (a) => a.id == ref.watch(currentAssignmentProvider).assignment?.id);
+    final currentAssignment = currentAssignmentRef;
+
+    // Local variables to store the current assignment's categories, starred, and completed status
+    Set<Categories> categories = currentAssignment.categories!.toSet();
+    bool isStar = currentAssignment.starred;
+    bool isComp = currentAssignment.completed;
 
     ref
         .read(subtasksProvider.notifier)
@@ -69,7 +83,47 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
             size.width < 800
                 ? const SizedBox()
                 : ActionButtons(
-                    ref: ref, currentAssignment: currentAssignment, size: size),
+                    deleteAssignment: _deleteAssignment,
+                    updateAssignment: _updateAssignment,
+                    currentAssignment: currentAssignment,
+                    size: size,
+                    isStar: isStar,
+                    isComp: isComp),
+
+            // Use the enum to create chips
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const ClampingScrollPhysics(),
+              child: Wrap(
+                spacing: 8.0,
+                children: Categories.values
+                    .map((category) => FilterChip(
+                        selected: categories.contains(category),
+                        selectedColor: const Color(0xFFa86fd1),
+                        showCheckmark: false,
+                        deleteIcon: const Icon(Icons.close),
+                        label: Text(
+                          category.toString().split('.').last,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        onSelected: (bool value) {
+                          if (value) {
+                            categories.add(category);
+                          } else {
+                            categories.remove(category);
+                          }
+
+                          final Assignment updatedAssignment = currentAssignment
+                              .copyWith(categories: categories.toList());
+
+                          _updateAssignment(updatedAssignment);
+                        }))
+                    .toList(),
+              ),
+            ),
             Container(
               padding: const EdgeInsets.all(8.0),
               alignment: Alignment.centerLeft,
@@ -135,7 +189,12 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
             size.width > 800
                 ? const SizedBox()
                 : ActionButtons(
-                    ref: ref, currentAssignment: currentAssignment, size: size),
+                    updateAssignment: _updateAssignment,
+                    deleteAssignment: _deleteAssignment,
+                    currentAssignment: currentAssignment,
+                    size: size,
+                    isStar: isStar,
+                    isComp: isComp),
             SizedBox(height: MediaQuery.of(context).padding.top + 10),
           ],
         ),
@@ -144,25 +203,33 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
   }
 }
 
-class ActionButtons extends ConsumerStatefulWidget {
+class ActionButtons extends StatefulWidget {
   const ActionButtons({
     super.key,
-    required this.ref,
+    required this.updateAssignment,
     required this.currentAssignment,
+    required this.isStar,
+    required this.isComp,
     required this.size,
+    required this.deleteAssignment,
   });
 
-  final WidgetRef ref;
   final Assignment? currentAssignment;
+  final void Function(Assignment assignment) updateAssignment;
+  final void Function(Assignment assignment) deleteAssignment;
   final Size size;
+  final bool isStar, isComp;
 
   @override
-  ConsumerState<ActionButtons> createState() => _ActionButtonsState();
+  ActionButtonsState createState() => ActionButtonsState();
 }
 
-class _ActionButtonsState extends ConsumerState<ActionButtons> {
+class ActionButtonsState extends State<ActionButtons> {
   @override
   Widget build(BuildContext context) {
+    bool isStar = widget.isStar;
+    bool isComp = widget.isComp;
+    var newAssignment = widget.currentAssignment;
     return Row(
       // space evenly to take up the full width
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -172,9 +239,6 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           onPressed: () {
             // Pop the screen when the back button is tapped
             widget.size.width > 800 ? null : Navigator.of(context).pop();
-            widget.ref
-                .read(currentAssignmentProvider.notifier)
-                .setCurrentAssignment(null);
           },
         ),
         Visibility(
@@ -185,22 +249,18 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
         IconButton(
           icon: const Icon(Icons.edit),
           onPressed: () {
-            widget.ref.read(currentAssignmentProvider.notifier);
-
-            widget.ref
-                .read(currentAssignmentProvider.notifier)
-                .setCurrentAssignment(widget.currentAssignment);
+            // Navigate to the edit screen
+            Navigator.of(context).pushNamed(
+                '/edit-assignment?assignmentId=${widget.currentAssignment!.id}');
           },
         ),
         IconButton(
-          icon: widget.currentAssignment!.starred
-              ? const Icon(Icons.star)
-              : const Icon(Icons.star_outline),
+          icon:
+              isStar ? const Icon(Icons.star) : const Icon(Icons.star_outline),
           color: Colors.amber,
           onPressed: () {
-            widget.ref.read(assignmentsProvider.notifier).toggleStar(
-                  widget.currentAssignment!,
-                );
+            isStar = !isStar;
+            widget.updateAssignment(newAssignment!.copyWith(starred: isStar));
           },
         ),
         IconButton(
@@ -210,9 +270,8 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           color:
               widget.currentAssignment!.completed ? Colors.red : Colors.green,
           onPressed: () {
-            widget.ref.read(assignmentsProvider.notifier).toggleComplete(
-                  widget.currentAssignment!,
-                );
+            isComp = !isComp;
+            widget.updateAssignment(newAssignment!.copyWith(completed: isComp));
           },
         ),
         IconButton(
@@ -229,13 +288,13 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                       actions: [
                         ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              widget
+                                  .deleteAssignment(widget.currentAssignment!);
                             },
                             child: const Text("Cancel")),
                         ElevatedButton(
                             onPressed: () {
-                              widget.ref
-                                  .read(assignmentsProvider.notifier)
+                              widget
                                   .deleteAssignment(widget.currentAssignment!);
                               Navigator.of(context).pop();
                             },
