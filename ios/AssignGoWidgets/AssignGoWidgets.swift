@@ -91,20 +91,18 @@ struct AssignGoWidgetsEntryView: View {
       ).cornerRadius(12)
 
       if #available(iOS 17.0, *) {
-        if family == .systemMedium || family == .systemLarge {
 
-          VStack(spacing: 4) {
-            Button(intent: WidgetScrollerUp()) {
-              Image(systemName: "arrow.up")
-            }
-            Button(intent: WidgetScrollerDown()) {
-              Image(systemName: "arrow.down")
-            }
+        VStack(spacing: 4) {
+          Button(intent: WidgetScrollerUp()) {
+            Image(systemName: "arrow.up")
           }
-          .buttonStyle(.bordered)
-          .foregroundColor(.white)
-          .tint(.white)
+          Button(intent: WidgetScrollerDown()) {
+            Image(systemName: "arrow.down")
+          }
         }
+        .buttonStyle(.bordered)
+        .foregroundColor(.white)
+        .tint(.white)
       }
     }
   }
@@ -119,6 +117,6 @@ struct AssignGoWidgets: Widget {
     }
     .configurationDisplayName("AssignGo Widget")
     .description("This is an example widget.")
-    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+    .supportedFamilies([.systemMedium])
   }
 }
