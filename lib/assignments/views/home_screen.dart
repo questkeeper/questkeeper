@@ -8,10 +8,9 @@ class HomeScreen extends StatelessWidget {
   final List<Assignment> assignments;
 
   static const colors = [
-    Colors.deepPurple,
     Colors.purple,
-    Colors.indigo,
     Colors.blue,
+    Colors.lightBlue,
   ];
 
   @override

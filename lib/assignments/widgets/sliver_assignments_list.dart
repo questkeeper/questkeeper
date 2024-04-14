@@ -40,9 +40,24 @@ class _SliverAssignmentsListState extends State<SliverAssignmentsList> {
         pinned: _pinned,
         snap: _snap,
         floating: _floating,
+        flexibleSpace: FlexibleSpaceBar(
+          title: Text(widget.title),
+          centerTitle: false,
+          titlePadding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+          background: Opacity(
+            opacity: 0.5,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: widget.colors,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
+          ),
+        ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
-        title: Text(widget.title),
       ),
       SliverList(
         delegate: SliverChildListDelegate.fixed(
