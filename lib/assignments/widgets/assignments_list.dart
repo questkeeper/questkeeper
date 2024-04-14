@@ -31,7 +31,7 @@ class AssignmentsList extends StatelessWidget {
           }
 
           return Container(
-            padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
+            padding: const EdgeInsets.fromLTRB(4.0, 2.0, 4.0, 2.0),
             child:
                 AssignmentCard(assignment: assignments[index], filter: filter),
           );

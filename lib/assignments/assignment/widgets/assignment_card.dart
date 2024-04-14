@@ -81,7 +81,7 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
       child: InkWell(
         radius: 16.0,
         customBorder: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(12.0),
         ),
         splashColor: Colors.transparent,
         enableFeedback: true,
@@ -98,8 +98,8 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
                 useSafeArea: true,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
+                    topLeft: Radius.circular(12.0),
+                    topRight: Radius.circular(12.0),
                   ),
                 ),
                 showDragHandle: true,
@@ -124,8 +124,8 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
             ),
             elevation: 2.0,
             child: Container(
-              padding: const EdgeInsets.all(16.0),
-              margin: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12.0),
+              margin: const EdgeInsets.all(6.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -21,6 +21,7 @@ class SliverAssignmentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double bottom = MediaQuery.of(context).padding.bottom;
     return CustomScrollView(shrinkWrap: true, slivers: [
       SliverAppBar(
         pinned: _pinned,
@@ -51,7 +52,7 @@ class SliverAssignmentsList extends StatelessWidget {
         ),
       ),
       SliverPadding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.fromLTRB(4.0, 2.0, 4.0, bottom),
         sliver: AssignmentsList(assignments: assignments, filter: filter),
       ),
     ]);

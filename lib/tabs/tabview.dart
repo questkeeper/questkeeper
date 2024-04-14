@@ -66,17 +66,6 @@ class _TabViewState extends ConsumerState<TabView> {
                     .refresh(assignmentsProvider.notifier)
                     .fetchAssignments(),
                 child: pages[_selectedIndex]),
-            persistentFooterButtons: [
-              ElevatedButton(
-                onPressed: () {},
-                child: const Row(
-                  children: [
-                    Icon(Icons.search),
-                    Text("Search"),
-                  ],
-                ),
-              ),
-            ],
             bottomNavigationBar: NavigationBar(
               onDestinationSelected: _onItemTapped,
               selectedIndex: _selectedIndex,
@@ -140,17 +129,6 @@ class _TabViewState extends ConsumerState<TabView> {
                 ],
               ),
             ),
-            persistentFooterButtons: [
-              ElevatedButton(
-                onPressed: () {},
-                child: const Row(
-                  children: [
-                    Icon(Icons.search),
-                    Text("Search"),
-                  ],
-                ),
-              ),
-            ],
           );
         }
       },
