@@ -183,12 +183,6 @@ class _AssignmentFormState extends State<AssignmentForm> {
             controller: widget.descriptionController,
             decoration: const InputDecoration(labelText: "Description"),
             maxLines: 3,
-            // validator: (value) {
-            //   if (value == null || value.isEmpty) {
-            //     return "Please enter a description";
-            //   }
-            //   return null;
-            // },
           ),
           const SizedBox(height: 20),
           Row(
@@ -243,6 +237,7 @@ class _AssignmentFormState extends State<AssignmentForm> {
                 child: DropdownButtonFormField<int>(
                   value: widget.subjectId,
                   onChanged: widget.onSubjectChanged,
+                  isExpanded: true,
                   items: widget.subjectsList
                       .map(
                         (subject) => DropdownMenuItem<int>(
