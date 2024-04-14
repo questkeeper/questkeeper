@@ -33,48 +33,16 @@ class _SliverAssignmentsListState extends State<SliverAssignmentsList> {
   Widget build(BuildContext context) {
     List<Assignment> filteredAssignments = widget.assignments;
 
-    // void updateFilter(Categories? filter) {
-    //   if (filter == null) {
-    //     _selectedFilter = null;
-    //     filteredAssignments = widget.assignments;
-    //   } else {
-    //     _selectedFilter = filter;
-    //     filteredAssignments = widget.assignments
-    //         .where((assignment) => assignment.categories!.contains(filter))
-    //         .toList();
-    //   }
-    // }
-
     double bottom = MediaQuery.of(context).padding.bottom;
     return CustomScrollView(shrinkWrap: true, slivers: [
-      SliverAppBar(
+      SliverAppBar.large(
         excludeHeaderSemantics: true,
         pinned: _pinned,
         snap: _snap,
         floating: _floating,
-        expandedHeight: 150.0,
-        backgroundColor: Colors.deepPurple,
-        flexibleSpace: FlexibleSpaceBar(
-          collapseMode: CollapseMode.pin,
-          background: Opacity(
-            opacity: 0.5,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: widget.colors,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-            ),
-          ),
-          title: Align(
-            alignment: Alignment.bottomLeft,
-            child: Text(
-              widget.title,
-            ),
-          ),
-        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+        title: Text(widget.title),
       ),
       SliverList(
         delegate: SliverChildListDelegate.fixed(
