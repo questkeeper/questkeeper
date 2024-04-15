@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ReturnModel {
   String get message => throw _privateConstructorUsedError;
   bool get success => throw _privateConstructorUsedError;
+  dynamic get data => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -31,7 +32,7 @@ abstract class $ReturnModelCopyWith<$Res> {
           ReturnModel value, $Res Function(ReturnModel) then) =
       _$ReturnModelCopyWithImpl<$Res, ReturnModel>;
   @useResult
-  $Res call({String message, bool success, String? error});
+  $Res call({String message, bool success, dynamic data, String? error});
 }
 
 /// @nodoc
@@ -49,6 +50,7 @@ class _$ReturnModelCopyWithImpl<$Res, $Val extends ReturnModel>
   $Res call({
     Object? message = null,
     Object? success = null,
+    Object? data = freezed,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -60,6 +62,10 @@ class _$ReturnModelCopyWithImpl<$Res, $Val extends ReturnModel>
           ? _value.success
           : success // ignore: cast_nullable_to_non_nullable
               as bool,
+      data: freezed == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -76,7 +82,7 @@ abstract class _$$ReturnModelImplCopyWith<$Res>
       __$$ReturnModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String message, bool success, String? error});
+  $Res call({String message, bool success, dynamic data, String? error});
 }
 
 /// @nodoc
@@ -92,6 +98,7 @@ class __$$ReturnModelImplCopyWithImpl<$Res>
   $Res call({
     Object? message = null,
     Object? success = null,
+    Object? data = freezed,
     Object? error = freezed,
   }) {
     return _then(_$ReturnModelImpl(
@@ -103,6 +110,10 @@ class __$$ReturnModelImplCopyWithImpl<$Res>
           ? _value.success
           : success // ignore: cast_nullable_to_non_nullable
               as bool,
+      data: freezed == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -115,18 +126,20 @@ class __$$ReturnModelImplCopyWithImpl<$Res>
 
 class _$ReturnModelImpl implements _ReturnModel {
   const _$ReturnModelImpl(
-      {required this.message, required this.success, this.error});
+      {required this.message, required this.success, this.data, this.error});
 
   @override
   final String message;
   @override
   final bool success;
   @override
+  final dynamic data;
+  @override
   final String? error;
 
   @override
   String toString() {
-    return 'ReturnModel(message: $message, success: $success, error: $error)';
+    return 'ReturnModel(message: $message, success: $success, data: $data, error: $error)';
   }
 
   @override
@@ -136,11 +149,13 @@ class _$ReturnModelImpl implements _ReturnModel {
             other is _$ReturnModelImpl &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.success, success) || other.success == success) &&
+            const DeepCollectionEquality().equals(other.data, data) &&
             (identical(other.error, error) || other.error == error));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, message, success, error);
+  int get hashCode => Object.hash(runtimeType, message, success,
+      const DeepCollectionEquality().hash(data), error);
 
   @JsonKey(ignore: true)
   @override
@@ -153,12 +168,15 @@ abstract class _ReturnModel implements ReturnModel {
   const factory _ReturnModel(
       {required final String message,
       required final bool success,
+      final dynamic data,
       final String? error}) = _$ReturnModelImpl;
 
   @override
   String get message;
   @override
   bool get success;
+  @override
+  dynamic get data;
   @override
   String? get error;
   @override

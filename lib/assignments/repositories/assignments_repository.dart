@@ -34,9 +34,12 @@ class AssignmentsRepository {
     jsonAssignment.remove('updatedAt');
     jsonAssignment.remove('subject');
     try {
-      await supabase.from('assignments').insert(jsonAssignment);
-      return const ReturnModel(
-          message: "Assignment created successfully", success: true);
+      final assignment =
+          await supabase.from('assignments').insert(jsonAssignment).select();
+      return ReturnModel(
+          data: Assignment.fromJson(assignment.first),
+          message: "Assignment created successfully",
+          success: true);
     } catch (error) {
       return ReturnModel(
           message: "Error creating assignment",

@@ -7,6 +7,7 @@ class ReturnModel with _$ReturnModel {
   const factory ReturnModel({
     required String message,
     required bool success,
+    dynamic data,
     String? error,
   }) = _ReturnModel;
 }

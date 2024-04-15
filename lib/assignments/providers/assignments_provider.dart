@@ -86,14 +86,10 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
         subjectId: subjectId,
       );
 
-      debugPrint("Creating assignment: $assignment");
-      await _repository.createAssignment(assignment);
+      final data = await _repository.createAssignment(assignment);
       await fetchAssignments();
 
-      return const ReturnModel(
-        success: true,
-        message: "Assignment created successfully",
-      );
+      return data;
     } catch (error) {
       debugPrint("Error creating assignment: $error");
 
