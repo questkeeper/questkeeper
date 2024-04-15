@@ -1,6 +1,7 @@
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
-import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
+import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:assigngo_rewrite/assignments/subtasks/providers/subtasks_providers.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
@@ -21,6 +22,7 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
   final _descriptionController = TextEditingController();
   DateTime _dueDate = DateTime.now();
   int? _subjectId;
+  final List<Subtask?> _subtasks = [];
 
   var _context;
 
@@ -42,12 +44,26 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
         subjectId: _subjectId,
       );
       final assignmentsNotifier = ref.read(assignmentsProvider.notifier);
-      final ReturnModel result = await assignmentsNotifier.createAssignment(
+      final subtaskNotifier = ref.read(subtasksProvider.notifier);
+      final result = await assignmentsNotifier.createAssignment(
         title: assignment.title,
         description: assignment.description,
         dueDate: assignment.dueDate,
         subjectId: assignment.subjectId,
       );
+
+      final List<Subtask?> subtasks = _subtasks
+          .where((element) => element != null)
+          .map((e) => e!.copyWith(assignmentId: result.data!.id))
+          .toList();
+
+      debugPrint(subtasks.toString());
+
+      if (subtasks.isNotEmpty) {
+        await subtaskNotifier.createBatchSubtasks(
+          subtasks.map((e) => e!).toList(),
+        );
+      }
 
       if (result.success) {
         ScaffoldMessenger.of(_context).showSnackBar(
@@ -95,7 +111,7 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                   child: Column(
                     children: [
                       Container(
-                        margin: const EdgeInsets.all(20),
+                        margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                         width: width > 600 ? width / 2 : width,
                         child: AssignmentForm(
                           onFormSubmitted: _submitForm,
@@ -117,6 +133,78 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                             });
                           },
                         ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        width: width > 600 ? width / 2 : width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Subtasks',
+                              style: Theme.of(context).textTheme.headlineSmall,
+                            ),
+                            const SizedBox(height: 5),
+                            if (_subtasks.length < 10)
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _subtasks.add(Subtask(
+                                      id: _subtasks.length + 1,
+                                      title: '',
+                                      createdAt: DateTime.now(),
+                                      updatedAt: DateTime.now(),
+                                      assignmentId: 1,
+                                    ));
+                                  });
+                                },
+                                child: const Text('Add Subtask'),
+                              ),
+                            Container(
+                              constraints: const BoxConstraints(
+                                minHeight: 100,
+                              ),
+                              // This is really stupid, but I think it's dynamic?
+                              height: _subtasks.isNotEmpty
+                                  ? _subtasks.length *
+                                          Theme.of(context).buttonTheme.height +
+                                      (_subtasks.length * 50)
+                                  : 100,
+                              child: ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: _subtasks.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    key: ValueKey(_subtasks[index]!.id),
+                                    title: TextFormField(
+                                      initialValue: _subtasks[index]!.title,
+                                      onChanged: (value) {
+                                        _subtasks[index] = _subtasks[index]!
+                                            .copyWith(title: value);
+                                      },
+                                    ),
+                                    trailing: IconButton(
+                                      onPressed: () {
+                                        _subtasks.removeAt(index);
+
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(Icons.delete),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _submitForm();
+                          }
+                        },
+                        child: const Text("Submit"),
                       ),
                     ],
                   ),
@@ -254,14 +342,6 @@ class _AssignmentFormState extends State<AssignmentForm> {
             ],
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              if (widget._formKey.currentState!.validate()) {
-                widget.onFormSubmitted();
-              }
-            },
-            child: const Text("Submit"),
-          )
         ],
       ),
     );

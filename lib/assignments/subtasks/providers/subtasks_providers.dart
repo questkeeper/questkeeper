@@ -1,5 +1,6 @@
 import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/assignments/subtasks/repositories/subtasks_repository.dart';
+import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,6 +21,15 @@ class SubtasksNotifier extends ChangeNotifier {
     if (returnModel.success) {
       subtasks.add(subtask);
     }
+  }
+
+  Future<ReturnModel> createBatchSubtasks(List<Subtask> subtasks) async {
+    final returnModel = await _subtasksRepository.createBatchSubtasks(subtasks);
+    if (returnModel.success) {
+      this.subtasks.addAll(subtasks);
+      notifyListeners();
+    }
+    return returnModel;
   }
 
   Future<void> toggleSubtaskDone(Subtask subtask) async {

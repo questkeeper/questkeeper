@@ -17,6 +17,28 @@ class SubtasksRepository {
     return subtask.map((e) => Subtask.fromJson(e)).toList();
   }
 
+  Future<ReturnModel> createBatchSubtasks(List<Subtask> subtasks) async {
+    final List<Map<String, dynamic>> jsonSubtasks =
+        subtasks.map((e) => e.toJson()).toList();
+
+    for (var element in jsonSubtasks) {
+      element.remove('id');
+      element.remove('createdAt');
+      element.remove('updatedAt');
+    }
+
+    try {
+      await supabase.from('subtasks').insert(jsonSubtasks);
+      return const ReturnModel(
+          message: "Subtasks created successfully", success: true);
+    } catch (error) {
+      return ReturnModel(
+          message: "Error creating subtasks",
+          success: false,
+          error: error.toString());
+    }
+  }
+
   Future<ReturnModel> createSubtask(Subtask subtask) async {
     final Map<String, dynamic> jsonSubtask = subtask.toJson();
     jsonSubtask.remove('id');
