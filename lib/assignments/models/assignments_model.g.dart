@@ -21,6 +21,9 @@ _$AssignmentImpl _$$AssignmentImplFromJson(Map<String, dynamic> json) =>
       subject: json['subject'] == null
           ? null
           : Subject.fromJson(json['subject'] as Map<String, dynamic>),
+      subtasks: (json['subtasks'] as List<dynamic>?)
+          ?.map((e) => Subtask.fromJson(e as Map<String, dynamic>))
+          .toList(),
       completed: json['completed'] as bool? ?? false,
       starred: json['starred'] as bool? ?? false,
       categories: (json['categories'] as List<dynamic>?)
@@ -38,6 +41,7 @@ Map<String, dynamic> _$$AssignmentImplToJson(_$AssignmentImpl instance) =>
       'dueDate': instance.dueDate.toIso8601String(),
       'description': instance.description,
       'subject': instance.subject,
+      'subtasks': instance.subtasks,
       'completed': instance.completed,
       'starred': instance.starred,
       'categories':

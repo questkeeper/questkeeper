@@ -27,6 +27,7 @@ mixin _$Assignment {
   DateTime get dueDate => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   Subject? get subject => throw _privateConstructorUsedError;
+  List<Subtask>? get subtasks => throw _privateConstructorUsedError;
   bool get completed => throw _privateConstructorUsedError;
   bool get starred => throw _privateConstructorUsedError;
   List<Categories> get categories => throw _privateConstructorUsedError;
@@ -51,6 +52,7 @@ abstract class $AssignmentCopyWith<$Res> {
       DateTime dueDate,
       String? description,
       Subject? subject,
+      List<Subtask>? subtasks,
       bool completed,
       bool starred,
       List<Categories> categories});
@@ -78,6 +80,7 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
     Object? dueDate = null,
     Object? description = freezed,
     Object? subject = freezed,
+    Object? subtasks = freezed,
     Object? completed = null,
     Object? starred = null,
     Object? categories = null,
@@ -111,6 +114,10 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
           ? _value.subject
           : subject // ignore: cast_nullable_to_non_nullable
               as Subject?,
+      subtasks: freezed == subtasks
+          ? _value.subtasks
+          : subtasks // ignore: cast_nullable_to_non_nullable
+              as List<Subtask>?,
       completed: null == completed
           ? _value.completed
           : completed // ignore: cast_nullable_to_non_nullable
@@ -155,6 +162,7 @@ abstract class _$$AssignmentImplCopyWith<$Res>
       DateTime dueDate,
       String? description,
       Subject? subject,
+      List<Subtask>? subtasks,
       bool completed,
       bool starred,
       List<Categories> categories});
@@ -181,6 +189,7 @@ class __$$AssignmentImplCopyWithImpl<$Res>
     Object? dueDate = null,
     Object? description = freezed,
     Object? subject = freezed,
+    Object? subtasks = freezed,
     Object? completed = null,
     Object? starred = null,
     Object? categories = null,
@@ -214,6 +223,10 @@ class __$$AssignmentImplCopyWithImpl<$Res>
           ? _value.subject
           : subject // ignore: cast_nullable_to_non_nullable
               as Subject?,
+      subtasks: freezed == subtasks
+          ? _value._subtasks
+          : subtasks // ignore: cast_nullable_to_non_nullable
+              as List<Subtask>?,
       completed: null == completed
           ? _value.completed
           : completed // ignore: cast_nullable_to_non_nullable
@@ -241,10 +254,12 @@ class _$AssignmentImpl implements _Assignment {
       required this.dueDate,
       this.description,
       this.subject,
+      final List<Subtask>? subtasks,
       this.completed = false,
       this.starred = false,
       final List<Categories> categories = const [Categories.homework]})
-      : _categories = categories;
+      : _subtasks = subtasks,
+        _categories = categories;
 
   factory _$AssignmentImpl.fromJson(Map<String, dynamic> json) =>
       _$$AssignmentImplFromJson(json);
@@ -263,6 +278,16 @@ class _$AssignmentImpl implements _Assignment {
   final String? description;
   @override
   final Subject? subject;
+  final List<Subtask>? _subtasks;
+  @override
+  List<Subtask>? get subtasks {
+    final value = _subtasks;
+    if (value == null) return null;
+    if (_subtasks is EqualUnmodifiableListView) return _subtasks;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey()
   final bool completed;
@@ -280,7 +305,7 @@ class _$AssignmentImpl implements _Assignment {
 
   @override
   String toString() {
-    return 'Assignment(\$id: ${$id}, \$createdAt: ${$createdAt}, \$updatedAt: ${$updatedAt}, title: $title, dueDate: $dueDate, description: $description, subject: $subject, completed: $completed, starred: $starred, categories: $categories)';
+    return 'Assignment(\$id: ${$id}, \$createdAt: ${$createdAt}, \$updatedAt: ${$updatedAt}, title: $title, dueDate: $dueDate, description: $description, subject: $subject, subtasks: $subtasks, completed: $completed, starred: $starred, categories: $categories)';
   }
 
   @override
@@ -298,6 +323,7 @@ class _$AssignmentImpl implements _Assignment {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.subject, subject) || other.subject == subject) &&
+            const DeepCollectionEquality().equals(other._subtasks, _subtasks) &&
             (identical(other.completed, completed) ||
                 other.completed == completed) &&
             (identical(other.starred, starred) || other.starred == starred) &&
@@ -316,6 +342,7 @@ class _$AssignmentImpl implements _Assignment {
       dueDate,
       description,
       subject,
+      const DeepCollectionEquality().hash(_subtasks),
       completed,
       starred,
       const DeepCollectionEquality().hash(_categories));
@@ -343,6 +370,7 @@ abstract class _Assignment implements Assignment {
       required final DateTime dueDate,
       final String? description,
       final Subject? subject,
+      final List<Subtask>? subtasks,
       final bool completed,
       final bool starred,
       final List<Categories> categories}) = _$AssignmentImpl;
@@ -364,6 +392,8 @@ abstract class _Assignment implements Assignment {
   String? get description;
   @override
   Subject? get subject;
+  @override
+  List<Subtask>? get subtasks;
   @override
   bool get completed;
   @override

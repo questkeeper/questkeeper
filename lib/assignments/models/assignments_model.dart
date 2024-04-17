@@ -1,5 +1,6 @@
 // freezed classes for assignments model
 
+import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -19,6 +20,7 @@ class Assignment with _$Assignment {
     required DateTime dueDate,
     String? description,
     Subject? subject,
+    List<Subtask>? subtasks,
     @Default(false) bool completed,
     @Default(false) bool starred,
     @Default([Categories.homework]) List<Categories> categories,
