@@ -29,7 +29,10 @@ class AssignmentsRepository {
   }
 
   Future<ReturnModel> createAssignment(Assignment assignment) async {
+    final subtasks = assignment.subtasks?.map((e) => e.toJson()).toList();
     final Map<String, dynamic> jsonAssignment = assignment.toJson();
+    jsonAssignment['subtasks'] = subtasks;
+
     User user = await account.get();
     jsonAssignment.remove("\$id");
     jsonAssignment.remove("\$updatedAt");
