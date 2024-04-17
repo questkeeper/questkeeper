@@ -22,8 +22,8 @@ Subject _$SubjectFromJson(Map<String, dynamic> json) {
 mixin _$Subject {
   String get $id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  DateTime? get createdAt => throw _privateConstructorUsedError;
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
+  DateTime? get $createdAt => throw _privateConstructorUsedError;
+  DateTime? get $updatedAt => throw _privateConstructorUsedError;
   String? get color => throw _privateConstructorUsedError;
   List<Assignment>? get assignments => throw _privateConstructorUsedError;
   bool get archived => throw _privateConstructorUsedError;
@@ -41,8 +41,8 @@ abstract class $SubjectCopyWith<$Res> {
   $Res call(
       {String $id,
       String name,
-      DateTime? createdAt,
-      DateTime? updatedAt,
+      DateTime? $createdAt,
+      DateTime? $updatedAt,
       String? color,
       List<Assignment>? assignments,
       bool archived});
@@ -63,8 +63,8 @@ class _$SubjectCopyWithImpl<$Res, $Val extends Subject>
   $Res call({
     Object? $id = null,
     Object? name = null,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
+    Object? $createdAt = freezed,
+    Object? $updatedAt = freezed,
     Object? color = freezed,
     Object? assignments = freezed,
     Object? archived = null,
@@ -78,13 +78,13 @@ class _$SubjectCopyWithImpl<$Res, $Val extends Subject>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
+      $createdAt: freezed == $createdAt
+          ? _value.$createdAt
+          : $createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
+      $updatedAt: freezed == $updatedAt
+          ? _value.$updatedAt
+          : $updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       color: freezed == color
           ? _value.color
@@ -112,8 +112,8 @@ abstract class _$$SubjectImplCopyWith<$Res> implements $SubjectCopyWith<$Res> {
   $Res call(
       {String $id,
       String name,
-      DateTime? createdAt,
-      DateTime? updatedAt,
+      DateTime? $createdAt,
+      DateTime? $updatedAt,
       String? color,
       List<Assignment>? assignments,
       bool archived});
@@ -132,8 +132,8 @@ class __$$SubjectImplCopyWithImpl<$Res>
   $Res call({
     Object? $id = null,
     Object? name = null,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
+    Object? $createdAt = freezed,
+    Object? $updatedAt = freezed,
     Object? color = freezed,
     Object? assignments = freezed,
     Object? archived = null,
@@ -147,13 +147,13 @@ class __$$SubjectImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
+      $createdAt: freezed == $createdAt
+          ? _value.$createdAt
+          : $createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
+      $updatedAt: freezed == $updatedAt
+          ? _value.$updatedAt
+          : $updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       color: freezed == color
           ? _value.color
@@ -177,8 +177,8 @@ class _$SubjectImpl implements _Subject {
   const _$SubjectImpl(
       {required this.$id,
       required this.name,
-      this.createdAt,
-      this.updatedAt,
+      this.$createdAt,
+      this.$updatedAt,
       this.color,
       final List<Assignment>? assignments,
       this.archived = false})
@@ -192,9 +192,9 @@ class _$SubjectImpl implements _Subject {
   @override
   final String name;
   @override
-  final DateTime? createdAt;
+  final DateTime? $createdAt;
   @override
-  final DateTime? updatedAt;
+  final DateTime? $updatedAt;
   @override
   final String? color;
   final List<Assignment>? _assignments;
@@ -213,7 +213,7 @@ class _$SubjectImpl implements _Subject {
 
   @override
   String toString() {
-    return 'Subject(\$id: ${$id}, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, color: $color, assignments: $assignments, archived: $archived)';
+    return 'Subject(\$id: ${$id}, name: $name, \$createdAt: ${$createdAt}, \$updatedAt: ${$updatedAt}, color: $color, assignments: $assignments, archived: $archived)';
   }
 
   @override
@@ -223,10 +223,10 @@ class _$SubjectImpl implements _Subject {
             other is _$SubjectImpl &&
             (identical(other.$id, $id) || other.$id == $id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt) &&
+            (identical(other.$createdAt, $createdAt) ||
+                other.$createdAt == $createdAt) &&
+            (identical(other.$updatedAt, $updatedAt) ||
+                other.$updatedAt == $updatedAt) &&
             (identical(other.color, color) || other.color == color) &&
             const DeepCollectionEquality()
                 .equals(other._assignments, _assignments) &&
@@ -236,8 +236,15 @@ class _$SubjectImpl implements _Subject {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, $id, name, createdAt, updatedAt,
-      color, const DeepCollectionEquality().hash(_assignments), archived);
+  int get hashCode => Object.hash(
+      runtimeType,
+      $id,
+      name,
+      $createdAt,
+      $updatedAt,
+      color,
+      const DeepCollectionEquality().hash(_assignments),
+      archived);
 
   @JsonKey(ignore: true)
   @override
@@ -257,8 +264,8 @@ abstract class _Subject implements Subject {
   const factory _Subject(
       {required final String $id,
       required final String name,
-      final DateTime? createdAt,
-      final DateTime? updatedAt,
+      final DateTime? $createdAt,
+      final DateTime? $updatedAt,
       final String? color,
       final List<Assignment>? assignments,
       final bool archived}) = _$SubjectImpl;
@@ -270,9 +277,9 @@ abstract class _Subject implements Subject {
   @override
   String get name;
   @override
-  DateTime? get createdAt;
+  DateTime? get $createdAt;
   @override
-  DateTime? get updatedAt;
+  DateTime? get $updatedAt;
   @override
   String? get color;
   @override

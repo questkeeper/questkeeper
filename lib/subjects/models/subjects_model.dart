@@ -9,8 +9,8 @@ class Subject with _$Subject {
   const factory Subject({
     required String $id,
     required String name,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    DateTime? $createdAt,
+    DateTime? $updatedAt,
     String? color,
     List<Assignment>? assignments,
     @Default(false) bool archived,
