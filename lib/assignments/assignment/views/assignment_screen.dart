@@ -1,6 +1,7 @@
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/providers/current_assignment_provider.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
+import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/assignments/subtasks/providers/subtasks_providers.dart';
 import 'package:assigngo_rewrite/assignments/subtasks/repositories/subtasks_repository.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
@@ -25,6 +26,12 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
     ref.read(assignmentsProvider.notifier).deleteAssignment(assignment);
     ref.read(currentAssignmentProvider.notifier).setCurrentAssignment(null);
     Navigator.of(context).pop();
+  }
+
+  void _subtaskComplete(Subtask subtask) {
+    subtask = subtask.copyWith(completed: !subtask.completed);
+    ref.read(subtasksProvider.notifier).toggleSubtaskDone(subtask);
+    ref.read(currentAssignmentProvider.notifier).updateSubtask(subtask);
   }
 
   @override
@@ -54,14 +61,11 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
     final currentAssignment = currentAssignmentRef;
 
     // Local variables to store the current assignment's categories, starred, and completed status
-    Set<Categories> categories = currentAssignment.categories!.toSet();
+    Set<Categories> categories = currentAssignment.categories.toSet();
     bool isStar = currentAssignment.starred;
     bool isComp = currentAssignment.completed;
 
-    ref
-        .read(subtasksProvider.notifier)
-        .getAssignmentSubtasks(currentAssignment.id!);
-    final subtasks = ref.watch(subtasksProvider).subtasks;
+    final subtasks = currentAssignment.subtasks;
 
     return Scaffold(
       body: Container(
@@ -158,26 +162,33 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
             ),
             ListView.builder(
               shrinkWrap: true,
-              itemCount: subtasks.length,
+              itemCount: subtasks?.length ?? 0,
               itemBuilder: (context, index) {
-                final subtask = subtasks[index];
+                final subtask = subtasks?[index];
                 return CheckboxListTile(
-                  subtitle: subtask.priority != null
+                  subtitle: subtask?.priority != null
                       ? Text(
-                          "Priority: ${subtask.priority}",
+                          "Priority: ${subtask?.priority}",
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
                               ?.copyWith(color: Colors.amber),
                         )
                       : null,
-                  value: subtask.completed,
+                  value: subtask?.completed,
                   title: Text(
-                    subtask.title,
+                    subtask!.title,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   onChanged: (bool? value) {
-                    SubtasksRepository().toggleComplete(subtask);
+                    try {
+                      if (value == null) {
+                        return;
+                      }
+                      _subtaskComplete(subtask);
+                    } catch (error) {
+                      debugPrint("Error completing subtask: $error");
+                    }
                   },
                 );
               },
@@ -251,7 +262,7 @@ class ActionButtonsState extends State<ActionButtons> {
           onPressed: () {
             // Navigate to the edit screen
             Navigator.of(context).pushNamed(
-                '/edit-assignment?assignmentId=${widget.currentAssignment!.id}');
+                '/edit-assignment?assignmentId=${widget.currentAssignment!.$id}');
           },
         ),
         IconButton(
