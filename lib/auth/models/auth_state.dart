@@ -10,6 +10,7 @@ class SignInState {
   SignInState copyWith({
     bool? otpSent,
     String? error,
+    required userId,
   }) {
     return SignInState(
       otpSent: otpSent ?? this.otpSent,
