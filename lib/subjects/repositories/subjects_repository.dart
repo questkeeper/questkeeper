@@ -1,32 +1,44 @@
+import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
+import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SubjectsRepository {
-  final SupabaseClient supabase = Supabase.instance.client;
-
   SubjectsRepository();
 
   Future<List<Subject>> getSubjects() async {
-    final subjects = await supabase.from('subjects').select();
+    final subjects = await database.listDocuments(
+        databaseId: publicDb,
+        collectionId: "subjects",
+        queries: [
+          Query.equal('archived', false),
+        ]);
 
-    final List<Subject> subjectsList =
-        subjects.map((e) => Subject.fromJson(e)).toList();
+    final subjectsList =
+        subjects.documents.map((e) => Subject.fromJson(e.data)).toList();
 
     return subjectsList;
   }
 
   Future<ReturnModel> createSubject(Subject subject) async {
     final jsonSubject = subject.toJson();
+    final User user = await account.get();
 
     jsonSubject.remove('id');
-    jsonSubject.remove('createdAt');
-    jsonSubject.remove('updatedAt');
 
     try {
-      await supabase.from("subjects").insert(jsonSubject);
-      return const ReturnModel(
-          message: "Subject created successfully", success: true);
+      final Document result = await database.createDocument(
+          databaseId: publicDb,
+          collectionId: "subjects",
+          documentId: ID.unique(),
+          data: jsonSubject,
+          permissions: getPermissions(user.$id));
+
+      return ReturnModel(
+          message: "Subject created successfully",
+          success: true,
+          data: result.data);
     } catch (error) {
       return ReturnModel(
           message: "Error creating subject",

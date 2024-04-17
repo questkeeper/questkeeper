@@ -30,8 +30,10 @@ class AssignmentsRepository {
 
   Future<ReturnModel> createAssignment(Assignment assignment) async {
     final subtasks = assignment.subtasks?.map((e) => e.toJson()).toList();
+    final subject = assignment.subject?.toJson();
     final Map<String, dynamic> jsonAssignment = assignment.toJson();
     jsonAssignment['subtasks'] = subtasks;
+    jsonAssignment['subject'] = subject;
 
     User user = await account.get();
     jsonAssignment.remove("\$id");
@@ -51,6 +53,7 @@ class AssignmentsRepository {
           message: "Assignment created successfully",
           success: true);
     } catch (error) {
+      print(error);
       return ReturnModel(
           message: "Error creating assignment",
           success: false,

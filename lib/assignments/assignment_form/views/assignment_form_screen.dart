@@ -21,10 +21,11 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   DateTime _dueDate = DateTime.now();
-  int? _subjectId;
   final List<Subtask> _subtasks = [];
+  String _subjectId = '';
+  late Subject _subject;
 
-  var _context;
+  late BuildContext _context;
 
   @override
   void dispose() {
@@ -35,12 +36,14 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
+      print('Submitting form with $_subject');
       final assignment = Assignment(
         $id: ID.unique(),
         title: _titleController.text,
         dueDate: _dueDate,
         description: _descriptionController.text,
         subtasks: _subtasks,
+        subject: _subject,
       );
       final assignmentsNotifier = ref.read(assignmentsProvider.notifier);
       final result = await assignmentsNotifier.createAssignment(assignment);
@@ -59,7 +62,7 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
         _descriptionController.clear();
         setState(() {
           _dueDate = DateTime.now();
-          _subjectId = null;
+          _subtasks.clear();
         });
       } else {
         ScaffoldMessenger.of(_context).showSnackBar(
@@ -100,7 +103,7 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                           titleController: _titleController,
                           descriptionController: _descriptionController,
                           dueDate: _dueDate,
-                          subjectsList: ref.read(subjectsProvider),
+                          subjectsList: ref.watch(subjectsProvider),
                           onDueDateChanged: (date) {
                             setState(() {
                               _dueDate = date!;
@@ -109,7 +112,10 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                           subjectId: _subjectId,
                           onSubjectChanged: (id) {
                             setState(() {
-                              _subjectId = id;
+                              _subjectId = id!;
+                              _subject = ref
+                                  .watch(subjectsProvider)
+                                  .firstWhere((subject) => subject.$id == id);
                             });
                           },
                         ),
@@ -217,8 +223,8 @@ class AssignmentForm extends StatefulWidget {
   final TextEditingController descriptionController;
   final DateTime dueDate;
   final void Function(DateTime?) onDueDateChanged;
-  final int? subjectId;
-  final void Function(int?) onSubjectChanged;
+  final String subjectId;
+  final void Function(String?) onSubjectChanged;
   final Future<void> Function() onFormSubmitted;
   final List<Subject> subjectsList;
 
@@ -300,15 +306,14 @@ class _AssignmentFormState extends State<AssignmentForm> {
               ),
               const SizedBox(width: 20),
               Expanded(
-                child: DropdownButtonFormField<int>(
-                  value: widget.subjectId,
+                child: DropdownButtonFormField<String>(
+                  value: widget.subjectsList.first.$id,
                   onChanged: widget.onSubjectChanged,
                   isExpanded: true,
                   items: widget.subjectsList
                       .map(
-                        (subject) => DropdownMenuItem<int>(
-                          // value:
-
+                        (subject) => DropdownMenuItem<String>(
+                          value: subject.$id,
                           child: Text(subject.name),
                         ),
                       )
