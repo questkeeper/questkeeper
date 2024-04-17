@@ -20,18 +20,16 @@ Assignment _$AssignmentFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Assignment {
-  int? get id => throw _privateConstructorUsedError;
-  DateTime get createdAt => throw _privateConstructorUsedError;
-  DateTime get updatedAt => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError;
+  DateTime? get $createdAt => throw _privateConstructorUsedError;
+  DateTime? get $updatedAt => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   DateTime get dueDate => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
-  int? get subjectId => throw _privateConstructorUsedError;
   Subject? get subject => throw _privateConstructorUsedError;
   bool get completed => throw _privateConstructorUsedError;
   bool get starred => throw _privateConstructorUsedError;
-  bool get deleted => throw _privateConstructorUsedError;
-  List<Categories>? get categories => throw _privateConstructorUsedError;
+  List<Categories> get categories => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -46,18 +44,16 @@ abstract class $AssignmentCopyWith<$Res> {
       _$AssignmentCopyWithImpl<$Res, Assignment>;
   @useResult
   $Res call(
-      {int? id,
-      DateTime createdAt,
-      DateTime updatedAt,
+      {String id,
+      DateTime? $createdAt,
+      DateTime? $updatedAt,
       String title,
       DateTime dueDate,
       String? description,
-      int? subjectId,
       Subject? subject,
       bool completed,
       bool starred,
-      bool deleted,
-      List<Categories>? categories});
+      List<Categories> categories});
 
   $SubjectCopyWith<$Res>? get subject;
 }
@@ -75,32 +71,30 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? id = null,
+    Object? $createdAt = freezed,
+    Object? $updatedAt = freezed,
     Object? title = null,
     Object? dueDate = null,
     Object? description = freezed,
-    Object? subjectId = freezed,
     Object? subject = freezed,
     Object? completed = null,
     Object? starred = null,
-    Object? deleted = null,
-    Object? categories = freezed,
+    Object? categories = null,
   }) {
     return _then(_value.copyWith(
-      id: freezed == id
+      id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as String,
+      $createdAt: freezed == $createdAt
+          ? _value.$createdAt
+          : $createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      $updatedAt: freezed == $updatedAt
+          ? _value.$updatedAt
+          : $updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -113,10 +107,6 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
-      subjectId: freezed == subjectId
-          ? _value.subjectId
-          : subjectId // ignore: cast_nullable_to_non_nullable
-              as int?,
       subject: freezed == subject
           ? _value.subject
           : subject // ignore: cast_nullable_to_non_nullable
@@ -129,14 +119,10 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
           ? _value.starred
           : starred // ignore: cast_nullable_to_non_nullable
               as bool,
-      deleted: null == deleted
-          ? _value.deleted
-          : deleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      categories: freezed == categories
+      categories: null == categories
           ? _value.categories
           : categories // ignore: cast_nullable_to_non_nullable
-              as List<Categories>?,
+              as List<Categories>,
     ) as $Val);
   }
 
@@ -162,18 +148,16 @@ abstract class _$$AssignmentImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? id,
-      DateTime createdAt,
-      DateTime updatedAt,
+      {String id,
+      DateTime? $createdAt,
+      DateTime? $updatedAt,
       String title,
       DateTime dueDate,
       String? description,
-      int? subjectId,
       Subject? subject,
       bool completed,
       bool starred,
-      bool deleted,
-      List<Categories>? categories});
+      List<Categories> categories});
 
   @override
   $SubjectCopyWith<$Res>? get subject;
@@ -190,32 +174,30 @@ class __$$AssignmentImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? id = null,
+    Object? $createdAt = freezed,
+    Object? $updatedAt = freezed,
     Object? title = null,
     Object? dueDate = null,
     Object? description = freezed,
-    Object? subjectId = freezed,
     Object? subject = freezed,
     Object? completed = null,
     Object? starred = null,
-    Object? deleted = null,
-    Object? categories = freezed,
+    Object? categories = null,
   }) {
     return _then(_$AssignmentImpl(
-      id: freezed == id
+      id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as String,
+      $createdAt: freezed == $createdAt
+          ? _value.$createdAt
+          : $createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      $updatedAt: freezed == $updatedAt
+          ? _value.$updatedAt
+          : $updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -228,10 +210,6 @@ class __$$AssignmentImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
-      subjectId: freezed == subjectId
-          ? _value.subjectId
-          : subjectId // ignore: cast_nullable_to_non_nullable
-              as int?,
       subject: freezed == subject
           ? _value.subject
           : subject // ignore: cast_nullable_to_non_nullable
@@ -244,14 +222,10 @@ class __$$AssignmentImplCopyWithImpl<$Res>
           ? _value.starred
           : starred // ignore: cast_nullable_to_non_nullable
               as bool,
-      deleted: null == deleted
-          ? _value.deleted
-          : deleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      categories: freezed == categories
+      categories: null == categories
           ? _value._categories
           : categories // ignore: cast_nullable_to_non_nullable
-              as List<Categories>?,
+              as List<Categories>,
     ));
   }
 }
@@ -260,37 +234,33 @@ class __$$AssignmentImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AssignmentImpl implements _Assignment {
   const _$AssignmentImpl(
-      {this.id,
-      required this.createdAt,
-      required this.updatedAt,
+      {required this.id,
+      this.$createdAt,
+      this.$updatedAt,
       required this.title,
       required this.dueDate,
       this.description,
-      this.subjectId,
       this.subject,
       this.completed = false,
       this.starred = false,
-      this.deleted = false,
-      final List<Categories>? categories = const [Categories.homework]})
+      final List<Categories> categories = const [Categories.homework]})
       : _categories = categories;
 
   factory _$AssignmentImpl.fromJson(Map<String, dynamic> json) =>
       _$$AssignmentImplFromJson(json);
 
   @override
-  final int? id;
+  final String id;
   @override
-  final DateTime createdAt;
+  final DateTime? $createdAt;
   @override
-  final DateTime updatedAt;
+  final DateTime? $updatedAt;
   @override
   final String title;
   @override
   final DateTime dueDate;
   @override
   final String? description;
-  @override
-  final int? subjectId;
   @override
   final Subject? subject;
   @override
@@ -299,23 +269,18 @@ class _$AssignmentImpl implements _Assignment {
   @override
   @JsonKey()
   final bool starred;
+  final List<Categories> _categories;
   @override
   @JsonKey()
-  final bool deleted;
-  final List<Categories>? _categories;
-  @override
-  @JsonKey()
-  List<Categories>? get categories {
-    final value = _categories;
-    if (value == null) return null;
+  List<Categories> get categories {
     if (_categories is EqualUnmodifiableListView) return _categories;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
+    return EqualUnmodifiableListView(_categories);
   }
 
   @override
   String toString() {
-    return 'Assignment(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, dueDate: $dueDate, description: $description, subjectId: $subjectId, subject: $subject, completed: $completed, starred: $starred, deleted: $deleted, categories: $categories)';
+    return 'Assignment(id: $id, \$createdAt: ${$createdAt}, \$updatedAt: ${$updatedAt}, title: $title, dueDate: $dueDate, description: $description, subject: $subject, completed: $completed, starred: $starred, categories: $categories)';
   }
 
   @override
@@ -324,21 +289,18 @@ class _$AssignmentImpl implements _Assignment {
         (other.runtimeType == runtimeType &&
             other is _$AssignmentImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt) &&
+            (identical(other.$createdAt, $createdAt) ||
+                other.$createdAt == $createdAt) &&
+            (identical(other.$updatedAt, $updatedAt) ||
+                other.$updatedAt == $updatedAt) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.dueDate, dueDate) || other.dueDate == dueDate) &&
             (identical(other.description, description) ||
                 other.description == description) &&
-            (identical(other.subjectId, subjectId) ||
-                other.subjectId == subjectId) &&
             (identical(other.subject, subject) || other.subject == subject) &&
             (identical(other.completed, completed) ||
                 other.completed == completed) &&
             (identical(other.starred, starred) || other.starred == starred) &&
-            (identical(other.deleted, deleted) || other.deleted == deleted) &&
             const DeepCollectionEquality()
                 .equals(other._categories, _categories));
   }
@@ -348,16 +310,14 @@ class _$AssignmentImpl implements _Assignment {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      createdAt,
-      updatedAt,
+      $createdAt,
+      $updatedAt,
       title,
       dueDate,
       description,
-      subjectId,
       subject,
       completed,
       starred,
-      deleted,
       const DeepCollectionEquality().hash(_categories));
 
   @JsonKey(ignore: true)
@@ -376,28 +336,26 @@ class _$AssignmentImpl implements _Assignment {
 
 abstract class _Assignment implements Assignment {
   const factory _Assignment(
-      {final int? id,
-      required final DateTime createdAt,
-      required final DateTime updatedAt,
+      {required final String id,
+      final DateTime? $createdAt,
+      final DateTime? $updatedAt,
       required final String title,
       required final DateTime dueDate,
       final String? description,
-      final int? subjectId,
       final Subject? subject,
       final bool completed,
       final bool starred,
-      final bool deleted,
-      final List<Categories>? categories}) = _$AssignmentImpl;
+      final List<Categories> categories}) = _$AssignmentImpl;
 
   factory _Assignment.fromJson(Map<String, dynamic> json) =
       _$AssignmentImpl.fromJson;
 
   @override
-  int? get id;
+  String get id;
   @override
-  DateTime get createdAt;
+  DateTime? get $createdAt;
   @override
-  DateTime get updatedAt;
+  DateTime? get $updatedAt;
   @override
   String get title;
   @override
@@ -405,17 +363,13 @@ abstract class _Assignment implements Assignment {
   @override
   String? get description;
   @override
-  int? get subjectId;
-  @override
   Subject? get subject;
   @override
   bool get completed;
   @override
   bool get starred;
   @override
-  bool get deleted;
-  @override
-  List<Categories>? get categories;
+  List<Categories> get categories;
   @override
   @JsonKey(ignore: true)
   _$$AssignmentImplCopyWith<_$AssignmentImpl> get copyWith =>
