@@ -32,7 +32,7 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
   Widget build(BuildContext context) {
     final Assignment assignment = widget.assignment;
     return Dismissible(
-      key: ValueKey(widget.assignment.id),
+      key: ValueKey(widget.assignment.$id),
       confirmDismiss: (direction) {
         if (direction == DismissDirection.startToEnd) {
           ref.read(assignmentsProvider.notifier).toggleStar(widget.assignment);
@@ -114,11 +114,10 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
           // height: 150,
           width: double.infinity,
           child: Card(
-            color: assignment.subjectId != null &&
-                    assignment.subject != null &&
-                    assignment.subject?.color != null
-                ? HexColor(assignment.subject!.color!)
-                : Colors.transparent,
+            color:
+                assignment.subject != null && assignment.subject!.color != null
+                    ? HexColor(assignment.subject!.color!)
+                    : Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0),
             ),

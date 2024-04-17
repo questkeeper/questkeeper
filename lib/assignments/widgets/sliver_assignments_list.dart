@@ -110,7 +110,7 @@ class _SliverAssignmentsListState extends State<SliverAssignmentsList> {
 
             if (_selectedFilter != null &&
                 !filteredAssignments[index]
-                    .categories!
+                    .categories
                     .contains(_selectedFilter)) {
               return const SizedBox.shrink();
             }
