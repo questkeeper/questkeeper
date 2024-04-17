@@ -9,19 +9,29 @@ class AuthNotifier extends StateNotifier<SignInState> {
 
   final emailController = TextEditingController();
   final otpController = TextEditingController();
-  final String? userId;
+  String? userId;
 
   Future<void> signIn() async {
     try {
-      if (state.otpSent) {
-        await account.updateVerification(
+      if (state.otpSent && userId != null) {
+        final response = await account.createSession(
           userId: userId!,
           secret: otpController.text,
         );
+
+        if (!response.current) {
+          throw Exception("OTP is incorrect");
+        }
       } else {
+        if (state.otpSent) {
+          throw Exception("User ID is null");
+        }
+        userId = ID.unique();
         final response = await account.createEmailToken(
-            userId: ID.unique(), email: emailController.text);
+            userId: userId!, email: emailController.text);
         state = state.copyWith(otpSent: true, userId: response.userId);
+
+        userId = response.userId;
       }
     } catch (error) {
       state = state.copyWith(error: error.toString(), userId: null);

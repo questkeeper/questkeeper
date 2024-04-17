@@ -5,8 +5,13 @@ import 'package:assigngo_rewrite/tabs/tabview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final currentSessionProvider = FutureProvider<Session?>((ref) async {
-  return await account.getSession(sessionId: "current");
+final currentSessionProvider = FutureProvider<User?>((ref) async {
+  try {
+    final user = await account.get();
+    return user;
+  } catch (error) {
+    return null;
+  }
 });
 
 class AuthGate extends ConsumerWidget {
