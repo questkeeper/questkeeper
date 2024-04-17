@@ -20,7 +20,7 @@ Assignment _$AssignmentFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Assignment {
-  String get id => throw _privateConstructorUsedError;
+  String get $id => throw _privateConstructorUsedError;
   DateTime? get $createdAt => throw _privateConstructorUsedError;
   DateTime? get $updatedAt => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
@@ -44,7 +44,7 @@ abstract class $AssignmentCopyWith<$Res> {
       _$AssignmentCopyWithImpl<$Res, Assignment>;
   @useResult
   $Res call(
-      {String id,
+      {String $id,
       DateTime? $createdAt,
       DateTime? $updatedAt,
       String title,
@@ -71,7 +71,7 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? $id = null,
     Object? $createdAt = freezed,
     Object? $updatedAt = freezed,
     Object? title = null,
@@ -83,9 +83,9 @@ class _$AssignmentCopyWithImpl<$Res, $Val extends Assignment>
     Object? categories = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
+      $id: null == $id
+          ? _value.$id
+          : $id // ignore: cast_nullable_to_non_nullable
               as String,
       $createdAt: freezed == $createdAt
           ? _value.$createdAt
@@ -148,7 +148,7 @@ abstract class _$$AssignmentImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
+      {String $id,
       DateTime? $createdAt,
       DateTime? $updatedAt,
       String title,
@@ -174,7 +174,7 @@ class __$$AssignmentImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? $id = null,
     Object? $createdAt = freezed,
     Object? $updatedAt = freezed,
     Object? title = null,
@@ -186,9 +186,9 @@ class __$$AssignmentImplCopyWithImpl<$Res>
     Object? categories = null,
   }) {
     return _then(_$AssignmentImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
+      $id: null == $id
+          ? _value.$id
+          : $id // ignore: cast_nullable_to_non_nullable
               as String,
       $createdAt: freezed == $createdAt
           ? _value.$createdAt
@@ -234,7 +234,7 @@ class __$$AssignmentImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AssignmentImpl implements _Assignment {
   const _$AssignmentImpl(
-      {required this.id,
+      {required this.$id,
       this.$createdAt,
       this.$updatedAt,
       required this.title,
@@ -250,7 +250,7 @@ class _$AssignmentImpl implements _Assignment {
       _$$AssignmentImplFromJson(json);
 
   @override
-  final String id;
+  final String $id;
   @override
   final DateTime? $createdAt;
   @override
@@ -280,7 +280,7 @@ class _$AssignmentImpl implements _Assignment {
 
   @override
   String toString() {
-    return 'Assignment(id: $id, \$createdAt: ${$createdAt}, \$updatedAt: ${$updatedAt}, title: $title, dueDate: $dueDate, description: $description, subject: $subject, completed: $completed, starred: $starred, categories: $categories)';
+    return 'Assignment(\$id: ${$id}, \$createdAt: ${$createdAt}, \$updatedAt: ${$updatedAt}, title: $title, dueDate: $dueDate, description: $description, subject: $subject, completed: $completed, starred: $starred, categories: $categories)';
   }
 
   @override
@@ -288,7 +288,7 @@ class _$AssignmentImpl implements _Assignment {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AssignmentImpl &&
-            (identical(other.id, id) || other.id == id) &&
+            (identical(other.$id, $id) || other.$id == $id) &&
             (identical(other.$createdAt, $createdAt) ||
                 other.$createdAt == $createdAt) &&
             (identical(other.$updatedAt, $updatedAt) ||
@@ -309,7 +309,7 @@ class _$AssignmentImpl implements _Assignment {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      id,
+      $id,
       $createdAt,
       $updatedAt,
       title,
@@ -336,7 +336,7 @@ class _$AssignmentImpl implements _Assignment {
 
 abstract class _Assignment implements Assignment {
   const factory _Assignment(
-      {required final String id,
+      {required final String $id,
       final DateTime? $createdAt,
       final DateTime? $updatedAt,
       required final String title,
@@ -351,7 +351,7 @@ abstract class _Assignment implements Assignment {
       _$AssignmentImpl.fromJson;
 
   @override
-  String get id;
+  String get $id;
   @override
   DateTime? get $createdAt;
   @override

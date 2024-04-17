@@ -12,7 +12,7 @@ enum Categories { homework, quiz, essay, exam, project, presentation }
 @freezed
 class Assignment with _$Assignment {
   const factory Assignment({
-    required String id,
+    required String $id,
     DateTime? $createdAt,
     DateTime? $updatedAt,
     required String title,

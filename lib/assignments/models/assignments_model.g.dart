@@ -8,7 +8,7 @@ part of 'assignments_model.dart';
 
 _$AssignmentImpl _$$AssignmentImplFromJson(Map<String, dynamic> json) =>
     _$AssignmentImpl(
-      id: json['id'] as String,
+      $id: json[r'$id'] as String,
       $createdAt: json[r'$createdAt'] == null
           ? null
           : DateTime.parse(json[r'$createdAt'] as String),
@@ -31,7 +31,7 @@ _$AssignmentImpl _$$AssignmentImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$AssignmentImplToJson(_$AssignmentImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      r'$id': instance.$id,
       r'$createdAt': instance.$createdAt?.toIso8601String(),
       r'$updatedAt': instance.$updatedAt?.toIso8601String(),
       'title': instance.title,
