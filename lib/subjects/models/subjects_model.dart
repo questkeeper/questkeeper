@@ -7,7 +7,7 @@ part 'subjects_model.g.dart';
 @freezed
 class Subject with _$Subject {
   const factory Subject({
-    required String id,
+    required String $id,
     required String name,
     DateTime? createdAt,
     DateTime? updatedAt,

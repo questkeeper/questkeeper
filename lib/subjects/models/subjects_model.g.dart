@@ -8,7 +8,7 @@ part of 'subjects_model.dart';
 
 _$SubjectImpl _$$SubjectImplFromJson(Map<String, dynamic> json) =>
     _$SubjectImpl(
-      id: json['id'] as String,
+      $id: json[r'$id'] as String,
       name: json['name'] as String,
       createdAt: json['createdAt'] == null
           ? null
@@ -25,7 +25,7 @@ _$SubjectImpl _$$SubjectImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$SubjectImplToJson(_$SubjectImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      r'$id': instance.$id,
       'name': instance.name,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),

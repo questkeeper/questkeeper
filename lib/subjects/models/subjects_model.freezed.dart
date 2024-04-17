@@ -20,7 +20,7 @@ Subject _$SubjectFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Subject {
-  String get id => throw _privateConstructorUsedError;
+  String get $id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
@@ -39,7 +39,7 @@ abstract class $SubjectCopyWith<$Res> {
       _$SubjectCopyWithImpl<$Res, Subject>;
   @useResult
   $Res call(
-      {String id,
+      {String $id,
       String name,
       DateTime? createdAt,
       DateTime? updatedAt,
@@ -61,7 +61,7 @@ class _$SubjectCopyWithImpl<$Res, $Val extends Subject>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? $id = null,
     Object? name = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -70,9 +70,9 @@ class _$SubjectCopyWithImpl<$Res, $Val extends Subject>
     Object? archived = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
+      $id: null == $id
+          ? _value.$id
+          : $id // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -110,7 +110,7 @@ abstract class _$$SubjectImplCopyWith<$Res> implements $SubjectCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {String id,
+      {String $id,
       String name,
       DateTime? createdAt,
       DateTime? updatedAt,
@@ -130,7 +130,7 @@ class __$$SubjectImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? $id = null,
     Object? name = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -139,9 +139,9 @@ class __$$SubjectImplCopyWithImpl<$Res>
     Object? archived = null,
   }) {
     return _then(_$SubjectImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
+      $id: null == $id
+          ? _value.$id
+          : $id // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -175,7 +175,7 @@ class __$$SubjectImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SubjectImpl implements _Subject {
   const _$SubjectImpl(
-      {required this.id,
+      {required this.$id,
       required this.name,
       this.createdAt,
       this.updatedAt,
@@ -188,7 +188,7 @@ class _$SubjectImpl implements _Subject {
       _$$SubjectImplFromJson(json);
 
   @override
-  final String id;
+  final String $id;
   @override
   final String name;
   @override
@@ -213,7 +213,7 @@ class _$SubjectImpl implements _Subject {
 
   @override
   String toString() {
-    return 'Subject(id: $id, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, color: $color, assignments: $assignments, archived: $archived)';
+    return 'Subject(\$id: ${$id}, name: $name, createdAt: $createdAt, updatedAt: $updatedAt, color: $color, assignments: $assignments, archived: $archived)';
   }
 
   @override
@@ -221,7 +221,7 @@ class _$SubjectImpl implements _Subject {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SubjectImpl &&
-            (identical(other.id, id) || other.id == id) &&
+            (identical(other.$id, $id) || other.$id == $id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
@@ -236,7 +236,7 @@ class _$SubjectImpl implements _Subject {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, createdAt, updatedAt,
+  int get hashCode => Object.hash(runtimeType, $id, name, createdAt, updatedAt,
       color, const DeepCollectionEquality().hash(_assignments), archived);
 
   @JsonKey(ignore: true)
@@ -255,7 +255,7 @@ class _$SubjectImpl implements _Subject {
 
 abstract class _Subject implements Subject {
   const factory _Subject(
-      {required final String id,
+      {required final String $id,
       required final String name,
       final DateTime? createdAt,
       final DateTime? updatedAt,
@@ -266,7 +266,7 @@ abstract class _Subject implements Subject {
   factory _Subject.fromJson(Map<String, dynamic> json) = _$SubjectImpl.fromJson;
 
   @override
-  String get id;
+  String get $id;
   @override
   String get name;
   @override
