@@ -7,15 +7,17 @@ const supabaseKey =
 const appwriteEndpoint = "https://appwrite.hayhay.dev/v1";
 const projectId = "661e90420031a22ce300";
 
-Client client = Client();
+Client client = Client().setEndpoint(appwriteEndpoint).setProject(projectId);
 Databases database = Databases(client);
 Account account = Account(client);
 
 const publicDb = "public";
 
-List<String> defaultPermissions = [
-  Permission.read(Role.user("[USER_ID]")),
-  Permission.write(Role.user("[USER_ID]")),
-  Permission.update(Role.user("[USER_ID]")),
-  Permission.delete(Role.user("[USER_ID]"))
-];
+List<String> getPermissions(String userId) {
+  return [
+    Permission.read(Role.user(userId)),
+    Permission.write(Role.user(userId)),
+    Permission.update(Role.user(userId)),
+    Permission.delete(Role.user(userId)),
+  ];
+}

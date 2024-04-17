@@ -6,12 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home_widget/home_widget.dart';
 import 'tabs/tabview.dart';
-import 'package:assigngo_rewrite/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
-  client.setEndpoint(appwriteEndpoint).setProject(projectId);
-
   if (Platform.isIOS) {
     HomeWidget.setAppGroupId('group.assigngo');
   }
