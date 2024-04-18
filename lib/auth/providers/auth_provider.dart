@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:assigngo_rewrite/constants.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/auth/models/auth_state.dart';
@@ -36,6 +37,28 @@ class AuthNotifier extends StateNotifier<SignInState> {
     } catch (error) {
       state = state.copyWith(error: error.toString(), userId: null);
     }
+  }
+
+  // Set up FCM
+  void setFirebaseMessaging() async {
+    debugPrint('Setting up FCM');
+    await FirebaseMessaging.instance.requestPermission();
+    await FirebaseMessaging.instance.getAPNSToken();
+    final token = await FirebaseMessaging.instance.getToken();
+    debugPrint(token);
+
+    if (token == null) {
+      debugPrint('Token is null');
+      return;
+    }
+
+    debugPrint("Making a call to createPushTarget");
+    final result = await account.createPushTarget(
+        targetId: ID.unique(),
+        identifier: token,
+        providerId: '661e90e9001427890121');
+
+    debugPrint(result.identifier);
   }
 }
 
