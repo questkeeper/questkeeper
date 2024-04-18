@@ -17,26 +17,17 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -66,4 +57,33 @@ class DefaultFirebaseOptions {
     storageBucket: 'assigngo-d890c.appspot.com',
     iosBundleId: 'com.example.assigngoRewrite',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAEoFGpjPeK5xK53akStqUmTuIYuj6Y_VY',
+    appId: '1:479691835174:web:daa0e390776cd9d93763e7',
+    messagingSenderId: '479691835174',
+    projectId: 'assigngo-d890c',
+    authDomain: 'assigngo-d890c.firebaseapp.com',
+    storageBucket: 'assigngo-d890c.appspot.com',
+    measurementId: 'G-L4EHMBMZTG',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyA71mAfcb4HlBkKnpcXSGTsDRixQ7YLa3k',
+    appId: '1:479691835174:android:260855096e34f6cd3763e7',
+    messagingSenderId: '479691835174',
+    projectId: 'assigngo-d890c',
+    storageBucket: 'assigngo-d890c.appspot.com',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAEoFGpjPeK5xK53akStqUmTuIYuj6Y_VY',
+    appId: '1:479691835174:web:d9313bfa9b4ba0e73763e7',
+    messagingSenderId: '479691835174',
+    projectId: 'assigngo-d890c',
+    authDomain: 'assigngo-d890c.firebaseapp.com',
+    storageBucket: 'assigngo-d890c.appspot.com',
+    measurementId: 'G-4VV958BNZK',
+  );
+
 }
