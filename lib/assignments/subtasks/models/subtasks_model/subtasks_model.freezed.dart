@@ -20,12 +20,9 @@ Subtask _$SubtaskFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Subtask {
-  int? get id => throw _privateConstructorUsedError;
-  DateTime get createdAt => throw _privateConstructorUsedError;
-  DateTime get updatedAt => throw _privateConstructorUsedError;
+  String get $id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  int get assignmentId => throw _privateConstructorUsedError;
-  int? get priority => throw _privateConstructorUsedError;
+  int get priority => throw _privateConstructorUsedError;
   bool get completed => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -38,14 +35,7 @@ abstract class $SubtaskCopyWith<$Res> {
   factory $SubtaskCopyWith(Subtask value, $Res Function(Subtask) then) =
       _$SubtaskCopyWithImpl<$Res, Subtask>;
   @useResult
-  $Res call(
-      {int? id,
-      DateTime createdAt,
-      DateTime updatedAt,
-      String title,
-      int assignmentId,
-      int? priority,
-      bool completed});
+  $Res call({String $id, String title, int priority, bool completed});
 }
 
 /// @nodoc
@@ -61,39 +51,24 @@ class _$SubtaskCopyWithImpl<$Res, $Val extends Subtask>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? $id = null,
     Object? title = null,
-    Object? assignmentId = null,
-    Object? priority = freezed,
+    Object? priority = null,
     Object? completed = null,
   }) {
     return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+      $id: null == $id
+          ? _value.$id
+          : $id // ignore: cast_nullable_to_non_nullable
+              as String,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      assignmentId: null == assignmentId
-          ? _value.assignmentId
-          : assignmentId // ignore: cast_nullable_to_non_nullable
-              as int,
-      priority: freezed == priority
+      priority: null == priority
           ? _value.priority
           : priority // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       completed: null == completed
           ? _value.completed
           : completed // ignore: cast_nullable_to_non_nullable
@@ -109,14 +84,7 @@ abstract class _$$SubtaskImplCopyWith<$Res> implements $SubtaskCopyWith<$Res> {
       __$$SubtaskImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int? id,
-      DateTime createdAt,
-      DateTime updatedAt,
-      String title,
-      int assignmentId,
-      int? priority,
-      bool completed});
+  $Res call({String $id, String title, int priority, bool completed});
 }
 
 /// @nodoc
@@ -130,39 +98,24 @@ class __$$SubtaskImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? $id = null,
     Object? title = null,
-    Object? assignmentId = null,
-    Object? priority = freezed,
+    Object? priority = null,
     Object? completed = null,
   }) {
     return _then(_$SubtaskImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+      $id: null == $id
+          ? _value.$id
+          : $id // ignore: cast_nullable_to_non_nullable
+              as String,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      assignmentId: null == assignmentId
-          ? _value.assignmentId
-          : assignmentId // ignore: cast_nullable_to_non_nullable
-              as int,
-      priority: freezed == priority
+      priority: null == priority
           ? _value.priority
           : priority // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       completed: null == completed
           ? _value.completed
           : completed // ignore: cast_nullable_to_non_nullable
@@ -175,36 +128,28 @@ class __$$SubtaskImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SubtaskImpl implements _Subtask {
   const _$SubtaskImpl(
-      {this.id,
-      required this.createdAt,
-      required this.updatedAt,
+      {required this.$id,
       required this.title,
-      required this.assignmentId,
-      this.priority,
+      this.priority = 1,
       this.completed = false});
 
   factory _$SubtaskImpl.fromJson(Map<String, dynamic> json) =>
       _$$SubtaskImplFromJson(json);
 
   @override
-  final int? id;
-  @override
-  final DateTime createdAt;
-  @override
-  final DateTime updatedAt;
+  final String $id;
   @override
   final String title;
   @override
-  final int assignmentId;
-  @override
-  final int? priority;
+  @JsonKey()
+  final int priority;
   @override
   @JsonKey()
   final bool completed;
 
   @override
   String toString() {
-    return 'Subtask(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, assignmentId: $assignmentId, priority: $priority, completed: $completed)';
+    return 'Subtask(\$id: ${$id}, title: $title, priority: $priority, completed: $completed)';
   }
 
   @override
@@ -212,14 +157,8 @@ class _$SubtaskImpl implements _Subtask {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SubtaskImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt) &&
+            (identical(other.$id, $id) || other.$id == $id) &&
             (identical(other.title, title) || other.title == title) &&
-            (identical(other.assignmentId, assignmentId) ||
-                other.assignmentId == assignmentId) &&
             (identical(other.priority, priority) ||
                 other.priority == priority) &&
             (identical(other.completed, completed) ||
@@ -228,8 +167,7 @@ class _$SubtaskImpl implements _Subtask {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, createdAt, updatedAt, title,
-      assignmentId, priority, completed);
+  int get hashCode => Object.hash(runtimeType, $id, title, priority, completed);
 
   @JsonKey(ignore: true)
   @override
@@ -247,28 +185,19 @@ class _$SubtaskImpl implements _Subtask {
 
 abstract class _Subtask implements Subtask {
   const factory _Subtask(
-      {final int? id,
-      required final DateTime createdAt,
-      required final DateTime updatedAt,
+      {required final String $id,
       required final String title,
-      required final int assignmentId,
-      final int? priority,
+      final int priority,
       final bool completed}) = _$SubtaskImpl;
 
   factory _Subtask.fromJson(Map<String, dynamic> json) = _$SubtaskImpl.fromJson;
 
   @override
-  int? get id;
-  @override
-  DateTime get createdAt;
-  @override
-  DateTime get updatedAt;
+  String get $id;
   @override
   String get title;
   @override
-  int get assignmentId;
-  @override
-  int? get priority;
+  int get priority;
   @override
   bool get completed;
   @override

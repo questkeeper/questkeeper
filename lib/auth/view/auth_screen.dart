@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/auth/providers/auth_provider.dart';
@@ -54,9 +57,32 @@ class AuthScreen extends ConsumerWidget {
                             ),
                           ),
                           if (authState.otpSent && authState.error == null)
-                            Navigator.of(context).pushNamed(
-                              '/home',
-                            ),
+                            {
+                              // Request push notification permission
+                              FirebaseMessaging.instance.requestPermission(
+                                provisional: true,
+                              ),
+
+                              if (Platform.isIOS || Platform.isMacOS)
+                                {
+                                  FirebaseMessaging.instance
+                                      .setForegroundNotificationPresentationOptions(
+                                    alert: true,
+                                    badge: true,
+                                    sound: true,
+                                  ),
+                                },
+
+                              print("Pre FCM"),
+
+                              ref
+                                  .read(authProvider.notifier)
+                                  .setFirebaseMessaging(),
+
+                              Navigator.of(context).pushReplacementNamed(
+                                '/home',
+                              ),
+                            }
                         })
                     .catchError((error) => {
                           ScaffoldMessenger.of(context).showSnackBar(

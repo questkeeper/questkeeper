@@ -1,7 +1,7 @@
+import 'package:appwrite/appwrite.dart';
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
 import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
-import 'package:assigngo_rewrite/assignments/subtasks/providers/subtasks_providers.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
@@ -21,10 +21,11 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   DateTime _dueDate = DateTime.now();
-  int? _subjectId;
-  final List<Subtask?> _subtasks = [];
+  final List<Subtask> _subtasks = [];
+  String _subjectId = '';
+  late Subject _subject;
 
-  var _context;
+  late BuildContext _context;
 
   @override
   void dispose() {
@@ -35,35 +36,17 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
+      print('Submitting form with $_subject');
       final assignment = Assignment(
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        $id: ID.unique(),
         title: _titleController.text,
         dueDate: _dueDate,
         description: _descriptionController.text,
-        subjectId: _subjectId,
+        subtasks: _subtasks,
+        subject: _subject,
       );
       final assignmentsNotifier = ref.read(assignmentsProvider.notifier);
-      final subtaskNotifier = ref.read(subtasksProvider.notifier);
-      final result = await assignmentsNotifier.createAssignment(
-        title: assignment.title,
-        description: assignment.description,
-        dueDate: assignment.dueDate,
-        subjectId: assignment.subjectId,
-      );
-
-      final List<Subtask?> subtasks = _subtasks
-          .where((element) => element != null)
-          .map((e) => e!.copyWith(assignmentId: result.data!.id))
-          .toList();
-
-      debugPrint(subtasks.toString());
-
-      if (subtasks.isNotEmpty) {
-        await subtaskNotifier.createBatchSubtasks(
-          subtasks.map((e) => e!).toList(),
-        );
-      }
+      final result = await assignmentsNotifier.createAssignment(assignment);
 
       if (result.success) {
         ScaffoldMessenger.of(_context).showSnackBar(
@@ -79,7 +62,7 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
         _descriptionController.clear();
         setState(() {
           _dueDate = DateTime.now();
-          _subjectId = null;
+          _subtasks.clear();
         });
       } else {
         ScaffoldMessenger.of(_context).showSnackBar(
@@ -120,7 +103,7 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                           titleController: _titleController,
                           descriptionController: _descriptionController,
                           dueDate: _dueDate,
-                          subjectsList: ref.read(subjectsProvider),
+                          subjectsList: ref.watch(subjectsProvider),
                           onDueDateChanged: (date) {
                             setState(() {
                               _dueDate = date!;
@@ -129,7 +112,10 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                           subjectId: _subjectId,
                           onSubjectChanged: (id) {
                             setState(() {
-                              _subjectId = id;
+                              _subjectId = id!;
+                              _subject = ref
+                                  .watch(subjectsProvider)
+                                  .firstWhere((subject) => subject.$id == id);
                             });
                           },
                         ),
@@ -150,11 +136,9 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                                 onPressed: () {
                                   setState(() {
                                     _subtasks.add(Subtask(
-                                      id: _subtasks.length + 1,
+                                      $id: ID.unique(),
                                       title: '',
-                                      createdAt: DateTime.now(),
-                                      updatedAt: DateTime.now(),
-                                      assignmentId: 1,
+                                      priority: 1,
                                     ));
                                   });
                                 },
@@ -175,11 +159,11 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                                 itemCount: _subtasks.length,
                                 itemBuilder: (context, index) {
                                   return ListTile(
-                                    key: ValueKey(_subtasks[index]!.id),
+                                    key: ValueKey(_subtasks[index].$id),
                                     title: TextFormField(
-                                      initialValue: _subtasks[index]!.title,
+                                      initialValue: _subtasks[index].title,
                                       onChanged: (value) {
-                                        _subtasks[index] = _subtasks[index]!
+                                        _subtasks[index] = _subtasks[index]
                                             .copyWith(title: value);
                                       },
                                     ),
@@ -239,8 +223,8 @@ class AssignmentForm extends StatefulWidget {
   final TextEditingController descriptionController;
   final DateTime dueDate;
   final void Function(DateTime?) onDueDateChanged;
-  final int? subjectId;
-  final void Function(int?) onSubjectChanged;
+  final String subjectId;
+  final void Function(String?) onSubjectChanged;
   final Future<void> Function() onFormSubmitted;
   final List<Subject> subjectsList;
 
@@ -322,14 +306,14 @@ class _AssignmentFormState extends State<AssignmentForm> {
               ),
               const SizedBox(width: 20),
               Expanded(
-                child: DropdownButtonFormField<int>(
-                  value: widget.subjectId,
+                child: DropdownButtonFormField<String>(
+                  value: widget.subjectsList.first.$id,
                   onChanged: widget.onSubjectChanged,
                   isExpanded: true,
                   items: widget.subjectsList
                       .map(
-                        (subject) => DropdownMenuItem<int>(
-                          value: subject.id,
+                        (subject) => DropdownMenuItem<String>(
+                          value: subject.$id,
                           child: Text(subject.name),
                         ),
                       )

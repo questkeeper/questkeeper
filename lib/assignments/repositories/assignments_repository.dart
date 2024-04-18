@@ -1,46 +1,59 @@
+import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
+import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AssignmentsRepository {
-  final SupabaseClient supabase = Supabase.instance.client;
-
   AssignmentsRepository();
 
   Future<List<Assignment>> getAssignments() async {
-    final assignments =
-        await supabase.from('assignments').select().eq("deleted", false).order(
-              'dueDate',
-              ascending: true,
-            );
+    final assignments = await database.listDocuments(
+        databaseId: publicDb,
+        collectionId: "assignments",
+        queries: [
+          Query.orderAsc("dueDate"),
+        ]);
 
     final List<Assignment> assignmentList =
-        assignments.map((e) => Assignment.fromJson(e)).toList();
+        assignments.documents.map((e) => Assignment.fromJson(e.data)).toList();
 
     return assignmentList;
   }
 
-  Future<Assignment> getAssignment(int id) async {
-    final assignment =
-        await supabase.from('assignments').select().eq('id', id).single();
+  Future<Assignment> getAssignment(String id) async {
+    final assignment = await database.getDocument(
+        databaseId: publicDb, collectionId: "assignments", documentId: id);
 
-    return Assignment.fromJson(assignment);
+    return Assignment.fromJson(assignment.data);
   }
 
   Future<ReturnModel> createAssignment(Assignment assignment) async {
+    final subtasks = assignment.subtasks?.map((e) => e.toJson()).toList();
+    final subject = assignment.subject?.toJson();
     final Map<String, dynamic> jsonAssignment = assignment.toJson();
-    jsonAssignment.remove('id');
-    jsonAssignment.remove('createdAt');
-    jsonAssignment.remove('updatedAt');
-    jsonAssignment.remove('subject');
+    jsonAssignment['subtasks'] = subtasks;
+    jsonAssignment['subject'] = subject;
+
+    User user = await account.get();
+    jsonAssignment.remove("\$id");
+    jsonAssignment.remove("\$updatedAt");
+    jsonAssignment.remove("\$createdAt");
+
     try {
-      final assignment =
-          await supabase.from('assignments').insert(jsonAssignment).select();
+      final newAssignment = await database.createDocument(
+          databaseId: publicDb,
+          collectionId: "assignments",
+          documentId: ID.unique(),
+          data: jsonAssignment,
+          permissions: getPermissions(user.$id));
+
       return ReturnModel(
-          data: Assignment.fromJson(assignment.first),
+          data: Assignment.fromJson(newAssignment.data),
           message: "Assignment created successfully",
           success: true);
     } catch (error) {
+      print(error);
       return ReturnModel(
           message: "Error creating assignment",
           success: false,
@@ -50,9 +63,11 @@ class AssignmentsRepository {
 
   Future<ReturnModel> toggleStar(Assignment assignment) async {
     try {
-      await supabase
-          .from('assignments')
-          .update({'starred': !assignment.starred}).eq('id', assignment.id!);
+      await database.updateDocument(
+          databaseId: publicDb,
+          collectionId: "assignments",
+          documentId: assignment.$id,
+          data: {'starred': !assignment.starred});
       return const ReturnModel(
           message: "Assignment starred successfully", success: true);
     } catch (error) {
@@ -65,8 +80,11 @@ class AssignmentsRepository {
 
   Future<ReturnModel> toggleComplete(Assignment assignment) async {
     try {
-      await supabase.from('assignments').update(
-          {'completed': !assignment.completed}).eq('id', assignment.id!);
+      await database.updateDocument(
+          databaseId: publicDb,
+          collectionId: "assignments",
+          documentId: assignment.$id,
+          data: {'completed': !assignment.completed});
 
       return const ReturnModel(
           message: "Assignment completed successfully", success: true);
@@ -80,9 +98,11 @@ class AssignmentsRepository {
 
   Future<ReturnModel> deleteAssignment(Assignment assignment) async {
     try {
-      await supabase
-          .from("assignments")
-          .update({"deleted": true}).eq("id", assignment.id!);
+      await database.deleteDocument(
+          databaseId: publicDb,
+          collectionId: "assignments",
+          documentId: assignment.$id);
+
       return ReturnModel(
           message: "Successfully deleted ${assignment.title}", success: true);
     } catch (error) {
@@ -95,15 +115,13 @@ class AssignmentsRepository {
 
   Future<ReturnModel> updateAssignment(Assignment assignment) async {
     final Map<String, dynamic> jsonAssignment = assignment.toJson();
-    jsonAssignment.remove('columns');
-    jsonAssignment.remove('subject');
-    jsonAssignment.remove('createdAt');
 
     try {
-      await supabase
-          .from('assignments')
-          .update(jsonAssignment)
-          .eq('id', assignment.id!);
+      await database.updateDocument(
+          databaseId: publicDb,
+          collectionId: "assignments",
+          documentId: assignment.$id,
+          data: jsonAssignment);
 
       return const ReturnModel(
           message: "Assignment updated successfully", success: true);

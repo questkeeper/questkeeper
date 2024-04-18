@@ -1,5 +1,6 @@
 // freezed classes for assignments model
 
+import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -12,18 +13,17 @@ enum Categories { homework, quiz, essay, exam, project, presentation }
 @freezed
 class Assignment with _$Assignment {
   const factory Assignment({
-    int? id,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String $id,
+    DateTime? $createdAt,
+    DateTime? $updatedAt,
     required String title,
     required DateTime dueDate,
     String? description,
-    int? subjectId,
     Subject? subject,
+    List<Subtask>? subtasks,
     @Default(false) bool completed,
     @Default(false) bool starred,
-    @Default(false) bool deleted,
-    @Default([Categories.homework]) List<Categories>? categories,
+    @Default([Categories.homework]) List<Categories> categories,
   }) = _Assignment;
 
   factory Assignment.fromJson(Map<String, dynamic> json) =>

@@ -5,19 +5,14 @@ import 'package:assigngo_rewrite/auth/view/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home_widget/home_widget.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
-import 'package:assigngo_rewrite/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  await Supabase.initialize(
-    url: supabaseUrl,
-    anonKey: supabaseKey,
-  );
-
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -32,9 +27,6 @@ Future<void> main() async {
     ),
   );
 }
-
-// Get a reference your Supabase client
-final supabase = Supabase.instance.client;
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
