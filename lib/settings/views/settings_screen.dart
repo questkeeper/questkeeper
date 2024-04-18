@@ -1,4 +1,6 @@
+import 'package:appwrite/models.dart';
 import 'package:assigngo_rewrite/constants.dart';
+import 'package:assigngo_rewrite/settings/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -6,17 +8,107 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text('Settings'),
-        const Text('Coming soon...'),
-        ElevatedButton(
-            onPressed: () async {
-              await account.deleteSession(sessionId: "current");
-              Navigator.pushReplacementNamed(context, "/signin");
-            },
-            child: const Text('Sign out')),
-      ],
+    Future<User?> currentAccount = account.get();
+    return Container(
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          AppBar(
+            surfaceTintColor: Colors.transparent,
+            title: Text(
+              'Settings',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+          ),
+          CircleAvatar(
+            radius: 50,
+            backgroundColor: secondaryColor,
+            child: const Icon(
+              Icons.account_circle,
+              size: 50,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+          FutureBuilder(
+              future: currentAccount,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(
+                    snapshot.data!.email
+                        .substring(0, snapshot.data!.email.indexOf('@')),
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  );
+                } else {
+                  return Text(
+                    'John Doe',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  );
+                }
+              }),
+          const SizedBox(height: 10),
+          Expanded(
+            flex: 1,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const Divider(),
+                  SettingsCard(
+                      backgroundColor: primaryColor,
+                      title: 'Subjects',
+                      description: 'Add, delete, or archive your subjects',
+                      icon: Icons.subject,
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/settings/subjects')),
+                  const Divider(),
+                  SettingsCard(
+                      title: 'Notifications',
+                      description: 'Manage your notifications',
+                      icon: Icons.notifications,
+                      onTap: () => Navigator.pushNamed(
+                          context, '/settings/notifications')),
+                  SettingsCard(
+                      title: 'Theme',
+                      description: 'Change the app theme',
+                      icon: Icons.info,
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/settings/theme')),
+                  const Divider(),
+                  SettingsCard(
+                      title: 'Account',
+                      description: 'Manage your account',
+                      icon: Icons.account_circle,
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/settings/account')),
+                  SettingsCard(
+                      title: 'Feedback',
+                      description: 'Send us your feedback',
+                      icon: Icons.info,
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/settings/feedback')),
+                  const Divider(),
+                  SettingsCard(
+                      title: 'About',
+                      description: 'About the app',
+                      icon: Icons.info,
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/settings/about')),
+                  SettingsCard(
+                      title: 'Sign out',
+                      description: 'Sign out',
+                      icon: Icons.logout,
+                      backgroundColor: Colors.red,
+                      onTap: () async {
+                        await account.deleteSession(sessionId: "current");
+                        Navigator.pushReplacementNamed(context, "/signin");
+                      }),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
