@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:assigngo_rewrite/auth/view/auth_screen.dart';
 import 'package:assigngo_rewrite/auth/view/auth_gate.dart';
+import 'package:assigngo_rewrite/subjects/views/subjects_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home_widget/home_widget.dart';
@@ -70,6 +71,7 @@ class MyApp extends ConsumerWidget {
       routes: {
         '/signin': (context) => const AuthScreen(),
         '/home': (context) => const TabView(),
+        '/subjects': (context) => const SubjectsScreen(),
       },
     );
   }

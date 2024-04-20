@@ -21,17 +21,41 @@ class SubjectsRepository {
     return subjectsList;
   }
 
+  Future<ReturnModel> updateSubject(Subject subject) async {
+    final jsonSubject = subject.toJson();
+    final String id = jsonSubject["\$id"];
+    jsonSubject.remove("\$id");
+
+    try {
+      final Document result = await database.updateDocument(
+          databaseId: publicDb,
+          collectionId: "subjects",
+          documentId: id,
+          data: jsonSubject);
+
+      return ReturnModel(
+          message: "Subject updated successfully",
+          success: true,
+          data: result.data);
+    } catch (error) {
+      return ReturnModel(
+          message: "Error updating subject",
+          success: false,
+          error: error.toString());
+    }
+  }
+
   Future<ReturnModel> createSubject(Subject subject) async {
     final jsonSubject = subject.toJson();
     final User user = await account.get();
 
-    jsonSubject.remove('id');
+    jsonSubject.remove('\$id');
 
     try {
       final Document result = await database.createDocument(
           databaseId: publicDb,
           collectionId: "subjects",
-          documentId: ID.unique(),
+          documentId: subject.$id,
           data: jsonSubject,
           permissions: getPermissions(user.$id));
 
@@ -42,6 +66,25 @@ class SubjectsRepository {
     } catch (error) {
       return ReturnModel(
           message: "Error creating subject",
+          success: false,
+          error: error.toString());
+    }
+  }
+
+  Future<ReturnModel> deleteSubject(Subject subject) async {
+    try {
+      final Document result = await database.deleteDocument(
+          databaseId: publicDb,
+          collectionId: "subjects",
+          documentId: subject.$id);
+
+      return ReturnModel(
+          message: "Subject deleted successfully",
+          success: true,
+          data: result.data);
+    } catch (error) {
+      return ReturnModel(
+          message: "Error deleting subject",
           success: false,
           error: error.toString());
     }
