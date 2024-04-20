@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:assigngo_rewrite/auth/view/auth_screen.dart';
 import 'package:assigngo_rewrite/auth/view/auth_gate.dart';
+import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
+import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:assigngo_rewrite/subjects/views/subjects_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:home_widget/home_widget.dart';
 import 'tabs/tabview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,8 +19,15 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  if (Platform.isIOS) {
-    HomeWidget.setAppGroupId('group.assigngo');
+  HomeWidgetInterface? homeWidget;
+
+  try {
+    if (Platform.isIOS || Platform.isAndroid) {
+      homeWidget = HomeWidgetMobile();
+      homeWidget.initHomeWidget('group.dev.ishanmisra.assigngo');
+    }
+  } catch (e) {
+    debugPrint("Platform implementation error: $e");
   }
 
   runApp(
