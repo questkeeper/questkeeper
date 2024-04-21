@@ -24,7 +24,7 @@ Future<void> main() async {
   try {
     if (Platform.isIOS || Platform.isAndroid) {
       homeWidget = HomeWidgetMobile();
-      homeWidget.initHomeWidget('group.dev.ishanmisra.assigngo');
+      homeWidget.initHomeWidget('group.assigngo');
     }
   } catch (e) {
     debugPrint("Platform implementation error: $e");
