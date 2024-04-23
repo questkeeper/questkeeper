@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/auth/models/auth_state.dart';
 
+final authProvider = StateNotifierProvider<AuthNotifier, SignInState>((ref) {
+  return AuthNotifier(null);
+});
+
 class AuthNotifier extends StateNotifier<SignInState> {
   AuthNotifier(this.userId) : super(SignInState(otpSent: false));
 
@@ -39,6 +43,24 @@ class AuthNotifier extends StateNotifier<SignInState> {
     }
   }
 
+  Future<void> passwordSignIn() async {
+    print(emailController.text);
+    print(otpController.text);
+    try {
+      final response = await account.createEmailPasswordSession(
+          email: emailController.text, password: otpController.text);
+
+      if (!response.current) {
+        throw Exception("Password is incorrect");
+      }
+
+      state = state.copyWith(otpSent: true, userId: response.userId);
+      userId = response.userId;
+    } catch (error) {
+      state = state.copyWith(error: error.toString(), userId: null);
+    }
+  }
+
   // Set up FCM
   void setFirebaseMessaging() async {
     debugPrint('Setting up FCM');
@@ -61,7 +83,3 @@ class AuthNotifier extends StateNotifier<SignInState> {
     debugPrint(result.identifier);
   }
 }
-
-final authProvider = StateNotifierProvider<AuthNotifier, SignInState>((ref) {
-  return AuthNotifier(null);
-});

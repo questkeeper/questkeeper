@@ -73,13 +73,11 @@ class AuthScreen extends ConsumerWidget {
                                   ),
                                 },
 
-                              print("Pre FCM"),
-
                               ref
                                   .read(authProvider.notifier)
                                   .setFirebaseMessaging(),
 
-                              Navigator.of(context).pushReplacementNamed(
+                              Navigator.of(context).popAndPushNamed(
                                 '/home',
                               ),
                             }
@@ -103,6 +101,16 @@ class AuthScreen extends ConsumerWidget {
                 style: const TextStyle(color: Colors.red),
               ),
             ),
+          // Sign in with password option
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed('/signin/password');
+              },
+              child: const Text('Sign In with Password'),
+            ),
+          ),
         ],
       ),
     );

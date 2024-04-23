@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:assigngo_rewrite/auth/view/auth_password_screen.dart';
 import 'package:assigngo_rewrite/auth/view/auth_screen.dart';
 import 'package:assigngo_rewrite/auth/view/auth_gate.dart';
 import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
@@ -78,6 +79,7 @@ class MyApp extends ConsumerWidget {
       home: const AuthGate(),
       routes: {
         '/signin': (context) => const AuthScreen(),
+        '/signin/password': (context) => const SignInPasswordScreen(),
         '/home': (context) => const TabView(),
         '/subjects': (context) => const SubjectsScreen(),
       },
