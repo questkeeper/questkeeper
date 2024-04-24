@@ -11,14 +11,5 @@ Messaging messaging = Messaging(client);
 
 const publicDb = "public";
 
-List<String> getPermissions(String userId) {
-  return [
-    Permission.read(Role.user(userId)),
-    Permission.write(Role.user(userId)),
-    Permission.update(Role.user(userId)),
-    Permission.delete(Role.user(userId)),
-  ];
-}
-
 final primaryColor = HexColor("#a86fd1");
 final secondaryColor = HexColor("#FFA751");
