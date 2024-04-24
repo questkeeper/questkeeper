@@ -36,14 +36,13 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      print('Submitting form with $_subject');
       final assignment = Assignment(
         $id: ID.unique(),
         title: _titleController.text,
         dueDate: _dueDate,
         description: _descriptionController.text,
         subtasks: _subtasks,
-        subject: _subject,
+        subject: _subjectId == '' ? null : _subject,
       );
       final assignmentsNotifier = ref.read(assignmentsProvider.notifier);
       final result = await assignmentsNotifier.createAssignment(assignment);
@@ -103,7 +102,13 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                           titleController: _titleController,
                           descriptionController: _descriptionController,
                           dueDate: _dueDate,
-                          subjectsList: ref.watch(subjectsProvider),
+                          subjectsList: [
+                                const Subject(
+                                  $id: '-1',
+                                  name: 'Select a subject',
+                                )
+                              ] +
+                              ref.watch(subjectsProvider),
                           onDueDateChanged: (date) {
                             setState(() {
                               _dueDate = date!;
@@ -112,7 +117,8 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                           subjectId: _subjectId,
                           onSubjectChanged: (id) {
                             setState(() {
-                              _subjectId = id!;
+                              if (id == '-1' || id == null || id == '') return;
+                              _subjectId = id;
                               _subject = ref
                                   .watch(subjectsProvider)
                                   .firstWhere((subject) => subject.$id == id);
