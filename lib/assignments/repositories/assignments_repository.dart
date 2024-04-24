@@ -1,11 +1,12 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
+import 'package:assigngo_rewrite/subjects/repositories/subjects_repository.dart';
 
 class AssignmentsRepository {
   AssignmentsRepository();
+  final SubjectsRepository _repository = SubjectsRepository();
 
   Future<List<Assignment>> getAssignments() async {
     final assignments = await database.listDocuments(
@@ -33,27 +34,30 @@ class AssignmentsRepository {
     final subject = assignment.subject?.toJson();
     final Map<String, dynamic> jsonAssignment = assignment.toJson();
     jsonAssignment['subtasks'] = subtasks;
-    jsonAssignment['subject'] = subject;
 
-    User user = await account.get();
     jsonAssignment.remove("\$id");
     jsonAssignment.remove("\$updatedAt");
     jsonAssignment.remove("\$createdAt");
+    jsonAssignment.remove("subject");
 
     try {
       final newAssignment = await database.createDocument(
-          databaseId: publicDb,
-          collectionId: "assignments",
-          documentId: ID.unique(),
-          data: jsonAssignment,
-          permissions: getPermissions(user.$id));
+        databaseId: publicDb,
+        collectionId: "assignments",
+        documentId: ID.unique(),
+        data: jsonAssignment,
+      );
+
+      if (subject != null) {
+        await _repository.updateSubjectWithAssignment(
+            Assignment.fromJson(newAssignment.data), subject['\$id']);
+      }
 
       return ReturnModel(
           data: Assignment.fromJson(newAssignment.data),
           message: "Assignment created successfully",
           success: true);
     } catch (error) {
-      print(error);
       return ReturnModel(
           message: "Error creating assignment",
           success: false,
@@ -115,6 +119,7 @@ class AssignmentsRepository {
 
   Future<ReturnModel> updateAssignment(Assignment assignment) async {
     final Map<String, dynamic> jsonAssignment = assignment.toJson();
+    jsonAssignment.remove("subject");
 
     try {
       await database.updateDocument(

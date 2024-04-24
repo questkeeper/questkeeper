@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
@@ -45,19 +46,47 @@ class SubjectsRepository {
     }
   }
 
+  Future<ReturnModel> updateSubjectWithAssignment(
+      Assignment assignment, String subjectId) async {
+    try {
+      final Document subject = await database.getDocument(
+          databaseId: publicDb,
+          collectionId: "subjects",
+          documentId: subjectId);
+
+      final Document result = await database.updateDocument(
+          databaseId: publicDb,
+          collectionId: "subjects",
+          documentId: subjectId,
+          data: {
+            "assignments": (List.from(subject.data['assignments'] ?? [])
+              ..add(assignment.toJson())),
+          });
+
+      return ReturnModel(
+          message: "Subject updated successfully",
+          success: true,
+          data: result.data);
+    } catch (error) {
+      return ReturnModel(
+          message: "Error updating subject",
+          success: false,
+          error: error.toString());
+    }
+  }
+
   Future<ReturnModel> createSubject(Subject subject) async {
     final jsonSubject = subject.toJson();
-    final User user = await account.get();
 
     jsonSubject.remove('\$id');
 
     try {
       final Document result = await database.createDocument(
-          databaseId: publicDb,
-          collectionId: "subjects",
-          documentId: subject.$id,
-          data: jsonSubject,
-          permissions: getPermissions(user.$id));
+        databaseId: publicDb,
+        collectionId: "subjects",
+        documentId: subject.$id,
+        data: jsonSubject,
+      );
 
       return ReturnModel(
           message: "Subject created successfully",
