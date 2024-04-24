@@ -27,10 +27,15 @@ class CurrentAssignment extends ChangeNotifier {
   }
 
   void updateSubtask(Subtask subtask) {
-    // Locally update the subtask
-    final index = _assignment!.subtasks!
-        .indexWhere((element) => element.$id == subtask.$id);
-    _assignment!.subtasks![index] = subtask;
+    _assignment = _assignment?.copyWith(
+      subtasks: _assignment?.subtasks?.map((oldSubtask) {
+        if (oldSubtask.$id == subtask.$id) {
+          return subtask;
+        }
+        return oldSubtask;
+      }).toList(),
+    );
+
     notifyListeners();
   }
 }

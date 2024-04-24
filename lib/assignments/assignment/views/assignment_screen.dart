@@ -29,8 +29,8 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
 
   void _subtaskComplete(Subtask subtask) {
     subtask = subtask.copyWith(completed: !subtask.completed);
-    ref.read(subtasksProvider.notifier).toggleSubtaskDone(subtask);
     ref.read(currentAssignmentProvider.notifier).updateSubtask(subtask);
+    ref.read(subtasksProvider.notifier).toggleSubtaskDone(subtask);
   }
 
   @override

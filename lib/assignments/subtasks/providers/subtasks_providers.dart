@@ -13,11 +13,13 @@ class SubtasksNotifier extends ChangeNotifier {
   Future<void> toggleSubtaskDone(Subtask subtask) async {
     final returnModel = await _subtasksRepository.updateSubtask(subtask);
     if (returnModel.success) {
-      int index = subtasks.indexWhere((element) => element.$id == subtask.$id);
-
-      Subtask updatedSubtask = subtask.copyWith(completed: !subtask.completed);
-
-      subtasks[index] = updatedSubtask;
+      subtasks = subtasks.map((oldSubtask) {
+        if (oldSubtask.$id == subtask.$id) {
+          return subtask;
+        }
+        return oldSubtask;
+      }).toList();
+      notifyListeners();
     }
   }
 }
