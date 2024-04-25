@@ -39,7 +39,7 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
       final assignment = Assignment(
         $id: ID.unique(),
         title: _titleController.text,
-        dueDate: _dueDate,
+        dueDate: _dueDate.toUtc(),
         description: _descriptionController.text,
         subtasks: _subtasks,
         subject: _subjectId == '' ? null : _subject,
