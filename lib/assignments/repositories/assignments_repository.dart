@@ -34,17 +34,39 @@ class AssignmentsRepository {
     final subject = assignment.subject?.toJson();
     final Map<String, dynamic> jsonAssignment = assignment.toJson();
     jsonAssignment['subtasks'] = subtasks;
+    final assignmentId = ID.unique();
 
     jsonAssignment.remove("\$id");
     jsonAssignment.remove("\$updatedAt");
     jsonAssignment.remove("\$createdAt");
     jsonAssignment.remove("subject");
 
+    final userNotificationTimes = [12, 24, 48];
+    final notifications = [];
+
+    for (final time in userNotificationTimes) {
+      final notificationTime =
+          assignment.dueDate.subtract(Duration(hours: time));
+
+      if (notificationTime.isAfter(assignment.dueDate) ||
+          notificationTime.isBefore(DateTime.now())) {
+        continue;
+      }
+
+      // Issue was due to not converting times to UTC when creating notifications
+      notifications.add({
+        "notificationTime": notificationTime.toUtc().toIso8601String(),
+        "activated": false,
+      });
+    }
+
+    jsonAssignment['notifications'] = notifications;
+
     try {
       final newAssignment = await database.createDocument(
         databaseId: publicDb,
         collectionId: "assignments",
-        documentId: ID.unique(),
+        documentId: assignmentId,
         data: jsonAssignment,
       );
 
