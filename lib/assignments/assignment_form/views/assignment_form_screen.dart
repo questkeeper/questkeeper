@@ -27,6 +27,8 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
 
   late BuildContext _context;
 
+  bool _isSubmitting = false;
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -35,6 +37,9 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
   }
 
   Future<void> _submitForm() async {
+    _isSubmitting = true;
+    setState(() {});
+
     if (_formKey.currentState!.validate()) {
       final assignment = Assignment(
         $id: ID.unique(),
@@ -77,134 +82,148 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
   Widget build(BuildContext context) {
     _context = context;
     final width = MediaQuery.of(_context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Assignment Form"),
-      ),
-      body: Center(
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
-                child: IntrinsicHeight(
-                  child: Column(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                        width: width > 600 ? width / 2 : width,
-                        child: AssignmentForm(
-                          onFormSubmitted: _submitForm,
-                          formKey: _formKey,
-                          width: width,
-                          titleController: _titleController,
-                          descriptionController: _descriptionController,
-                          dueDate: _dueDate,
-                          subjectsList: [
-                                const Subject(
-                                  $id: '-1',
-                                  name: 'Select a subject',
-                                )
-                              ] +
-                              ref.watch(subjectsProvider),
-                          onDueDateChanged: (date) {
-                            setState(() {
-                              _dueDate = date!;
-                            });
-                          },
-                          subjectId: _subjectId,
-                          onSubjectChanged: (id) {
-                            setState(() {
-                              if (id == '-1' || id == null || id == '') return;
-                              _subjectId = id;
-                              _subject = ref
-                                  .watch(subjectsProvider)
-                                  .firstWhere((subject) => subject.$id == id);
-                            });
-                          },
-                        ),
+    return _isSubmitting
+        ? const Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.transparent,
+            ),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: const Text("Create an assignment"),
+            ),
+            body: Center(
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
                       ),
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                        width: width > 600 ? width / 2 : width,
+                      child: IntrinsicHeight(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Subtasks',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            const SizedBox(height: 5),
-                            if (_subtasks.length < 10)
-                              TextButton(
-                                onPressed: () {
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                              width: width > 600 ? width / 2 : width,
+                              child: AssignmentForm(
+                                onFormSubmitted: _submitForm,
+                                formKey: _formKey,
+                                width: width,
+                                titleController: _titleController,
+                                descriptionController: _descriptionController,
+                                dueDate: _dueDate,
+                                subjectsList: [
+                                      const Subject(
+                                        $id: '-1',
+                                        name: 'Select a subject',
+                                      )
+                                    ] +
+                                    ref.watch(subjectsProvider),
+                                onDueDateChanged: (date) {
                                   setState(() {
-                                    _subtasks.add(Subtask(
-                                      $id: ID.unique(),
-                                      title: '',
-                                      priority: 1,
-                                    ));
+                                    _dueDate = date!;
                                   });
                                 },
-                                child: const Text('Add Subtask'),
-                              ),
-                            Container(
-                              constraints: const BoxConstraints(
-                                minHeight: 100,
-                              ),
-                              // This is really stupid, but I think it's dynamic?
-                              height: _subtasks.isNotEmpty
-                                  ? _subtasks.length *
-                                          Theme.of(context).buttonTheme.height +
-                                      (_subtasks.length * 50)
-                                  : 100,
-                              child: ListView.builder(
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: _subtasks.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    key: ValueKey(_subtasks[index].$id),
-                                    title: TextFormField(
-                                      initialValue: _subtasks[index].title,
-                                      onChanged: (value) {
-                                        _subtasks[index] = _subtasks[index]
-                                            .copyWith(title: value);
-                                      },
-                                    ),
-                                    trailing: IconButton(
-                                      onPressed: () {
-                                        _subtasks.removeAt(index);
-
-                                        setState(() {});
-                                      },
-                                      icon: const Icon(Icons.delete),
-                                    ),
-                                  );
+                                subjectId: _subjectId,
+                                onSubjectChanged: (id) {
+                                  setState(() {
+                                    if (id == '-1' || id == null || id == '')
+                                      return;
+                                    _subjectId = id;
+                                    _subject = ref
+                                        .watch(subjectsProvider)
+                                        .firstWhere(
+                                            (subject) => subject.$id == id);
+                                  });
                                 },
                               ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                              width: width > 600 ? width / 2 : width,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Subtasks',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall,
+                                  ),
+                                  const SizedBox(height: 5),
+                                  if (_subtasks.length < 10)
+                                    TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _subtasks.add(Subtask(
+                                            $id: ID.unique(),
+                                            title: '',
+                                            priority: 1,
+                                          ));
+                                        });
+                                      },
+                                      child: const Text('Add Subtask'),
+                                    ),
+                                  Container(
+                                    constraints: const BoxConstraints(
+                                      minHeight: 100,
+                                    ),
+                                    // This is really stupid, but I think it's dynamic?
+                                    height: _subtasks.isNotEmpty
+                                        ? _subtasks.length *
+                                                Theme.of(context)
+                                                    .buttonTheme
+                                                    .height +
+                                            (_subtasks.length * 50)
+                                        : 100,
+                                    child: ListView.builder(
+                                      physics: const BouncingScrollPhysics(),
+                                      itemCount: _subtasks.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          key: ValueKey(_subtasks[index].$id),
+                                          title: TextFormField(
+                                            initialValue:
+                                                _subtasks[index].title,
+                                            onChanged: (value) {
+                                              _subtasks[index] =
+                                                  _subtasks[index]
+                                                      .copyWith(title: value);
+                                            },
+                                          ),
+                                          trailing: IconButton(
+                                            onPressed: () {
+                                              _subtasks.removeAt(index);
+
+                                              setState(() {});
+                                            },
+                                            icon: const Icon(Icons.delete),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _submitForm();
+                                }
+                              },
+                              child: const Text("Submit"),
                             ),
                           ],
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _submitForm();
-                          }
-                        },
-                        child: const Text("Submit"),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
-      ),
-    );
+            ),
+          );
   }
 }
 
