@@ -9,6 +9,17 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<User?> currentAccount = account.get();
+
+    void notYetImplemented() {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Not yet implemented'),
+          duration: Duration(seconds: 1),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
+
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -62,34 +73,39 @@ class SettingsScreen extends StatelessWidget {
                     title: 'Notifications',
                     description: 'Manage your notifications',
                     icon: Icons.notifications,
-                    onTap: () => Navigator.pushNamed(
-                        context, '/settings/notifications')),
+                    // onTap: () => Navigator.pushNamed(
+                    //     context, '/settings/notifications')),
+                    onTap: notYetImplemented),
                 SettingsCard(
                     title: 'Theme',
                     description: 'Change the app theme',
                     icon: Icons.info,
-                    onTap: () =>
-                        Navigator.pushNamed(context, '/settings/theme')),
+                    onTap: notYetImplemented),
+                // onTap: () =>
+                //     Navigator.pushNamed(context, '/settings/theme')),
                 const Divider(),
                 SettingsCard(
                     title: 'Account',
                     description: 'Manage your account',
                     icon: Icons.account_circle,
-                    onTap: () =>
-                        Navigator.pushNamed(context, '/settings/account')),
+                    onTap: notYetImplemented),
+                // onTap: () =>
+                //     Navigator.pushNamed(context, '/settings/account')),
                 SettingsCard(
                     title: 'Feedback',
                     description: 'Send us your feedback',
                     icon: Icons.info,
-                    onTap: () =>
-                        Navigator.pushNamed(context, '/settings/feedback')),
+                    onTap: notYetImplemented),
+                // onTap: () =>
+                //     Navigator.pushNamed(context, '/settings/feedback')),
                 const Divider(),
                 SettingsCard(
                     title: 'About',
                     description: 'About the app',
                     icon: Icons.info,
-                    onTap: () =>
-                        Navigator.pushNamed(context, '/settings/about')),
+                    onTap: notYetImplemented),
+                // onTap: () =>
+                //     Navigator.pushNamed(context, '/settings/about')),
                 SettingsCard(
                     title: 'Sign out',
                     description: 'Sign out',
