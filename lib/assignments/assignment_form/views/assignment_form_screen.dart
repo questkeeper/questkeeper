@@ -2,6 +2,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
 import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:assigngo_rewrite/assignments/widgets/date_time_picker.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
@@ -291,40 +292,11 @@ class _AssignmentFormState extends State<AssignmentForm> {
                   ),
                   decoration: const InputDecoration(labelText: "Due Date"),
                   onTap: () async {
-                    final selectedDate = await showDatePicker(
-                      context: context,
-                      initialDate: widget.dueDate,
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(2100),
-                    ).then((selectedDate) {
-                      // After selecting the date, display the time picker.
-                      if (selectedDate != null) {
-                        showTimePicker(
-                          context: context,
-                          initialTime: widget.dueDate == selectedDate
-                              ? TimeOfDay.fromDateTime(widget.dueDate)
-                              : const TimeOfDay(hour: 23, minute: 59),
-                        ).then((selectedTime) {
-                          // Handle the selected date and time here.
-                          if (selectedTime != null) {
-                            DateTime selectedDateTime = DateTime(
-                              selectedDate.year,
-                              selectedDate.month,
-                              selectedDate.day,
-                              selectedTime.hour,
-                              selectedTime.minute,
-                            );
-                            widget.onDueDateChanged(selectedDateTime);
-                          }
-                        });
-                      }
-                    });
-
-                    if (selectedDate != null) {
-                      widget.onDueDateChanged(selectedDate);
-
-                      return selectedDate;
-                    }
+                    await showDateTimePicker(
+                      context,
+                      widget.dueDate,
+                      widget.onDueDateChanged,
+                    );
                   },
                   readOnly: true,
                 ),
