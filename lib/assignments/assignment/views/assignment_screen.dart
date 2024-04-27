@@ -91,7 +91,13 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                     currentAssignment: currentAssignment,
                     size: size,
                     isStar: isStar,
-                    isComp: isComp),
+                    isComp: isComp,
+                    setCurrentAssignmentNull: () {
+                      ref
+                          .read(currentAssignmentProvider.notifier)
+                          .setCurrentAssignment(null);
+                    },
+                  ),
 
             // Use the enum to create chips
             SingleChildScrollView(
@@ -204,7 +210,13 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                     currentAssignment: currentAssignment,
                     size: size,
                     isStar: isStar,
-                    isComp: isComp),
+                    isComp: isComp,
+                    setCurrentAssignmentNull: () {
+                      ref
+                          .read(currentAssignmentProvider.notifier)
+                          .setCurrentAssignment(null);
+                    },
+                  ),
             SizedBox(height: MediaQuery.of(context).padding.top + 10),
           ],
         ),
@@ -222,6 +234,7 @@ class ActionButtons extends StatefulWidget {
     required this.isComp,
     required this.size,
     required this.deleteAssignment,
+    required this.setCurrentAssignmentNull,
   });
 
   final Assignment? currentAssignment;
@@ -229,6 +242,7 @@ class ActionButtons extends StatefulWidget {
   final void Function(Assignment assignment) deleteAssignment;
   final Size size;
   final bool isStar, isComp;
+  final void Function() setCurrentAssignmentNull;
 
   @override
   ActionButtonsState createState() => ActionButtonsState();
@@ -240,6 +254,8 @@ class ActionButtonsState extends State<ActionButtons> {
     bool isStar = widget.isStar;
     bool isComp = widget.isComp;
     var newAssignment = widget.currentAssignment;
+
+    final isModal = ModalRoute.of(context) is PopupRoute;
     return Row(
       // space evenly to take up the full width
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -247,8 +263,10 @@ class ActionButtonsState extends State<ActionButtons> {
         IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            // Pop the screen when the back button is tapped
-            widget.size.width > 800 ? null : Navigator.of(context).pop();
+            if (isModal) {
+              Navigator.of(context).pop();
+            }
+            widget.setCurrentAssignmentNull();
           },
         ),
         Visibility(
@@ -298,15 +316,15 @@ class ActionButtonsState extends State<ActionButtons> {
                       actions: [
                         ElevatedButton(
                             onPressed: () {
-                              widget
-                                  .deleteAssignment(widget.currentAssignment!);
+                              Navigator.of(context).pop();
                             },
                             child: const Text("Cancel")),
                         ElevatedButton(
                             onPressed: () {
                               widget
                                   .deleteAssignment(widget.currentAssignment!);
-                              Navigator.of(context).pop();
+
+                              isModal ? Navigator.of(context).pop() : null;
                             },
                             child: const Text("Delete")),
                       ],
