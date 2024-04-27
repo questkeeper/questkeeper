@@ -68,12 +68,8 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
 
     return Scaffold(
       body: Container(
-        padding: size.width > 800
-            ? const EdgeInsets.all(32.0)
-            : const EdgeInsets.all(8),
-        margin: size.width > 800
-            ? const EdgeInsets.all(32.0)
-            : const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(16.0),
+        margin: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: platformBrightness == Brightness.dark
               ? CupertinoColors.darkBackgroundGray
