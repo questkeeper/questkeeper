@@ -103,7 +103,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
 
   Future<dynamic> _showSubjectSheet(BuildContext context, Subject subject) {
     return showModalBottomSheet(
-        scrollControlDisabledMaxHeightRatio: 0.85,
+        scrollControlDisabledMaxHeightRatio: 0.9,
         isDismissible: true,
         enableDrag: true,
         showDragHandle: true,
@@ -115,139 +115,145 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
               subject.color != null ? HexColor(subject.color!) : primaryColor;
           return Container(
             color: Theme.of(context).cardColor,
-            child: Column(
-              children: [
-                AppBar(
-                  title: Text("Editing ${subject.name}"),
-                ),
-                Container(
-                  margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  child: Form(
-                    child: Column(
-                      children: [
-                        FormField(builder: (FormFieldState state) {
-                          return TextFormField(
-                            controller: _subjectName,
-                            validator: (value) {
-                              if (value == null ||
-                                  value.isEmpty ||
-                                  value.length < 24) {
-                                return 'Please enter a subject name';
-                              }
-                              return null;
-                            },
-                            autofocus: true,
-                            decoration: const InputDecoration(
-                                labelText: 'Subject Name'),
-                          );
-                        }),
-                        SizedBox(
-                          width: double.infinity,
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: Card(
-                              elevation: 2,
-                              child: ColorPicker(
-                                color: _subjectColor,
-                                onColorChanged: (Color color) =>
-                                    setState(() => _subjectColor = color),
-                                width: 44,
-                                height: 44,
-                                borderRadius: 22,
-                                heading: Text(
-                                  'Select color',
-                                  style:
-                                      Theme.of(context).textTheme.headlineSmall,
-                                ),
-                                subheading: Text(
-                                  'Select color shade',
-                                  style: Theme.of(context).textTheme.titleSmall,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  AppBar(
+                    title: Text("Editing ${subject.name}"),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    child: Form(
+                      child: Column(
+                        children: [
+                          FormField(builder: (FormFieldState state) {
+                            return TextFormField(
+                              controller: _subjectName,
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value.length < 24) {
+                                  return 'Please enter a subject name';
+                                }
+                                return null;
+                              },
+                              autofocus: true,
+                              decoration: const InputDecoration(
+                                  labelText: 'Subject Name'),
+                            );
+                          }),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Padding(
+                              padding: const EdgeInsets.all(6),
+                              child: Card(
+                                elevation: 2,
+                                child: ColorPicker(
+                                  color: _subjectColor,
+                                  onColorChanged: (Color color) =>
+                                      setState(() => _subjectColor = color),
+                                  width: 44,
+                                  height: 44,
+                                  borderRadius: 22,
+                                  heading: Text(
+                                    'Select color',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall,
+                                  ),
+                                  subheading: Text(
+                                    'Select color shade',
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.all(20),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) => AlertDialog(
-                                            title: Text(
-                                                'Delete ${_subjectName.text}'),
-                                            content: const Text(
-                                                'Are you sure you want to delete this subject? This will delete all assignments associated with the subject.'),
-                                            actions: <Widget>[
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  foregroundColor: Colors.white,
-                                                  backgroundColor:
-                                                      Colors.redAccent,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.all(20),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                              title: Text(
+                                                  'Delete ${_subjectName.text}'),
+                                              content: const Text(
+                                                  'Are you sure you want to delete this subject? This will delete all assignments associated with the subject.'),
+                                              actions: <Widget>[
+                                                ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    backgroundColor:
+                                                        Colors.redAccent,
+                                                  ),
+                                                  onPressed: () {
+                                                    ref
+                                                        .read(subjectsProvider
+                                                            .notifier)
+                                                        .deleteSubject(subject);
+                                                    ref
+                                                        .read(subjectsProvider
+                                                            .notifier)
+                                                        .fetchSubjects();
+                                                    Navigator.pop(context);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('Yes'),
                                                 ),
-                                                onPressed: () {
-                                                  ref
-                                                      .read(subjectsProvider
-                                                          .notifier)
-                                                      .deleteSubject(subject);
-                                                  ref
-                                                      .read(subjectsProvider
-                                                          .notifier)
-                                                      .fetchSubjects();
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('Yes'),
-                                              ),
-                                              OutlinedButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('No'),
-                                              ),
-                                            ],
-                                          ));
-                                },
-                                style: TextButton.styleFrom(
-                                  backgroundColor: Colors.redAccent,
-                                  foregroundColor: Colors.white,
+                                                OutlinedButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('No'),
+                                                ),
+                                              ],
+                                            ));
+                                  },
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Colors.redAccent,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: const Text('Delete'),
                                 ),
-                                child: const Text('Delete'),
                               ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(20),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  final newSubject = subject.copyWith(
-                                    color: _subjectColor.hex,
-                                    name: _subjectName.text,
-                                  );
-                                  if (newSubject != subject) {
-                                    ref
-                                        .read(subjectsProvider.notifier)
-                                        .updateSubject(newSubject);
-                                  }
+                              Container(
+                                margin: const EdgeInsets.all(20),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    final newSubject = subject.copyWith(
+                                      color: _subjectColor.hex,
+                                      name: _subjectName.text,
+                                    );
+                                    if (newSubject != subject) {
+                                      ref
+                                          .read(subjectsProvider.notifier)
+                                          .updateSubject(newSubject);
+                                    }
 
-                                  Navigator.pop(context);
-                                },
-                                style: TextButton.styleFrom(
-                                  backgroundColor: primaryColor,
-                                  foregroundColor: Colors.white,
+                                    Navigator.pop(context);
+                                  },
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: primaryColor,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: const Text('Update'),
                                 ),
-                                child: const Text('Update'),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           );
         });
