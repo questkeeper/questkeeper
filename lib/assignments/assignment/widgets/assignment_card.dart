@@ -129,6 +129,21 @@ class _AssignmentCardState extends ConsumerState<AssignmentCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  if (widget.filter != AssignmentsFilter.completed &&
+                      assignment.dueDate.isBefore(DateTime.now().toUtc()))
+                    const Chip(
+                        label: Text("Overdue",
+                            style: TextStyle(color: Colors.black)),
+                        visualDensity: VisualDensity.compact,
+                        backgroundColor: Colors.redAccent),
+                  if (assignment.dueDate.isAfter(DateTime.now().toUtc()) &&
+                      assignment.dueDate.isBefore(
+                          DateTime.now().add(const Duration(days: 1)).toUtc()))
+                    const Chip(
+                        label: Text("Due Today",
+                            style: TextStyle(color: Colors.black)),
+                        visualDensity: VisualDensity.compact,
+                        backgroundColor: Colors.amber),
                   Text(
                     widget.assignment.title,
                     style: Theme.of(context).textTheme.titleLarge,
