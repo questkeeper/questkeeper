@@ -88,9 +88,8 @@ class SettingsScreen extends StatelessWidget {
                     title: 'Account',
                     description: 'Manage your account',
                     icon: Icons.account_circle,
-                    onTap: notYetImplemented),
-                // onTap: () =>
-                //     Navigator.pushNamed(context, '/settings/account')),
+                    onTap: () =>
+                        Navigator.pushNamed(context, '/settings/account')),
                 SettingsCard(
                     title: 'Feedback',
                     description: 'Send us your feedback',

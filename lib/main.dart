@@ -4,6 +4,7 @@ import 'package:assigngo_rewrite/auth/view/auth_password_screen.dart';
 import 'package:assigngo_rewrite/auth/view/auth_screen.dart';
 import 'package:assigngo_rewrite/auth/view/auth_gate.dart';
 import 'package:assigngo_rewrite/settings/views/about/about_screen.dart';
+import 'package:assigngo_rewrite/settings/views/account/account_screen.dart';
 import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:assigngo_rewrite/subjects/views/subjects_screen.dart';
@@ -85,6 +86,7 @@ class MyApp extends ConsumerWidget {
         '/subjects': (context) => const SubjectsScreen(),
 
         // Settings stuff
+        '/settings/account': (context) => const AccountScreen(),
         '/settings/about': (context) => const AboutScreen()
       },
     );
