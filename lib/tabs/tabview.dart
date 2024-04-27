@@ -58,7 +58,8 @@ class _TabViewState extends ConsumerState<TabView> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (MediaQuery.of(context).size.width < 800) {
+        final double width = constraints.maxWidth;
+        if (width < 800) {
           // Mobile layout
           return Scaffold(
             body: RefreshIndicator(
@@ -122,7 +123,7 @@ class _TabViewState extends ConsumerState<TabView> {
                     ],
                   ),
                   Expanded(
-                    flex: 3,
+                    flex: width > 900 ? 3 : 2,
                     child: pages[_selectedIndex],
                   ),
                   const Expanded(flex: 2, child: AssignmentScreen()),
