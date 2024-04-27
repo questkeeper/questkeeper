@@ -103,9 +103,8 @@ class SettingsScreen extends StatelessWidget {
                     title: 'About',
                     description: 'About the app',
                     icon: Icons.info,
-                    onTap: notYetImplemented),
-                // onTap: () =>
-                //     Navigator.pushNamed(context, '/settings/about')),
+                    onTap: () =>
+                        Navigator.pushNamed(context, '/settings/about')),
                 SettingsCard(
                     title: 'Sign out',
                     description: 'Sign out',
