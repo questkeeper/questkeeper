@@ -102,6 +102,8 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
   Future<void> deleteAssignment(Assignment assignment) async {
     try {
       await _repository.deleteAssignment(assignment);
+
+      state = state.where((a) => a.$id != assignment.$id).toList();
     } catch (error) {
       debugPrint("Error deleting assignment: $error");
     }
