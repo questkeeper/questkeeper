@@ -36,11 +36,11 @@ jobs:
       - name: Build ${{ matrix.platform }}
         run: |
           if [ "${{ matrix.platform }}" == "android" ]; then
-            flutter build apk --split-debug-info --obfuscate --release
+            flutter build appbundle --split-debug-info=./debug-info --obfuscate --release
           elif [ "${{ matrix.platform }}" == "ios" ]; then
-            flutter build ios --split-debug-info --obfuscate --release
+            flutter build ipa --split-debug-info=./debug-info --obfuscate --release
           elif [ "${{ matrix.platform }}" == "macos" ]; then
-            flutter build macos --split-debug-info --obfuscate --release
+            flutter build macos --split-debug-info=./debug-info --obfuscate --release
           elif [ "${{ matrix.platform }}" == "windows" ]; then
             flutter build windows
           fi
@@ -50,10 +50,10 @@ jobs:
         with:
           name: ${{ matrix.platform }}-app
           path: |
-            build/app/outputs/flutter-apk/*.apk
-            build/ios/ipa/*.ipa
-            build/macos/Build/Products/Release/*.app
-            build/windows/runner/Release/*.exe
+            build/app/outputs/bundle/release/app-release.aab
+            build/ios/ipa/assigngo_rewrite.ipa
+            build/macos/Build/Products/Release/assigngo_rewrite.app
+            build/app/outputs/flutter-windows
 
   release:
     needs: build
