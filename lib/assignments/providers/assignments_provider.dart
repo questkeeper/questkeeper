@@ -122,4 +122,12 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
       debugPrint("Error updating assignment: $error");
     }
   }
+
+  Future<void> createSubtask(Assignment assignment) async {
+    try {
+      await _repository.createSubtask(assignment);
+    } catch (error) {
+      debugPrint("Error creating subtask: $error");
+    }
+  }
 }

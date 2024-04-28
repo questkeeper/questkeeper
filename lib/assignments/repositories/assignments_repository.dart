@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
+import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 import 'package:assigngo_rewrite/subjects/repositories/subjects_repository.dart';
@@ -155,6 +156,37 @@ class AssignmentsRepository {
     } catch (error) {
       return ReturnModel(
           message: "Error updating assignment",
+          success: false,
+          error: error.toString());
+    }
+  }
+
+  Future<ReturnModel> createSubtask(Assignment assignment) async {
+    final newSubtask = const Subtask(
+      $id: '',
+      title: "New subtask",
+      completed: false,
+    ).toJson();
+
+    newSubtask.remove("\$id");
+
+    try {
+      await database.updateDocument(
+          databaseId: publicDb,
+          collectionId: "assignments",
+          documentId: assignment.$id,
+          data: {
+            "subtasks": assignment.subtasks == null
+                ? [newSubtask]
+                : assignment.subtasks!.map((e) => e.toJson()).toList()
+              ..add(newSubtask)
+          });
+
+      return const ReturnModel(
+          message: "Subtask created successfully", success: true);
+    } catch (error) {
+      return ReturnModel(
+          message: "Error creating subtask",
           success: false,
           error: error.toString());
     }

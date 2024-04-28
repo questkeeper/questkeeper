@@ -1,4 +1,5 @@
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
+import 'package:assigngo_rewrite/assignments/repositories/assignments_repository.dart';
 import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +10,7 @@ final currentAssignmentProvider =
 class CurrentAssignment extends ChangeNotifier {
   Assignment? _assignment;
   Assignment? get assignment => _assignment;
+  final AssignmentsRepository _repository = AssignmentsRepository();
 
   set assignment(Assignment? assignment) {
     _assignment = assignment;
@@ -17,6 +19,11 @@ class CurrentAssignment extends ChangeNotifier {
 
   setCurrentAssignment(Assignment? assignment) {
     _assignment = assignment;
+    notifyListeners();
+  }
+
+  updateCurrentAssignment(Assignment assignment) async {
+    _assignment = await _repository.getAssignment(assignment.$id);
     notifyListeners();
   }
 
