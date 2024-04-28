@@ -1,4 +1,4 @@
-name: Build and Release
+name: Flutter Desktop Deployment
 
 on:
   push:
@@ -6,79 +6,58 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build and Release on All Platforms
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - platform: android
-            os: ubuntu-latest
-          - platform: ios
-            os: macos-latest
-          - platform: macos
-            os: macos-latest
-          - platform: windows
-            os: windows-latest
+  windows:
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2.16.0
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
         with:
-          channel: stable
-
-      - name: Install Dependencies
+          channel: "stable"
+      - name: Install project dependencies
         run: flutter pub get
-
-      - name: Build ${{ matrix.platform }}
-        run: |
-          if [ "${{ matrix.platform }}" == "android" ]; then
-            flutter build appbundle --release
-          elif [ "${{ matrix.platform }}" == "ios" ]; then
-            flutter build ipa --release
-          elif [ "${{ matrix.platform }}" == "macos" ]; then
-            flutter build macos --release
-          elif [ "${{ matrix.platform }}" == "windows" ]; then
-            dart run msix:create -d "AssignGo" -i "IshanMisra.AssignGo"
-          fi
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+      - name: Generate intermediates
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Build artifacts
+        run: dart run msix:create -d "AssignGo" -i "IshanMisra.AssignGo" --split-debug-info=./debug-info --obfuscate --release
+      - name: Package Release
+        uses: thedoctor0/zip-release@master
         with:
-          name: ${{ matrix.platform }}-app
-          path: |
-            build/app/outputs/bundle/release/app-release.aab
-            build/ios/ipa/assigngo_rewrite.ipa
-            build/macos/Build/Products/Release/assigngo_rewrite.app
-            build/windows/x64/runner/Release/assigngo2.exe
+          type: "zip"
+          filename: local_api_server-${{github.ref_name}}-windows.zip
+          directory: build/windows/runner/Release
+      - name: Release to github
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{github.ref_name}}
+          files: build/windows/runner/Release/local_api_server-${{github.ref_name}}-windows.zip
 
-  release:
-    needs: build
-    runs-on: ubuntu-latest
+  macos:
+    runs-on: macos-latest
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+      - name: Install project dependencies
+        run: flutter pub get
+      - name: Generate intermediates
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Build artifacts
+        run: flutter build macos --split-debug-info=./debug-info --obfuscate --release
+      - name: Package Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: "zip"
+          filename: local_api_server-${{github.ref_name}}-macos.zip
+          directory: build/macos/Build/Products/Release
+      - name: Release to github
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/app/outputs/flutter-apk/app-release.apk
-          asset_name: app-release.apk
-          asset_content_type: application/vnd.android.package-archive
+          tag_name: ${{github.ref_name}}
+          files: build/macos/Build/Products/Release/local_api_server-${{github.ref_name}}-macos.zip
