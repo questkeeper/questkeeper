@@ -36,13 +36,13 @@ jobs:
       - name: Build ${{ matrix.platform }}
         run: |
           if [ "${{ matrix.platform }}" == "android" ]; then
-            flutter build appbundle --split-debug-info=./debug-info --obfuscate --release
+            flutter build appbundle --release
           elif [ "${{ matrix.platform }}" == "ios" ]; then
-            flutter build ipa --split-debug-info=./debug-info --obfuscate --release
+            flutter build ipa --release
           elif [ "${{ matrix.platform }}" == "macos" ]; then
-            flutter build macos --split-debug-info=./debug-info --obfuscate --release
+            flutter build macos --release
           elif [ "${{ matrix.platform }}" == "windows" ]; then
-            dart run msix:create -d "AssignGo" -i "IshanMisra.AssignGo" --obfuscate --split-debug-info=./debug-info
+            dart run msix:create -d "AssignGo" -i "IshanMisra.AssignGo"
           fi
 
       - name: Upload Artifacts
