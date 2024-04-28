@@ -42,7 +42,7 @@ jobs:
           elif [ "${{ matrix.platform }}" == "macos" ]; then
             flutter build macos --split-debug-info=./debug-info --obfuscate --release
           elif [ "${{ matrix.platform }}" == "windows" ]; then
-            flutter build windows
+            dart run msix:create -d "AssignGo" -i "IshanMisra.AssignGo" --obfuscate --split-debug-info=./debug-info
           fi
 
       - name: Upload Artifacts
@@ -53,7 +53,7 @@ jobs:
             build/app/outputs/bundle/release/app-release.aab
             build/ios/ipa/assigngo_rewrite.ipa
             build/macos/Build/Products/Release/assigngo_rewrite.app
-            build/app/outputs/flutter-windows
+            build/windows/x64/runner/Release/assigngo2.exe
 
   release:
     needs: build
