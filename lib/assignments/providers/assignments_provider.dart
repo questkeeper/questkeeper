@@ -109,6 +109,21 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
     }
   }
 
+  Future<void> updateAssignmentSubject(Assignment assignment) async {
+    try {
+      await _repository.updateAssignmentSubject(assignment);
+
+      state = state.map((a) {
+        if (a.$id == assignment.$id) {
+          return assignment;
+        }
+        return a;
+      }).toList();
+    } catch (error) {
+      debugPrint("Error updating assignment subject: $error");
+    }
+  }
+
   Future<void> updateAssignment(Assignment assignment) async {
     try {
       await _repository.updateAssignment(assignment);

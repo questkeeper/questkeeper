@@ -140,6 +140,26 @@ class AssignmentsRepository {
     }
   }
 
+  Future<ReturnModel> updateAssignmentSubject(Assignment assignment) async {
+    final Map<String, dynamic> jsonAssignment = assignment.toJson();
+
+    try {
+      await database.updateDocument(
+          databaseId: publicDb,
+          collectionId: "assignments",
+          documentId: assignment.$id,
+          data: jsonAssignment);
+
+      return const ReturnModel(
+          message: "Assignment updated successfully", success: true);
+    } catch (error) {
+      return ReturnModel(
+          message: "Error updating assignment",
+          success: false,
+          error: error.toString());
+    }
+  }
+
   Future<ReturnModel> updateAssignment(Assignment assignment) async {
     final Map<String, dynamic> jsonAssignment = assignment.toJson();
     jsonAssignment.remove("subject");

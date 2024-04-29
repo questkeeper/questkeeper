@@ -33,6 +33,11 @@ class CurrentAssignment extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateAssignmentSubject(Assignment assignment) {
+    _assignment = _assignment?.copyWith(subject: assignment.subject);
+    notifyListeners();
+  }
+
   void updateSubtask(Subtask subtask) {
     _assignment = _assignment?.copyWith(
       subtasks: _assignment?.subtasks?.map((oldSubtask) {
