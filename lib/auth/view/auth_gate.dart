@@ -23,7 +23,7 @@ class AuthGate extends ConsumerWidget {
 
     return currentSessionAsync.when(
       data: (session) => session != null ? const TabView() : const AuthScreen(),
-      loading: () => const CircularProgressIndicator(),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, _) => Text('Error: $error'),
     );
   }
