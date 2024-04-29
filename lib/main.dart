@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'tabs/tabview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:assigngo_rewrite/theme.dart';
+import 'package:assigngo_rewrite/theme_components.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -40,44 +42,60 @@ Future<void> main() async {
   );
 }
 
+final textTheme = ThemeData.dark().textTheme.apply(
+      fontFamily: GoogleFonts.notoSans().fontFamily,
+    );
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final components = ComponentsTheme.componentsThemeData;
     return MaterialApp(
       title: 'AssignGo',
-      theme: ThemeData.light(
-        useMaterial3: true,
+      theme: ThemeData(
+              useMaterial3: true,
+              colorScheme: MaterialTheme.lightScheme().toColorScheme(),
+              textTheme: textTheme)
+          .copyWith(
+        appBarTheme: components.appBarTheme,
+        inputDecorationTheme: components.inputDecorationTheme,
+        textButtonTheme: components.textButtonTheme,
+        outlinedButtonTheme: components.outlinedButtonTheme,
       ),
-      darkTheme: ThemeData.dark(
+      darkTheme: ThemeData(
+              useMaterial3: true,
+              colorScheme: MaterialTheme.darkScheme().toColorScheme(),
+              textTheme: textTheme)
+          .copyWith(
+        appBarTheme: components.appBarTheme,
+        inputDecorationTheme: components.inputDecorationTheme,
+        textButtonTheme: components.textButtonTheme,
+        outlinedButtonTheme: components.outlinedButtonTheme,
+      ),
+      highContrastDarkTheme: ThemeData(
+              useMaterial3: true,
+              colorScheme:
+                  MaterialTheme.darkHighContrastScheme().toColorScheme(),
+              textTheme: textTheme)
+          .copyWith(
+        appBarTheme: components.appBarTheme,
+        inputDecorationTheme: components.inputDecorationTheme,
+        textButtonTheme: components.textButtonTheme,
+        outlinedButtonTheme: components.outlinedButtonTheme,
+      ),
+      highContrastTheme: ThemeData(
         useMaterial3: true,
+        colorScheme: MaterialTheme.lightHighContrastScheme().toColorScheme(),
+        textTheme: textTheme,
       ).copyWith(
-        textTheme: ThemeData.dark().textTheme.apply(
-              fontFamily: GoogleFonts.poppins(
-                textStyle: const TextStyle(fontWeight: FontWeight.w500),
-              ).fontFamily,
-            ),
-        primaryTextTheme: ThemeData.dark().textTheme.apply(
-              fontFamily: GoogleFonts.poppins(
-                textStyle: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                ),
-              ).fontFamily,
-            ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: false,
-        ),
-        inputDecorationTheme: const InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12.0)),
-          ),
-        ),
-        primaryColor: const Color(0xFFa86fd1),
+        appBarTheme: components.appBarTheme,
+        inputDecorationTheme: components.inputDecorationTheme,
+        textButtonTheme: components.textButtonTheme,
+        outlinedButtonTheme: components.outlinedButtonTheme,
       ),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.system,
       home: const AuthGate(),
       routes: {
         '/signin': (context) => const AuthScreen(),
