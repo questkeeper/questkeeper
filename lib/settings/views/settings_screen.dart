@@ -109,16 +109,8 @@ class SettingsScreen extends StatelessWidget {
                     description: 'Sign out',
                     icon: Icons.logout,
                     backgroundColor: Colors.red,
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                      );
-                      account
+                    onTap: () async {
+                      await account
                           .deleteSession(sessionId: "current")
                           .then((value) => {
                                 Navigator.pushReplacementNamed(
