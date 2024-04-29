@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@v2
         with:
           channel: "stable"
       - name: Install project dependencies
@@ -19,7 +19,7 @@ jobs:
       - name: Generate intermediates
         run: flutter pub run build_runner build --delete-conflicting-outputs
       - name: Build artifacts
-        run: dart run msix:create -d "AssignGo" -i "IshanMisra.AssignGo" -n "AssignGo"
+        run: dart run msix:create -d "AssignGo" -i "IshanMisra.AssignGo" -n "AssignGo" -u "Ishan Misra" -b "CN=A886BAF4-2956-4E4B-86CA-616F2ACE05D3" --release --store
       - name: Release msix to github
         uses: softprops/action-gh-release@v1
         env:
@@ -33,7 +33,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: "zip"
-          filename: local_api_server-${{github.ref_name}}-android.zip
+          filename: assigngo-${{github.ref_name}}-android.zip
           directory: build/app/outputs/bundle/release
       - name: Release app bundle to github
         uses: softprops/action-gh-release@v1
@@ -41,7 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{github.ref_name}}
-          files: build/app/outputs/bundle/release/local_api_server-${{github.ref_name}}-android.zip
+          files: build/app/outputs/bundle/release/assigngo-${{github.ref_name}}-android.zip
 
   macos:
     runs-on: macos-latest
@@ -61,7 +61,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: "zip"
-          filename: local_api_server-${{github.ref_name}}-macos.zip
+          filename: assigngo-${{github.ref_name}}-macos.zip
           directory: build/macos/Build/Products/Release
       - name: Release MacOS to github
         uses: softprops/action-gh-release@v1
@@ -69,12 +69,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{github.ref_name}}
-          files: build/macos/Build/Products/Release/local_api_server-${{github.ref_name}}-macos.zip
+          files: build/macos/Build/Products/Release/assigngo-${{github.ref_name}}-macos.zip
+      - name: Build ipa for iOS
+        run: flutter build ipa --split-debug-info=./debug-info --obfuscate --release
       - name: Package Release iOS IPA
         uses: thedoctor0/zip-release@master
         with:
           type: "zip"
-          filename: local_api_server-${{github.ref_name}}-ios.zip
+          filename: assigngo-${{github.ref_name}}-ios.zip
           directory: build/ios/ipa
       - name: Release IPA to github
         uses: softprops/action-gh-release@v1
@@ -82,4 +84,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{github.ref_name}}
-          files: build/ios/ipa/local_api_server-${{github.ref_name}}-ios.zip
+          files: build/ios/ipa/assigngo-${{github.ref_name}}-ios.zip
