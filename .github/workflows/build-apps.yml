@@ -8,6 +8,9 @@ on:
 jobs:
   windows:
     runs-on: windows-latest
+    permissions:
+      contents: write
+      packages: write
 
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +24,7 @@ jobs:
       - name: Build artifacts
         run: dart run msix:create -d "AssignGo" -i "IshanMisra.AssignGo" -n "AssignGo" -u "Ishan Misra" -b "CN=A886BAF4-2956-4E4B-86CA-616F2ACE05D3" --release --store
       - name: Release msix to github
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -36,7 +39,7 @@ jobs:
           filename: assigngo-${{github.ref_name}}-android.zip
           directory: build/app/outputs/bundle/release
       - name: Release app bundle to github
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -45,6 +48,9 @@ jobs:
 
   macos:
     runs-on: macos-latest
+    permissions:
+      contents: write
+      packages: write
 
     steps:
       - uses: actions/checkout@v2
@@ -64,7 +70,7 @@ jobs:
           filename: assigngo-${{github.ref_name}}-macos.zip
           directory: build/macos/Build/Products/Release
       - name: Release MacOS to github
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -79,7 +85,7 @@ jobs:
           filename: assigngo-${{github.ref_name}}-ios.zip
           directory: build/ios/ipa
       - name: Release IPA to github
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
