@@ -3,6 +3,7 @@ import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
 import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/assignments/widgets/date_time_picker.dart';
+import 'package:assigngo_rewrite/assignments/widgets/subject_dropdown_field.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
@@ -114,13 +115,7 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                                 titleController: _titleController,
                                 descriptionController: _descriptionController,
                                 dueDate: _dueDate,
-                                subjectsList: [
-                                      const Subject(
-                                        $id: '-1',
-                                        name: 'Select a subject',
-                                      )
-                                    ] +
-                                    ref.watch(subjectsProvider),
+                                subjectsList: ref.watch(subjectsProvider),
                                 onDueDateChanged: (date) {
                                   setState(() {
                                     _dueDate = date!;
@@ -129,8 +124,9 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                                 subjectId: _subjectId,
                                 onSubjectChanged: (id) {
                                   setState(() {
-                                    if (id == '-1' || id == null || id == '')
+                                    if (id == '-1' || id == null || id == '') {
                                       return;
+                                    }
                                     _subjectId = id;
                                     _subject = ref
                                         .watch(subjectsProvider)
@@ -303,21 +299,9 @@ class _AssignmentFormState extends State<AssignmentForm> {
               ),
               const SizedBox(width: 20),
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: widget.subjectsList.first.$id,
-                  onChanged: widget.onSubjectChanged,
-                  isExpanded: true,
-                  items: widget.subjectsList
-                      .map(
-                        (subject) => DropdownMenuItem<String>(
-                          value: subject.$id,
-                          child: Text(subject.name),
-                        ),
-                      )
-                      .toList(),
-                  decoration: const InputDecoration(
-                    labelText: "Subject",
-                  ),
+                child: SubjectDropdownField(
+                  subjectsList: widget.subjectsList,
+                  onSubjectChanged: widget.onSubjectChanged,
                 ),
               ),
             ],
