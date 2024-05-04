@@ -63,6 +63,7 @@ class MyApp extends ConsumerWidget {
         inputDecorationTheme: components.inputDecorationTheme,
         textButtonTheme: components.textButtonTheme,
         outlinedButtonTheme: components.outlinedButtonTheme,
+        elevatedButtonTheme: components.elevatedButtonTheme,
       ),
       darkTheme: ThemeData(
               useMaterial3: true,
@@ -73,6 +74,7 @@ class MyApp extends ConsumerWidget {
         inputDecorationTheme: components.inputDecorationTheme,
         textButtonTheme: components.textButtonTheme,
         outlinedButtonTheme: components.outlinedButtonTheme,
+        elevatedButtonTheme: components.elevatedButtonTheme,
       ),
       highContrastDarkTheme: ThemeData(
               useMaterial3: true,
@@ -84,6 +86,7 @@ class MyApp extends ConsumerWidget {
         inputDecorationTheme: components.inputDecorationTheme,
         textButtonTheme: components.textButtonTheme,
         outlinedButtonTheme: components.outlinedButtonTheme,
+        elevatedButtonTheme: components.elevatedButtonTheme,
       ),
       highContrastTheme: ThemeData(
         useMaterial3: true,
@@ -94,6 +97,7 @@ class MyApp extends ConsumerWidget {
         inputDecorationTheme: components.inputDecorationTheme,
         textButtonTheme: components.textButtonTheme,
         outlinedButtonTheme: components.outlinedButtonTheme,
+        elevatedButtonTheme: components.elevatedButtonTheme,
       ),
       themeMode: ThemeMode.system,
       home: const AuthGate(),

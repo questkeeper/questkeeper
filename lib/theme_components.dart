@@ -1,31 +1,4 @@
 import 'package:flutter/material.dart';
-// textButtonTheme: TextButtonThemeData(
-//     style: ButtonStyle(
-//       padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
-//       foregroundColor: MaterialStateProperty.all(secondaryColor),
-//       shape: MaterialStateProperty.all(
-//         RoundedRectangleBorder(
-//           borderRadius: BorderRadius.circular(12),
-//         ),
-//       ),
-//       iconSize: MaterialStateProperty.all(18),
-//       textStyle: MaterialStateProperty.all(
-//         GoogleFonts.notoSans(
-//           textStyle: const TextStyle(fontSize: 14),
-//         ),
-//       ),
-//     ),
-//   ),
-//   outlinedButtonTheme: OutlinedButtonThemeData(
-//     style: ButtonStyle(
-//       padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
-//       shape: MaterialStateProperty.all(
-//         RoundedRectangleBorder(
-//           borderRadius: BorderRadius.circular(12),
-//         ),
-//       ),
-//     ),
-//   ),
 
 class ComponentsTheme {
   static textButtonTheme() {
@@ -48,6 +21,19 @@ class ComponentsTheme {
 
   static outlinedButtonTheme() {
     return OutlinedButtonThemeData(
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
+        shape: MaterialStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static elevatedButtonTheme() {
+    return ElevatedButtonThemeData(
       style: ButtonStyle(
         padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
         shape: MaterialStateProperty.all(
