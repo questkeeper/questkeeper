@@ -1,10 +1,8 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
 
-const appwriteEndpoint = "https://appwrite.hayhay.dev/v1";
-const projectId = "661e90420031a22ce300";
-// const appwriteEndpoint = "https://cloud.appwrite.io/v1";
-// const projectId = "663070dc003453890e3c";
+const appwriteEndpoint = "https://cloud.appwrite.io/v1";
+const projectId = "663070dc003453890e3c";
 
 Client client = Client().setEndpoint(appwriteEndpoint).setProject(projectId);
 Databases database = Databases(client);

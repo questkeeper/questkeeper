@@ -1,9 +1,7 @@
-import 'dart:io';
-
 import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
 import 'package:assigngo_rewrite/assignments/repositories/assignments_repository.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
-import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
+// import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,22 +16,22 @@ class AssignmentsNotifier extends StateNotifier<List<Assignment>> {
   final AssignmentsRepository _repository = AssignmentsRepository();
   AssignmentsNotifier(super.state);
 
-  void updateHomeWidget(List<Assignment> state) {
-    try {
-      if (Platform.isIOS || Platform.isAndroid) {
-        HomeWidgetMobile().updateHomeWidget(state);
-      }
-    } catch (e) {
-      debugPrint("Platform implementation error: $e");
-    }
-  }
+  // void updateHomeWidget(List<Assignment> state) {
+  //   try {
+  //     if (Platform.isIOS || Platform.isAndroid) {
+  //       HomeWidgetMobile().updateHomeWidget(state);
+  //     }
+  //   } catch (e) {
+  //     debugPrint("Platform implementation error: $e");
+  //   }
+  // }
 
   Future<void> fetchAssignments() async {
     try {
       final assignments = await _repository.getAssignments();
 
       state = assignments;
-      updateHomeWidget(assignments);
+      // updateHomeWidget(assignments);
     } catch (error) {
       debugPrint("Error fetching assignments: $error");
     }
