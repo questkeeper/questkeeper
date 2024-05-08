@@ -44,8 +44,6 @@ class AuthNotifier extends StateNotifier<SignInState> {
   }
 
   Future<void> passwordSignIn() async {
-    print(emailController.text);
-    print(otpController.text);
     try {
       final response = await account.createEmailPasswordSession(
           email: emailController.text, password: otpController.text);
@@ -64,7 +62,9 @@ class AuthNotifier extends StateNotifier<SignInState> {
   // Set up FCM
   void setFirebaseMessaging() async {
     debugPrint('Setting up FCM');
-    await FirebaseMessaging.instance.requestPermission();
+    await FirebaseMessaging.instance.requestPermission(
+      provisional: true,
+    );
     await FirebaseMessaging.instance.getAPNSToken();
     final token = await FirebaseMessaging.instance.getToken();
     debugPrint(token);

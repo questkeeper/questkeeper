@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/auth/providers/auth_provider.dart';
@@ -53,7 +54,7 @@ class AuthScreen extends ConsumerWidget {
                       ref
                           .read(authProvider.notifier)
                           .signIn()
-                          .then((_) => {
+                          .then((value) async => {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(authState.otpSent
@@ -64,13 +65,9 @@ class AuthScreen extends ConsumerWidget {
                                 if (authState.otpSent &&
                                     authState.error == null)
                                   {
-                                    // Request push notification permission
-                                    FirebaseMessaging.instance
-                                        .requestPermission(
-                                      provisional: true,
-                                    ),
-
-                                    if (Platform.isIOS || Platform.isMacOS)
+                                    debugPrint("OTP verified"),
+                                    if (!kIsWeb &&
+                                        (Platform.isIOS || Platform.isMacOS))
                                       {
                                         FirebaseMessaging.instance
                                             .setForegroundNotificationPresentationOptions(
@@ -79,11 +76,12 @@ class AuthScreen extends ConsumerWidget {
                                           sound: true,
                                         ),
                                       },
-
+                                    debugPrint(
+                                        "Foreground notification options"),
                                     ref
                                         .read(authProvider.notifier)
                                         .setFirebaseMessaging(),
-
+                                    debugPrint("Firebase messaging set"),
                                     Navigator.of(context).popAndPushNamed(
                                       '/home',
                                     ),
