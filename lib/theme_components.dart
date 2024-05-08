@@ -22,10 +22,10 @@ class ComponentsTheme {
   static outlinedButtonTheme() {
     return OutlinedButtonThemeData(
       style: ButtonStyle(
-        padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
+        padding: MaterialStateProperty.all(const EdgeInsets.all(12)),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
       ),
@@ -35,10 +35,23 @@ class ComponentsTheme {
   static elevatedButtonTheme() {
     return ElevatedButtonThemeData(
       style: ButtonStyle(
-        padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
+        padding: MaterialStateProperty.all(const EdgeInsets.all(12)),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static filledButtonTheme() {
+    return ElevatedButtonThemeData(
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all(const EdgeInsets.all(12)),
+        shape: MaterialStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
       ),
@@ -66,5 +79,6 @@ class ComponentsTheme {
     outlinedButtonTheme: outlinedButtonTheme(),
     appBarTheme: appBarTheme(),
     inputDecorationTheme: inputDecorationTheme(),
+    elevatedButtonTheme: elevatedButtonTheme(),
   );
 }
