@@ -31,7 +31,6 @@ class SignInPasswordScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextFormField(
-              keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Password',
                 hintText: 'Enter your Password',
