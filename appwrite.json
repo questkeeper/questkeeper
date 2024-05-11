@@ -1,40 +1,21 @@
 {
-    "projectId": "661e90420031a22ce300",
-    "projectName": "assigngo",
-    "functions": [
-        {
-            "$id": "66293c77a954122c2905",
-            "name": "createPush",
-            "runtime": "deno-1.40",
-            "execute": [],
-            "events": [
-                "databases.public.collections.assignments.documents.*.create"
-            ],
-            "schedule": "",
-            "timeout": 15,
-            "enabled": true,
-            "logging": true,
-            "entrypoint": "src/main.ts",
-            "commands": "",
-            "ignore": [],
-            "path": "functions/createPush"
-        },
-        {
-            "$id": "662b1617de34d91ef7c6",
-            "name": "deletePush",
-            "runtime": "deno-1.40",
-            "execute": [],
-            "events": [
-              "databases.public.collections.assignments.documents.*.delete"
-            ],
-            "schedule": "",
-            "timeout": 15,
-            "enabled": true,
-            "logging": true,
-            "entrypoint": "src/main.ts",
-            "commands": "deno install",
-            "ignore": [],
-            "path": "functions/deletePush"
-        }
-    ]
+  "projectId": "663070dc003453890e3c",
+  "projectName": "assigngo",
+  "functions": [
+    {
+      "$id": "notify",
+      "name": "notify",
+      "runtime": "bun-1.0",
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "entrypoint": "src/main.ts",
+      "commands": "bun install",
+      "ignore": ["node_modules", ".npm"],
+      "path": "functions/notify"
+    }
+  ]
 }
