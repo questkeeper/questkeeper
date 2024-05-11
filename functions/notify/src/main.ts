@@ -38,10 +38,12 @@ export default async ({ req, res, error, log }: any) => {
     .setProject(Bun.env["APPWRITE_FUNCTION_PROJECT_ID"] as string)
     .setKey(Bun.env["APPWRITE_API_KEY"] as string);
 
-  const jsonBody = req.body;
+  const appwriteHeaderEvent = req.headers["x-appwrite-event"];
 
-  const assignment = jsonBody["assignment"] as Assignment;
-  const type = jsonBody["type"] as string;
+  const assignment = req.body as Assignment;
+
+  const type =
+    appwriteHeaderEvent.split(".")[appwriteHeaderEvent.split(".").length - 1];
 
   const messaging = new Messaging(client);
   const users = new Users(client);
@@ -64,30 +66,6 @@ export default async ({ req, res, error, log }: any) => {
       return "";
     })
     .filter((target) => target !== "");
-
-  try {
-    log("Creating test push");
-    const test = await messaging.createPush(
-      ID.unique(),
-      "Test",
-      "Test",
-      [],
-      [userId],
-      targets,
-      {},
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      false
-    );
-    log(test);
-  } catch (err) {
-    error(err);
-  }
 
   switch (type) {
     case "create":
@@ -126,8 +104,6 @@ async function createPush(
 
   try {
     for (const time of notificationTimes) {
-      log("Test Push");
-
       const pushNotif = await messaging.createPush(
         ID.unique(),
         assignment.title,
@@ -180,6 +156,8 @@ async function updatePush(
   log: any,
   error: any
 ) {
+  // TODO: Implement updatePush based on changes to notifications array
+  return;
   const notifications = assignment?.notifications;
   const notificationTimes = notifications.map(
     (notification) => notification.notificationTime
