@@ -7,7 +7,6 @@ import 'package:assigngo_rewrite/assignments/views/completed_screen.dart';
 import 'package:assigngo_rewrite/settings/views/settings_screen.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TabView extends ConsumerStatefulWidget {
@@ -101,29 +100,28 @@ class _TabViewState extends ConsumerState<TabView> {
         } else {
           // Desktop layout
           return Scaffold(
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.startFloat,
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AssignmentFormScreen(),
-                    fullscreenDialog: true,
-                  ),
-                )
-              },
-              tooltip: 'Add New Assignment',
-              elevation: 2,
-              child: const Icon(Icons.add),
-            ),
+            // floatingActionButtonLocation:
+            //     FloatingActionButtonLocation.startFloat,
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: () => {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => const AssignmentFormScreen(),
+            //         fullscreenDialog: true,
+            //       ),
+            //     )
+            //   },
+            //   tooltip: 'Add New Assignment',
+            //   elevation: 2,
+            //   child: const Icon(Icons.add),
+            // ),
             body: RefreshIndicator(
               onRefresh: () =>
                   ref.refresh(assignmentsProvider.notifier).fetchAssignments(),
               child: Row(
                 children: [
                   NavigationRail(
-                    elevation: 1,
                     selectedIndex: _selectedIndex,
                     onDestinationSelected: _onItemTapped,
                     labelType: NavigationRailLabelType.all,
@@ -135,6 +133,10 @@ class _TabViewState extends ConsumerState<TabView> {
                       NavigationRailDestination(
                         icon: Icon(Icons.star),
                         label: Text("Prioritized"),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.add),
+                        label: Text("Add"),
                       ),
                       NavigationRailDestination(
                         icon: Icon(Icons.check_box),
