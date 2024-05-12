@@ -7,6 +7,7 @@ import 'package:assigngo_rewrite/assignments/views/completed_screen.dart';
 import 'package:assigngo_rewrite/settings/views/settings_screen.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TabView extends ConsumerStatefulWidget {
@@ -28,21 +29,9 @@ class _TabViewState extends ConsumerState<TabView> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) async {
-    if (index == 2) {
-      // Call the assignModal function when the add button is tapped
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const AssignmentFormScreen(),
-          fullscreenDialog: true,
-        ),
-      );
-    } else {
-      // Update the selected index for other buttons
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -51,7 +40,7 @@ class _TabViewState extends ConsumerState<TabView> {
     final List<Widget> pages = [
       HomeScreen(assignments: assignments),
       StarScreen(assignments: assignments),
-      HomeScreen(assignments: assignments),
+      const AssignmentFormScreen(),
       CompletedScreen(assignments: assignments),
       const SettingsScreen(),
     ];
@@ -67,34 +56,74 @@ class _TabViewState extends ConsumerState<TabView> {
                     .refresh(assignmentsProvider.notifier)
                     .fetchAssignments(),
                 child: pages[_selectedIndex]),
-            bottomNavigationBar: NavigationBar(
-              onDestinationSelected: _onItemTapped,
-              selectedIndex: _selectedIndex,
-              destinations: const [
-                NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-                NavigationDestination(
-                    icon: Icon(Icons.star), label: "Prioritized"),
-                NavigationDestination(icon: Icon(Icons.add), label: "Add"),
-                NavigationDestination(
-                  icon: Icon(Icons.check_box),
-                  label: "Completed",
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.settings),
-                  label: "Settings",
-                ),
-              ],
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AssignmentFormScreen(),
+                    fullscreenDialog: true,
+                  ),
+                )
+              },
+              tooltip: 'Add New Assignment',
+              elevation: 2,
+              child: const Icon(Icons.add),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.miniCenterDocked,
+            bottomNavigationBar: BottomAppBar(
+              shape: const CircularNotchedRectangle(),
+              child: NavigationBar(
+                onDestinationSelected: _onItemTapped,
+                selectedIndex: _selectedIndex,
+                destinations: const [
+                  NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+                  NavigationDestination(
+                      icon: Icon(Icons.star), label: "Prioritized"),
+                  NavigationDestination(
+                    icon: Icon(null),
+                    label: "",
+                    enabled: false,
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.check_box),
+                    label: "Completed",
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.settings),
+                    label: "Settings",
+                  ),
+                ],
+              ),
             ),
           );
         } else {
           // Desktop layout
           return Scaffold(
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.startFloat,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AssignmentFormScreen(),
+                    fullscreenDialog: true,
+                  ),
+                )
+              },
+              tooltip: 'Add New Assignment',
+              elevation: 2,
+              child: const Icon(Icons.add),
+            ),
             body: RefreshIndicator(
               onRefresh: () =>
                   ref.refresh(assignmentsProvider.notifier).fetchAssignments(),
               child: Row(
                 children: [
                   NavigationRail(
+                    elevation: 1,
                     selectedIndex: _selectedIndex,
                     onDestinationSelected: _onItemTapped,
                     labelType: NavigationRailLabelType.all,
@@ -106,10 +135,6 @@ class _TabViewState extends ConsumerState<TabView> {
                       NavigationRailDestination(
                         icon: Icon(Icons.star),
                         label: Text("Prioritized"),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.add),
-                        label: Text("Add"),
                       ),
                       NavigationRailDestination(
                         icon: Icon(Icons.check_box),
