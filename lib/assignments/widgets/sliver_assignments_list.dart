@@ -34,8 +34,8 @@ class _SliverAssignmentsListState extends State<SliverAssignmentsList> {
     List<Assignment> filteredAssignments = widget.assignments;
 
     double bottom = MediaQuery.of(context).padding.bottom;
-    return CustomScrollView(shrinkWrap: true, slivers: [
-      SliverAppBar.large(
+    return CustomScrollView(slivers: [
+      SliverAppBar.medium(
         excludeHeaderSemantics: true,
         pinned: _pinned,
         snap: _snap,

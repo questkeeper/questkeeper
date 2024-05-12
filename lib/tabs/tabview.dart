@@ -70,7 +70,6 @@ class _TabViewState extends ConsumerState<TabView> {
             bottomNavigationBar: NavigationBar(
               onDestinationSelected: _onItemTapped,
               selectedIndex: _selectedIndex,
-              indicatorColor: Colors.purple,
               destinations: const [
                 NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
                 NavigationDestination(

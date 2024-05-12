@@ -23,16 +23,17 @@ class _SettingsCardState extends State<SettingsCard> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      focusColor: Theme.of(context).colorScheme.primary,
-      tileColor:
-          widget.backgroundColor ?? Theme.of(context).colorScheme.background,
+      tileColor: widget.backgroundColor,
       enableFeedback: true,
       visualDensity: VisualDensity.comfortable,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      textColor: Colors.white,
-      iconColor: Colors.white,
+      titleTextStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      iconColor: Theme.of(context).iconTheme.color,
       leading: Icon(widget.icon),
       title: Text(widget.title),
       subtitle: Text(widget.description),

@@ -197,9 +197,6 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
               child: readOnly == true
                   ? Text(
                       currentAssignment.subject?.name ?? "Select a subject",
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey,
-                          ),
                     )
                   : SubjectDropdownField(
                       subjectsList: subjectsList,
@@ -236,9 +233,6 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                           currentAssignment.description!.isNotEmpty
                       ? currentAssignment.description
                       : "Description here..",
-                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey,
-                      ),
                 ),
                 style: Theme.of(context).textTheme.bodyMedium,
                 onSubmitted: (String value) {
