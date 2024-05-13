@@ -20,12 +20,12 @@ Categories _$CategoriesFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Categories {
-  String get id => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   DateTime? get $createdAt => throw _privateConstructorUsedError;
   DateTime? get $updatedAt => throw _privateConstructorUsedError;
   String? get color => throw _privateConstructorUsedError;
-  String? get spaceId => throw _privateConstructorUsedError;
+  int? get spaceId => throw _privateConstructorUsedError;
   bool get archived => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,12 +41,12 @@ abstract class $CategoriesCopyWith<$Res> {
       _$CategoriesCopyWithImpl<$Res, Categories>;
   @useResult
   $Res call(
-      {String id,
+      {int id,
       String title,
       DateTime? $createdAt,
       DateTime? $updatedAt,
       String? color,
-      String? spaceId,
+      int? spaceId,
       bool archived});
 }
 
@@ -75,7 +75,7 @@ class _$CategoriesCopyWithImpl<$Res, $Val extends Categories>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -95,7 +95,7 @@ class _$CategoriesCopyWithImpl<$Res, $Val extends Categories>
       spaceId: freezed == spaceId
           ? _value.spaceId
           : spaceId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       archived: null == archived
           ? _value.archived
           : archived // ignore: cast_nullable_to_non_nullable
@@ -113,12 +113,12 @@ abstract class _$$CategoriesImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
+      {int id,
       String title,
       DateTime? $createdAt,
       DateTime? $updatedAt,
       String? color,
-      String? spaceId,
+      int? spaceId,
       bool archived});
 }
 
@@ -145,7 +145,7 @@ class __$$CategoriesImplCopyWithImpl<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -165,7 +165,7 @@ class __$$CategoriesImplCopyWithImpl<$Res>
       spaceId: freezed == spaceId
           ? _value.spaceId
           : spaceId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       archived: null == archived
           ? _value.archived
           : archived // ignore: cast_nullable_to_non_nullable
@@ -190,7 +190,7 @@ class _$CategoriesImpl implements _Categories {
       _$$CategoriesImplFromJson(json);
 
   @override
-  final String id;
+  final int id;
   @override
   final String title;
   @override
@@ -200,7 +200,7 @@ class _$CategoriesImpl implements _Categories {
   @override
   final String? color;
   @override
-  final String? spaceId;
+  final int? spaceId;
   @override
   @JsonKey()
   final bool archived;
@@ -248,19 +248,19 @@ class _$CategoriesImpl implements _Categories {
 
 abstract class _Categories implements Categories {
   const factory _Categories(
-      {required final String id,
+      {required final int id,
       required final String title,
       final DateTime? $createdAt,
       final DateTime? $updatedAt,
       final String? color,
-      final String? spaceId,
+      final int? spaceId,
       final bool archived}) = _$CategoriesImpl;
 
   factory _Categories.fromJson(Map<String, dynamic> json) =
       _$CategoriesImpl.fromJson;
 
   @override
-  String get id;
+  int get id;
   @override
   String get title;
   @override
@@ -270,7 +270,7 @@ abstract class _Categories implements Categories {
   @override
   String? get color;
   @override
-  String? get spaceId;
+  int? get spaceId;
   @override
   bool get archived;
   @override

@@ -6,12 +6,12 @@ part 'categories_model.g.dart';
 @freezed
 class Categories with _$Categories {
   const factory Categories({
-    required String id,
+    required int id,
     required String title,
     DateTime? $createdAt,
     DateTime? $updatedAt,
     String? color,
-    String? spaceId,
+    int? spaceId,
     @Default(false) bool archived,
   }) = _Categories;
 

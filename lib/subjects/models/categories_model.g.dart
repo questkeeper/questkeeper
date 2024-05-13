@@ -8,7 +8,7 @@ part of 'categories_model.dart';
 
 _$CategoriesImpl _$$CategoriesImplFromJson(Map<String, dynamic> json) =>
     _$CategoriesImpl(
-      id: json['id'] as String,
+      id: (json['id'] as num).toInt(),
       title: json['title'] as String,
       $createdAt: json[r'$createdAt'] == null
           ? null
@@ -17,7 +17,7 @@ _$CategoriesImpl _$$CategoriesImplFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json[r'$updatedAt'] as String),
       color: json['color'] as String?,
-      spaceId: json['spaceId'] as String?,
+      spaceId: (json['spaceId'] as num?)?.toInt(),
       archived: json['archived'] as bool? ?? false,
     );
 
