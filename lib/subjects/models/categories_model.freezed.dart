@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'subjects_model.dart';
+part of 'categories_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,44 +14,46 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-Subject _$SubjectFromJson(Map<String, dynamic> json) {
-  return _Subject.fromJson(json);
+Categories _$CategoriesFromJson(Map<String, dynamic> json) {
+  return _Categories.fromJson(json);
 }
 
 /// @nodoc
-mixin _$Subject {
-  String get $id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
+mixin _$Categories {
+  String get id => throw _privateConstructorUsedError;
+  String get title => throw _privateConstructorUsedError;
   DateTime? get $createdAt => throw _privateConstructorUsedError;
   DateTime? get $updatedAt => throw _privateConstructorUsedError;
   String? get color => throw _privateConstructorUsedError;
-  List<Assignment>? get assignments => throw _privateConstructorUsedError;
+  String? get spaceId => throw _privateConstructorUsedError;
   bool get archived => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $SubjectCopyWith<Subject> get copyWith => throw _privateConstructorUsedError;
+  $CategoriesCopyWith<Categories> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SubjectCopyWith<$Res> {
-  factory $SubjectCopyWith(Subject value, $Res Function(Subject) then) =
-      _$SubjectCopyWithImpl<$Res, Subject>;
+abstract class $CategoriesCopyWith<$Res> {
+  factory $CategoriesCopyWith(
+          Categories value, $Res Function(Categories) then) =
+      _$CategoriesCopyWithImpl<$Res, Categories>;
   @useResult
   $Res call(
-      {String $id,
-      String name,
+      {String id,
+      String title,
       DateTime? $createdAt,
       DateTime? $updatedAt,
       String? color,
-      List<Assignment>? assignments,
+      String? spaceId,
       bool archived});
 }
 
 /// @nodoc
-class _$SubjectCopyWithImpl<$Res, $Val extends Subject>
-    implements $SubjectCopyWith<$Res> {
-  _$SubjectCopyWithImpl(this._value, this._then);
+class _$CategoriesCopyWithImpl<$Res, $Val extends Categories>
+    implements $CategoriesCopyWith<$Res> {
+  _$CategoriesCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -61,22 +63,22 @@ class _$SubjectCopyWithImpl<$Res, $Val extends Subject>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? $id = null,
-    Object? name = null,
+    Object? id = null,
+    Object? title = null,
     Object? $createdAt = freezed,
     Object? $updatedAt = freezed,
     Object? color = freezed,
-    Object? assignments = freezed,
+    Object? spaceId = freezed,
     Object? archived = null,
   }) {
     return _then(_value.copyWith(
-      $id: null == $id
-          ? _value.$id
-          : $id // ignore: cast_nullable_to_non_nullable
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
               as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String,
       $createdAt: freezed == $createdAt
           ? _value.$createdAt
@@ -90,10 +92,10 @@ class _$SubjectCopyWithImpl<$Res, $Val extends Subject>
           ? _value.color
           : color // ignore: cast_nullable_to_non_nullable
               as String?,
-      assignments: freezed == assignments
-          ? _value.assignments
-          : assignments // ignore: cast_nullable_to_non_nullable
-              as List<Assignment>?,
+      spaceId: freezed == spaceId
+          ? _value.spaceId
+          : spaceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       archived: null == archived
           ? _value.archived
           : archived // ignore: cast_nullable_to_non_nullable
@@ -103,49 +105,50 @@ class _$SubjectCopyWithImpl<$Res, $Val extends Subject>
 }
 
 /// @nodoc
-abstract class _$$SubjectImplCopyWith<$Res> implements $SubjectCopyWith<$Res> {
-  factory _$$SubjectImplCopyWith(
-          _$SubjectImpl value, $Res Function(_$SubjectImpl) then) =
-      __$$SubjectImplCopyWithImpl<$Res>;
+abstract class _$$CategoriesImplCopyWith<$Res>
+    implements $CategoriesCopyWith<$Res> {
+  factory _$$CategoriesImplCopyWith(
+          _$CategoriesImpl value, $Res Function(_$CategoriesImpl) then) =
+      __$$CategoriesImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {String $id,
-      String name,
+      {String id,
+      String title,
       DateTime? $createdAt,
       DateTime? $updatedAt,
       String? color,
-      List<Assignment>? assignments,
+      String? spaceId,
       bool archived});
 }
 
 /// @nodoc
-class __$$SubjectImplCopyWithImpl<$Res>
-    extends _$SubjectCopyWithImpl<$Res, _$SubjectImpl>
-    implements _$$SubjectImplCopyWith<$Res> {
-  __$$SubjectImplCopyWithImpl(
-      _$SubjectImpl _value, $Res Function(_$SubjectImpl) _then)
+class __$$CategoriesImplCopyWithImpl<$Res>
+    extends _$CategoriesCopyWithImpl<$Res, _$CategoriesImpl>
+    implements _$$CategoriesImplCopyWith<$Res> {
+  __$$CategoriesImplCopyWithImpl(
+      _$CategoriesImpl _value, $Res Function(_$CategoriesImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? $id = null,
-    Object? name = null,
+    Object? id = null,
+    Object? title = null,
     Object? $createdAt = freezed,
     Object? $updatedAt = freezed,
     Object? color = freezed,
-    Object? assignments = freezed,
+    Object? spaceId = freezed,
     Object? archived = null,
   }) {
-    return _then(_$SubjectImpl(
-      $id: null == $id
-          ? _value.$id
-          : $id // ignore: cast_nullable_to_non_nullable
+    return _then(_$CategoriesImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
               as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String,
       $createdAt: freezed == $createdAt
           ? _value.$createdAt
@@ -159,10 +162,10 @@ class __$$SubjectImplCopyWithImpl<$Res>
           ? _value.color
           : color // ignore: cast_nullable_to_non_nullable
               as String?,
-      assignments: freezed == assignments
-          ? _value._assignments
-          : assignments // ignore: cast_nullable_to_non_nullable
-              as List<Assignment>?,
+      spaceId: freezed == spaceId
+          ? _value.spaceId
+          : spaceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       archived: null == archived
           ? _value.archived
           : archived // ignore: cast_nullable_to_non_nullable
@@ -173,63 +176,53 @@ class __$$SubjectImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$SubjectImpl implements _Subject {
-  const _$SubjectImpl(
-      {required this.$id,
-      required this.name,
+class _$CategoriesImpl implements _Categories {
+  const _$CategoriesImpl(
+      {required this.id,
+      required this.title,
       this.$createdAt,
       this.$updatedAt,
       this.color,
-      final List<Assignment>? assignments,
-      this.archived = false})
-      : _assignments = assignments;
+      this.spaceId,
+      this.archived = false});
 
-  factory _$SubjectImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SubjectImplFromJson(json);
+  factory _$CategoriesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CategoriesImplFromJson(json);
 
   @override
-  final String $id;
+  final String id;
   @override
-  final String name;
+  final String title;
   @override
   final DateTime? $createdAt;
   @override
   final DateTime? $updatedAt;
   @override
   final String? color;
-  final List<Assignment>? _assignments;
   @override
-  List<Assignment>? get assignments {
-    final value = _assignments;
-    if (value == null) return null;
-    if (_assignments is EqualUnmodifiableListView) return _assignments;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
+  final String? spaceId;
   @override
   @JsonKey()
   final bool archived;
 
   @override
   String toString() {
-    return 'Subject(\$id: ${$id}, name: $name, \$createdAt: ${$createdAt}, \$updatedAt: ${$updatedAt}, color: $color, assignments: $assignments, archived: $archived)';
+    return 'Categories(id: $id, title: $title, \$createdAt: ${$createdAt}, \$updatedAt: ${$updatedAt}, color: $color, spaceId: $spaceId, archived: $archived)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SubjectImpl &&
-            (identical(other.$id, $id) || other.$id == $id) &&
-            (identical(other.name, name) || other.name == name) &&
+            other is _$CategoriesImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.title, title) || other.title == title) &&
             (identical(other.$createdAt, $createdAt) ||
                 other.$createdAt == $createdAt) &&
             (identical(other.$updatedAt, $updatedAt) ||
                 other.$updatedAt == $updatedAt) &&
             (identical(other.color, color) || other.color == color) &&
-            const DeepCollectionEquality()
-                .equals(other._assignments, _assignments) &&
+            (identical(other.spaceId, spaceId) || other.spaceId == spaceId) &&
             (identical(other.archived, archived) ||
                 other.archived == archived));
   }
@@ -237,45 +230,39 @@ class _$SubjectImpl implements _Subject {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      $id,
-      name,
-      $createdAt,
-      $updatedAt,
-      color,
-      const DeepCollectionEquality().hash(_assignments),
-      archived);
+      runtimeType, id, title, $createdAt, $updatedAt, color, spaceId, archived);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SubjectImplCopyWith<_$SubjectImpl> get copyWith =>
-      __$$SubjectImplCopyWithImpl<_$SubjectImpl>(this, _$identity);
+  _$$CategoriesImplCopyWith<_$CategoriesImpl> get copyWith =>
+      __$$CategoriesImplCopyWithImpl<_$CategoriesImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SubjectImplToJson(
+    return _$$CategoriesImplToJson(
       this,
     );
   }
 }
 
-abstract class _Subject implements Subject {
-  const factory _Subject(
-      {required final String $id,
-      required final String name,
+abstract class _Categories implements Categories {
+  const factory _Categories(
+      {required final String id,
+      required final String title,
       final DateTime? $createdAt,
       final DateTime? $updatedAt,
       final String? color,
-      final List<Assignment>? assignments,
-      final bool archived}) = _$SubjectImpl;
+      final String? spaceId,
+      final bool archived}) = _$CategoriesImpl;
 
-  factory _Subject.fromJson(Map<String, dynamic> json) = _$SubjectImpl.fromJson;
+  factory _Categories.fromJson(Map<String, dynamic> json) =
+      _$CategoriesImpl.fromJson;
 
   @override
-  String get $id;
+  String get id;
   @override
-  String get name;
+  String get title;
   @override
   DateTime? get $createdAt;
   @override
@@ -283,11 +270,11 @@ abstract class _Subject implements Subject {
   @override
   String? get color;
   @override
-  List<Assignment>? get assignments;
+  String? get spaceId;
   @override
   bool get archived;
   @override
   @JsonKey(ignore: true)
-  _$$SubjectImplCopyWith<_$SubjectImpl> get copyWith =>
+  _$$CategoriesImplCopyWith<_$CategoriesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
