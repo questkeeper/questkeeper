@@ -451,19 +451,24 @@ class ActionButtonsState extends State<ActionButtons> {
                         "Are you sure you want to delete ${widget.currentAssignment!.title}?",
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
+                      actionsAlignment: MainAxisAlignment.spaceBetween,
                       actions: [
-                        ElevatedButton(
+                        FilledButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
                             child: const Text("Cancel")),
-                        ElevatedButton(
+                        FilledButton(
                             onPressed: () {
                               widget
                                   .deleteAssignment(widget.currentAssignment!);
 
                               isModal ? Navigator.of(context).pop() : null;
                             },
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.redAccent),
+                            ),
                             child: const Text("Delete")),
                       ],
                     ));

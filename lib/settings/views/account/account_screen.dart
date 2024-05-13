@@ -114,7 +114,7 @@ class AccountScreen extends StatelessWidget {
               children: [
                 Container(
                   margin: const EdgeInsets.only(right: kDefaultFontSize),
-                  child: ElevatedButton.icon(
+                  child: FilledButton.icon(
                       onPressed: () async {
                         await account.deleteSessions();
 
@@ -139,7 +139,7 @@ class AccountScreen extends StatelessWidget {
                 // Ask if the user wants to delete their account
                 Container(
                   margin: const EdgeInsets.only(left: kDefaultFontSize),
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: () {
                       showDialog(
                         context: context,

@@ -175,7 +175,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                             children: [
                               Container(
                                 margin: const EdgeInsets.all(20),
-                                child: ElevatedButton(
+                                child: FilledButton(
                                   onPressed: () {
                                     showDialog(
                                         context: context,
@@ -185,9 +185,8 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                                               content: const Text(
                                                   'Are you sure you want to delete this subject? This will delete all assignments associated with the subject.'),
                                               actions: <Widget>[
-                                                ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
+                                                FilledButton(
+                                                  style: FilledButton.styleFrom(
                                                     foregroundColor:
                                                         Colors.white,
                                                     backgroundColor:
@@ -225,7 +224,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                               ),
                               Container(
                                 margin: const EdgeInsets.all(20),
-                                child: ElevatedButton(
+                                child: FilledButton(
                                   onPressed: () {
                                     final newSubject = subject.copyWith(
                                       color: _subjectColor.hex,

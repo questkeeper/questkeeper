@@ -35,10 +35,9 @@ class SettingsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 50,
-                backgroundColor: secondaryColor,
-                child: const Icon(
+                child: Icon(
                   Icons.account_circle,
                   size: 50,
                   color: Colors.white,

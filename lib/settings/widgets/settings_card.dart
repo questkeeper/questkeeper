@@ -29,9 +29,10 @@ class _SettingsCardState extends State<SettingsCard> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      titleTextStyle: const TextStyle(
+      titleTextStyle: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w500,
+        color: Theme.of(context).iconTheme.color,
       ),
       iconColor: Theme.of(context).iconTheme.color,
       leading: Icon(widget.icon),

@@ -204,7 +204,7 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                                 ],
                               ),
                             ),
-                            ElevatedButton(
+                            FilledButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   _submitForm();

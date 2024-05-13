@@ -49,7 +49,7 @@ class AuthScreen extends ConsumerWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: () {
                       ref
                           .read(authProvider.notifier)

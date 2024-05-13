@@ -40,7 +40,7 @@ class SignInPasswordScreen extends ConsumerWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
+            child: FilledButton(
               onPressed: () {
                 ref.read(authProvider.notifier).passwordSignIn().then((_) => {
                       if (authState.error == null)
