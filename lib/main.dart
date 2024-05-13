@@ -48,7 +48,7 @@ class MyApp extends ConsumerWidget {
     final components = ComponentsTheme.componentsThemeData;
 
     final brightness = View.of(context).platformDispatcher.platformBrightness;
-    TextTheme textTheme = createTextTheme(context, "Raleway", "Poppins");
+    TextTheme textTheme = createTextTheme(context, "Nunito", "Poppins");
 
     MaterialTheme theme = MaterialTheme(textTheme);
 
