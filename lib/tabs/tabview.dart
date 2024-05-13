@@ -1,9 +1,9 @@
-import 'package:assigngo_rewrite/assignments/assignment/views/assignment_screen.dart';
-import 'package:assigngo_rewrite/assignments/assignment_form/views/assignment_form_screen.dart';
-import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
-import 'package:assigngo_rewrite/assignments/views/home_screen.dart';
-import 'package:assigngo_rewrite/assignments/views/priority_screen.dart';
-import 'package:assigngo_rewrite/assignments/views/completed_screen.dart';
+import 'package:assigngo_rewrite/task_list/task_item/views/assignment_screen.dart';
+import 'package:assigngo_rewrite/task_list/task_create_form/views/assignment_form_screen.dart';
+import 'package:assigngo_rewrite/task_list/providers/assignments_provider.dart';
+import 'package:assigngo_rewrite/task_list/views/home_screen.dart';
+import 'package:assigngo_rewrite/task_list/views/priority_screen.dart';
+import 'package:assigngo_rewrite/task_list/views/completed_screen.dart';
 import 'package:assigngo_rewrite/settings/views/settings_screen.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
 import 'package:flutter/material.dart';

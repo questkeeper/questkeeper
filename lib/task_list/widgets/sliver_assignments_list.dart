@@ -1,5 +1,5 @@
-import 'package:assigngo_rewrite/assignments/assignment/widgets/assignment_card.dart';
-import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/task_item/widgets/assignment_card.dart';
+import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
 import 'package:flutter/material.dart';
 
 enum AssignmentsFilter { all, starred, completed }

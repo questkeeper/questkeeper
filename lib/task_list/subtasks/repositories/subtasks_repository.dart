@@ -1,4 +1,4 @@
-import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 

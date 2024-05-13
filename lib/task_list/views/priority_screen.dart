@@ -1,5 +1,5 @@
-import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
-import 'package:assigngo_rewrite/assignments/widgets/sliver_assignments_list.dart';
+import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/widgets/sliver_assignments_list.dart';
 import 'package:flutter/material.dart';
 
 class StarScreen extends StatelessWidget {

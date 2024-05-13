@@ -1,6 +1,6 @@
-import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
-import 'package:assigngo_rewrite/assignments/repositories/assignments_repository.dart';
-import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/repositories/assignments_repository.dart';
+import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

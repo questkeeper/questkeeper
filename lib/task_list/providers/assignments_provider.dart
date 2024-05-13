@@ -1,5 +1,5 @@
-import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
-import 'package:assigngo_rewrite/assignments/repositories/assignments_repository.dart';
+import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/repositories/assignments_repository.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 // import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:flutter/material.dart';

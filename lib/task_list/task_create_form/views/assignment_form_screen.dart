@@ -1,9 +1,9 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
-import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
-import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
-import 'package:assigngo_rewrite/assignments/widgets/date_time_picker.dart';
-import 'package:assigngo_rewrite/assignments/widgets/subject_dropdown_field.dart';
+import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/providers/assignments_provider.dart';
+import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:assigngo_rewrite/task_list/widgets/date_time_picker.dart';
+import 'package:assigngo_rewrite/task_list/widgets/subject_dropdown_field.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';

@@ -1,6 +1,6 @@
 // freezed classes for assignments model
 
-import 'package:assigngo_rewrite/assignments/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

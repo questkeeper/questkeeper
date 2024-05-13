@@ -1,6 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
 import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';

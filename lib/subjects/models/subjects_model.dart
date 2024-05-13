@@ -1,4 +1,4 @@
-import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'subjects_model.freezed.dart';

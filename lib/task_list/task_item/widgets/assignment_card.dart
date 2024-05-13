@@ -1,8 +1,8 @@
-import 'package:assigngo_rewrite/assignments/assignment/views/assignment_screen.dart';
-import 'package:assigngo_rewrite/assignments/models/assignments_model.dart';
-import 'package:assigngo_rewrite/assignments/providers/current_assignment_provider.dart';
-import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
-import 'package:assigngo_rewrite/assignments/widgets/sliver_assignments_list.dart';
+import 'package:assigngo_rewrite/task_list/task_item/views/assignment_screen.dart';
+import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/providers/current_assignment_provider.dart';
+import 'package:assigngo_rewrite/task_list/providers/assignments_provider.dart';
+import 'package:assigngo_rewrite/task_list/widgets/sliver_assignments_list.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
 import 'package:flutter/material.dart';

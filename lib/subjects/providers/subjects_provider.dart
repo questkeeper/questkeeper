@@ -1,4 +1,4 @@
-import 'package:assigngo_rewrite/assignments/repositories/assignments_repository.dart';
+import 'package:assigngo_rewrite/task_list/repositories/assignments_repository.dart';
 import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:assigngo_rewrite/subjects/repositories/subjects_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
