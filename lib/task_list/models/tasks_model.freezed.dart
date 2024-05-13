@@ -25,12 +25,11 @@ mixin _$Tasks {
   DateTime? get updatedAt => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   DateTime get dueDate => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
-  Subject? get subject => throw _privateConstructorUsedError;
-  bool get completed => throw _privateConstructorUsedError;
-  bool get starred => throw _privateConstructorUsedError;
   int? get categoryId => throw _privateConstructorUsedError;
   int? get spaceId => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
+  bool get completed => throw _privateConstructorUsedError;
+  bool get starred => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -48,14 +47,11 @@ abstract class $TasksCopyWith<$Res> {
       DateTime? updatedAt,
       String title,
       DateTime dueDate,
-      String? description,
-      Subject? subject,
-      bool completed,
-      bool starred,
       int? categoryId,
-      int? spaceId});
-
-  $SubjectCopyWith<$Res>? get subject;
+      int? spaceId,
+      String? description,
+      bool completed,
+      bool starred});
 }
 
 /// @nodoc
@@ -76,12 +72,11 @@ class _$TasksCopyWithImpl<$Res, $Val extends Tasks>
     Object? updatedAt = freezed,
     Object? title = null,
     Object? dueDate = null,
-    Object? description = freezed,
-    Object? subject = freezed,
-    Object? completed = null,
-    Object? starred = null,
     Object? categoryId = freezed,
     Object? spaceId = freezed,
+    Object? description = freezed,
+    Object? completed = null,
+    Object? starred = null,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -104,22 +99,6 @@ class _$TasksCopyWithImpl<$Res, $Val extends Tasks>
           ? _value.dueDate
           : dueDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      subject: freezed == subject
-          ? _value.subject
-          : subject // ignore: cast_nullable_to_non_nullable
-              as Subject?,
-      completed: null == completed
-          ? _value.completed
-          : completed // ignore: cast_nullable_to_non_nullable
-              as bool,
-      starred: null == starred
-          ? _value.starred
-          : starred // ignore: cast_nullable_to_non_nullable
-              as bool,
       categoryId: freezed == categoryId
           ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
@@ -128,19 +107,19 @@ class _$TasksCopyWithImpl<$Res, $Val extends Tasks>
           ? _value.spaceId
           : spaceId // ignore: cast_nullable_to_non_nullable
               as int?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      completed: null == completed
+          ? _value.completed
+          : completed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      starred: null == starred
+          ? _value.starred
+          : starred // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $SubjectCopyWith<$Res>? get subject {
-    if (_value.subject == null) {
-      return null;
-    }
-
-    return $SubjectCopyWith<$Res>(_value.subject!, (value) {
-      return _then(_value.copyWith(subject: value) as $Val);
-    });
   }
 }
 
@@ -157,15 +136,11 @@ abstract class _$$TasksImplCopyWith<$Res> implements $TasksCopyWith<$Res> {
       DateTime? updatedAt,
       String title,
       DateTime dueDate,
-      String? description,
-      Subject? subject,
-      bool completed,
-      bool starred,
       int? categoryId,
-      int? spaceId});
-
-  @override
-  $SubjectCopyWith<$Res>? get subject;
+      int? spaceId,
+      String? description,
+      bool completed,
+      bool starred});
 }
 
 /// @nodoc
@@ -184,12 +159,11 @@ class __$$TasksImplCopyWithImpl<$Res>
     Object? updatedAt = freezed,
     Object? title = null,
     Object? dueDate = null,
-    Object? description = freezed,
-    Object? subject = freezed,
-    Object? completed = null,
-    Object? starred = null,
     Object? categoryId = freezed,
     Object? spaceId = freezed,
+    Object? description = freezed,
+    Object? completed = null,
+    Object? starred = null,
   }) {
     return _then(_$TasksImpl(
       id: freezed == id
@@ -212,22 +186,6 @@ class __$$TasksImplCopyWithImpl<$Res>
           ? _value.dueDate
           : dueDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      subject: freezed == subject
-          ? _value.subject
-          : subject // ignore: cast_nullable_to_non_nullable
-              as Subject?,
-      completed: null == completed
-          ? _value.completed
-          : completed // ignore: cast_nullable_to_non_nullable
-              as bool,
-      starred: null == starred
-          ? _value.starred
-          : starred // ignore: cast_nullable_to_non_nullable
-              as bool,
       categoryId: freezed == categoryId
           ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
@@ -236,6 +194,18 @@ class __$$TasksImplCopyWithImpl<$Res>
           ? _value.spaceId
           : spaceId // ignore: cast_nullable_to_non_nullable
               as int?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      completed: null == completed
+          ? _value.completed
+          : completed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      starred: null == starred
+          ? _value.starred
+          : starred // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -249,12 +219,11 @@ class _$TasksImpl implements _Tasks {
       this.updatedAt,
       required this.title,
       required this.dueDate,
-      this.description,
-      this.subject,
-      this.completed = false,
-      this.starred = false,
       this.categoryId,
-      this.spaceId});
+      this.spaceId,
+      this.description,
+      this.completed = false,
+      this.starred = false});
 
   factory _$TasksImpl.fromJson(Map<String, dynamic> json) =>
       _$$TasksImplFromJson(json);
@@ -270,23 +239,21 @@ class _$TasksImpl implements _Tasks {
   @override
   final DateTime dueDate;
   @override
-  final String? description;
+  final int? categoryId;
   @override
-  final Subject? subject;
+  final int? spaceId;
+  @override
+  final String? description;
   @override
   @JsonKey()
   final bool completed;
   @override
   @JsonKey()
   final bool starred;
-  @override
-  final int? categoryId;
-  @override
-  final int? spaceId;
 
   @override
   String toString() {
-    return 'Tasks(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, dueDate: $dueDate, description: $description, subject: $subject, completed: $completed, starred: $starred, categoryId: $categoryId, spaceId: $spaceId)';
+    return 'Tasks(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, dueDate: $dueDate, categoryId: $categoryId, spaceId: $spaceId, description: $description, completed: $completed, starred: $starred)';
   }
 
   @override
@@ -301,21 +268,20 @@ class _$TasksImpl implements _Tasks {
                 other.updatedAt == updatedAt) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.dueDate, dueDate) || other.dueDate == dueDate) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.subject, subject) || other.subject == subject) &&
-            (identical(other.completed, completed) ||
-                other.completed == completed) &&
-            (identical(other.starred, starred) || other.starred == starred) &&
             (identical(other.categoryId, categoryId) ||
                 other.categoryId == categoryId) &&
-            (identical(other.spaceId, spaceId) || other.spaceId == spaceId));
+            (identical(other.spaceId, spaceId) || other.spaceId == spaceId) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.completed, completed) ||
+                other.completed == completed) &&
+            (identical(other.starred, starred) || other.starred == starred));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, createdAt, updatedAt, title,
-      dueDate, description, subject, completed, starred, categoryId, spaceId);
+      dueDate, categoryId, spaceId, description, completed, starred);
 
   @JsonKey(ignore: true)
   @override
@@ -338,12 +304,11 @@ abstract class _Tasks implements Tasks {
       final DateTime? updatedAt,
       required final String title,
       required final DateTime dueDate,
-      final String? description,
-      final Subject? subject,
-      final bool completed,
-      final bool starred,
       final int? categoryId,
-      final int? spaceId}) = _$TasksImpl;
+      final int? spaceId,
+      final String? description,
+      final bool completed,
+      final bool starred}) = _$TasksImpl;
 
   factory _Tasks.fromJson(Map<String, dynamic> json) = _$TasksImpl.fromJson;
 
@@ -358,17 +323,15 @@ abstract class _Tasks implements Tasks {
   @override
   DateTime get dueDate;
   @override
-  String? get description;
+  int? get categoryId;
   @override
-  Subject? get subject;
+  int? get spaceId;
+  @override
+  String? get description;
   @override
   bool get completed;
   @override
   bool get starred;
-  @override
-  int? get categoryId;
-  @override
-  int? get spaceId;
   @override
   @JsonKey(ignore: true)
   _$$TasksImplCopyWith<_$TasksImpl> get copyWith =>

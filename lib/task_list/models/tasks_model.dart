@@ -1,4 +1,3 @@
-import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'tasks_model.freezed.dart';
@@ -12,12 +11,11 @@ class Tasks with _$Tasks {
     DateTime? updatedAt,
     required String title,
     required DateTime dueDate,
-    String? description,
-    Subject? subject,
-    @Default(false) bool completed,
-    @Default(false) bool starred,
     int? categoryId,
     int? spaceId,
+    String? description,
+    @Default(false) bool completed,
+    @Default(false) bool starred,
   }) = _Tasks;
 
   factory Tasks.fromJson(Map<String, dynamic> json) => _$TasksFromJson(json);

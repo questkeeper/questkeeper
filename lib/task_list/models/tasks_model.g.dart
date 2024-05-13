@@ -16,14 +16,11 @@ _$TasksImpl _$$TasksImplFromJson(Map<String, dynamic> json) => _$TasksImpl(
           : DateTime.parse(json['updatedAt'] as String),
       title: json['title'] as String,
       dueDate: DateTime.parse(json['dueDate'] as String),
-      description: json['description'] as String?,
-      subject: json['subject'] == null
-          ? null
-          : Subject.fromJson(json['subject'] as Map<String, dynamic>),
-      completed: json['completed'] as bool? ?? false,
-      starred: json['starred'] as bool? ?? false,
       categoryId: (json['categoryId'] as num?)?.toInt(),
       spaceId: (json['spaceId'] as num?)?.toInt(),
+      description: json['description'] as String?,
+      completed: json['completed'] as bool? ?? false,
+      starred: json['starred'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$TasksImplToJson(_$TasksImpl instance) =>
@@ -33,10 +30,9 @@ Map<String, dynamic> _$$TasksImplToJson(_$TasksImpl instance) =>
       'updatedAt': instance.updatedAt?.toIso8601String(),
       'title': instance.title,
       'dueDate': instance.dueDate.toIso8601String(),
-      'description': instance.description,
-      'subject': instance.subject,
-      'completed': instance.completed,
-      'starred': instance.starred,
       'categoryId': instance.categoryId,
       'spaceId': instance.spaceId,
+      'description': instance.description,
+      'completed': instance.completed,
+      'starred': instance.starred,
     };
