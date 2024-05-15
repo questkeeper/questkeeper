@@ -1,119 +1,76 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
-import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
-import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
-import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
+import 'package:assigngo_rewrite/subjects/models/categories_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SubjectsRepository {
-  SubjectsRepository();
+class CategoriesRepository {
+  CategoriesRepository();
+  SupabaseClient supabase = Supabase.instance.client;
 
-  Future<List<Subject>> getSubjects() async {
-    final subjects = await database.listDocuments(
-        databaseId: publicDb,
-        collectionId: "subjects",
-        queries: [
-          Query.equal('archived', false),
-        ]);
+  Future<List<Categories>> getCategories() async {
+    final categories =
+        await supabase.from('categories').select().eq('archived', false);
 
-    final subjectsList =
-        subjects.documents.map((e) => Subject.fromJson(e.data)).toList();
+    final categoriesList =
+        categories.map((e) => Categories.fromJson(e)).toList();
 
-    return subjectsList;
+    return categoriesList;
   }
 
-  Future<ReturnModel> updateSubject(Subject subject) async {
-    final jsonSubject = subject.toJson();
-    final String id = jsonSubject["\$id"];
-    jsonSubject.remove("\$id");
+  Future<ReturnModel> updateCategory(Categories category) async {
+    final jsonCategory = category.toJson();
+    final int id = jsonCategory["id"];
 
     try {
-      final Document result = await database.updateDocument(
-          databaseId: publicDb,
-          collectionId: "subjects",
-          documentId: id,
-          data: jsonSubject);
+      final result = await supabase
+          .from('categories')
+          .update(jsonCategory)
+          .eq('id', id)
+          .select();
 
       return ReturnModel(
-          message: "Subject updated successfully",
+          message: "Category updated successfully",
           success: true,
-          data: result.data);
+          data: result.first);
     } catch (error) {
       return ReturnModel(
-          message: "Error updating subject",
+          message: "Error updating category",
           success: false,
           error: error.toString());
     }
   }
 
-  Future<ReturnModel> updateSubjectWithAssignment(
-      Assignment assignment, String subjectId) async {
-    try {
-      final Document subject = await database.getDocument(
-          databaseId: publicDb,
-          collectionId: "subjects",
-          documentId: subjectId);
+  Future<ReturnModel> createCategory(Categories category) async {
+    final jsonCategory = category.toJson();
 
-      final Document result = await database.updateDocument(
-          databaseId: publicDb,
-          collectionId: "subjects",
-          documentId: subjectId,
-          data: {
-            "assignments": (List.from(subject.data['assignments'] ?? [])
-              ..add(assignment.toJson())),
-          });
+    jsonCategory.remove('id');
+    jsonCategory.remove('createdAt');
+    jsonCategory.remove('updatedAt');
+
+    try {
+      final result =
+          await supabase.from('categories').insert(jsonCategory).select();
 
       return ReturnModel(
-          message: "Subject updated successfully",
+          message: "Category created successfully",
           success: true,
-          data: result.data);
+          data: result.first);
     } catch (error) {
       return ReturnModel(
-          message: "Error updating subject",
+          message: "Error creating category",
           success: false,
           error: error.toString());
     }
   }
 
-  Future<ReturnModel> createSubject(Subject subject) async {
-    final jsonSubject = subject.toJson();
-
-    jsonSubject.remove('\$id');
-
+  Future<ReturnModel> deleteCategory(Categories category) async {
     try {
-      final Document result = await database.createDocument(
-        databaseId: publicDb,
-        collectionId: "subjects",
-        documentId: subject.$id,
-        data: jsonSubject,
-      );
+      await supabase.from('categories').delete().eq('id', category.id!);
 
-      return ReturnModel(
-          message: "Subject created successfully",
-          success: true,
-          data: result.data);
+      return const ReturnModel(
+          message: "Category deleted successfully", success: true);
     } catch (error) {
       return ReturnModel(
-          message: "Error creating subject",
-          success: false,
-          error: error.toString());
-    }
-  }
-
-  Future<ReturnModel> deleteSubject(Subject subject) async {
-    try {
-      final Document result = await database.deleteDocument(
-          databaseId: publicDb,
-          collectionId: "subjects",
-          documentId: subject.$id);
-
-      return ReturnModel(
-          message: "Subject deleted successfully",
-          success: true,
-          data: result.data);
-    } catch (error) {
-      return ReturnModel(
-          message: "Error deleting subject",
+          message: "Error deleting category",
           success: false,
           error: error.toString());
     }

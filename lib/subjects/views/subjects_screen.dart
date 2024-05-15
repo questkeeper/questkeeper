@@ -1,48 +1,47 @@
-import 'package:appwrite/appwrite.dart';
 import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
-import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
+import 'package:assigngo_rewrite/subjects/models/categories_model.dart';
 import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
 // Subjects screen with provider and consumer
-class SubjectsScreen extends ConsumerStatefulWidget {
-  const SubjectsScreen({super.key});
+class CategoriesScreen extends ConsumerStatefulWidget {
+  const CategoriesScreen({super.key});
 
   @override
-  ConsumerState<SubjectsScreen> createState() => _SubjectsScreenState();
+  ConsumerState<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 
-class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
+class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch the subjects when the screen is initialized
-    ref.read(subjectsProvider.notifier).fetchSubjects();
+    // Fetch the categorys when the screen is initialized
+    ref.read(categoriesProvider.notifier).fetchCategories();
   }
 
-  final TextEditingController _subjectName = TextEditingController();
-  late Color _subjectColor;
+  final TextEditingController _categoryName = TextEditingController();
+  late Color _categoryColor;
 
   @override
   Widget build(BuildContext context) {
-    final subjects = ref.watch(subjectsProvider);
+    final categorys = ref.watch(categoriesProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Subjects'),
+        title: const Text('Categories'),
         actions: [
           Container(
             margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: IconButton(
               onPressed: () {
-                ref.read(subjectsProvider.notifier).createSubject(
-                      Subject(
-                          name: 'New subject! Edit me!',
-                          color: primaryColor.hex,
-                          $id: ID.unique()),
+                ref.read(categoriesProvider.notifier).createCategory(
+                      Categories(
+                        title: 'New category! Edit me!',
+                        color: primaryColor.hex,
+                      ),
                     );
               },
               icon: const Icon(Icons.add_circle_outline_sharp),
@@ -60,14 +59,14 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
             margin: const EdgeInsets.all(20),
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: subjects.length,
+              itemCount: categorys.length,
               itemBuilder: (context, index) {
-                final subject = subjects[index];
+                final category = categorys[index];
                 return Container(
                   margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                   child: InkWell(
                       onTap: () {
-                        _showSubjectSheet(context, subject);
+                        _showSubjectSheet(context, category);
                       },
                       child: ListTile(
                           isThreeLine: true,
@@ -76,10 +75,10 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                           ),
                           titleTextStyle:
                               Theme.of(context).textTheme.headlineSmall,
-                          tileColor: subject.color != null
-                              ? HexColor(subject.color!)
+                          tileColor: category.color != null
+                              ? HexColor(category.color!)
                               : Theme.of(context).cardColor,
-                          title: Text(subject.name),
+                          title: Text(category.title),
                           textColor: Theme.of(context)
                               .primaryTextTheme
                               .bodyLarge
@@ -87,8 +86,8 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                  "${subject.assignments?.length} assignments "),
+                              // Text(
+                              // "${category.assignments?.length} assignments "),
                               const Text("Tap to edit"),
                             ],
                           ))),
@@ -101,7 +100,7 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
     );
   }
 
-  Future<dynamic> _showSubjectSheet(BuildContext context, Subject subject) {
+  Future<dynamic> _showSubjectSheet(BuildContext context, Categories category) {
     return showModalBottomSheet(
         scrollControlDisabledMaxHeightRatio: 0.9,
         isDismissible: true,
@@ -110,16 +109,16 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
         useSafeArea: true,
         context: context,
         builder: (context) {
-          _subjectName.text = subject.name;
-          _subjectColor =
-              subject.color != null ? HexColor(subject.color!) : primaryColor;
+          _categoryName.text = category.title;
+          _categoryColor =
+              category.color != null ? HexColor(category.color!) : primaryColor;
           return Container(
             color: Theme.of(context).cardColor,
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   AppBar(
-                    title: Text("Editing ${subject.name}"),
+                    title: Text("Editing ${category.title}"),
                   ),
                   Container(
                     margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -128,18 +127,18 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                         children: [
                           FormField(builder: (FormFieldState state) {
                             return TextFormField(
-                              controller: _subjectName,
+                              controller: _categoryName,
                               validator: (value) {
                                 if (value == null ||
                                     value.isEmpty ||
                                     value.length < 24) {
-                                  return 'Please enter a subject name';
+                                  return 'Please enter a category name';
                                 }
                                 return null;
                               },
                               autofocus: true,
                               decoration: const InputDecoration(
-                                  labelText: 'Subject Name'),
+                                  labelText: 'Category Name'),
                             );
                           }),
                           SizedBox(
@@ -149,9 +148,9 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                               child: Card(
                                 elevation: 2,
                                 child: ColorPicker(
-                                  color: _subjectColor,
+                                  color: _categoryColor,
                                   onColorChanged: (Color color) =>
-                                      setState(() => _subjectColor = color),
+                                      setState(() => _categoryColor = color),
                                   width: 44,
                                   height: 44,
                                   borderRadius: 22,
@@ -181,9 +180,9 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                                         context: context,
                                         builder: (_) => AlertDialog(
                                               title: Text(
-                                                  'Delete ${_subjectName.text}'),
+                                                  'Delete ${_categoryName.text}'),
                                               content: const Text(
-                                                  'Are you sure you want to delete this subject? This will delete all assignments associated with the subject.'),
+                                                  'Are you sure you want to delete this category? This will delete all tasks associated with it.'),
                                               actions: <Widget>[
                                                 FilledButton(
                                                   style: FilledButton.styleFrom(
@@ -194,13 +193,14 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                                                   ),
                                                   onPressed: () {
                                                     ref
-                                                        .read(subjectsProvider
+                                                        .read(categoriesProvider
                                                             .notifier)
-                                                        .deleteSubject(subject);
+                                                        .deleteCategory(
+                                                            category);
                                                     ref
-                                                        .read(subjectsProvider
+                                                        .read(categoriesProvider
                                                             .notifier)
-                                                        .fetchSubjects();
+                                                        .fetchCategories();
                                                     Navigator.pop(context);
                                                     Navigator.pop(context);
                                                   },
@@ -226,14 +226,14 @@ class _SubjectsScreenState extends ConsumerState<SubjectsScreen> {
                                 margin: const EdgeInsets.all(20),
                                 child: FilledButton(
                                   onPressed: () {
-                                    final newSubject = subject.copyWith(
-                                      color: _subjectColor.hex,
-                                      name: _subjectName.text,
+                                    final newCategory = category.copyWith(
+                                      color: _categoryColor.hex,
+                                      title: _categoryName.text,
                                     );
-                                    if (newSubject != subject) {
+                                    if (newCategory != category) {
                                       ref
-                                          .read(subjectsProvider.notifier)
-                                          .updateSubject(newSubject);
+                                          .read(categoriesProvider.notifier)
+                                          .updateCategory(newCategory);
                                     }
 
                                     Navigator.pop(context);

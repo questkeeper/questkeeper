@@ -1,40 +1,41 @@
 import 'package:assigngo_rewrite/task_list/repositories/assignments_repository.dart';
-import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
+import 'package:assigngo_rewrite/subjects/models/categories_model.dart';
 import 'package:assigngo_rewrite/subjects/repositories/subjects_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final subjectsProvider = StateNotifierProvider<SubjectsNotifier, List<Subject>>(
-  (ref) => SubjectsNotifier([]),
+final categoriesProvider =
+    StateNotifierProvider<CategoriesNotifier, List<Categories>>(
+  (ref) => CategoriesNotifier([]),
 );
 
-class SubjectsNotifier extends StateNotifier<List<Subject>> {
-  final SubjectsRepository _repository = SubjectsRepository();
-  final AssignmentsRepository _assignmentsRepository = AssignmentsRepository();
+class CategoriesNotifier extends StateNotifier<List<Categories>> {
+  final CategoriesRepository _repository = CategoriesRepository();
+  final TasksRepository _tasksRepository = TasksRepository();
 
-  SubjectsNotifier(super._state);
+  CategoriesNotifier(super._state);
 
-  Future<void> fetchSubjects() async {
-    final subjects = await _repository.getSubjects();
-    state = subjects;
+  Future<void> fetchCategories() async {
+    final categories = await _repository.getCategories();
+    state = categories;
   }
 
-  Future<void> createSubject(Subject subject) async {
-    await _repository.createSubject(subject);
+  Future<void> createCategory(Categories category) async {
+    await _repository.createCategory(category);
 
-    await fetchSubjects();
+    await fetchCategories();
   }
 
-  Future<void> updateSubject(Subject subject) async {
-    await _repository.updateSubject(subject);
-    await fetchSubjects();
+  Future<void> updateCategory(Categories category) async {
+    await _repository.updateCategory(category);
+    await fetchCategories();
   }
 
-  Future<void> deleteSubject(Subject subject) async {
-    final result = await _repository.deleteSubject(subject);
+  Future<void> deleteCategory(Categories category) async {
+    final result = await _repository.deleteCategory(category);
 
     if (result.success) {
-      state = state.where((e) => e.$id != subject.$id).toList();
-      _assignmentsRepository.getAssignments();
+      state = state.where((e) => e.id != category.id).toList();
+      _tasksRepository.getTasks();
     }
   }
 }
