@@ -1,5 +1,4 @@
 import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
-import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -28,8 +27,6 @@ class TasksRepository {
     jsonTask.remove("id");
     jsonTask.remove("createdAt");
     jsonTask.remove("updatedAt");
-
-    print(jsonTask);
 
     try {
       final newTask = await supabase.from("tasks").insert(jsonTask).select();
@@ -106,37 +103,6 @@ class TasksRepository {
     } catch (error) {
       return ReturnModel(
           message: "Error updating task item",
-          success: false,
-          error: error.toString());
-    }
-  }
-
-  Future<ReturnModel> createSubtask(Tasks task) async {
-    final newSubtask = const Subtask(
-      $id: '',
-      title: "New subtask",
-      completed: false,
-    ).toJson();
-
-    newSubtask.remove("\$id");
-
-    try {
-      // await database.updateDocument(
-      //     databaseId: publicDb,
-      //     collectionId: "assignments",
-      //     documentId: assignment.$id,
-      //     data: {
-      //       "subtasks": assignment.subtasks == null
-      //           ? [newSubtask]
-      //           : assignment.subtasks!.map((e) => e.toJson()).toList()
-      //         ..add(newSubtask)
-      //     });
-
-      return const ReturnModel(
-          message: "Subtask created successfully", success: true);
-    } catch (error) {
-      return ReturnModel(
-          message: "Error creating subtask",
           success: false,
           error: error.toString());
     }

@@ -119,12 +119,4 @@ class TasksNotifier extends StateNotifier<List<Tasks>> {
       debugPrint("Error updating task: $error");
     }
   }
-
-  Future<void> createSubtask(Tasks task) async {
-    try {
-      await _repository.createSubtask(task);
-    } catch (error) {
-      debugPrint("Error creating subtask: $error");
-    }
-  }
 }
