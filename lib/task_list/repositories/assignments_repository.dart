@@ -1,187 +1,117 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
-import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
-import 'package:assigngo_rewrite/subjects/repositories/subjects_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AssignmentsRepository {
-  AssignmentsRepository();
-  final SubjectsRepository _repository = SubjectsRepository();
+class TasksRepository {
+  TasksRepository();
 
-  Future<List<Assignment>> getAssignments() async {
-    final assignments = await database.listDocuments(
-        databaseId: publicDb,
-        collectionId: "assignments",
-        queries: [
-          Query.orderAsc("dueDate"),
-        ]);
+  final supabase = Supabase.instance.client;
 
-    final List<Assignment> assignmentList =
-        assignments.documents.map((e) => Assignment.fromJson(e.data)).toList();
+  Future<List<Tasks>> getTasks() async {
+    final tasks = await supabase.from("tasks").select().order("dueDate");
 
-    return assignmentList;
+    final List<Tasks> tasksList = tasks.map((e) => Tasks.fromJson(e)).toList();
+
+    return tasksList;
   }
 
-  Future<Assignment> getAssignment(String id) async {
-    final assignment = await database.getDocument(
-        databaseId: publicDb, collectionId: "assignments", documentId: id);
+  Future<Tasks> getTask(int id) async {
+    final task = await supabase.from("tasks").select().eq("id", id).single();
 
-    return Assignment.fromJson(assignment.data);
+    return Tasks.fromJson(task);
   }
 
-  Future<ReturnModel> createAssignment(Assignment assignment) async {
-    final subtasks = assignment.subtasks?.map((e) => e.toJson()).toList();
-    final subject = assignment.subject?.toJson();
-    final Map<String, dynamic> jsonAssignment = assignment.toJson();
-    jsonAssignment['subtasks'] = subtasks;
-    final assignmentId = ID.unique();
+  Future<ReturnModel> createTask(Tasks task) async {
+    final Map<String, dynamic> jsonTask = task.toJson();
+    jsonTask.remove("id");
+    jsonTask.remove("createdAt");
+    jsonTask.remove("updatedAt");
 
-    jsonAssignment.remove("\$id");
-    jsonAssignment.remove("\$updatedAt");
-    jsonAssignment.remove("\$createdAt");
-    jsonAssignment.remove("subject");
-
-    final userNotificationTimes = [12, 24, 48];
-    final notifications = [];
-
-    for (final time in userNotificationTimes) {
-      final notificationTime =
-          assignment.dueDate.subtract(Duration(hours: time));
-
-      if (notificationTime.isAfter(assignment.dueDate) ||
-          notificationTime.isBefore(DateTime.now())) {
-        continue;
-      }
-
-      // Issue was due to not converting times to UTC when creating notifications
-      notifications.add({
-        "notificationTime": notificationTime.toUtc().toIso8601String(),
-        "activated": false,
-      });
-    }
-
-    jsonAssignment['notifications'] = notifications;
+    print(jsonTask);
 
     try {
-      final newAssignment = await database.createDocument(
-        databaseId: publicDb,
-        collectionId: "assignments",
-        documentId: assignmentId,
-        data: jsonAssignment,
-      );
+      final newTask = await supabase.from("tasks").insert(jsonTask).select();
 
-      if (subject != null) {
-        await _repository.updateSubjectWithAssignment(
-            Assignment.fromJson(newAssignment.data), subject['\$id']);
-      }
+      debugPrint("New task: $newTask");
 
       return ReturnModel(
-          data: Assignment.fromJson(newAssignment.data),
-          message: "Assignment created successfully",
+          data: Tasks.fromJson(newTask.first),
+          message: "Task created successfully",
           success: true);
     } catch (error) {
+      debugPrint("Error creating task: $error");
       return ReturnModel(
-          message: "Error creating assignment",
+          message: "Error creating task item",
           success: false,
           error: error.toString());
     }
   }
 
-  Future<ReturnModel> toggleStar(Assignment assignment) async {
+  Future<ReturnModel> toggleStar(Tasks task) async {
     try {
-      await database.updateDocument(
-          databaseId: publicDb,
-          collectionId: "assignments",
-          documentId: assignment.$id,
-          data: {'starred': !assignment.starred});
+      await supabase
+          .from("tasks")
+          .update({"starred": !task.starred, "id": task.id});
       return const ReturnModel(
-          message: "Assignment starred successfully", success: true);
+          message: "Task starred successfully", success: true);
     } catch (error) {
       return ReturnModel(
-          message: "Error starring assignment",
+          message: "Error starring task item",
           success: false,
           error: error.toString());
     }
   }
 
-  Future<ReturnModel> toggleComplete(Assignment assignment) async {
+  Future<ReturnModel> toggleComplete(Tasks task) async {
     try {
-      await database.updateDocument(
-          databaseId: publicDb,
-          collectionId: "assignments",
-          documentId: assignment.$id,
-          data: {'completed': !assignment.completed});
+      await supabase
+          .from("tasks")
+          .update({"completed": !task.completed, "id": task.id});
 
       return const ReturnModel(
-          message: "Assignment completed successfully", success: true);
+          message: "Task completed successfully", success: true);
     } catch (error) {
       return ReturnModel(
-          message: "Error completing assignment",
+          message: "Error completing task item",
           success: false,
           error: error.toString());
     }
   }
 
-  Future<ReturnModel> deleteAssignment(Assignment assignment) async {
+  Future<ReturnModel> deleteTask(Tasks task) async {
     try {
-      await database.deleteDocument(
-          databaseId: publicDb,
-          collectionId: "assignments",
-          documentId: assignment.$id);
+      await supabase.from("tasks").delete().eq("id", task.id.toString());
 
       return ReturnModel(
-          message: "Successfully deleted ${assignment.title}", success: true);
+          message: "Successfully deleted ${task.title}", success: true);
     } catch (error) {
       return ReturnModel(
-          message: "Error deleting assignment",
+          message: "Error deleting task item",
           success: false,
           error: error.toString());
     }
   }
 
-  Future<ReturnModel> updateAssignmentSubject(Assignment assignment) async {
-    final Map<String, dynamic> jsonAssignment = assignment.toJson();
-
+  Future<ReturnModel> updateTask(Tasks task) async {
     try {
-      await database.updateDocument(
-          databaseId: publicDb,
-          collectionId: "assignments",
-          documentId: assignment.$id,
-          data: jsonAssignment);
+      await supabase
+          .from("tasks")
+          .update(task.toJson())
+          .eq("id", task.id.toString());
 
       return const ReturnModel(
-          message: "Assignment updated successfully", success: true);
+          message: "Task updated successfully", success: true);
     } catch (error) {
       return ReturnModel(
-          message: "Error updating assignment",
+          message: "Error updating task item",
           success: false,
           error: error.toString());
     }
   }
 
-  Future<ReturnModel> updateAssignment(Assignment assignment) async {
-    final Map<String, dynamic> jsonAssignment = assignment.toJson();
-    jsonAssignment.remove("subject");
-
-    try {
-      await database.updateDocument(
-          databaseId: publicDb,
-          collectionId: "assignments",
-          documentId: assignment.$id,
-          data: jsonAssignment);
-
-      return const ReturnModel(
-          message: "Assignment updated successfully", success: true);
-    } catch (error) {
-      return ReturnModel(
-          message: "Error updating assignment",
-          success: false,
-          error: error.toString());
-    }
-  }
-
-  Future<ReturnModel> createSubtask(Assignment assignment) async {
+  Future<ReturnModel> createSubtask(Tasks task) async {
     final newSubtask = const Subtask(
       $id: '',
       title: "New subtask",
@@ -191,16 +121,16 @@ class AssignmentsRepository {
     newSubtask.remove("\$id");
 
     try {
-      await database.updateDocument(
-          databaseId: publicDb,
-          collectionId: "assignments",
-          documentId: assignment.$id,
-          data: {
-            "subtasks": assignment.subtasks == null
-                ? [newSubtask]
-                : assignment.subtasks!.map((e) => e.toJson()).toList()
-              ..add(newSubtask)
-          });
+      // await database.updateDocument(
+      //     databaseId: publicDb,
+      //     collectionId: "assignments",
+      //     documentId: assignment.$id,
+      //     data: {
+      //       "subtasks": assignment.subtasks == null
+      //           ? [newSubtask]
+      //           : assignment.subtasks!.map((e) => e.toJson()).toList()
+      //         ..add(newSubtask)
+      //     });
 
       return const ReturnModel(
           message: "Subtask created successfully", success: true);

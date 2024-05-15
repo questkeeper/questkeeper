@@ -1,62 +1,62 @@
-import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
-import 'package:assigngo_rewrite/task_list/providers/current_assignment_provider.dart';
-import 'package:assigngo_rewrite/task_list/providers/assignments_provider.dart';
+import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
+import 'package:assigngo_rewrite/task_list/providers/current_task_provider.dart';
+import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/task_list/widgets/date_time_picker.dart';
 import 'package:assigngo_rewrite/task_list/widgets/subject_dropdown_field.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
-import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
+import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AssignmentScreen extends ConsumerStatefulWidget {
-  const AssignmentScreen({super.key});
+class TaskItemScreen extends ConsumerStatefulWidget {
+  const TaskItemScreen({super.key});
 
   @override
-  ConsumerState<AssignmentScreen> createState() => _AssignmentScreenState();
+  ConsumerState<TaskItemScreen> createState() => _TaskItemScreenState();
 }
 
-class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
-  void _updateAssignment(Assignment assignment) {
-    ref.read(currentAssignmentProvider.notifier).updateAssignment(assignment);
-    ref.read(assignmentsProvider.notifier).updateAssignment(assignment);
+class _TaskItemScreenState extends ConsumerState<TaskItemScreen> {
+  void _updateTask(Tasks task) {
+    ref.read(tasksProvider.notifier).updateTask(task);
+    ref.read(currentTaskProvider.notifier).updateTask(task);
   }
 
-  void _updateAssignmentSubject(Assignment assignment) {
-    ref
-        .read(currentAssignmentProvider.notifier)
-        .updateAssignmentSubject(assignment);
-    ref.read(assignmentsProvider.notifier).updateAssignmentSubject(assignment);
+  void _updateTaskCategory(Tasks task) {
+    // ref
+    //     .read(currentTaskProvider.notifier)
+    //     .updateTaskSubject(assignment);
+    // ref.read(assignmentsProvider.notifier).updateTaskSubject(assignment);
   }
 
-  void _deleteAssignment(Assignment assignment) {
-    ref.read(assignmentsProvider.notifier).deleteAssignment(assignment);
-    ref.read(currentAssignmentProvider.notifier).setCurrentAssignment(null);
+  void _deleteTask(Tasks task) {
+    ref.read(tasksProvider.notifier).deleteTask(task);
+    ref.read(currentTaskProvider.notifier).setCurrentTask(null);
     Navigator.of(context).pop();
   }
 
   void _subtaskComplete(Subtask subtask) {
     subtask = subtask.copyWith(completed: !subtask.completed);
-    ref.read(currentAssignmentProvider.notifier).updateSubtask(subtask);
-    ref
-        .read(assignmentsProvider.notifier)
-        .updateAssignment(ref.read(currentAssignmentProvider).assignment!);
+    // ref.read(currentTaskProvider.notifier).updateSubtask(subtask);
+    // ref
+    //     .read(assignmentsProvider.notifier)
+    //     .updateTask(ref.read(currentTaskProvider).assignment!);
   }
 
   void _updateSubtask(Subtask subtask) {
-    ref.read(currentAssignmentProvider.notifier).updateSubtask(subtask);
-    ref
-        .read(assignmentsProvider.notifier)
-        .updateAssignment(ref.read(currentAssignmentProvider).assignment!);
+    // ref.read(currentTaskProvider.notifier).updateSubtask(subtask);
+    // ref
+    //     .read(assignmentsProvider.notifier)
+    //     .updateTask(ref.read(currentTaskProvider).assignment!);
   }
 
-  void _createSubtask(Assignment assignment) async {
-    await ref.read(assignmentsProvider.notifier).createSubtask(assignment);
-    ref
-        .read(currentAssignmentProvider.notifier)
-        .updateCurrentAssignment(assignment);
+  void _createSubtask(Tasks task) async {
+    // await ref.read(assignmentsProvider.notifier).createSubtask(assignment);
+    // ref
+    //     .read(currentTaskProvider.notifier)
+    //     .updateCurrentTask(assignment);
   }
 
   bool readOnly = true;
@@ -75,14 +75,12 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
       });
     }
 
-    final currentAssignmentRef =
-        ref.watch(currentAssignmentProvider).assignment;
-    final updatedAssignment = ref.watch(currentAssignmentProvider).assignment;
+    final currentTaskRef = ref.watch(currentTaskProvider).task;
 
     final platformBrightness = MediaQuery.of(context).platformBrightness;
     final size = MediaQuery.of(context).size;
 
-    if (currentAssignmentRef == null) {
+    if (currentTaskRef == null) {
       return Container(
         padding: const EdgeInsets.all(16.0),
         margin: const EdgeInsets.all(16.0),
@@ -93,20 +91,20 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
           borderRadius: const BorderRadius.all(Radius.circular(16.0)),
         ),
         child: const Center(
-          child: Text("No assignment selected"),
+          child: Text("No task selected"),
         ),
       );
     }
 
-    final currentAssignment = updatedAssignment ?? currentAssignmentRef;
-    final subjectsList = ref.watch(subjectsProvider);
+    final currentTask = currentTaskRef;
+    // final subjectsList = ref.watch(subjectsProvider);
 
     // Local variables to store the current assignment's categories, starred, and completed status
-    Set<Categories> categories = currentAssignment.categories.toSet();
-    bool isStar = currentAssignment.starred;
-    bool isComp = currentAssignment.completed;
+    // Set<Categories> categories = currentTask.categories.toSet();
+    bool isStar = currentTask.starred;
+    bool isComp = currentTask.completed;
 
-    final subtasks = currentAssignment.subtasks;
+    // final subtasks = currentTask.subtasks;
 
     return Scaffold(
       body: Container(
@@ -124,55 +122,54 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
             size.width < 800
                 ? const SizedBox()
                 : ActionButtons(
-                    deleteAssignment: _deleteAssignment,
-                    updateAssignment: _updateAssignment,
-                    currentAssignment: currentAssignment,
+                    deleteTask: _deleteTask,
+                    updateTask: _updateTask,
+                    currentTask: currentTask,
                     size: size,
                     isStar: isStar,
                     isComp: isComp,
-                    setCurrentAssignmentNull: () {
+                    setCurrentTaskNull: () {
                       ref
-                          .read(currentAssignmentProvider.notifier)
-                          .setCurrentAssignment(null);
+                          .read(currentTaskProvider.notifier)
+                          .setCurrentTask(null);
                     },
                     setReadOnly: setReadOnly,
                     readOnly: readOnly,
                   ),
 
-            // Use the enum to create chips
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const ClampingScrollPhysics(),
-              child: Wrap(
-                spacing: 8.0,
-                children: Categories.values
-                    .map((category) => FilterChip(
-                        selected: categories.contains(category),
-                        selectedColor: const Color(0xFFa86fd1),
-                        showCheckmark: false,
-                        deleteIcon: const Icon(Icons.close),
-                        label: Text(
-                          category.toString().split('.').last,
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                        onSelected: (bool value) {
-                          if (value) {
-                            categories.add(category);
-                          } else {
-                            categories.remove(category);
-                          }
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.horizontal,
+            //   physics: const ClampingScrollPhysics(),
+            //   child: Wrap(
+            //     spacing: 8.0,
+            //     children: Categories.values
+            //         .map((category) => FilterChip(
+            //             selected: categories.contains(category),
+            //             selectedColor: const Color(0xFFa86fd1),
+            //             showCheckmark: false,
+            //             deleteIcon: const Icon(Icons.close),
+            //             label: Text(
+            //               category.toString().split('.').last,
+            //               style:
+            //                   Theme.of(context).textTheme.bodySmall?.copyWith(
+            //                         fontWeight: FontWeight.bold,
+            //                       ),
+            //             ),
+            //             onSelected: (bool value) {
+            //               if (value) {
+            //                 categories.add(category);
+            //               } else {
+            //                 categories.remove(category);
+            //               }
 
-                          final Assignment updatedAssignment = currentAssignment
-                              .copyWith(categories: categories.toList());
+            //               final Task updatedTask = currentTask.copyWith(
+            //                   categories: categories.toList());
 
-                          _updateAssignment(updatedAssignment);
-                        }))
-                    .toList(),
-              ),
-            ),
+            //               _updateTask(updatedTask);
+            //             }))
+            //         .toList(),
+            //   ),
+            // ),
             Container(
               padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0, 0),
               alignment: Alignment.centerLeft,
@@ -180,47 +177,45 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                 readOnly: readOnly,
                 decoration: InputDecoration(
                   border: InputBorder.none,
-                  hintText: currentAssignment.title,
+                  hintText: currentTask.title,
                   hintStyle: Theme.of(context).textTheme.headlineLarge,
                 ),
                 style: Theme.of(context).textTheme.headlineLarge,
                 onSubmitted: (String value) {
-                  final Assignment updatedAssignment =
-                      currentAssignment.copyWith(title: value);
-                  _updateAssignment(updatedAssignment);
+                  final Tasks updatedTask = currentTask.copyWith(title: value);
+                  _updateTask(updatedTask);
                 },
               ),
             ),
-            Container(
-              padding: const EdgeInsets.only(left: 8.0),
-              alignment: Alignment.centerLeft,
-              child: readOnly == true
-                  ? Text(
-                      currentAssignment.subject?.name ?? "Select a subject",
-                    )
-                  : SubjectDropdownField(
-                      subjectsList: subjectsList,
-                      onSubjectChanged: (id) {
-                        setState(() {
-                          late Assignment updatedAssignment;
-                          if (id == '-1' || id == null || id == '') {
-                            updatedAssignment =
-                                currentAssignment.copyWith(subject: null);
-                            debugPrint("subject: $updatedAssignment");
-                          } else {
-                            final subject = subjectsList
-                                .firstWhere((subject) => subject.$id == id);
+            // Container(
+            //   padding: const EdgeInsets.only(left: 8.0),
+            //   alignment: Alignment.centerLeft,
+            //   child: readOnly == true
+            //       ? Text(
+            //           currentTask.subject?.name ?? "Select a subject",
+            //         )
+            //       : SubjectDropdownField(
+            //           subjectsList: subjectsList,
+            //           onSubjectChanged: (id) {
+            //             setState(() {
+            //               late Task updatedTask;
+            //               if (id == '-1' || id == null || id == '') {
+            //                 updatedTask = currentTask.copyWith(subject: null);
+            //                 debugPrint("subject: $updatedTask");
+            //               } else {
+            //                 final subject = subjectsList
+            //                     .firstWhere((subject) => subject.$id == id);
 
-                            updatedAssignment =
-                                currentAssignment.copyWith(subject: subject);
-                            debugPrint("subject: $updatedAssignment");
-                          }
-                          _updateAssignmentSubject(updatedAssignment);
-                        });
-                      },
-                      defaultSubjectId: currentAssignment.subject?.$id,
-                    ),
-            ),
+            //                 updatedTask =
+            //                     currentTask.copyWith(subject: subject);
+            //                 debugPrint("subject: $updatedTask");
+            //               }
+            //               _updateTaskSubject(updatedTask);
+            //             });
+            //           },
+            //           defaultSubjectId: currentTask.subject?.$id,
+            //         ),
+            // ),
 
             Container(
               padding: const EdgeInsets.only(left: 8.0),
@@ -229,16 +224,16 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                 readOnly: readOnly,
                 decoration: InputDecoration(
                   border: InputBorder.none,
-                  hintText: currentAssignment.description != null &&
-                          currentAssignment.description!.isNotEmpty
-                      ? currentAssignment.description
+                  hintText: currentTask.description != null &&
+                          currentTask.description!.isNotEmpty
+                      ? currentTask.description
                       : "Description here..",
                 ),
                 style: Theme.of(context).textTheme.bodyMedium,
                 onSubmitted: (String value) {
-                  final Assignment updatedAssignment =
-                      currentAssignment.copyWith(description: value);
-                  _updateAssignment(updatedAssignment);
+                  final Tasks updatedTask =
+                      currentTask.copyWith(description: value);
+                  _updateTask(updatedTask);
                 },
               ),
             ),
@@ -249,11 +244,11 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                 }
                 await showDateTimePicker(
                   context,
-                  currentAssignment.dueDate,
+                  currentTask.dueDate,
                   (DateTime selectedDateTime) {
-                    final Assignment updatedAssignment =
-                        currentAssignment.copyWith(dueDate: selectedDateTime);
-                    _updateAssignment(updatedAssignment);
+                    final Tasks updatedTask =
+                        currentTask.copyWith(dueDate: selectedDateTime);
+                    _updateTask(updatedTask);
                   },
                 );
               },
@@ -261,7 +256,7 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                 padding: const EdgeInsets.all(8.0),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Due ${formatDate(currentAssignment.dueDate)}",
+                  "Due ${formatDate(currentTask.dueDate)}",
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
@@ -279,58 +274,58 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
                   IconButton(
                     icon: const Icon(Icons.add_box_outlined),
                     onPressed: () {
-                      _createSubtask(currentAssignment);
+                      _createSubtask(currentTask);
                     },
                   ),
                 ],
               ),
             ),
-            Expanded(
-              flex: 100,
-              child: ListView.builder(
-                itemCount: subtasks?.length ?? 0,
-                itemBuilder: (context, index) {
-                  final subtask = subtasks?[index];
-                  return CheckboxListTile(
-                    enableFeedback: true,
-                    subtitle: subtask?.priority != null
-                        ? Text(
-                            "Priority: ${subtask?.priority}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(color: Colors.amber),
-                          )
-                        : null,
-                    value: subtask?.completed,
-                    title: TextField(
-                      readOnly: readOnly,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: subtask!.title,
-                        hintStyle: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      onSubmitted: (String value) {
-                        final Subtask updatedSubtask =
-                            subtask.copyWith(title: value);
-                        _updateSubtask(updatedSubtask);
-                      },
-                    ),
-                    onChanged: (bool? value) {
-                      try {
-                        if (value == null) {
-                          return;
-                        }
-                        _subtaskComplete(subtask);
-                      } catch (error) {
-                        debugPrint("Error completing subtask: $error");
-                      }
-                    },
-                  );
-                },
-              ),
-            ),
+            // Expanded(
+            //   flex: 100,
+            //   child: ListView.builder(
+            //     itemCount: subtasks?.length ?? 0,
+            //     itemBuilder: (context, index) {
+            //       final subtask = subtasks?[index];
+            //       return CheckboxListTile(
+            //         enableFeedback: true,
+            //         subtitle: subtask?.priority != null
+            //             ? Text(
+            //                 "Priority: ${subtask?.priority}",
+            //                 style: Theme.of(context)
+            //                     .textTheme
+            //                     .bodySmall
+            //                     ?.copyWith(color: Colors.amber),
+            //               )
+            //             : null,
+            //         value: subtask?.completed,
+            //         title: TextField(
+            //           readOnly: readOnly,
+            //           decoration: InputDecoration(
+            //             border: InputBorder.none,
+            //             hintText: subtask!.title,
+            //             hintStyle: Theme.of(context).textTheme.bodyLarge,
+            //           ),
+            //           style: Theme.of(context).textTheme.bodyLarge,
+            //           onSubmitted: (String value) {
+            //             final Subtask updatedSubtask =
+            //                 subtask.copyWith(title: value);
+            //             _updateSubtask(updatedSubtask);
+            //           },
+            //         ),
+            //         onChanged: (bool? value) {
+            //           try {
+            //             if (value == null) {
+            //               return;
+            //             }
+            //             _subtaskComplete(subtask);
+            //           } catch (error) {
+            //             debugPrint("Error completing subtask: $error");
+            //           }
+            //         },
+            //       );
+            //     },
+            //   ),
+            // ),
             const Spacer(
               flex: 2,
             ),
@@ -338,18 +333,18 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
             size.width > 800
                 ? const SizedBox()
                 : ActionButtons(
-                    updateAssignment: _updateAssignment,
-                    deleteAssignment: _deleteAssignment,
-                    currentAssignment: currentAssignment,
+                    updateTask: _updateTask,
+                    deleteTask: _deleteTask,
+                    currentTask: currentTask,
                     setReadOnly: setReadOnly,
                     size: size,
                     isStar: isStar,
                     isComp: isComp,
                     readOnly: readOnly,
-                    setCurrentAssignmentNull: () {
+                    setCurrentTaskNull: () {
                       ref
-                          .read(currentAssignmentProvider.notifier)
-                          .setCurrentAssignment(null);
+                          .read(currentTaskProvider.notifier)
+                          .setCurrentTask(null);
                     },
                   ),
             SizedBox(height: MediaQuery.of(context).padding.top + 10),
@@ -363,24 +358,24 @@ class _AssignmentScreenState extends ConsumerState<AssignmentScreen> {
 class ActionButtons extends StatefulWidget {
   const ActionButtons({
     super.key,
-    required this.updateAssignment,
-    required this.currentAssignment,
+    required this.updateTask,
+    required this.currentTask,
     required this.isStar,
     required this.isComp,
     required this.size,
-    required this.deleteAssignment,
-    required this.setCurrentAssignmentNull,
+    required this.deleteTask,
+    required this.setCurrentTaskNull,
     required this.setReadOnly,
     required this.readOnly,
   });
 
-  final Assignment? currentAssignment;
-  final void Function(Assignment assignment) updateAssignment;
-  final void Function(Assignment assignment) deleteAssignment;
+  final Tasks? currentTask;
+  final void Function(Tasks assignment) updateTask;
+  final void Function(Tasks assignment) deleteTask;
   final void Function(bool readOnly) setReadOnly;
   final Size size;
   final bool isStar, isComp, readOnly;
-  final void Function() setCurrentAssignmentNull;
+  final void Function() setCurrentTaskNull;
 
   @override
   ActionButtonsState createState() => ActionButtonsState();
@@ -391,7 +386,7 @@ class ActionButtonsState extends State<ActionButtons> {
   Widget build(BuildContext context) {
     bool isStar = widget.isStar;
     bool isComp = widget.isComp;
-    var newAssignment = widget.currentAssignment;
+    var newTask = widget.currentTask;
 
     final isModal = ModalRoute.of(context) is PopupRoute;
     return Row(
@@ -404,7 +399,7 @@ class ActionButtonsState extends State<ActionButtons> {
             if (isModal) {
               Navigator.of(context).pop();
             }
-            widget.setCurrentAssignmentNull();
+            widget.setCurrentTaskNull();
           },
         ),
         Visibility(
@@ -426,18 +421,17 @@ class ActionButtonsState extends State<ActionButtons> {
           color: Colors.amber,
           onPressed: () {
             isStar = !isStar;
-            widget.updateAssignment(newAssignment!.copyWith(starred: isStar));
+            widget.updateTask(newTask!.copyWith(starred: isStar));
           },
         ),
         IconButton(
-          icon: widget.currentAssignment!.completed
+          icon: widget.currentTask!.completed
               ? const Icon(Icons.cancel_presentation)
               : const Icon(Icons.check),
-          color:
-              widget.currentAssignment!.completed ? Colors.red : Colors.green,
+          color: widget.currentTask!.completed ? Colors.red : Colors.green,
           onPressed: () {
             isComp = !isComp;
-            widget.updateAssignment(newAssignment!.copyWith(completed: isComp));
+            widget.updateTask(newTask!.copyWith(completed: isComp));
           },
         ),
         IconButton(
@@ -448,7 +442,7 @@ class ActionButtonsState extends State<ActionButtons> {
                 context: context,
                 builder: (_) => AlertDialog(
                       content: Text(
-                        "Are you sure you want to delete ${widget.currentAssignment!.title}?",
+                        "Are you sure you want to delete ${widget.currentTask!.title}?",
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       actionsAlignment: MainAxisAlignment.spaceBetween,
@@ -460,8 +454,7 @@ class ActionButtonsState extends State<ActionButtons> {
                             child: const Text("Cancel")),
                         FilledButton(
                             onPressed: () {
-                              widget
-                                  .deleteAssignment(widget.currentAssignment!);
+                              widget.deleteTask(widget.currentTask!);
 
                               isModal ? Navigator.of(context).pop() : null;
                             },

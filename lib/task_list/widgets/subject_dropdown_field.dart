@@ -1,42 +1,41 @@
-import 'package:assigngo_rewrite/subjects/models/subjects_model.dart';
+import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:flutter/material.dart';
 
-class SubjectDropdownField extends StatelessWidget {
-  const SubjectDropdownField({
+class CategoryDropdownField extends StatelessWidget {
+  const CategoryDropdownField({
     super.key,
-    required this.subjectsList,
-    required this.onSubjectChanged,
-    this.defaultSubjectId,
+    required this.categoriesList,
+    required this.onCategoryChanged,
+    this.defaultCategoryId,
   });
 
-  final List<Subject> subjectsList;
-  final void Function(String?) onSubjectChanged;
-  final String? defaultSubjectId;
+  final List<Categories> categoriesList;
+  final void Function(String?) onCategoryChanged;
+  final String? defaultCategoryId;
 
   @override
   Widget build(BuildContext context) {
-    final subjectsList = [
-          const Subject(
-            $id: '-1',
-            name: 'Select a subject',
-          )
+    final categoriesList = [
+          const Categories(
+            id: -1,
+            title: "Select a category",
+          ),
         ] +
-        this.subjectsList;
-    subjectsList;
+        this.categoriesList;
     return DropdownButtonFormField<String>(
-      value: defaultSubjectId ?? subjectsList.first.$id,
-      onChanged: onSubjectChanged,
+      value: defaultCategoryId ?? categoriesList.first.id.toString(),
+      onChanged: onCategoryChanged,
       isExpanded: true,
-      items: subjectsList
+      items: categoriesList
           .map(
             (subject) => DropdownMenuItem<String>(
-              value: subject.$id,
-              child: Text(subject.name),
+              value: subject.id.toString(),
+              child: Text(subject.title),
             ),
           )
           .toList(),
       decoration: const InputDecoration(
-        labelText: "Subject",
+        labelText: "Category",
       ),
     );
   }
