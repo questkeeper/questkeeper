@@ -12,12 +12,18 @@ class SubtasksNotifier extends ChangeNotifier {
   List<Subtask> subtasks = [];
 
   Future<ReturnModel> createSubtask(Subtask subtask) async {
-    subtasks.add(subtask);
-    notifyListeners();
-
     final result = await _subtasksRepository.createSubtask(subtask);
     if (!result.success) {
       subtasks.remove(subtask);
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future<ReturnModel> createBatchSubtasks(List<Subtask> subtasks) async {
+    final result = await _subtasksRepository.createBatchSubtasks(subtasks);
+    if (!result.success) {
+      this.subtasks.removeWhere((subtask) => subtasks.contains(subtask));
       notifyListeners();
     }
     return result;

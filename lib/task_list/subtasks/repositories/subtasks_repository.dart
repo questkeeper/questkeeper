@@ -23,6 +23,27 @@ class SubtasksRepository {
     }
   }
 
+  Future<ReturnModel> createBatchSubtasks(List<Subtask> subtasks) async {
+    try {
+      final subtasksJson = subtasks.map((subtask) {
+        final subtaskJson = subtask.toJson();
+        subtaskJson.remove("id");
+        return subtaskJson;
+      }).toList();
+
+      final newSubtasks =
+          await supabase.from("subtasks").insert(subtasksJson).select();
+
+      return ReturnModel(
+          success: true,
+          data:
+              newSubtasks.map((subtask) => Subtask.fromJson(subtask)).toList(),
+          message: "Subtasks created successfully");
+    } catch (error) {
+      return ReturnModel(success: false, message: error.toString());
+    }
+  }
+
   Future<ReturnModel> updateSubtask(Subtask subtask) async {
     try {
       final updatedSubtask = await supabase
