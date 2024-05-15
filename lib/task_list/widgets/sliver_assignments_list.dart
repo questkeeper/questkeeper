@@ -1,37 +1,37 @@
-import 'package:assigngo_rewrite/task_list/task_item/widgets/assignment_card.dart';
-import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/task_item/widgets/task_card.dart';
+import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:flutter/material.dart';
 
 enum AssignmentsFilter { all, starred, completed }
 
-class SliverAssignmentsList extends StatefulWidget {
-  const SliverAssignmentsList(
+class SliverTasksList extends StatefulWidget {
+  const SliverTasksList(
       {super.key,
-      required this.assignments,
+      required this.tasks,
       required this.filter,
       required this.colors,
       required this.title});
 
-  final List<Assignment> assignments;
+  final List<Tasks> tasks;
 
   final AssignmentsFilter filter;
   final List<Color> colors;
   final String title;
 
   @override
-  State<SliverAssignmentsList> createState() => _SliverAssignmentsListState();
+  State<SliverTasksList> createState() => _SliverTasksListState();
 }
 
-class _SliverAssignmentsListState extends State<SliverAssignmentsList> {
+class _SliverTasksListState extends State<SliverTasksList> {
   final bool _pinned = true;
   final bool _snap = false;
   final bool _floating = false;
   final value = 0;
-  Categories? _selectedFilter;
+  // Filters? _selectedFilter;
 
   @override
   Widget build(BuildContext context) {
-    List<Assignment> filteredAssignments = widget.assignments;
+    List<Tasks> filteredTasks = widget.tasks;
 
     double bottom = MediaQuery.of(context).padding.bottom;
     return CustomScrollView(slivers: [
@@ -59,67 +59,65 @@ class _SliverAssignmentsListState extends State<SliverAssignmentsList> {
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
-      SliverList(
-        delegate: SliverChildListDelegate.fixed(
-          [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const ClampingScrollPhysics(),
-              child: Wrap(
-                children: Categories.values
-                    .map(
-                      (e) => Padding(
-                        padding: const EdgeInsets.fromLTRB(4.0, 2.0, 4.0, 2.0),
-                        child: ChoiceChip(
-                          label: Text(e.toString().split('.').last),
-                          selected: _selectedFilter == e,
-                          onSelected: (selected) {
-                            setState(() {
-                              _selectedFilter = selected ? e : null;
-                            });
-                          },
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            )
-          ],
-        ),
-      ),
+      // SliverList(
+      //   delegate: SliverChildListDelegate.fixed(
+      //     [
+      //       SingleChildScrollView(
+      //         scrollDirection: Axis.horizontal,
+      //         physics: const ClampingScrollPhysics(),
+      //         child: Wrap(
+      //           children: Filters.values
+      //               .map(
+      //                 (e) => Padding(
+      //                   padding: const EdgeInsets.fromLTRB(4.0, 2.0, 4.0, 2.0),
+      //                   child: ChoiceChip(
+      //                     label: Text(e.toString().split('.').last),
+      //                     selected: _selectedFilter == e,
+      //                     onSelected: (selected) {
+      //                       setState(() {
+      //                         _selectedFilter = selected ? e : null;
+      //                       });
+      //                     },
+      //                   ),
+      //                 ),
+      //               )
+      //               .toList(),
+      //         ),
+      //       )
+      //     ],
+      //   ),
+      // ),
       SliverPadding(
         padding: EdgeInsets.fromLTRB(4.0, 2.0, 4.0, bottom),
         sliver: SliverList.builder(
-          itemCount: filteredAssignments.length,
+          itemCount: filteredTasks.length,
           itemBuilder: (context, index) {
             if (widget.filter == AssignmentsFilter.completed &&
-                !filteredAssignments[index].completed) {
+                !filteredTasks[index].completed) {
               return const SizedBox.shrink();
             }
 
             if (widget.filter == AssignmentsFilter.starred &&
-                (!filteredAssignments[index].starred ||
-                    filteredAssignments[index].completed)) {
+                (!filteredTasks[index].starred ||
+                    filteredTasks[index].completed)) {
               return const SizedBox.shrink();
             }
 
             if (widget.filter == AssignmentsFilter.all &&
-                filteredAssignments[index].completed) {
+                filteredTasks[index].completed) {
               return const SizedBox.shrink();
             }
 
-            if (_selectedFilter != null &&
-                !filteredAssignments[index]
-                    .categories
-                    .contains(_selectedFilter)) {
-              return const SizedBox.shrink();
-            }
+            // if (_selectedFilter != null &&
+            //     !filteredTasks[index].categories.contains(_selectedFilter)) {
+            //   return const SizedBox.shrink();
+            // }
 
             return Container(
               padding: const EdgeInsets.fromLTRB(4.0, 2.0, 4.0, 2.0),
-              child: AssignmentCard(
-                  assignment: filteredAssignments[index],
-                  filter: widget.filter),
+              child: TaskCard(
+                task: filteredTasks[index],
+              ),
             );
           },
         ),
