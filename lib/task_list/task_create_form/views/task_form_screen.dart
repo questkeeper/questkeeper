@@ -1,6 +1,8 @@
+import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
 import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:assigngo_rewrite/task_list/subtasks/providers/subtasks_providers.dart';
 import 'package:assigngo_rewrite/task_list/widgets/date_time_picker.dart';
 import 'package:assigngo_rewrite/task_list/widgets/category_dropdown_field.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
@@ -51,6 +53,26 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
       final result = await tasksNotifier.createTask(task);
 
       if (result.success) {
+        final taskData = result.data! as Tasks;
+        final subtasks = _subtasks.map((subtask) {
+          return subtask.copyWith(taskId: taskData.id!);
+        }).toList();
+
+        final subtasksResult = await ref
+            .read(subtasksProvider.notifier)
+            .createBatchSubtasks(subtasks);
+
+        // Check if context is mounted
+        if (!mounted) return;
+
+        if (!subtasksResult.success) {
+          SnackbarService.showErrorSnackbar(
+            _context,
+            "Error creating subtasks: ${subtasksResult.message}",
+          );
+          return;
+        }
+
         ScaffoldMessenger.of(_context).showSnackBar(
           const SnackBar(
             content: Text("Task created successfully"),
@@ -67,10 +89,11 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
           _subtasks.clear();
         });
       } else {
-        ScaffoldMessenger.of(_context).showSnackBar(
-          SnackBar(
-            content: Text("Error creating task: ${result.message}"),
-          ),
+        // Check if context is mounted
+        if (!mounted) return;
+        SnackbarService.showErrorSnackbar(
+          _context,
+          "Error creating task: ${result.message}",
         );
       }
     }
@@ -88,7 +111,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
           )
         : Scaffold(
             appBar: AppBar(
-              title: const Text("Create an task"),
+              title: const Text("Create a task"),
             ),
             body: Center(
               child: LayoutBuilder(
@@ -143,7 +166,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                                       onPressed: () {
                                         setState(() {
                                           _subtasks.add(const Subtask(
-                                            $id: "",
+                                            taskId: -1,
                                             title: '',
                                             priority: 1,
                                           ));
@@ -168,7 +191,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                                       itemCount: _subtasks.length,
                                       itemBuilder: (context, index) {
                                         return ListTile(
-                                          key: ValueKey(_subtasks[index].$id),
+                                          key: ValueKey(_subtasks[index].id),
                                           title: TextFormField(
                                             initialValue:
                                                 _subtasks[index].title,
