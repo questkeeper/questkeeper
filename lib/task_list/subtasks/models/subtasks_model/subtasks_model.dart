@@ -6,10 +6,11 @@ part 'subtasks_model.g.dart';
 @freezed
 class Subtask with _$Subtask {
   const factory Subtask({
-    required String $id,
+    int? id,
     required String title,
     @Default(1) int priority,
     @Default(false) bool completed,
+    required int taskId,
   }) = _Subtask;
 
   factory Subtask.fromJson(Map<String, dynamic> json) =>

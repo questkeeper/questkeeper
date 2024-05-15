@@ -8,16 +8,18 @@ part of 'subtasks_model.dart';
 
 _$SubtaskImpl _$$SubtaskImplFromJson(Map<String, dynamic> json) =>
     _$SubtaskImpl(
-      $id: json[r'$id'] as String,
+      id: (json['id'] as num?)?.toInt(),
       title: json['title'] as String,
-      priority: json['priority'] as int? ?? 1,
+      priority: (json['priority'] as num?)?.toInt() ?? 1,
       completed: json['completed'] as bool? ?? false,
+      taskId: (json['taskId'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$SubtaskImplToJson(_$SubtaskImpl instance) =>
     <String, dynamic>{
-      r'$id': instance.$id,
+      'id': instance.id,
       'title': instance.title,
       'priority': instance.priority,
       'completed': instance.completed,
+      'taskId': instance.taskId,
     };
