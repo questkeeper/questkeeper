@@ -1,6 +1,6 @@
 import 'package:assigngo_rewrite/task_list/repositories/assignments_repository.dart';
-import 'package:assigngo_rewrite/subjects/models/categories_model.dart';
-import 'package:assigngo_rewrite/subjects/repositories/subjects_repository.dart';
+import 'package:assigngo_rewrite/categories/models/categories_model.dart';
+import 'package:assigngo_rewrite/categories/repositories/categories_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final categoriesProvider =
