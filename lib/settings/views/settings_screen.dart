@@ -52,11 +52,10 @@ class SettingsScreen extends StatelessWidget {
                   const Divider(),
                   SettingsCard(
                       backgroundColor: primaryColor,
-                      title: 'Subjects',
-                      description: 'Add, delete, or archive your subjects',
+                      title: 'Categories',
+                      description: 'Add, delete, or archive your categories',
                       icon: Icons.subject,
-                      // TODO: Fix pushed route to category
-                      onTap: () => Navigator.pushNamed(context, '/subjects')),
+                      onTap: () => Navigator.pushNamed(context, '/categories')),
                   const Divider(),
                   SettingsCard(
                       title: 'Notifications',

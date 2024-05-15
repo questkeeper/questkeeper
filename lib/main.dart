@@ -6,7 +6,7 @@ import 'package:assigngo_rewrite/settings/views/account/account_screen.dart';
 // import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
 // import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:assigngo_rewrite/shared/utils/text_theme.dart';
-import 'package:assigngo_rewrite/subjects/views/subjects_screen.dart';
+import 'package:assigngo_rewrite/categories/views/categories_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
@@ -84,7 +84,7 @@ class MyApp extends ConsumerWidget {
         '/signin': (context) => const AuthScreen(),
         '/signin/password': (context) => const SignInPasswordScreen(),
         '/home': (context) => const TabView(),
-        '/subjects': (context) => const SubjectsScreen(),
+        '/categories': (context) => const CategoriesScreen(),
 
         // Settings stuff
         '/settings/account': (context) => const AccountScreen(),
