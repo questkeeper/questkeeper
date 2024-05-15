@@ -1,4 +1,3 @@
-import 'package:assigngo_rewrite/constants.dart';
 import 'package:flutter/material.dart';
 
 class AccountScreen extends StatelessWidget {
@@ -25,89 +24,90 @@ class AccountScreen extends StatelessWidget {
               'Sessions',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-            Card(
-              margin: const EdgeInsets.all(kDefaultFontSize),
-              child: FutureBuilder(
-                  future: account.listSessions(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data?.sessions.length ?? 0,
-                        itemBuilder: (context, index) {
-                          final clientName =
-                              snapshot.data!.sessions[index].clientName;
-                          final id = snapshot.data!.sessions[index].$id;
-                          final device = snapshot.data!.sessions[index].osName;
-                          late final Icon deviceIcon;
-                          final isCurrent =
-                              snapshot.data!.sessions[index].current;
+            // TODO: Update session management for Supabase
+            // Card(
+            //   margin: const EdgeInsets.all(kDefaultFontSize),
+            //   child: FutureBuilder(
+            //       future: account.listSessions(),
+            //       builder: (context, snapshot) {
+            //         if (snapshot.connectionState == ConnectionState.waiting) {
+            //           return const Center(
+            //             child: CircularProgressIndicator(),
+            //           );
+            //         }
+            //         return ListView.builder(
+            //             shrinkWrap: true,
+            //             itemCount: snapshot.data?.sessions.length ?? 0,
+            //             itemBuilder: (context, index) {
+            //               final clientName =
+            //                   snapshot.data!.sessions[index].clientName;
+            //               final id = snapshot.data!.sessions[index].$id;
+            //               final device = snapshot.data!.sessions[index].osName;
+            //               late final Icon deviceIcon;
+            //               final isCurrent =
+            //                   snapshot.data!.sessions[index].current;
 
-                          if (device == "iOS" || device == "Mac") {
-                            deviceIcon =
-                                const Icon(Icons.apple, color: Colors.blueGrey);
-                          } else if (device == "Windows") {
-                            deviceIcon =
-                                const Icon(Icons.window, color: Colors.blue);
-                          } else if (device == "Android") {
-                            deviceIcon =
-                                const Icon(Icons.android, color: Colors.green);
-                          } else {
-                            deviceIcon =
-                                Icon(Icons.devices_other, color: primaryColor);
-                          }
+            //               if (device == "iOS" || device == "Mac") {
+            //                 deviceIcon =
+            //                     const Icon(Icons.apple, color: Colors.blueGrey);
+            //               } else if (device == "Windows") {
+            //                 deviceIcon =
+            //                     const Icon(Icons.window, color: Colors.blue);
+            //               } else if (device == "Android") {
+            //                 deviceIcon =
+            //                     const Icon(Icons.android, color: Colors.green);
+            //               } else {
+            //                 deviceIcon =
+            //                     Icon(Icons.devices_other, color: primaryColor);
+            //               }
 
-                          return ListTile(
-                            trailing: const Icon(Icons.logout_rounded),
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text('Logout'),
-                                    content: const Text(
-                                        'Are you sure you want to logout from this device?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          account.deleteSession(sessionId: id);
-                                          Navigator.pop(context);
+            //               return ListTile(
+            //                 trailing: const Icon(Icons.logout_rounded),
+            //                 onTap: () {
+            //                   showDialog(
+            //                     context: context,
+            //                     builder: (context) {
+            //                       return AlertDialog(
+            //                         title: const Text('Logout'),
+            //                         content: const Text(
+            //                             'Are you sure you want to logout from this device?'),
+            //                         actions: [
+            //                           TextButton(
+            //                             onPressed: () {
+            //                               Navigator.pop(context);
+            //                             },
+            //                             child: const Text('Cancel'),
+            //                           ),
+            //                           TextButton(
+            //                             onPressed: () {
+            //                               account.deleteSession(sessionId: id);
+            //                               Navigator.pop(context);
 
-                                          if (isCurrent) {
-                                            Navigator.pushNamedAndRemoveUntil(
-                                                context,
-                                                '/signin',
-                                                (route) => false);
-                                          }
-                                        },
-                                        child: const Text('Logout'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            iconColor: Colors.redAccent,
-                            leading: deviceIcon,
-                            title: Text(
-                                "$device ${clientName.isEmpty ? "" : '— $clientName'}"),
-                            subtitle:
-                                isCurrent ? const Text("Current Device") : null,
-                            visualDensity: VisualDensity.standard,
-                          );
-                        });
-                  }),
-            ),
+            //                               if (isCurrent) {
+            //                                 Navigator.pushNamedAndRemoveUntil(
+            //                                     context,
+            //                                     '/signin',
+            //                                     (route) => false);
+            //                               }
+            //                             },
+            //                             child: const Text('Logout'),
+            //                           ),
+            //                         ],
+            //                       );
+            //                     },
+            //                   );
+            //                 },
+            //                 iconColor: Colors.redAccent,
+            //                 leading: deviceIcon,
+            //                 title: Text(
+            //                     "$device ${clientName.isEmpty ? "" : '— $clientName'}"),
+            //                 subtitle:
+            //                     isCurrent ? const Text("Current Device") : null,
+            //                 visualDensity: VisualDensity.standard,
+            //               );
+            //             });
+            //       }),
+            // ),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -116,7 +116,7 @@ class AccountScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(right: kDefaultFontSize),
                   child: FilledButton.icon(
                       onPressed: () async {
-                        await account.deleteSessions();
+                        // await account.deleteSessions();
 
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(

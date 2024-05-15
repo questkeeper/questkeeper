@@ -1,15 +1,13 @@
-import 'package:appwrite/models.dart';
 import 'package:assigngo_rewrite/constants.dart';
 import 'package:assigngo_rewrite/settings/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Future<User?> currentAccount = account.get();
-
     void notYetImplemented() {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -44,22 +42,10 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              FutureBuilder(
-                  future: currentAccount,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(
-                        snapshot.data!.email
-                            .substring(0, snapshot.data!.email.indexOf('@')),
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      );
-                    } else {
-                      return Text(
-                        'John Doe',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      );
-                    }
-                  }),
+              Text(
+                'John Doe',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
               const SizedBox(height: 10),
               Column(
                 children: [
@@ -69,6 +55,7 @@ class SettingsScreen extends StatelessWidget {
                       title: 'Subjects',
                       description: 'Add, delete, or archive your subjects',
                       icon: Icons.subject,
+                      // TODO: Fix pushed route to category
                       onTap: () => Navigator.pushNamed(context, '/subjects')),
                   const Divider(),
                   SettingsCard(
@@ -112,8 +99,8 @@ class SettingsScreen extends StatelessWidget {
                       icon: Icons.logout,
                       backgroundColor: Colors.red,
                       onTap: () async {
-                        await account
-                            .deleteSession(sessionId: "current")
+                        await Supabase.instance.client.auth
+                            .signOut()
                             .then((value) => {
                                   Navigator.pushReplacementNamed(
                                       context, "/signin"),
