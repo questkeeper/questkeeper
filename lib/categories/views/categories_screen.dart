@@ -83,12 +83,12 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                               .primaryTextTheme
                               .bodyLarge
                               ?.color,
-                          subtitle: Column(
+                          subtitle: const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Text(
                               // "${category.assignments?.length} assignments "),
-                              const Text("Tap to edit"),
+                              Text("Tap to edit"),
                             ],
                           ))),
                 );

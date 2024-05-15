@@ -22,8 +22,8 @@ Categories _$CategoriesFromJson(Map<String, dynamic> json) {
 mixin _$Categories {
   int? get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  DateTime? get $createdAt => throw _privateConstructorUsedError;
-  DateTime? get $updatedAt => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
   String? get color => throw _privateConstructorUsedError;
   int? get spaceId => throw _privateConstructorUsedError;
   bool get archived => throw _privateConstructorUsedError;
@@ -43,8 +43,8 @@ abstract class $CategoriesCopyWith<$Res> {
   $Res call(
       {int? id,
       String title,
-      DateTime? $createdAt,
-      DateTime? $updatedAt,
+      DateTime? createdAt,
+      DateTime? updatedAt,
       String? color,
       int? spaceId,
       bool archived});
@@ -65,8 +65,8 @@ class _$CategoriesCopyWithImpl<$Res, $Val extends Categories>
   $Res call({
     Object? id = freezed,
     Object? title = null,
-    Object? $createdAt = freezed,
-    Object? $updatedAt = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
     Object? color = freezed,
     Object? spaceId = freezed,
     Object? archived = null,
@@ -80,13 +80,13 @@ class _$CategoriesCopyWithImpl<$Res, $Val extends Categories>
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      $createdAt: freezed == $createdAt
-          ? _value.$createdAt
-          : $createdAt // ignore: cast_nullable_to_non_nullable
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      $updatedAt: freezed == $updatedAt
-          ? _value.$updatedAt
-          : $updatedAt // ignore: cast_nullable_to_non_nullable
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       color: freezed == color
           ? _value.color
@@ -115,8 +115,8 @@ abstract class _$$CategoriesImplCopyWith<$Res>
   $Res call(
       {int? id,
       String title,
-      DateTime? $createdAt,
-      DateTime? $updatedAt,
+      DateTime? createdAt,
+      DateTime? updatedAt,
       String? color,
       int? spaceId,
       bool archived});
@@ -135,8 +135,8 @@ class __$$CategoriesImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? title = null,
-    Object? $createdAt = freezed,
-    Object? $updatedAt = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
     Object? color = freezed,
     Object? spaceId = freezed,
     Object? archived = null,
@@ -150,13 +150,13 @@ class __$$CategoriesImplCopyWithImpl<$Res>
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      $createdAt: freezed == $createdAt
-          ? _value.$createdAt
-          : $createdAt // ignore: cast_nullable_to_non_nullable
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      $updatedAt: freezed == $updatedAt
-          ? _value.$updatedAt
-          : $updatedAt // ignore: cast_nullable_to_non_nullable
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       color: freezed == color
           ? _value.color
@@ -180,8 +180,8 @@ class _$CategoriesImpl implements _Categories {
   const _$CategoriesImpl(
       {this.id,
       required this.title,
-      this.$createdAt,
-      this.$updatedAt,
+      this.createdAt,
+      this.updatedAt,
       this.color,
       this.spaceId,
       this.archived = false});
@@ -194,9 +194,9 @@ class _$CategoriesImpl implements _Categories {
   @override
   final String title;
   @override
-  final DateTime? $createdAt;
+  final DateTime? createdAt;
   @override
-  final DateTime? $updatedAt;
+  final DateTime? updatedAt;
   @override
   final String? color;
   @override
@@ -207,7 +207,7 @@ class _$CategoriesImpl implements _Categories {
 
   @override
   String toString() {
-    return 'Categories(id: $id, title: $title, \$createdAt: ${$createdAt}, \$updatedAt: ${$updatedAt}, color: $color, spaceId: $spaceId, archived: $archived)';
+    return 'Categories(id: $id, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, color: $color, spaceId: $spaceId, archived: $archived)';
   }
 
   @override
@@ -217,10 +217,10 @@ class _$CategoriesImpl implements _Categories {
             other is _$CategoriesImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
-            (identical(other.$createdAt, $createdAt) ||
-                other.$createdAt == $createdAt) &&
-            (identical(other.$updatedAt, $updatedAt) ||
-                other.$updatedAt == $updatedAt) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
             (identical(other.color, color) || other.color == color) &&
             (identical(other.spaceId, spaceId) || other.spaceId == spaceId) &&
             (identical(other.archived, archived) ||
@@ -230,7 +230,7 @@ class _$CategoriesImpl implements _Categories {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, title, $createdAt, $updatedAt, color, spaceId, archived);
+      runtimeType, id, title, createdAt, updatedAt, color, spaceId, archived);
 
   @JsonKey(ignore: true)
   @override
@@ -250,8 +250,8 @@ abstract class _Categories implements Categories {
   const factory _Categories(
       {final int? id,
       required final String title,
-      final DateTime? $createdAt,
-      final DateTime? $updatedAt,
+      final DateTime? createdAt,
+      final DateTime? updatedAt,
       final String? color,
       final int? spaceId,
       final bool archived}) = _$CategoriesImpl;
@@ -264,9 +264,9 @@ abstract class _Categories implements Categories {
   @override
   String get title;
   @override
-  DateTime? get $createdAt;
+  DateTime? get createdAt;
   @override
-  DateTime? get $updatedAt;
+  DateTime? get updatedAt;
   @override
   String? get color;
   @override

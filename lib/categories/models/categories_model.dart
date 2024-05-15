@@ -8,8 +8,8 @@ class Categories with _$Categories {
   const factory Categories({
     int? id,
     required String title,
-    DateTime? $createdAt,
-    DateTime? $updatedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     String? color,
     int? spaceId,
     @Default(false) bool archived,
