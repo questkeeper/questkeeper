@@ -20,7 +20,7 @@ Categories _$CategoriesFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Categories {
-  int get id => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   DateTime? get $createdAt => throw _privateConstructorUsedError;
   DateTime? get $updatedAt => throw _privateConstructorUsedError;
@@ -41,7 +41,7 @@ abstract class $CategoriesCopyWith<$Res> {
       _$CategoriesCopyWithImpl<$Res, Categories>;
   @useResult
   $Res call(
-      {int id,
+      {int? id,
       String title,
       DateTime? $createdAt,
       DateTime? $updatedAt,
@@ -63,7 +63,7 @@ class _$CategoriesCopyWithImpl<$Res, $Val extends Categories>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? title = null,
     Object? $createdAt = freezed,
     Object? $updatedAt = freezed,
@@ -72,10 +72,10 @@ class _$CategoriesCopyWithImpl<$Res, $Val extends Categories>
     Object? archived = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -113,7 +113,7 @@ abstract class _$$CategoriesImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int id,
+      {int? id,
       String title,
       DateTime? $createdAt,
       DateTime? $updatedAt,
@@ -133,7 +133,7 @@ class __$$CategoriesImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? title = null,
     Object? $createdAt = freezed,
     Object? $updatedAt = freezed,
@@ -142,10 +142,10 @@ class __$$CategoriesImplCopyWithImpl<$Res>
     Object? archived = null,
   }) {
     return _then(_$CategoriesImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -178,7 +178,7 @@ class __$$CategoriesImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CategoriesImpl implements _Categories {
   const _$CategoriesImpl(
-      {required this.id,
+      {this.id,
       required this.title,
       this.$createdAt,
       this.$updatedAt,
@@ -190,7 +190,7 @@ class _$CategoriesImpl implements _Categories {
       _$$CategoriesImplFromJson(json);
 
   @override
-  final int id;
+  final int? id;
   @override
   final String title;
   @override
@@ -248,7 +248,7 @@ class _$CategoriesImpl implements _Categories {
 
 abstract class _Categories implements Categories {
   const factory _Categories(
-      {required final int id,
+      {final int? id,
       required final String title,
       final DateTime? $createdAt,
       final DateTime? $updatedAt,
@@ -260,7 +260,7 @@ abstract class _Categories implements Categories {
       _$CategoriesImpl.fromJson;
 
   @override
-  int get id;
+  int? get id;
   @override
   String get title;
   @override
