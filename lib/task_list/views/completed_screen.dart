@@ -1,11 +1,11 @@
-import 'package:assigngo_rewrite/task_list/models/assignments_model.dart';
+import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:assigngo_rewrite/task_list/widgets/sliver_assignments_list.dart';
 import 'package:flutter/material.dart';
 
 class CompletedScreen extends StatelessWidget {
-  const CompletedScreen({super.key, required this.assignments});
+  const CompletedScreen({super.key, required this.tasks});
 
-  final List<Assignment> assignments;
+  final List<Tasks> tasks;
 
   // static const colors = [Colors.purple, Colors.green, Colors.lightGreen];
   static const colors = [
@@ -17,9 +17,9 @@ class CompletedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SliverAssignmentsList(
+      body: SliverTasksList(
         title: "Completed",
-        assignments: assignments,
+        tasks: tasks,
         filter: AssignmentsFilter.completed,
         colors: colors,
       ),

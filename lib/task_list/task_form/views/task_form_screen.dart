@@ -2,7 +2,7 @@ import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/task_list/widgets/date_time_picker.dart';
-import 'package:assigngo_rewrite/task_list/widgets/subject_dropdown_field.dart';
+import 'package:assigngo_rewrite/task_list/widgets/category_dropdown_field.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
@@ -48,13 +48,12 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
         categoryId: _categoryId,
       );
 
-      final tasksNotifier = ref.read(tasksProvider.notifier);
-      final result = await tasksNotifier.createTask(task);
+      final result = await ref.read(tasksProvider.notifier).createTask(task);
 
       if (result.success) {
         ScaffoldMessenger.of(_context).showSnackBar(
           const SnackBar(
-            content: Text("Task created successfully"),
+            content: Text("Assignment created successfully"),
           ),
         );
 
@@ -89,7 +88,7 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
           )
         : Scaffold(
             appBar: AppBar(
-              title: const Text("Create an task"),
+              title: const Text("Create a task"),
             ),
             body: Center(
               child: LayoutBuilder(
@@ -118,10 +117,18 @@ class _AssignmentFormScreenState extends ConsumerState<AssignmentFormScreen> {
                                     _dueDate = date!;
                                   });
                                 },
-                                categoryId: _categoryId.toString(),
+                                categoryId: _categoryId,
                                 onCategoryChanged: (id) {
                                   setState(() {
-                                    _categoryId = int.tryParse(id!);
+                                    if (id == '-1' || id == null || id == '') {
+                                      return;
+                                    }
+                                    // _subjectId = id;
+                                    // _subject = ref
+                                    //     .watch(subjectsProvider)
+                                    //     .firstWhere(
+                                    //         (subject) => subject.$id == id);
+                                    _categoryId = int.tryParse(id);
                                   });
                                 },
                               ),
@@ -235,7 +242,7 @@ class AssignmentForm extends StatefulWidget {
   final TextEditingController descriptionController;
   final DateTime dueDate;
   final void Function(DateTime?) onDueDateChanged;
-  final String categoryId;
+  final int? categoryId;
   final void Function(String?) onCategoryChanged;
   final Future<void> Function() onFormSubmitted;
   final List<Categories> categoriesList;
