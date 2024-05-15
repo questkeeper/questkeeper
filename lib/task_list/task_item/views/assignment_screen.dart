@@ -3,10 +3,8 @@ import 'package:assigngo_rewrite/task_list/providers/current_task_provider.dart'
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:assigngo_rewrite/task_list/widgets/date_time_picker.dart';
-import 'package:assigngo_rewrite/task_list/widgets/subject_dropdown_field.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
-import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
