@@ -1,3 +1,6 @@
+// ignore_for_file: unnecessary_getters_setters
+// Code breaks if I change the getters/setters to public.
+
 import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:assigngo_rewrite/categories/repositories/categories_repository.dart';
 import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';

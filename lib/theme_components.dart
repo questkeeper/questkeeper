@@ -4,20 +4,20 @@ class ComponentsTheme {
   static textButtonTheme() {
     return TextButtonThemeData(
       style: ButtonStyle(
-        padding: MaterialStateProperty.all(
+        padding: WidgetStateProperty.all(
           const EdgeInsets.symmetric(horizontal: 24),
         ),
-        foregroundColor: MaterialStateProperty.all(const Color(0xFF3F51B5)),
-        fixedSize: MaterialStateProperty.all(
+        foregroundColor: WidgetStateProperty.all(const Color(0xFF3F51B5)),
+        fixedSize: WidgetStateProperty.all(
           const Size.fromHeight(40),
         ),
-        shape: MaterialStateProperty.all(
+        shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        iconSize: MaterialStateProperty.all(18),
-        textStyle: MaterialStateProperty.all(
+        iconSize: WidgetStateProperty.all(18),
+        textStyle: WidgetStateProperty.all(
           const TextStyle(fontSize: 14),
         ),
       ),
@@ -27,12 +27,12 @@ class ComponentsTheme {
   static outlinedButtonTheme() {
     return OutlinedButtonThemeData(
       style: ButtonStyle(
-        padding: MaterialStateProperty.all(
-            const EdgeInsets.symmetric(horizontal: 24)),
-        fixedSize: MaterialStateProperty.all(
+        padding:
+            WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 24)),
+        fixedSize: WidgetStateProperty.all(
           const Size.fromHeight(40),
         ),
-        shape: MaterialStateProperty.all(
+        shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -44,12 +44,12 @@ class ComponentsTheme {
   static elevatedButtonTheme() {
     return ElevatedButtonThemeData(
       style: ButtonStyle(
-        padding: MaterialStateProperty.all(
-            const EdgeInsets.symmetric(horizontal: 24)),
-        fixedSize: MaterialStateProperty.all(
+        padding:
+            WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 24)),
+        fixedSize: WidgetStateProperty.all(
           const Size.fromHeight(40),
         ),
-        shape: MaterialStateProperty.all(
+        shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -61,15 +61,15 @@ class ComponentsTheme {
   static filledButtonTheme() {
     return FilledButtonThemeData(
       style: ButtonStyle(
-        textStyle: MaterialStateProperty.all(
+        textStyle: WidgetStateProperty.all(
           const TextStyle(fontWeight: FontWeight.w600),
         ),
-        padding: MaterialStateProperty.all(
-            const EdgeInsets.symmetric(horizontal: 24)),
-        fixedSize: MaterialStateProperty.all(
+        padding:
+            WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 24)),
+        fixedSize: WidgetStateProperty.all(
           const Size.fromHeight(40),
         ),
-        shape: MaterialStateProperty.all(
+        shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
