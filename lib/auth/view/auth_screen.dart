@@ -59,7 +59,8 @@ class AuthScreen extends ConsumerWidget {
             ),
 
             SupaMagicAuth(
-              redirectUrl: kIsWeb ? null : 'listify://signin',
+              redirectUrl:
+                  kIsWeb ? "${Uri.base.toString()}/signin" : 'listify://signin',
               onSuccess: onSuccess,
               onError: onError,
             ),
