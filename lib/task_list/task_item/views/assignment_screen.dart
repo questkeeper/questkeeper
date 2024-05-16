@@ -2,6 +2,7 @@ import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:assigngo_rewrite/task_list/providers/current_task_provider.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:assigngo_rewrite/task_list/widgets/category_dropdown_field.dart';
 import 'package:assigngo_rewrite/task_list/widgets/date_time_picker.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
@@ -17,16 +18,31 @@ class TaskItemScreen extends ConsumerStatefulWidget {
 }
 
 class _TaskItemScreenState extends ConsumerState<TaskItemScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    if (ref.read(currentTaskProvider).task == null) {
+      return;
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    ref.read(currentTaskProvider.notifier).onDispose();
+  }
+
   void _updateTask(Tasks task) {
     ref.read(tasksProvider.notifier).updateTask(task);
-    ref.read(currentTaskProvider.notifier).updateTask(task);
   }
 
   void _updateTaskCategory(Tasks task) {
-    // ref
-    //     .read(currentTaskProvider.notifier)
-    //     .updateTaskSubject(assignment);
-    // ref.read(assignmentsProvider.notifier).updateTaskSubject(assignment);
+    if (task.categoryId == -1) {
+      task = task.copyWith(categoryId: null);
+    }
+    ref.read(currentTaskProvider.notifier).updateTaskCategory(task.categoryId);
+    ref.read(tasksProvider.notifier).updateTask(task);
   }
 
   void _deleteTask(Tasks task) {
@@ -37,48 +53,45 @@ class _TaskItemScreenState extends ConsumerState<TaskItemScreen> {
 
   void _subtaskComplete(Subtask subtask) {
     subtask = subtask.copyWith(completed: !subtask.completed);
-    // ref.read(currentTaskProvider.notifier).updateSubtask(subtask);
-    // ref
-    //     .read(assignmentsProvider.notifier)
-    //     .updateTask(ref.read(currentTaskProvider).assignment!);
+    ref.read(currentTaskProvider.notifier).updateSubtask(subtask);
   }
 
   void _updateSubtask(Subtask subtask) {
-    // ref.read(currentTaskProvider.notifier).updateSubtask(subtask);
-    // ref
-    //     .read(assignmentsProvider.notifier)
-    //     .updateTask(ref.read(currentTaskProvider).assignment!);
+    ref.read(currentTaskProvider.notifier).updateSubtask(subtask);
   }
 
   void _createSubtask(Tasks task) async {
-    // await ref.read(assignmentsProvider.notifier).createSubtask(assignment);
-    // ref
-    //     .read(currentTaskProvider.notifier)
-    //     .updateCurrentTask(assignment);
+    final subtask = Subtask(
+      title: "New Subtask",
+      taskId: task.id!,
+    );
+
+    await ref.read(currentTaskProvider.notifier).addSubtask(subtask);
   }
 
-  bool readOnly = true;
+  void setReadOnly(bool value) {
+    SnackbarService.showInfoSnackbar(
+        context,
+        !value
+            ? "Tap a field to edit it"
+            : "You are no longer editing the assignment");
+
+    ref.read(currentTaskProvider.notifier).readOnly = value;
+  }
 
   @override
   Widget build(BuildContext context) {
-    void setReadOnly(bool value) {
-      SnackbarService.showInfoSnackbar(
-          context,
-          !value
-              ? "Tap a field to edit it"
-              : "You are no longer editing the assignment");
-
-      setState(() {
-        readOnly = value;
-      });
-    }
-
-    final currentTaskRef = ref.watch(currentTaskProvider).task;
+    bool readOnly = ref.watch(currentTaskProvider).readOnly;
+    ref.watch(currentTaskProvider).fetchSubtasksForCurrentTask();
+    final currentTask = ref.watch(currentTaskProvider).task;
+    final subtasks = ref.watch(currentTaskProvider).subtasks;
+    final currentCategory = ref.watch(currentTaskProvider).category;
+    final categoriesList = ref.watch(currentTaskProvider).allCategories;
 
     final platformBrightness = MediaQuery.of(context).platformBrightness;
     final size = MediaQuery.of(context).size;
 
-    if (currentTaskRef == null) {
+    if (currentTask == null) {
       return Container(
         padding: const EdgeInsets.all(16.0),
         margin: const EdgeInsets.all(16.0),
@@ -93,16 +106,10 @@ class _TaskItemScreenState extends ConsumerState<TaskItemScreen> {
         ),
       );
     }
-
-    final currentTask = currentTaskRef;
-    // final subjectsList = ref.watch(subjectsProvider);
-
     // Local variables to store the current assignment's categories, starred, and completed status
     // Set<Categories> categories = currentTask.categories.toSet();
     bool isStar = currentTask.starred;
     bool isComp = currentTask.completed;
-
-    // final subtasks = currentTask.subtasks;
 
     return Scaffold(
       body: Container(
@@ -185,35 +192,27 @@ class _TaskItemScreenState extends ConsumerState<TaskItemScreen> {
                 },
               ),
             ),
-            // Container(
-            //   padding: const EdgeInsets.only(left: 8.0),
-            //   alignment: Alignment.centerLeft,
-            //   child: readOnly == true
-            //       ? Text(
-            //           currentTask.subject?.name ?? "Select a subject",
-            //         )
-            //       : SubjectDropdownField(
-            //           subjectsList: subjectsList,
-            //           onSubjectChanged: (id) {
-            //             setState(() {
-            //               late Task updatedTask;
-            //               if (id == '-1' || id == null || id == '') {
-            //                 updatedTask = currentTask.copyWith(subject: null);
-            //                 debugPrint("subject: $updatedTask");
-            //               } else {
-            //                 final subject = subjectsList
-            //                     .firstWhere((subject) => subject.$id == id);
-
-            //                 updatedTask =
-            //                     currentTask.copyWith(subject: subject);
-            //                 debugPrint("subject: $updatedTask");
-            //               }
-            //               _updateTaskSubject(updatedTask);
-            //             });
-            //           },
-            //           defaultSubjectId: currentTask.subject?.$id,
-            //         ),
-            // ),
+            Container(
+              padding: const EdgeInsets.only(left: 8.0),
+              alignment: Alignment.centerLeft,
+              child: readOnly == true
+                  ? Text(
+                      currentCategory?.title ?? "No category",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  : CategoryDropdownField(
+                      categoriesList: categoriesList,
+                      onCategoryChanged: (id) {
+                        setState(() {
+                          final Tasks updatedTask = currentTask.copyWith(
+                            categoryId: int.parse(id!),
+                          );
+                          _updateTaskCategory(updatedTask);
+                        });
+                      },
+                      defaultCategoryId: currentCategory?.id.toString(),
+                    ),
+            ),
 
             Container(
               padding: const EdgeInsets.only(left: 8.0),
@@ -278,52 +277,55 @@ class _TaskItemScreenState extends ConsumerState<TaskItemScreen> {
                 ],
               ),
             ),
-            // Expanded(
-            //   flex: 100,
-            //   child: ListView.builder(
-            //     itemCount: subtasks?.length ?? 0,
-            //     itemBuilder: (context, index) {
-            //       final subtask = subtasks?[index];
-            //       return CheckboxListTile(
-            //         enableFeedback: true,
-            //         subtitle: subtask?.priority != null
-            //             ? Text(
-            //                 "Priority: ${subtask?.priority}",
-            //                 style: Theme.of(context)
-            //                     .textTheme
-            //                     .bodySmall
-            //                     ?.copyWith(color: Colors.amber),
-            //               )
-            //             : null,
-            //         value: subtask?.completed,
-            //         title: TextField(
-            //           readOnly: readOnly,
-            //           decoration: InputDecoration(
-            //             border: InputBorder.none,
-            //             hintText: subtask!.title,
-            //             hintStyle: Theme.of(context).textTheme.bodyLarge,
-            //           ),
-            //           style: Theme.of(context).textTheme.bodyLarge,
-            //           onSubmitted: (String value) {
-            //             final Subtask updatedSubtask =
-            //                 subtask.copyWith(title: value);
-            //             _updateSubtask(updatedSubtask);
-            //           },
-            //         ),
-            //         onChanged: (bool? value) {
-            //           try {
-            //             if (value == null) {
-            //               return;
-            //             }
-            //             _subtaskComplete(subtask);
-            //           } catch (error) {
-            //             debugPrint("Error completing subtask: $error");
-            //           }
-            //         },
-            //       );
-            //     },
-            //   ),
-            // ),
+            Expanded(
+              flex: 100,
+              child: ListView.builder(
+                itemCount: subtasks?.length ?? 0,
+                itemBuilder: (context, index) {
+                  final subtask = subtasks?[index];
+                  return CheckboxListTile(
+                    enableFeedback: true,
+                    subtitle: subtask?.priority != null
+                        ? Text(
+                            "Priority: ${subtask!.priority}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(color: Colors.amber),
+                          )
+                        : null,
+                    value: subtask?.completed,
+                    title: readOnly
+                        ? Text(subtask!.title,
+                            style: Theme.of(context).textTheme.bodyLarge)
+                        : TextField(
+                            readOnly: readOnly,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: subtask!.title,
+                              hintStyle: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            onSubmitted: (String value) {
+                              final Subtask updatedSubtask =
+                                  subtask.copyWith(title: value);
+                              _updateSubtask(updatedSubtask);
+                            },
+                          ),
+                    onChanged: (bool? value) {
+                      try {
+                        if (value == null) {
+                          return;
+                        }
+                        _subtaskComplete(subtask);
+                      } catch (error) {
+                        debugPrint("Error completing subtask: $error");
+                      }
+                    },
+                  );
+                },
+              ),
+            ),
             const Spacer(
               flex: 2,
             ),
@@ -396,6 +398,7 @@ class ActionButtonsState extends State<ActionButtons> {
           onPressed: () {
             if (isModal) {
               Navigator.of(context).pop();
+              dispose();
             }
             widget.setCurrentTaskNull();
           },
@@ -455,6 +458,8 @@ class ActionButtonsState extends State<ActionButtons> {
                               widget.deleteTask(widget.currentTask!);
 
                               isModal ? Navigator.of(context).pop() : null;
+
+                              dispose();
                             },
                             style: ButtonStyle(
                               backgroundColor:

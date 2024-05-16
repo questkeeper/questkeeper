@@ -6,6 +6,20 @@ class SubtasksRepository {
   SubtasksRepository();
   final supabase = Supabase.instance.client;
 
+  Future<ReturnModel> getSubtasks(int taskId) async {
+    try {
+      final subtasks =
+          await supabase.from("subtasks").select().eq("taskId", taskId);
+
+      final subtasksList = subtasks.map((e) => Subtask.fromJson(e)).toList();
+
+      return ReturnModel(
+          success: true, data: subtasksList, message: "Subtasks fetched");
+    } catch (error) {
+      return ReturnModel(success: false, message: error.toString());
+    }
+  }
+
   Future<ReturnModel> createSubtask(Subtask subtask) async {
     try {
       final subtaskJson = subtask.toJson();
