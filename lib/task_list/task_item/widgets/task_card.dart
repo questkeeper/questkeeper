@@ -38,7 +38,7 @@ class _TaskCardState extends ConsumerState<TaskCard> {
       confirmDismiss: (direction) {
         if (direction == DismissDirection.startToEnd) {
           ref.read(tasksProvider.notifier).toggleStar(widget.task);
-          return Future.value(true);
+          return Future.value(false);
           // return widget.filter == TasksFilter.starred
           //     ? Future.value(true)
           //     : Future.value(false);

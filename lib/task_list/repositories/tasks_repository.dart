@@ -50,7 +50,7 @@ class TasksRepository {
     try {
       await supabase
           .from("tasks")
-          .update({"starred": !task.starred, "id": task.id});
+          .update({"starred": !task.starred}).eq("id", task.id!);
       return const ReturnModel(
           message: "Task starred successfully", success: true);
     } catch (error) {
@@ -65,7 +65,7 @@ class TasksRepository {
     try {
       await supabase
           .from("tasks")
-          .update({"completed": !task.completed, "id": task.id});
+          .update({"completed": !task.completed}).eq("id", task.id!);
 
       return const ReturnModel(
           message: "Task completed successfully", success: true);
