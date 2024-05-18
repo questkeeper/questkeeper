@@ -1,11 +1,10 @@
-import 'package:assigngo_rewrite/assignments/assignment/views/assignment_screen.dart';
-import 'package:assigngo_rewrite/assignments/assignment_form/views/assignment_form_screen.dart';
-import 'package:assigngo_rewrite/assignments/providers/assignments_provider.dart';
-import 'package:assigngo_rewrite/assignments/views/home_screen.dart';
-import 'package:assigngo_rewrite/assignments/views/priority_screen.dart';
-import 'package:assigngo_rewrite/assignments/views/completed_screen.dart';
+import 'package:assigngo_rewrite/task_list/task_item/views/assignment_screen.dart';
+import 'package:assigngo_rewrite/task_list/task_create_form/views/task_form_screen.dart';
+import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
+import 'package:assigngo_rewrite/task_list/views/home_screen.dart';
+import 'package:assigngo_rewrite/task_list/views/priority_screen.dart';
+import 'package:assigngo_rewrite/task_list/views/completed_screen.dart';
 import 'package:assigngo_rewrite/settings/views/settings_screen.dart';
-import 'package:assigngo_rewrite/subjects/providers/subjects_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,8 +20,7 @@ class _TabViewState extends ConsumerState<TabView> {
   void initState() {
     super.initState();
     // Fetch the assignments when the screen is initialized
-    ref.read(assignmentsProvider.notifier).fetchAssignments();
-    ref.read(subjectsProvider.notifier).fetchSubjects();
+    ref.read(tasksProvider.notifier).fetchTasks();
   }
 
   int _selectedIndex = 0;
@@ -35,12 +33,12 @@ class _TabViewState extends ConsumerState<TabView> {
 
   @override
   Widget build(BuildContext context) {
-    final assignments = ref.watch(assignmentsProvider);
+    final tasks = ref.watch(tasksProvider);
     final List<Widget> pages = [
-      HomeScreen(assignments: assignments),
-      StarScreen(assignments: assignments),
-      const AssignmentFormScreen(),
-      CompletedScreen(assignments: assignments),
+      HomeScreen(tasks: tasks),
+      StarScreen(tasks: tasks),
+      const TaskFormScreen(),
+      CompletedScreen(tasks: tasks),
       const SettingsScreen(),
     ];
 
@@ -51,16 +49,15 @@ class _TabViewState extends ConsumerState<TabView> {
           // Mobile layout
           return Scaffold(
             body: RefreshIndicator(
-                onRefresh: () => ref
-                    .refresh(assignmentsProvider.notifier)
-                    .fetchAssignments(),
+                onRefresh: () =>
+                    ref.refresh(tasksProvider.notifier).fetchTasks(),
                 child: pages[_selectedIndex]),
             floatingActionButton: FloatingActionButton(
               onPressed: () => {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AssignmentFormScreen(),
+                    builder: (context) => const TaskFormScreen(),
                     fullscreenDialog: true,
                   ),
                 )
@@ -100,25 +97,8 @@ class _TabViewState extends ConsumerState<TabView> {
         } else {
           // Desktop layout
           return Scaffold(
-            // floatingActionButtonLocation:
-            //     FloatingActionButtonLocation.startFloat,
-            // floatingActionButton: FloatingActionButton(
-            //   onPressed: () => {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => const AssignmentFormScreen(),
-            //         fullscreenDialog: true,
-            //       ),
-            //     )
-            //   },
-            //   tooltip: 'Add New Assignment',
-            //   elevation: 2,
-            //   child: const Icon(Icons.add),
-            // ),
             body: RefreshIndicator(
-              onRefresh: () =>
-                  ref.refresh(assignmentsProvider.notifier).fetchAssignments(),
+              onRefresh: () => ref.refresh(tasksProvider.notifier).fetchTasks(),
               child: Row(
                 children: [
                   NavigationRail(
@@ -152,7 +132,7 @@ class _TabViewState extends ConsumerState<TabView> {
                     flex: width > 900 ? 3 : 2,
                     child: pages[_selectedIndex],
                   ),
-                  const Expanded(flex: 2, child: AssignmentScreen()),
+                  const Expanded(flex: 2, child: TaskItemScreen()),
                 ],
               ),
             ),
