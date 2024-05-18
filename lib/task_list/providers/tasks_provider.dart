@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:assigngo_rewrite/task_list/repositories/tasks_repository.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
-// import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
-import 'package:flutter/material.dart';
+import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final tasksProvider = StateNotifierProvider<TasksNotifier, List<Tasks>>(
@@ -15,22 +17,24 @@ class TasksNotifier extends StateNotifier<List<Tasks>> {
   final TasksRepository _repository = TasksRepository();
   TasksNotifier(super.state);
 
-  // void updateHomeWidget(List<task> state) {
-  //   try {
-  //     if (Platform.isIOS || Platform.isAndroid) {
-  //       HomeWidgetMobile().updateHomeWidget(state);
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Platform implementation error: $e");
-  //   }
-  // }
+  void updateHomeWidget(List<Tasks> state) {
+    try {
+      if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
+        HomeWidgetMobile().updateHomeWidget(
+          state,
+        );
+      }
+    } catch (e) {
+      debugPrint("Platform implementation error: $e");
+    }
+  }
 
   Future<void> fetchTasks() async {
     try {
       final tasks = await _repository.getTasks();
 
       state = tasks;
-      // updateHomeWidget(tasks);
+      updateHomeWidget(tasks);
     } catch (error) {
       debugPrint("Error fetching tasks: $error");
     }

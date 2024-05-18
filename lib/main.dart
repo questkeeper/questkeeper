@@ -1,12 +1,15 @@
+import 'dart:io';
+
 import 'package:assigngo_rewrite/auth/view/auth_password_screen.dart';
 import 'package:assigngo_rewrite/auth/view/auth_screen.dart';
 import 'package:assigngo_rewrite/auth/view/auth_gate.dart';
 import 'package:assigngo_rewrite/settings/views/about/about_screen.dart';
 import 'package:assigngo_rewrite/settings/views/account/account_screen.dart';
-// import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
-// import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_stub.dart';
+import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
+import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:assigngo_rewrite/shared/utils/text_theme.dart';
 import 'package:assigngo_rewrite/categories/views/categories_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
@@ -29,16 +32,16 @@ Future<void> main() async {
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16dWRha25icnppeGprdmpxYXl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI0MjU3NDgsImV4cCI6MjAyODAwMTc0OH0.b71_fWtic8S4sfNmCMlwLAlzZwhS_lHGBEW1ZQynfsc",
   );
 
-  // HomeWidgetInterface? homeWidget;
+  HomeWidgetInterface? homeWidget;
 
-  // try {
-  //   if (Platform.isIOS || Platform.isAndroid) {
-  //     homeWidget = HomeWidgetMobile();
-  //     homeWidget.initHomeWidget('group.assigngo');
-  //   }
-  // } catch (e) {
-  //   debugPrint("Platform implementation error: $e");
-  // }
+  try {
+    if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
+      homeWidget = HomeWidgetMobile();
+      homeWidget.initHomeWidget('group.assigngo');
+    }
+  } catch (e) {
+    debugPrint("Platform implementation error: $e");
+  }
 
   runApp(
     const ProviderScope(
