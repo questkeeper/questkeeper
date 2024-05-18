@@ -1,3 +1,5 @@
+import 'package:assigngo_rewrite/categories/models/categories_model.dart';
+import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
 import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:assigngo_rewrite/task_list/providers/current_task_provider.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
@@ -10,10 +12,12 @@ class TaskCard extends ConsumerStatefulWidget {
   const TaskCard({
     super.key,
     required this.task,
+    this.category,
     // required this.filter,
   });
 
   final Tasks task;
+  final Categories? category;
   // final TasksFilter filter;
 
   @override
@@ -109,9 +113,9 @@ class _TaskCardState extends ConsumerState<TaskCard> {
           // height: 150,
           width: double.infinity,
           child: Card(
-            // color: task.subject != null && task.subject!.color != null
-            //     ? HexColor(task.subject!.color!)
-            //     : Colors.transparent,
+            color: widget.category != null && widget.category!.color != null
+                ? HexColor(widget.category!.color!)
+                : Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0),
             ),

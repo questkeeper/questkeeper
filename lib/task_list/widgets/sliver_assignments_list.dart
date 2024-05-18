@@ -1,10 +1,13 @@
+import 'package:assigngo_rewrite/categories/models/categories_model.dart';
+import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
 import 'package:assigngo_rewrite/task_list/task_item/widgets/task_card.dart';
 import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum AssignmentsFilter { all, starred, completed }
 
-class SliverTasksList extends StatefulWidget {
+class SliverTasksList extends ConsumerStatefulWidget {
   const SliverTasksList(
       {super.key,
       required this.tasks,
@@ -19,10 +22,10 @@ class SliverTasksList extends StatefulWidget {
   final String title;
 
   @override
-  State<SliverTasksList> createState() => _SliverTasksListState();
+  ConsumerState<SliverTasksList> createState() => _SliverTasksListState();
 }
 
-class _SliverTasksListState extends State<SliverTasksList> {
+class _SliverTasksListState extends ConsumerState<SliverTasksList> {
   final bool _pinned = true;
   final bool _snap = false;
   final bool _floating = false;
@@ -30,8 +33,15 @@ class _SliverTasksListState extends State<SliverTasksList> {
   // Filters? _selectedFilter;
 
   @override
+  void initState() {
+    super.initState();
+    ref.read(categoriesProvider.notifier).fetchCategories();
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<Tasks> filteredTasks = widget.tasks;
+    final categories = ref.watch(categoriesProvider);
 
     double bottom = MediaQuery.of(context).padding.bottom;
     return CustomScrollView(slivers: [
@@ -113,10 +123,18 @@ class _SliverTasksListState extends State<SliverTasksList> {
             //   return const SizedBox.shrink();
             // }
 
+            Categories? category;
+
+            if (filteredTasks[index].categoryId != null) {
+              category = categories.firstWhere(
+                  (element) => element.id == filteredTasks[index].categoryId);
+            }
+
             return Container(
               padding: const EdgeInsets.fromLTRB(4.0, 2.0, 4.0, 2.0),
               child: TaskCard(
                 task: filteredTasks[index],
+                category: category,
               ),
             );
           },
