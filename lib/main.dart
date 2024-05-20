@@ -16,15 +16,13 @@ import 'tabs/tabview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/theme.dart';
 import 'package:assigngo_rewrite/theme_components.dart';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+
+  OneSignal.initialize("cbc24f01-5a26-4613-82c0-ceb2f8696e4c");
 
   await Supabase.initialize(
     url: "https://mzudaknbrzixjkvjqayw.supabase.co",

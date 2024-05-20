@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:assigngo_rewrite/auth/providers/auth_provider.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -45,21 +42,7 @@ class SignInPasswordScreen extends ConsumerWidget {
                 ref.read(authProvider.notifier).passwordSignIn().then((_) => {
                       if (authState.error == null)
                         {
-                          FirebaseMessaging.instance.requestPermission(
-                            provisional: true,
-                          ),
-                          if (Platform.isIOS || Platform.isMacOS)
-                            {
-                              FirebaseMessaging.instance
-                                  .setForegroundNotificationPresentationOptions(
-                                alert: true,
-                                badge: true,
-                                sound: true,
-                              ),
-                            },
-                          ref
-                              .read(authProvider.notifier)
-                              .setFirebaseMessaging(),
+                          ref.read(authProvider.notifier).setOneSignal(),
                           Navigator.of(context).popAndPushNamed(
                             '/home',
                           ),

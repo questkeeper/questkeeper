@@ -1,7 +1,7 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/auth/models/auth_state.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, SignInState>((ref) {
@@ -56,26 +56,9 @@ class AuthNotifier extends StateNotifier<SignInState> {
   }
 
   // Set up FCM
-  void setFirebaseMessaging() async {
-    debugPrint('Setting up FCM');
-    await FirebaseMessaging.instance.requestPermission(
-      provisional: true,
-    );
-    await FirebaseMessaging.instance.getAPNSToken();
-    final token = await FirebaseMessaging.instance.getToken();
-    debugPrint(token);
-
-    if (token == null) {
-      debugPrint('Token is null');
-      return;
-    }
-
-    debugPrint("Making a call to createPushTarget");
-    // final result = await account.createPushTarget(
-    //     targetId: ID.unique(),
-    //     identifier: token,
-    //     providerId: '661e90e9001427890121');
-
-    // debugPrint(result.identifier);
+  void setOneSignal() async {
+    final userId = supabase.auth.currentUser?.id;
+    OneSignal.login(userId!);
+    OneSignal.User.addEmail(emailController.text);
   }
 }
