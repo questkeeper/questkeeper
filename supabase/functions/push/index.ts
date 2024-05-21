@@ -1,11 +1,24 @@
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import * as OneSignal from "https://esm.sh/@onesignal/node-onesignal@1.0.0-beta7";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { JWT } from "npm:google-auth-library@9";
-import serviceAccount from "../service-account.json" with { type: "json" };
+
+console.log("Starting server");
+const _OnesignalAppId_ = Deno.env.get("ONESIGNAL_APP_ID")!;
+const _OnesignalRestApiKey_ = Deno.env.get("ONESIGNAL_REST_API_KEY")!;
+const configuration = OneSignal.createConfiguration({
+  appKey: _OnesignalRestApiKey_,
+});
+
+const onesignal = new OneSignal.DefaultApi(configuration);
 
 interface Notification {
   id: string;
   user_id: string;
-  body: string;
+  taskId: string;
+  scheduledAt: Date;
+  delivered: boolean;
+  message: string;
+  title: string;
 }
 
 interface WebhookPayload {
@@ -20,71 +33,51 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
-Deno.serve(async (req) => {
+serve(async (req) => {
   const payload: WebhookPayload = await req.json();
+  console.info("Received payload", payload);
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("fcm_token")
-    .eq("id", payload.record.user_id)
-    .single();
+  console.info("Creating OneSignal notification");
 
-  const fcmToken = data!.fcm_token as string;
+  console.log("Sending notification to user", payload.record.user_id);
 
-  const accessToken = await getAccessToken({
-    clientEmail: serviceAccount.client_email,
-    privateKey: serviceAccount.private_key,
-  });
+  try {
+    console.info("Creating OneSignal notification");
+    const notification = new OneSignal.Notification();
+    notification.app_id = _OnesignalAppId_;
+    notification.include_external_user_ids = [payload.record.user_id];
+    notification.send_after = payload.record.scheduledAt.toString();
+    notification.contents = {
+      en: payload.record.message,
+    };
+    notification.headings = {
+      en: payload.record.title,
+    };
+    const onesignalApiRes = await onesignal.createNotification(notification);
 
-  const res = await fetch(
-    `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+    console.log(onesignalApiRes);
+
+    // Update the record in the database
+    const { error } = await supabase
+      .from("scheduled_notifications")
+      .update({ delivered: true })
+      .eq("id", payload.record.id);
+
+    if (error) {
+      throw error;
+    }
+
+    return new Response(
+      JSON.stringify({ onesignalResponse: onesignalApiRes }),
+      {
+        headers: { "Content-Type": "application/json" },
       },
-      body: JSON.stringify({
-        message: {
-          token: fcmToken,
-          notification: {
-            title: `Notification from Supabase`,
-            body: payload.record.body,
-          },
-        },
-      }),
-    },
-  );
-
-  const resData = await res.json();
-  if (res.status < 200 || 299 < res.status) {
-    throw resData;
+    );
+  } catch (err) {
+    console.error("Failed to create OneSignal notification", err);
+    return new Response("Server error.", {
+      headers: { "Content-Type": "application/json" },
+      status: 400,
+    });
   }
-
-  return new Response(JSON.stringify(resData), {
-    headers: { "Content-Type": "application/json" },
-  });
 });
-
-const getAccessToken = ({
-  clientEmail,
-  privateKey,
-}: {
-  clientEmail: string;
-  privateKey: string;
-}): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const jwtClient = new JWT({
-      email: clientEmail,
-      key: privateKey,
-      scopes: ["https://www.googleapis.com/auth/firebase.messaging"],
-    });
-    jwtClient.authorize((err, tokens) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(tokens!.access_token!);
-    });
-  });
-};
