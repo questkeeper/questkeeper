@@ -1,11 +1,11 @@
 {
-    "name": "assigngo_rewrite",
-    "short_name": "assigngo_rewrite",
+    "name": "Listify",
+    "short_name": "Listify",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A smart way to store and track tasks.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
