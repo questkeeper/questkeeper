@@ -1,7 +1,10 @@
+import 'dart:io';
+
+import 'package:assigngo_rewrite/shared/utils/onesignal/onesignal_mobile.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/auth/models/auth_state.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, SignInState>((ref) {
@@ -58,7 +61,8 @@ class AuthNotifier extends StateNotifier<SignInState> {
   // Set up FCM
   void setOneSignal() async {
     final userId = supabase.auth.currentUser?.id;
-    OneSignal.login(userId!);
-    OneSignal.User.addEmail(emailController.text);
+    if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
+      OneSignalMobile().loginExternalUserId(userId!);
+    }
   }
 }

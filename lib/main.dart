@@ -7,6 +7,7 @@ import 'package:assigngo_rewrite/settings/views/about/about_screen.dart';
 import 'package:assigngo_rewrite/settings/views/account/account_screen.dart';
 import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_stub.dart';
+import 'package:assigngo_rewrite/shared/utils/onesignal/onesignal_mobile.dart';
 import 'package:assigngo_rewrite/shared/utils/text_theme.dart';
 import 'package:assigngo_rewrite/categories/views/categories_screen.dart';
 import 'package:flutter/foundation.dart';
@@ -16,13 +17,9 @@ import 'tabs/tabview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/theme.dart';
 import 'package:assigngo_rewrite/theme_components.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-
-  OneSignal.initialize("cbc24f01-5a26-4613-82c0-ceb2f8696e4c");
 
   await Supabase.initialize(
     url: "https://mzudaknbrzixjkvjqayw.supabase.co",
@@ -36,6 +33,7 @@ Future<void> main() async {
     if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
       homeWidget = HomeWidgetMobile();
       homeWidget.initHomeWidget('group.assigngo');
+      OneSignalMobile().initHomeWidget();
     }
   } catch (e) {
     debugPrint("Platform implementation error: $e");
