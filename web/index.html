@@ -18,32 +18,25 @@
 
     <meta charset="UTF-8" />
     <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
-    <meta name="description" content="A smart way to track your tasks" />
+    <meta name="description" content="A new Flutter project." />
 
     <!-- iOS meta tags & icons -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-title" content="Listify" />
+    <meta name="apple-mobile-web-app-title" content="listify" />
     <link rel="apple-touch-icon" href="icons/Icon-192.png" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png" />
 
     <title>Listify</title>
-    <link rel="manifest" href="manifest.json" />
-
-    <script>
-      // The value below is injected by flutter build, do not touch.
-      const serviceWorkerVersion = "{{ serviceWorkerVersion }}";
-    </script>
-    <!-- This script adds the flutter initialization JS code -->
-    <script src="flutter.js" defer></script>
 
     <script
       src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js"
       defer
     ></script>
     <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
       OneSignalDeferred.push(function (OneSignal) {
         OneSignal.init({
           appId: "cbc24f01-5a26-4613-82c0-ceb2f8696e4c",
@@ -55,22 +48,10 @@
         });
       });
     </script>
+
+    <link rel="manifest" href="manifest.json" />
   </head>
   <body>
-    <script>
-      window.addEventListener("load", function (ev) {
-        // Download main.dart.js
-        _flutter.loader.load({
-          serviceWorker: {
-            serviceWorkerVersion: serviceWorkerVersion,
-          },
-          onEntrypointLoaded: function (engineInitializer) {
-            engineInitializer.initializeEngine().then(function (appRunner) {
-              appRunner.runApp();
-            });
-          },
-        });
-      });
-    </script>
+    <script src="flutter_bootstrap.js" async></script>
   </body>
 </html>
