@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/auth/models/auth_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, SignInState>((ref) {
@@ -71,11 +72,21 @@ class AuthNotifier extends StateNotifier<SignInState> {
     }
 
     debugPrint("Making a call to createPushTarget");
-    // final result = await account.createPushTarget(
-    //     targetId: ID.unique(),
-    //     identifier: token,
-    //     providerId: '661e90e9001427890121');
 
-    // debugPrint(result.identifier);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final currentDeviceId = prefs.getString("deviceId");
+
+    if (currentDeviceId != null) {
+      await supabase.from("profiles").update({
+        "fcm_token": token,
+      }).eq("device_id", currentDeviceId);
+    } else {
+      final deviceId = await supabase.from("profiles").upsert({
+        "fcm_token": token,
+      }).select();
+
+      prefs.setString("deviceId", deviceId.first["device_id"]);
+    }
   }
 }
