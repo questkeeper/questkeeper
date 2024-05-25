@@ -50,6 +50,7 @@ dependencies:
   supabase_flutter: ^2.5.2
   supabase_auth_ui: ^0.4.1
   home_widget: ^0.6.0
+  shared_preferences: ^2.2.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
