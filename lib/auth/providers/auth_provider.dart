@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/auth/models/auth_state.dart';
@@ -57,14 +60,26 @@ class AuthNotifier extends StateNotifier<SignInState> {
   }
 
   // Set up FCM
-  void setFirebaseMessaging() async {
+  Future<void> setFirebaseMessaging() async {
     debugPrint('Setting up FCM');
+    String? token;
     await FirebaseMessaging.instance.requestPermission(
       provisional: true,
     );
-    await FirebaseMessaging.instance.getAPNSToken();
-    final token = await FirebaseMessaging.instance.getToken();
-    debugPrint(token);
+
+    if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
+      FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
+      token = await FirebaseMessaging.instance.getAPNSToken();
+      debugPrint("APNS Token: $token");
+    } else {
+      token = await FirebaseMessaging.instance.getToken();
+      debugPrint("FCM Token: $token");
+    }
 
     if (token == null) {
       debugPrint('Token is null');
@@ -82,11 +97,13 @@ class AuthNotifier extends StateNotifier<SignInState> {
         "fcm_token": token,
       }).eq("device_id", currentDeviceId);
     } else {
-      final deviceId = await supabase.from("profiles").upsert({
+      final deviceId = await supabase.from("profiles").insert({
         "fcm_token": token,
       }).select();
 
       prefs.setString("deviceId", deviceId.first["device_id"]);
     }
+
+    debugPrint("Token: $token, Device ID: ${prefs.getString("deviceId")}");
   }
 }

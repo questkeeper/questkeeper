@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,22 +10,16 @@ class AuthScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void onSuccess(Session response) {
-      debugPrint("Success: $response");
-
-      if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
-        FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-          alert: true,
-          badge: true,
-          sound: true,
+    void onSuccess(Session response) async {
+      debugPrint("Foreground notification options");
+      await ref.read(authProvider.notifier).setFirebaseMessaging();
+      debugPrint("Firebase messaging set");
+      if (context.mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/home',
+          (route) => false,
         );
       }
-      debugPrint("Foreground notification options");
-      ref.read(authProvider.notifier).setFirebaseMessaging();
-      debugPrint("Firebase messaging set");
-      Navigator.of(context).popAndPushNamed(
-        '/home',
-      );
     }
 
     void onError(error) {
