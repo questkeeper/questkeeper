@@ -1,18 +1,29 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { JWT } from "npm:google-auth-library@9";
-import serviceAccount from "../service-account.json" with { type: "json" };
+import { Novu } from "npm:@novu/node";
 
 interface Notification {
-  id: string;
+  id: number;
   user_id: string;
-  body: string;
+  taskId: number;
+  dueDate: string;
+  delivered: boolean;
+  message: string;
+  title: string;
+}
+
+interface NotificationTransaction {
+  id: number;
+  notificationId: number;
+  transactionId: number;
+  scheduledAt: Date;
 }
 
 interface WebhookPayload {
-  type: "INSERT";
+  type: "INSERT" | "UPDATE" | "DELETE";
   table: string;
   record: Notification;
   schema: "public";
+  old_record: Notification | null;
 }
 
 const supabase = createClient(
@@ -20,71 +31,74 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
+const novu = new Novu(Deno.env.get("NOVU_API_KEY")!);
+
 Deno.serve(async (req) => {
-  const payload: WebhookPayload = await req.json();
+  console.info("Received request", req);
+  const webhookPayload: WebhookPayload = await req.json();
+  console.info("Received payload", webhookPayload);
+  const payload = webhookPayload.record;
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("fcm_token")
-    .eq("id", payload.record.user_id)
-    .single();
+  // TODO: Get the user's preferences for notification times
+  // Current setup is temporary
+  const times = [12, 24, 48];
+  const sendAtArray = [];
+  const transactionIds: string[] = [];
 
-  const fcmToken = data!.fcm_token as string;
+  let resData = {
+    success: true,
+    error: null,
+    message: "Notification scheduled successfully",
+  };
 
-  const accessToken = await getAccessToken({
-    clientEmail: serviceAccount.client_email,
-    privateKey: serviceAccount.private_key,
-  });
+  const dueAt = new Date(payload.dueDate);
 
-  const res = await fetch(
-    `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        message: {
-          token: fcmToken,
-          notification: {
-            title: `Notification from Supabase`,
-            body: payload.record.body,
+  try {
+    for (let i = 0; i < times.length; i++) {
+      const time = times[i];
+      const sendAt = new Date(dueAt.getTime() - time * 60 * 60 * 1000);
+
+      // Skip if the sendAt time is in the past
+      if (sendAt < new Date()) {
+        continue;
+      }
+
+      sendAtArray.push(sendAt);
+      const transaction = await novu.trigger("schedulepush", {
+        payload: {
+          sendAt: sendAt.toISOString(),
+          payload: {
+            title: payload.title,
+            message: payload.message,
           },
         },
-      }),
-    },
-  );
+        to: {
+          subscriberId: payload.user_id,
+        },
+      });
 
-  const resData = await res.json();
-  if (res.status < 200 || 299 < res.status) {
-    throw resData;
+      transactionIds.push(transaction.data.data.transactionId);
+    }
+
+    await supabase
+      .from("notification_transactions")
+      .insert(
+        sendAtArray.map((sendAt) => ({
+          notificationId: payload.id,
+          scheduledAt: sendAt,
+          transactionId: transactionIds.shift(),
+        })),
+      );
+  } catch (error) {
+    console.error(error);
+    resData = {
+      success: false,
+      error: error,
+      message: "Failed to schedule notification",
+    };
   }
 
   return new Response(JSON.stringify(resData), {
     headers: { "Content-Type": "application/json" },
   });
 });
-
-const getAccessToken = ({
-  clientEmail,
-  privateKey,
-}: {
-  clientEmail: string;
-  privateKey: string;
-}): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const jwtClient = new JWT({
-      email: clientEmail,
-      key: privateKey,
-      scopes: ["https://www.googleapis.com/auth/firebase.messaging"],
-    });
-    jwtClient.authorize((err, tokens) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(tokens!.access_token!);
-    });
-  });
-};
