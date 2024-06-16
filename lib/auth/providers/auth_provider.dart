@@ -76,6 +76,7 @@ class AuthNotifier extends StateNotifier<SignInState> {
       await supabase.from("profiles").update({
         "previousToken": currentToken,
         "token": token,
+        "deviceType": Platform.operatingSystem,
       }).eq("deviceId", currentDeviceId);
     } else {
       final deviceId = await supabase.from("profiles").insert({
@@ -107,7 +108,7 @@ class AuthNotifier extends StateNotifier<SignInState> {
 
   // Set up FCM
   Future<void> setFirebaseMessaging() async {
-    // await clearToken();
+    await clearToken();
     debugPrint('Setting up FCM');
     String? token;
     NotificationSettings settings =
@@ -121,35 +122,35 @@ class AuthNotifier extends StateNotifier<SignInState> {
         saveToken(token);
       });
 
-      if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
-        String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-        if (apnsToken != null) {
-          saveToken(apnsToken);
-        } else {
-          // Handle the case where the initial token retrieval fails.
-          // You might want to retry later or provide user feedback.
-          debugPrint("APNS Token is null");
-        }
+      // if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
+      // String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+      // if (apnsToken != null) {
+      //   saveToken(apnsToken);
+      // } else {
+      // Handle the case where the initial token retrieval fails.
+      // You might want to retry later or provide user feedback.
+      //   debugPrint("APNS Token is null");
+      // }
 
-        FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
+      FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      // } else {
+      token = await FirebaseMessaging.instance.getToken();
+
+      if (token != null) {
+        saveToken(token);
       } else {
-        token = await FirebaseMessaging.instance.getToken();
-
-        if (token != null) {
-          saveToken(token);
-        } else {
-          // Handle the case where the initial token retrieval fails.
-          // You might want to retry later or provide user feedback.
-          debugPrint("FCM Token is null");
-        }
+        // Handle the case where the initial token retrieval fails.
+        // You might want to retry later or provide user feedback.
+        debugPrint("FCM Token is null");
       }
-    } else {
-      debugPrint("User declined permission");
     }
+    // } else {
+    //   debugPrint("User declined permission");
+    // }
 
     // if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
     //   FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
