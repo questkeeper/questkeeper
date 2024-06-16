@@ -29,6 +29,7 @@ const supabase = createClient(
 const novu = new Novu(Deno.env.get("NOVU_API_KEY")!);
 
 Deno.serve(async (req) => {
+  console.log("Request received");
   const webhookPayload: WebhookPayload = await req.json();
   const payload = webhookPayload.record;
 
@@ -37,12 +38,18 @@ Deno.serve(async (req) => {
   try {
     subscribers = await novu.subscribers.get(payload.user_id);
   } catch (error) {
-    subscribers = { status: 404 };
+    subscribers = await novu.subscribers.identify(payload.user_id, {});
   }
 
   if (shouldCreateNew(subscribers, payload)) {
     webhookPayload.type = "INSERT";
   }
+  // const pushProvider =
+  //   payload.deviceType === "ios" || payload.deviceType === "macos"
+  //     ? PushProviderIdEnum.APNS
+  //     : PushProviderIdEnum.FCM;
+
+  console.log("webhookPayload type", webhookPayload.type);
 
   try {
     switch (webhookPayload.type) {
@@ -68,6 +75,8 @@ Deno.serve(async (req) => {
     );
   }
 
+  console.log("Request processed successfully");
+
   return new Response(
     JSON.stringify({
       success: true,
@@ -82,8 +91,8 @@ function shouldCreateNew(
   payload: Profile,
 ) {
   return subscribers.status === 404 || payload.previousToken === null ||
-    subscribers.data.channels.length === 0 ||
-    !subscribers.data.channels[0].credentials.deviceTokens.includes(
+    subscribers.data.data.channels.length === 0 ||
+    !subscribers.data.data.channels[0].credentials.deviceTokens.includes(
       payload.token,
     );
 }
@@ -95,20 +104,15 @@ async function deleteDeviceFromSubscriberProfile(
   if (payload.previousToken === null) {
     throw new Error("Previous token is required for delete operation");
   }
-  await novu.subscribers.update(payload.user_id, {
-    channels: [
-      {
-        "credentials": {
-          "deviceTokens": [
-            ...subscribers.data.channels[0].credentials.deviceTokens.filter(
-              (token: string) => token !== payload.previousToken,
-            ),
-          ],
-        },
-        providerId: PushProviderIdEnum.FCM,
-      },
-    ],
-  });
+  await novu.subscribers.setCredentials(
+    payload.user_id,
+    PushProviderIdEnum.FCM,
+    {
+      deviceTokens: subscribers?.data?.data?.channels?.[0]?.credentials?.deviceTokens.filter(
+        (token: string) => token !== payload.previousToken,
+      ),
+    },
+  );
 }
 
 async function updateSubscriberProfile(
@@ -118,21 +122,18 @@ async function updateSubscriberProfile(
   if (payload.previousToken === null) {
     throw new Error("Previous token is required for update operation");
   }
-  await novu.subscribers.update(payload.user_id, {
-    channels: [
-      {
-        "credentials": {
-          "deviceTokens": [
-            ...subscribers.data.channels[0].credentials.deviceTokens.filter(
-              (token: string) => token !== payload.previousToken,
-            ),
-            payload.token,
-          ],
-        },
-        providerId: PushProviderIdEnum.FCM,
-      },
-    ],
-  });
+  await novu.subscribers.setCredentials(
+    payload.user_id,
+    PushProviderIdEnum.FCM,
+    {
+      deviceTokens: [
+        ...subscribers?.data?.data?.channels?.[0]?.credentials?.deviceTokens.filter(
+          (token: string) => token !== payload.previousToken,
+        ),
+        payload.token,
+      ],
+    },
+  );
 }
 
 async function addToSubscriberProfile(
@@ -140,34 +141,16 @@ async function addToSubscriberProfile(
   payload: Profile,
 ) {
   const existingDeviceTokens =
-    subscribers?.data?.channels?.[0]?.credentials?.deviceTokens ?? [];
-  const newDeviceTokens = [...existingDeviceTokens, payload.token];
+    subscribers?.data?.data?.channels?.[0]?.credentials?.deviceTokens ?? [];
+  const newDeviceTokens = [payload.token, ...existingDeviceTokens];
 
-  if (subscribers?.status === 404) {
-    // Subscriber not found, create new one
-    await novu.subscribers.identify(payload.user_id, {
-      channels: [
-        {
-          credentials: {
-            deviceTokens: newDeviceTokens,
-          },
-          providerId: PushProviderIdEnum.FCM,
-        },
-      ],
-    });
-  } else {
-    // Subscriber exists, update channels
-    await novu.subscribers.update(payload.user_id, {
-      channels: [
-        {
-          credentials: {
-            deviceTokens: newDeviceTokens,
-          },
-          providerId: PushProviderIdEnum.FCM,
-        },
-      ],
-    });
-  }
+  await novu.subscribers.setCredentials(
+    payload.user_id,
+    PushProviderIdEnum.FCM,
+    {
+      deviceTokens: newDeviceTokens,
+    },
+  );
 }
 /* To invoke locally:
 
