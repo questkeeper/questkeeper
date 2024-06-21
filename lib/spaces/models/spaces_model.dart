@@ -1,0 +1,17 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'spaces_model.freezed.dart';
+part 'spaces_model.g.dart';
+
+@freezed
+class Spaces with _$Spaces {
+  const factory Spaces({
+    int? id,
+    required String title,
+    DateTime? updatedAt,
+    String? color,
+    @Default(false) bool archived,
+  }) = _Spaces;
+
+  factory Spaces.fromJson(Map<String, dynamic> json) => _$SpacesFromJson(json);
+}
