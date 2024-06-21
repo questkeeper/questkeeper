@@ -1,3 +1,4 @@
+import 'package:assigngo_rewrite/auth/providers/auth_provider.dart';
 import 'package:assigngo_rewrite/task_list/task_item/views/assignment_screen.dart';
 import 'package:assigngo_rewrite/task_list/task_create_form/views/task_form_screen.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
@@ -21,6 +22,7 @@ class _TabViewState extends ConsumerState<TabView> {
     super.initState();
     // Fetch the assignments when the screen is initialized
     ref.read(tasksProvider.notifier).fetchTasks();
+    ref.read(authProvider.notifier).setFirebaseMessaging();
   }
 
   int _selectedIndex = 0;

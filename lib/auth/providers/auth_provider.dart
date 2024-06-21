@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:assigngo_rewrite/auth/models/auth_state.dart';
@@ -108,7 +107,7 @@ class AuthNotifier extends StateNotifier<SignInState> {
 
   // Set up FCM
   Future<void> setFirebaseMessaging() async {
-    await clearToken();
+    // await clearToken();
     debugPrint('Setting up FCM');
     String? token;
     NotificationSettings settings =
