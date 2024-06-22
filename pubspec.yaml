@@ -51,6 +51,7 @@ dependencies:
   supabase_auth_ui: ^0.4.1
   home_widget: ^0.6.0
   shared_preferences: ^2.2.3
+  lucide_icons: ^0.257.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
