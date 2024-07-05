@@ -1,22 +1,27 @@
-import 'package:assigngo_rewrite/task_list/repositories/tasks_repository.dart';
 import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:assigngo_rewrite/categories/repositories/categories_repository.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final categoriesProvider =
-    StateNotifierProvider<CategoriesNotifier, List<Categories>>(
-  (ref) => CategoriesNotifier([]),
-);
+part 'categories_provider.g.dart';
 
-class CategoriesNotifier extends StateNotifier<List<Categories>> {
-  final CategoriesRepository _repository = CategoriesRepository();
-  final TasksRepository _tasksRepository = TasksRepository();
+@riverpod
+class CategoriesManager extends _$CategoriesManager {
+  final CategoriesRepository _repository;
 
-  CategoriesNotifier(super._state);
+  CategoriesManager() : _repository = CategoriesRepository();
 
-  Future<void> fetchCategories() async {
-    final categories = await _repository.getCategories();
-    state = categories;
+  @override
+  FutureOr<List<Categories>> build() {
+    return fetchCategories();
+  }
+
+  Future<List<Categories>> fetchCategories() async {
+    try {
+      final categories = await _repository.getCategories();
+      return categories;
+    } catch (e) {
+      throw Exception("Failed to fetch categories");
+    }
   }
 
   Future<void> createCategory(Categories category) async {
@@ -31,11 +36,15 @@ class CategoriesNotifier extends StateNotifier<List<Categories>> {
   }
 
   Future<void> deleteCategory(Categories category) async {
-    final result = await _repository.deleteCategory(category);
-
-    if (result.success) {
-      state = state.where((e) => e.id != category.id).toList();
-      _tasksRepository.getTasks();
+    state = const AsyncLoading();
+    try {
+      final result = await _repository.deleteCategory(category);
+      if (result.error != null) {
+        throw result.error!;
+      }
+      state = AsyncData(await fetchCategories());
+    } catch (e) {
+      state = AsyncError('Failed to delete category', StackTrace.current);
     }
   }
 }
