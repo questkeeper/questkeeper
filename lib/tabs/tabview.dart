@@ -1,10 +1,7 @@
-import 'package:assigngo_rewrite/auth/providers/auth_provider.dart';
-import 'package:assigngo_rewrite/task_list/task_item/views/assignment_screen.dart';
+import 'package:assigngo_rewrite/spaces/views/all_spaces_screen.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:assigngo_rewrite/task_list/task_create_form/views/task_form_screen.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
-import 'package:assigngo_rewrite/task_list/views/home_screen.dart';
-import 'package:assigngo_rewrite/task_list/views/priority_screen.dart';
-import 'package:assigngo_rewrite/task_list/views/completed_screen.dart';
 import 'package:assigngo_rewrite/settings/views/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,15 +14,8 @@ class TabView extends ConsumerStatefulWidget {
 }
 
 class _TabViewState extends ConsumerState<TabView> {
-  @override
-  void initState() {
-    super.initState();
-    // Fetch the assignments when the screen is initialized
-    ref.read(tasksProvider.notifier).fetchTasks();
-    ref.read(authProvider.notifier).setFirebaseMessaging();
-  }
-
-  int _selectedIndex = 0;
+  // Tabs for "Home", "Game", "Add task"
+  int _selectedIndex = 1;
 
   void _onItemTapped(int index) async {
     setState(() {
@@ -35,12 +25,10 @@ class _TabViewState extends ConsumerState<TabView> {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = ref.watch(tasksProvider);
     final List<Widget> pages = [
-      HomeScreen(tasks: tasks),
-      StarScreen(tasks: tasks),
+      const AllSpacesScreen(),
+      const AllSpacesScreen(),
       const TaskFormScreen(),
-      CompletedScreen(tasks: tasks),
       const SettingsScreen(),
     ];
 
@@ -60,83 +48,77 @@ class _TabViewState extends ConsumerState<TabView> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const TaskFormScreen(),
-                    fullscreenDialog: true,
                   ),
                 )
               },
-              tooltip: 'Add New Assignment',
-              elevation: 2,
-              child: const Icon(Icons.add),
+              child: const Icon(LucideIcons.plus),
             ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.miniCenterDocked,
-            bottomNavigationBar: BottomAppBar(
-              shape: const CircularNotchedRectangle(),
-              child: NavigationBar(
-                onDestinationSelected: _onItemTapped,
-                selectedIndex: _selectedIndex,
-                destinations: const [
-                  NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-                  NavigationDestination(
-                      icon: Icon(Icons.star), label: "Prioritized"),
-                  NavigationDestination(
-                    icon: Icon(null),
-                    label: "",
-                    enabled: false,
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.check_box),
-                    label: "Completed",
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.settings),
-                    label: "Settings",
-                  ),
-                ],
-              ),
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(LucideIcons.list_start),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(LucideIcons.eclipse),
+                  label: 'Spaces',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(LucideIcons.trophy),
+                  label: 'Arcade',
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(LucideIcons.user_cog), label: 'Profile'),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.accents.first,
+              onTap: _onItemTapped,
             ),
           );
         } else {
-          // Desktop layout
+          // Tablet layout
           return Scaffold(
-            body: RefreshIndicator(
-              onRefresh: () => ref.refresh(tasksProvider.notifier).fetchTasks(),
-              child: Row(
-                children: [
-                  NavigationRail(
-                    selectedIndex: _selectedIndex,
-                    onDestinationSelected: _onItemTapped,
-                    labelType: NavigationRailLabelType.all,
-                    destinations: const [
-                      NavigationRailDestination(
-                        icon: Icon(Icons.home),
-                        label: Text('Home'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.star),
-                        label: Text("Prioritized"),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.add),
-                        label: Text("Add"),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.check_box),
-                        label: Text("Completed"),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.settings),
-                        label: Text("Settings"),
-                      ),
-                    ],
+            body: Row(
+              children: [
+                NavigationRail(
+                  selectedIndex: _selectedIndex,
+                  onDestinationSelected: _onItemTapped,
+                  labelType: NavigationRailLabelType.all,
+                  destinations: const <NavigationRailDestination>[
+                    NavigationRailDestination(
+                        icon: Icon(LucideIcons.list_start),
+                        label: Text('Home')),
+                    NavigationRailDestination(
+                        icon: Icon(LucideIcons.eclipse), label: Text('Spaces')),
+                    NavigationRailDestination(
+                        icon: Icon(LucideIcons.trophy), label: Text('Arcade')),
+                    NavigationRailDestination(
+                        icon: Icon(LucideIcons.user_cog),
+                        label: Text('Profile')),
+                  ],
+                ),
+                const VerticalDivider(thickness: 1, width: 1),
+                Expanded(
+                  child: Scaffold(
+                    body: RefreshIndicator(
+                        onRefresh: () =>
+                            ref.refresh(tasksProvider.notifier).fetchTasks(),
+                        child: pages[_selectedIndex]),
+                    floatingActionButton: FloatingActionButton(
+                      onPressed: () => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TaskFormScreen(),
+                          ),
+                        )
+                      },
+                      child: const Icon(LucideIcons.plus),
+                    ),
                   ),
-                  Expanded(
-                    flex: width > 900 ? 3 : 2,
-                    child: pages[_selectedIndex],
-                  ),
-                  const Expanded(flex: 2, child: TaskItemScreen()),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         }
