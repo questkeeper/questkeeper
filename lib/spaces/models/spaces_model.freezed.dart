@@ -25,6 +25,8 @@ mixin _$Spaces {
   DateTime? get updatedAt => throw _privateConstructorUsedError;
   String? get color => throw _privateConstructorUsedError;
   bool get archived => throw _privateConstructorUsedError;
+  List<Tasks>? get tasks => throw _privateConstructorUsedError;
+  List<Categories>? get categories => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -41,7 +43,9 @@ abstract class $SpacesCopyWith<$Res> {
       String title,
       DateTime? updatedAt,
       String? color,
-      bool archived});
+      bool archived,
+      List<Tasks>? tasks,
+      List<Categories>? categories});
 }
 
 /// @nodoc
@@ -62,6 +66,8 @@ class _$SpacesCopyWithImpl<$Res, $Val extends Spaces>
     Object? updatedAt = freezed,
     Object? color = freezed,
     Object? archived = null,
+    Object? tasks = freezed,
+    Object? categories = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -84,6 +90,14 @@ class _$SpacesCopyWithImpl<$Res, $Val extends Spaces>
           ? _value.archived
           : archived // ignore: cast_nullable_to_non_nullable
               as bool,
+      tasks: freezed == tasks
+          ? _value.tasks
+          : tasks // ignore: cast_nullable_to_non_nullable
+              as List<Tasks>?,
+      categories: freezed == categories
+          ? _value.categories
+          : categories // ignore: cast_nullable_to_non_nullable
+              as List<Categories>?,
     ) as $Val);
   }
 }
@@ -100,7 +114,9 @@ abstract class _$$SpacesImplCopyWith<$Res> implements $SpacesCopyWith<$Res> {
       String title,
       DateTime? updatedAt,
       String? color,
-      bool archived});
+      bool archived,
+      List<Tasks>? tasks,
+      List<Categories>? categories});
 }
 
 /// @nodoc
@@ -119,6 +135,8 @@ class __$$SpacesImplCopyWithImpl<$Res>
     Object? updatedAt = freezed,
     Object? color = freezed,
     Object? archived = null,
+    Object? tasks = freezed,
+    Object? categories = freezed,
   }) {
     return _then(_$SpacesImpl(
       id: freezed == id
@@ -141,6 +159,14 @@ class __$$SpacesImplCopyWithImpl<$Res>
           ? _value.archived
           : archived // ignore: cast_nullable_to_non_nullable
               as bool,
+      tasks: freezed == tasks
+          ? _value._tasks
+          : tasks // ignore: cast_nullable_to_non_nullable
+              as List<Tasks>?,
+      categories: freezed == categories
+          ? _value._categories
+          : categories // ignore: cast_nullable_to_non_nullable
+              as List<Categories>?,
     ));
   }
 }
@@ -153,7 +179,11 @@ class _$SpacesImpl implements _Spaces {
       required this.title,
       this.updatedAt,
       this.color,
-      this.archived = false});
+      this.archived = false,
+      final List<Tasks>? tasks,
+      final List<Categories>? categories})
+      : _tasks = tasks,
+        _categories = categories;
 
   factory _$SpacesImpl.fromJson(Map<String, dynamic> json) =>
       _$$SpacesImplFromJson(json);
@@ -169,10 +199,29 @@ class _$SpacesImpl implements _Spaces {
   @override
   @JsonKey()
   final bool archived;
+  final List<Tasks>? _tasks;
+  @override
+  List<Tasks>? get tasks {
+    final value = _tasks;
+    if (value == null) return null;
+    if (_tasks is EqualUnmodifiableListView) return _tasks;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<Categories>? _categories;
+  @override
+  List<Categories>? get categories {
+    final value = _categories;
+    if (value == null) return null;
+    if (_categories is EqualUnmodifiableListView) return _categories;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'Spaces(id: $id, title: $title, updatedAt: $updatedAt, color: $color, archived: $archived)';
+    return 'Spaces(id: $id, title: $title, updatedAt: $updatedAt, color: $color, archived: $archived, tasks: $tasks, categories: $categories)';
   }
 
   @override
@@ -186,13 +235,23 @@ class _$SpacesImpl implements _Spaces {
                 other.updatedAt == updatedAt) &&
             (identical(other.color, color) || other.color == color) &&
             (identical(other.archived, archived) ||
-                other.archived == archived));
+                other.archived == archived) &&
+            const DeepCollectionEquality().equals(other._tasks, _tasks) &&
+            const DeepCollectionEquality()
+                .equals(other._categories, _categories));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, title, updatedAt, color, archived);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      title,
+      updatedAt,
+      color,
+      archived,
+      const DeepCollectionEquality().hash(_tasks),
+      const DeepCollectionEquality().hash(_categories));
 
   @JsonKey(ignore: true)
   @override
@@ -214,7 +273,9 @@ abstract class _Spaces implements Spaces {
       required final String title,
       final DateTime? updatedAt,
       final String? color,
-      final bool archived}) = _$SpacesImpl;
+      final bool archived,
+      final List<Tasks>? tasks,
+      final List<Categories>? categories}) = _$SpacesImpl;
 
   factory _Spaces.fromJson(Map<String, dynamic> json) = _$SpacesImpl.fromJson;
 
@@ -228,6 +289,10 @@ abstract class _Spaces implements Spaces {
   String? get color;
   @override
   bool get archived;
+  @override
+  List<Tasks>? get tasks;
+  @override
+  List<Categories>? get categories;
   @override
   @JsonKey(ignore: true)
   _$$SpacesImplCopyWith<_$SpacesImpl> get copyWith =>
