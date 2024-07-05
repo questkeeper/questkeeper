@@ -49,7 +49,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
         categoryId: _categoryId,
       );
 
-      final tasksNotifier = ref.read(tasksProvider.notifier);
+      final tasksNotifier = ref.read(tasksManagerProvider.notifier);
       final result = await tasksNotifier.createTask(task);
 
       if (result.success) {

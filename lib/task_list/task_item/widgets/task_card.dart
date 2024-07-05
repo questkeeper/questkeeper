@@ -37,13 +37,13 @@ class _TaskCardState extends ConsumerState<TaskCard> {
       key: ValueKey(widget.task.id),
       confirmDismiss: (direction) {
         if (direction == DismissDirection.startToEnd) {
-          ref.read(tasksProvider.notifier).toggleStar(widget.task);
+          ref.read(tasksManagerProvider.notifier).toggleStar(widget.task);
           return Future.value(false);
           // return widget.filter == TasksFilter.starred
           //     ? Future.value(true)
           //     : Future.value(false);
         } else {
-          ref.read(tasksProvider.notifier).toggleComplete(widget.task);
+          ref.read(tasksManagerProvider.notifier).toggleComplete(widget.task);
           return Future.value(true);
         }
       },
