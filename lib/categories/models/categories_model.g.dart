@@ -19,6 +19,9 @@ _$CategoriesImpl _$$CategoriesImplFromJson(Map<String, dynamic> json) =>
       color: json['color'] as String?,
       spaceId: (json['spaceId'] as num?)?.toInt(),
       archived: json['archived'] as bool? ?? false,
+      tasks: (json['tasks'] as List<dynamic>?)
+          ?.map((e) => Tasks.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$CategoriesImplToJson(_$CategoriesImpl instance) =>
@@ -30,4 +33,5 @@ Map<String, dynamic> _$$CategoriesImplToJson(_$CategoriesImpl instance) =>
       'color': instance.color,
       'spaceId': instance.spaceId,
       'archived': instance.archived,
+      'tasks': instance.tasks,
     };

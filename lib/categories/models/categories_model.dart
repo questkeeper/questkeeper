@@ -1,3 +1,4 @@
+import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'categories_model.freezed.dart';
@@ -13,6 +14,7 @@ class Categories with _$Categories {
     String? color,
     int? spaceId,
     @Default(false) bool archived,
+    List<Tasks>? tasks,
   }) = _Categories;
 
   factory Categories.fromJson(Map<String, dynamic> json) =>
