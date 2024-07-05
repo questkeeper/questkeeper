@@ -35,13 +35,13 @@ class _SliverTasksListState extends ConsumerState<SliverTasksList> {
   @override
   void initState() {
     super.initState();
-    ref.read(categoriesProvider.notifier).fetchCategories();
+    ref.read(categoriesManagerProvider.notifier).fetchCategories();
   }
 
   @override
   Widget build(BuildContext context) {
     List<Tasks> filteredTasks = widget.tasks;
-    final categories = ref.watch(categoriesProvider);
+    final categories = ref.watch(categoriesManagerProvider);
 
     double bottom = MediaQuery.of(context).padding.bottom;
     return CustomScrollView(slivers: [
@@ -126,7 +126,7 @@ class _SliverTasksListState extends ConsumerState<SliverTasksList> {
             Categories? category;
 
             if (filteredTasks[index].categoryId != null) {
-              category = categories.firstWhere(
+              category = categories.asData!.value.firstWhere(
                   (element) => element.id == filteredTasks[index].categoryId);
             }
 

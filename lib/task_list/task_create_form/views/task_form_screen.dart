@@ -134,7 +134,8 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                                 titleController: _titleController,
                                 descriptionController: _descriptionController,
                                 dueDate: _dueDate,
-                                categoriesList: ref.watch(categoriesProvider),
+                                // categoriesList: ref.watch(categoriesProvider),
+                                categoriesList: const [],
                                 onDueDateChanged: (date) {
                                   setState(() {
                                     _dueDate = date!;
