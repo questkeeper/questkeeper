@@ -1,8 +1,7 @@
-import 'package:assigngo_rewrite/categories/repositories/categories_repository.dart';
+import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
 import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
 import 'package:assigngo_rewrite/spaces/repositories/spaces_repository.dart';
-import 'package:assigngo_rewrite/task_list/repositories/tasks_repository.dart';
-import 'package:flutter/foundation.dart';
+import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'spaces_provider.g.dart';
@@ -10,22 +9,18 @@ part 'spaces_provider.g.dart';
 @riverpod
 class SpacesManager extends _$SpacesManager {
   late final SpacesRepository _repository;
-  late final CategoriesRepository _categoriesRepository;
-  late final TasksRepository _tasksRepository;
 
   @override
   FutureOr<List<Spaces>> build() {
     _repository = SpacesRepository();
-    _categoriesRepository = CategoriesRepository();
-    _tasksRepository = TasksRepository();
     return fetchSpaces();
   }
 
   Future<List<Spaces>> fetchSpaces() async {
     try {
       final spaces = await _repository.getSpaces();
-      final tasks = await _tasksRepository.getTasks();
-      final categories = await _categoriesRepository.getCategories();
+      final categories = ref.read(categoriesProvider);
+      final tasks = ref.read(tasksProvider);
 
       List<Spaces> updatedSpaces = [...spaces];
 
@@ -65,49 +60,39 @@ class SpacesManager extends _$SpacesManager {
         );
       }).toList();
 
-      debugPrint("Spaces: $updatedSpaces");
-
       return updatedSpaces;
     } catch (e) {
-      debugPrint("Error fetching spaces: $e");
-      return [
-        const Spaces(title: "Something went wrong", id: -1),
-      ];
+      throw Exception("Error fetching spaces: $e");
+    }
+  }
+
+  Future<void> createSpace(Spaces space) async {
+    state = const AsyncValue.loading();
+    try {
+      await _repository.createSpace(space);
+      state = AsyncValue.data(await fetchSpaces());
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
+  Future<void> updateSpace(Spaces space) async {
+    state = const AsyncValue.loading();
+    try {
+      await _repository.updateSpace(space);
+      state = AsyncValue.data(await fetchSpaces());
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
     }
   }
 
   Future<void> refreshSpaces() async {
     state = const AsyncValue.loading();
-    state = AsyncValue.data(await fetchSpaces());
+    try {
+      final updatedSpaces = await fetchSpaces();
+      state = AsyncValue.data(updatedSpaces);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
   }
 }
-  // Future<ReturnModel> createSpace(Spaces space) async {
-  //   try {
-  //     final result = await _repository.createSpace(space);
-  //     _spacesList.add(result.data);
-
-  //     return ReturnModel(
-  //         data: result.data,
-  //         message: "Space created successfully",
-  //         success: true);
-  //   } catch (e) {
-  //     return ReturnModel(
-  //         message: "Error creating space", success: false, error: e.toString());
-  //   }
-  // }
-
-  // Future<ReturnModel> updateSpace(Spaces space) async {
-  //   try {
-  //     final result = await _repository.updateSpace(space);
-  //     _spacesList[_spacesList
-  //         .indexWhere((element) => element.id == result.data.id)] = result.data;
-
-  //     return ReturnModel(
-  //         data: result.data,
-  //         message: "Space updated successfully",
-  //         success: true);
-  //   } catch (e) {
-  //     return ReturnModel(
-  //         message: "Error updating space", success: false, error: e.toString());
-  //   }
-  // }
