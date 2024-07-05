@@ -1,6 +1,8 @@
+import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
 import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
 import 'package:assigngo_rewrite/spaces/repositories/spaces_repository.dart';
+import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -8,27 +10,24 @@ part 'spaces_provider.g.dart';
 
 @riverpod
 class SpacesManager extends _$SpacesManager {
-  late final SpacesRepository _repository;
+  final SpacesRepository _repository;
+
+  SpacesManager() : _repository = SpacesRepository();
 
   @override
-  FutureOr<List<Spaces>> build() {
-    _repository = SpacesRepository();
-    return fetchSpaces();
+  FutureOr<List<Spaces>> build() async {
+    final categories = await ref.watch(categoriesManagerProvider.future);
+    final tasks = await ref.watch(tasksManagerProvider.future);
+    return fetchSpaces(categories, tasks);
   }
 
-  Future<List<Spaces>> fetchSpaces() async {
+  Future<List<Spaces>> fetchSpaces(
+      List<Categories> categories, List<Tasks> tasks) async {
     try {
       final spaces = await _repository.getSpaces();
-      final categories = ref.read(categoriesProvider);
-      final tasks = ref.read(tasksProvider);
 
       List<Spaces> updatedSpaces = [...spaces];
-
-      // Add special spaces
-      updatedSpaces.addAll([
-        const Spaces(title: "Uncategorized", id: -1),
-        const Spaces(title: "Create New Space", id: -2)
-      ]);
+      updatedSpaces.addAll([const Spaces(title: "Uncategorized", id: -1)]);
 
       updatedSpaces = updatedSpaces.map((space) {
         final spaceCategories = categories
@@ -55,13 +54,12 @@ class SpacesManager extends _$SpacesManager {
             .toList();
 
         return space.copyWith(
-          categories: spaceCategories,
-          tasks: uncategorizedTasks,
-        );
+            categories: spaceCategories, tasks: uncategorizedTasks);
       }).toList();
 
       return updatedSpaces;
     } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
       throw Exception("Error fetching spaces: $e");
     }
   }
@@ -70,7 +68,7 @@ class SpacesManager extends _$SpacesManager {
     state = const AsyncValue.loading();
     try {
       await _repository.createSpace(space);
-      state = AsyncValue.data(await fetchSpaces());
+      await refreshSpaces();
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
@@ -80,7 +78,7 @@ class SpacesManager extends _$SpacesManager {
     state = const AsyncValue.loading();
     try {
       await _repository.updateSpace(space);
-      state = AsyncValue.data(await fetchSpaces());
+      await refreshSpaces();
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
@@ -89,8 +87,7 @@ class SpacesManager extends _$SpacesManager {
   Future<void> refreshSpaces() async {
     state = const AsyncValue.loading();
     try {
-      final updatedSpaces = await fetchSpaces();
-      state = AsyncValue.data(updatedSpaces);
+      state = AsyncValue.data(await ref.refresh(spacesManagerProvider.future));
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
