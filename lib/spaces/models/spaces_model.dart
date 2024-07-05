@@ -12,7 +12,6 @@ class Spaces with _$Spaces {
     required String title,
     DateTime? updatedAt,
     String? color,
-    @Default(false) bool archived,
     List<Tasks>? tasks,
     List<Categories>? categories,
   }) = _Spaces;

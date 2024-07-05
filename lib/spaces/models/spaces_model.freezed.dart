@@ -24,7 +24,6 @@ mixin _$Spaces {
   String get title => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
   String? get color => throw _privateConstructorUsedError;
-  bool get archived => throw _privateConstructorUsedError;
   List<Tasks>? get tasks => throw _privateConstructorUsedError;
   List<Categories>? get categories => throw _privateConstructorUsedError;
 
@@ -43,7 +42,6 @@ abstract class $SpacesCopyWith<$Res> {
       String title,
       DateTime? updatedAt,
       String? color,
-      bool archived,
       List<Tasks>? tasks,
       List<Categories>? categories});
 }
@@ -65,7 +63,6 @@ class _$SpacesCopyWithImpl<$Res, $Val extends Spaces>
     Object? title = null,
     Object? updatedAt = freezed,
     Object? color = freezed,
-    Object? archived = null,
     Object? tasks = freezed,
     Object? categories = freezed,
   }) {
@@ -86,10 +83,6 @@ class _$SpacesCopyWithImpl<$Res, $Val extends Spaces>
           ? _value.color
           : color // ignore: cast_nullable_to_non_nullable
               as String?,
-      archived: null == archived
-          ? _value.archived
-          : archived // ignore: cast_nullable_to_non_nullable
-              as bool,
       tasks: freezed == tasks
           ? _value.tasks
           : tasks // ignore: cast_nullable_to_non_nullable
@@ -114,7 +107,6 @@ abstract class _$$SpacesImplCopyWith<$Res> implements $SpacesCopyWith<$Res> {
       String title,
       DateTime? updatedAt,
       String? color,
-      bool archived,
       List<Tasks>? tasks,
       List<Categories>? categories});
 }
@@ -134,7 +126,6 @@ class __$$SpacesImplCopyWithImpl<$Res>
     Object? title = null,
     Object? updatedAt = freezed,
     Object? color = freezed,
-    Object? archived = null,
     Object? tasks = freezed,
     Object? categories = freezed,
   }) {
@@ -155,10 +146,6 @@ class __$$SpacesImplCopyWithImpl<$Res>
           ? _value.color
           : color // ignore: cast_nullable_to_non_nullable
               as String?,
-      archived: null == archived
-          ? _value.archived
-          : archived // ignore: cast_nullable_to_non_nullable
-              as bool,
       tasks: freezed == tasks
           ? _value._tasks
           : tasks // ignore: cast_nullable_to_non_nullable
@@ -179,7 +166,6 @@ class _$SpacesImpl implements _Spaces {
       required this.title,
       this.updatedAt,
       this.color,
-      this.archived = false,
       final List<Tasks>? tasks,
       final List<Categories>? categories})
       : _tasks = tasks,
@@ -196,9 +182,6 @@ class _$SpacesImpl implements _Spaces {
   final DateTime? updatedAt;
   @override
   final String? color;
-  @override
-  @JsonKey()
-  final bool archived;
   final List<Tasks>? _tasks;
   @override
   List<Tasks>? get tasks {
@@ -221,7 +204,7 @@ class _$SpacesImpl implements _Spaces {
 
   @override
   String toString() {
-    return 'Spaces(id: $id, title: $title, updatedAt: $updatedAt, color: $color, archived: $archived, tasks: $tasks, categories: $categories)';
+    return 'Spaces(id: $id, title: $title, updatedAt: $updatedAt, color: $color, tasks: $tasks, categories: $categories)';
   }
 
   @override
@@ -234,8 +217,6 @@ class _$SpacesImpl implements _Spaces {
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.color, color) || other.color == color) &&
-            (identical(other.archived, archived) ||
-                other.archived == archived) &&
             const DeepCollectionEquality().equals(other._tasks, _tasks) &&
             const DeepCollectionEquality()
                 .equals(other._categories, _categories));
@@ -249,7 +230,6 @@ class _$SpacesImpl implements _Spaces {
       title,
       updatedAt,
       color,
-      archived,
       const DeepCollectionEquality().hash(_tasks),
       const DeepCollectionEquality().hash(_categories));
 
@@ -273,7 +253,6 @@ abstract class _Spaces implements Spaces {
       required final String title,
       final DateTime? updatedAt,
       final String? color,
-      final bool archived,
       final List<Tasks>? tasks,
       final List<Categories>? categories}) = _$SpacesImpl;
 
@@ -287,8 +266,6 @@ abstract class _Spaces implements Spaces {
   DateTime? get updatedAt;
   @override
   String? get color;
-  @override
-  bool get archived;
   @override
   List<Tasks>? get tasks;
   @override

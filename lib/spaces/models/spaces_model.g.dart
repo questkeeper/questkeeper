@@ -13,7 +13,6 @@ _$SpacesImpl _$$SpacesImplFromJson(Map<String, dynamic> json) => _$SpacesImpl(
           ? null
           : DateTime.parse(json['updatedAt'] as String),
       color: json['color'] as String?,
-      archived: json['archived'] as bool? ?? false,
       tasks: (json['tasks'] as List<dynamic>?)
           ?.map((e) => Tasks.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -28,7 +27,6 @@ Map<String, dynamic> _$$SpacesImplToJson(_$SpacesImpl instance) =>
       'title': instance.title,
       'updatedAt': instance.updatedAt?.toIso8601String(),
       'color': instance.color,
-      'archived': instance.archived,
       'tasks': instance.tasks,
       'categories': instance.categories,
     };
