@@ -5,23 +5,28 @@ import 'package:assigngo_rewrite/task_list/repositories/tasks_repository.dart';
 import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final tasksProvider = StateNotifierProvider<TasksNotifier, List<Tasks>>(
-  (ref) {
-    return TasksNotifier([]);
-  },
-);
+part 'tasks_provider.g.dart';
 
-class TasksNotifier extends StateNotifier<List<Tasks>> {
-  final TasksRepository _repository = TasksRepository();
-  TasksNotifier(super.state);
+@riverpod
+class TasksManager extends _$TasksManager {
+  final TasksRepository _repository;
 
-  void updateHomeWidget(List<Tasks> state) {
+  TasksManager() : _repository = TasksRepository();
+
+  @override
+  FutureOr<List<Tasks>> build() {
+    return fetchTasks();
+  }
+
+  final _allTasks = <Tasks>[];
+
+  void updateHomeWidget(List<Tasks> tasks) {
     try {
       if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
         HomeWidgetMobile().updateHomeWidget(
-          state,
+          tasks,
         );
       }
     } catch (e) {
@@ -29,14 +34,19 @@ class TasksNotifier extends StateNotifier<List<Tasks>> {
     }
   }
 
-  Future<void> fetchTasks() async {
+  Future<List<Tasks>> fetchTasks() async {
     try {
       final tasks = await _repository.getTasks();
 
-      state = tasks;
+      _allTasks.clear();
+      _allTasks.addAll(tasks);
       updateHomeWidget(tasks);
+
+      return tasks;
     } catch (error) {
+      state = AsyncValue.error(error, StackTrace.current);
       debugPrint("Error fetching tasks: $error");
+      throw Exception("Failed to fetch tasks");
     }
   }
 
@@ -59,20 +69,24 @@ class TasksNotifier extends StateNotifier<List<Tasks>> {
 
   Future<void> toggleStar(Tasks task) async {
     try {
-      state = state.map((a) {
-        if (a.id == task.id) {
-          return a.copyWith(starred: !a.starred);
-        }
-        return a;
-      }).toList();
+      state = AsyncValue.data(
+        state.value!.map((a) {
+          if (a.id == task.id) {
+            return a.copyWith(starred: !a.starred);
+          }
+          return a;
+        }).toList(),
+      );
       await _repository.toggleStar(task);
     } catch (error) {
-      state = state.map((a) {
-        if (a.id == task.id) {
-          return a.copyWith(starred: !a.starred);
-        }
-        return a;
-      }).toList();
+      state = AsyncValue.data(
+        state.value!.map((a) {
+          if (a.id == task.id) {
+            return a.copyWith(starred: !a.starred);
+          }
+          return a;
+        }).toList(),
+      );
       debugPrint("Error starring task: $error");
     }
   }
@@ -81,12 +95,14 @@ class TasksNotifier extends StateNotifier<List<Tasks>> {
     try {
       await _repository.toggleComplete(task);
 
-      state = state.map((a) {
-        if (a.id == task.id) {
-          return a.copyWith(completed: !a.completed);
-        }
-        return a;
-      }).toList();
+      state = AsyncValue.data(
+        state.value!.map((a) {
+          if (a.id == task.id) {
+            return a.copyWith(completed: !a.completed);
+          }
+          return a;
+        }).toList(),
+      );
     } catch (error) {
       debugPrint("Error completing task: $error");
     }
@@ -104,7 +120,9 @@ class TasksNotifier extends StateNotifier<List<Tasks>> {
     try {
       await _repository.deleteTask(task);
 
-      state = state.where((a) => a.id != task.id).toList();
+      state = AsyncValue.data(
+        state.value!.where((a) => a.id != task.id).toList(),
+      );
     } catch (error) {
       debugPrint("Error deleting task: $error");
     }
@@ -113,14 +131,26 @@ class TasksNotifier extends StateNotifier<List<Tasks>> {
   Future<void> updateTask(Tasks task) async {
     try {
       await _repository.updateTask(task);
-      state = state.map((a) {
-        if (a.id == task.id) {
-          return task;
-        }
-        return a;
-      }).toList();
+      state = AsyncValue.data(
+        state.value!.map((a) {
+          if (a.id == task.id) {
+            return task;
+          }
+          return a;
+        }).toList(),
+      );
     } catch (error) {
       debugPrint("Error updating task: $error");
+    }
+  }
+
+  Future<void> getBySpaceId(int id) async {
+    try {
+      state = AsyncValue.data(
+        _allTasks.where((element) => element.spaceId == id).toList(),
+      );
+    } catch (error) {
+      debugPrint("Error fetching tasks: $error");
     }
   }
 }
