@@ -1,7 +1,7 @@
+import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
 import 'package:assigngo_rewrite/spaces/views/all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:assigngo_rewrite/task_list/task_create_form/views/task_form_screen.dart';
-import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:assigngo_rewrite/settings/views/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,8 +39,17 @@ class _TabViewState extends ConsumerState<TabView> {
           // Mobile layout
           return Scaffold(
             body: RefreshIndicator(
-                onRefresh: () =>
-                    ref.refresh(tasksProvider.notifier).fetchTasks(),
+                onRefresh: () {
+                  if (ref.read(spacesManagerProvider).isLoading ||
+                      ref.read(spacesManagerProvider).isRefreshing) {
+                    return Future
+                        .value(); // Do nothing if already loading or refreshing
+                  } else {
+                    return ref
+                        .read(spacesManagerProvider.notifier)
+                        .refreshSpaces();
+                  }
+                },
                 child: pages[_selectedIndex]),
             floatingActionButton: FloatingActionButton(
               onPressed: () => {
@@ -102,8 +111,17 @@ class _TabViewState extends ConsumerState<TabView> {
                 Expanded(
                   child: Scaffold(
                     body: RefreshIndicator(
-                        onRefresh: () =>
-                            ref.refresh(tasksProvider.notifier).fetchTasks(),
+                        onRefresh: () {
+                          if (ref.read(spacesManagerProvider).isLoading ||
+                              ref.read(spacesManagerProvider).isRefreshing) {
+                            return Future
+                                .value(); // Do nothing if already loading or refreshing
+                          } else {
+                            return ref
+                                .read(spacesManagerProvider.notifier)
+                                .refreshSpaces();
+                          }
+                        },
                         child: pages[_selectedIndex]),
                     floatingActionButton: FloatingActionButton(
                       onPressed: () => {
