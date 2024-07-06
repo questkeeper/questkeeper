@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:assigngo_rewrite/task_list/repositories/tasks_repository.dart';
-import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
 import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -34,52 +33,48 @@ class TasksManager extends _$TasksManager {
 
   Future<List<Tasks>> fetchTasks() async {
     try {
-      final tasks = await _repository.getTasks();
-      updateHomeWidget(tasks);
-      return tasks;
+      return await _repository.getTasks();
     } catch (error) {
       state = AsyncValue.error(error, StackTrace.current);
       throw Exception("Failed to fetch tasks: $error");
     }
   }
 
-  Future<ReturnModel> createTask(Tasks task) async {
+  Future<void> createTask(Tasks task) async {
     try {
-      final data = await _repository.createTask(task);
-      state.value?.add(task);
-      state = AsyncValue.data(state.value ?? []);
-      return data;
+      await _repository.createTask(task);
+      state = AsyncValue.data([...state.value ?? [], task]);
     } catch (error) {
-      return ReturnModel(
-        success: false,
-        message: "Error creating task: $error",
-        error: error.toString(),
-      );
+      // Handle error
     }
   }
 
-  Future<void> toggleStar(Tasks task) async {
-    _updateTask(
-      task.id!,
-      (t) => t.copyWith(starred: !t.starred),
-      () => _repository.toggleStar(task),
-    );
-  }
-
   Future<void> toggleComplete(Tasks task) async {
-    _updateTask(
-      task.id!,
-      (t) => t.copyWith(completed: !t.completed),
-      () => _repository.toggleComplete(task),
-    );
+    final updatedTask = task.copyWith(completed: !task.completed);
+    _updateTask(updatedTask, () => _repository.toggleComplete(task));
   }
 
-  Future<void> updateTask(Tasks task) async {
-    _updateTask(
-      task.id!,
-      (_) => task,
-      () => _repository.updateTask(task),
-    );
+  Future<void> toggleStar(Tasks task) async {
+    final updatedTask = task.copyWith(starred: !task.starred);
+    _updateTask(updatedTask, () => _repository.toggleStar(task));
+  }
+
+  void _updateTask(
+      Tasks updatedTask, Future<void> Function() repositoryAction) async {
+    final oldState = state.value ?? [];
+    final taskIndex = oldState.indexWhere((t) => t.id == updatedTask.id);
+    if (taskIndex == -1) return;
+
+    final newState = List<Tasks>.from(oldState);
+    newState[taskIndex] = updatedTask;
+
+    state = AsyncValue.data(newState);
+
+    try {
+      await repositoryAction();
+    } catch (error) {
+      // Handle error and possibly revert state
+    }
   }
 
   Future<void> deleteTask(Tasks task) async {
@@ -89,30 +84,7 @@ class TasksManager extends _$TasksManager {
         (state.value ?? []).where((a) => a.id != task.id).toList(),
       );
     } catch (error) {
-      debugPrint("Error deleting task: $error");
-    }
-  }
-
-  void _updateTask(
-    int taskId,
-    Tasks Function(Tasks) updateFn,
-    Future<void> Function() repositoryAction,
-  ) async {
-    final oldState = state.value ?? [];
-    final taskIndex = oldState.indexWhere((t) => t.id == taskId);
-    if (taskIndex == -1) return;
-
-    final updatedTask = updateFn(oldState[taskIndex]);
-    final newState = List<Tasks>.from(oldState);
-    newState[taskIndex] = updatedTask;
-
-    state = AsyncValue.data(newState);
-
-    try {
-      await repositoryAction();
-    } catch (error) {
-      debugPrint("Error updating task: $error");
-      state = AsyncValue.data(oldState); // Revert on error
+      // Handle error
     }
   }
 }
