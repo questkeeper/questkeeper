@@ -2,7 +2,7 @@ import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
 import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
 import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
 import 'package:assigngo_rewrite/spaces/widgets/circle_bar.dart';
-import 'package:assigngo_rewrite/spaces/views/space_card.dart';
+import 'package:assigngo_rewrite/spaces/widgets/space_card.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';

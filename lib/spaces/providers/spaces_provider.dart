@@ -46,6 +46,16 @@ class SpacesManager extends _$SpacesManager {
     }
   }
 
+  Future<void> deleteSpace(Spaces space) async {
+    state = const AsyncValue.loading();
+    try {
+      await _repository.deleteSpace(space);
+      await refreshSpaces();
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+
   Future<void> refreshSpaces() async {
     state = const AsyncValue.loading();
     try {
