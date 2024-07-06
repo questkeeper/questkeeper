@@ -1,6 +1,6 @@
-import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
 import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
 import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
+import 'package:assigngo_rewrite/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:assigngo_rewrite/spaces/widgets/circle_bar.dart';
 import 'package:assigngo_rewrite/spaces/widgets/space_card.dart';
 import 'package:flutter/gestures.dart';
@@ -33,70 +33,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
     super.dispose();
   }
 
-  void _showCreateSpaceBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16,
-            right: 16,
-            top: 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Create New Space',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Space Name',
-                  border: OutlineInputBorder(),
-                ),
-                autofocus: true,
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_nameController.text.isNotEmpty) {
-                    await ref
-                        .read(spacesManagerProvider.notifier)
-                        .createSpace(Spaces(title: _nameController.text));
-                    // Check if context is present
-                    if (context.mounted) Navigator.pop(context);
-                    _nameController.clear();
-                    // Move back to the first space after creating a new one
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (_pageController.hasClients) {
-                        setState(() {
-                          currentPageValue = 0;
-                          _pageController.animateToPage(0,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut);
-                        });
-
-                        // Show a snackbar to confirm the space was created
-                        SnackbarService.showSuccessSnackbar(
-                            context, 'Space created successfully');
-                      }
-                    });
-                  }
-                },
-                child: const Text('Create Space'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final spacesAsync =
@@ -119,7 +55,11 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                   });
                   if (page == spaces.length) {
                     // When the "Create New Space" page is reached, show the bottom sheet
-                    _showCreateSpaceBottomSheet();
+                    showSpaceBottomSheet(
+                      context: context,
+                      ref: ref,
+                      pageController: _pageController,
+                    );
                   }
                 },
                 itemCount: spaces.length + 1,
