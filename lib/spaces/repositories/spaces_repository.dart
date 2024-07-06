@@ -11,7 +11,8 @@ class SpacesRepository {
   Future<List<Spaces>> getSpaces() async {
     final spaces = await supabase.from("spaces").select().order("created_at");
 
-    final List<Spaces> spacesList = spaces.map((e) => Spaces.fromJson(e)).toList();
+    final List<Spaces> spacesList =
+        spaces.map((e) => Spaces.fromJson(e)).toList();
 
     return spacesList;
   }
@@ -25,6 +26,8 @@ class SpacesRepository {
   Future<ReturnModel> createSpace(Spaces space) async {
     final Map<String, dynamic> jsonSpace = space.toJson();
     jsonSpace.remove("id");
+    jsonSpace.remove("tasks");
+    jsonSpace.remove("categories");
 
     try {
       final newSpace = await supabase.from("spaces").insert(jsonSpace).select();
@@ -50,10 +53,8 @@ class SpacesRepository {
     jsonSpace.remove("updated_at");
 
     try {
-      final updatedSpace = await supabase
-          .from("spaces")
-          .update(jsonSpace)
-          .eq("id", space.id!);
+      final updatedSpace =
+          await supabase.from("spaces").update(jsonSpace).eq("id", space.id!);
 
       debugPrint("Updated space: $updatedSpace");
 
