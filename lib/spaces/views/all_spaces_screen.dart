@@ -1,7 +1,10 @@
+import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
+import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
 import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
 import 'package:assigngo_rewrite/spaces/views/space_card.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AllSpacesScreen extends ConsumerStatefulWidget {
@@ -14,7 +17,13 @@ class AllSpacesScreen extends ConsumerStatefulWidget {
 class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   int currentPageValue = 0;
   final TextEditingController _nameController = TextEditingController();
-  final PageController _pageController = PageController();
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
 
   @override
   void dispose() {
@@ -56,14 +65,27 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
               ElevatedButton(
                 onPressed: () async {
                   if (_nameController.text.isNotEmpty) {
-                    await ref.read(spacesManagerProvider.notifier);
-                    // .createSpace(_nameController.text);
-                    Navigator.pop(context);
+                    await ref
+                        .read(spacesManagerProvider.notifier)
+                        .createSpace(Spaces(title: _nameController.text));
+                    // Check if context is present
+                    if (context.mounted) Navigator.pop(context);
                     _nameController.clear();
                     // Move back to the first space after creating a new one
-                    _pageController.animateToPage(0,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut);
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (_pageController.hasClients) {
+                        setState(() {
+                          currentPageValue = 0;
+                          _pageController.animateToPage(0,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut);
+                        });
+
+                        // Show a snackbar to confirm the space was created
+                        SnackbarService.showSuccessSnackbar(
+                            context, 'Space created successfully');
+                      }
+                    });
                   }
                 },
                 child: const Text('Create Space'),
@@ -141,7 +163,19 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                                         curve: Curves.easeInOut);
                                   },
                                   child: circleBar(false),
-                                )
+                                ),
+                            IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    currentPageValue = spaces.length;
+                                    _pageController.animateToPage(spaces.length,
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut);
+                                  });
+                                },
+                                icon: const Icon(LucideIcons.plus,
+                                    size: 24, color: Colors.blue)),
                           ],
                         ),
                         const SizedBox(height: 8.0),
