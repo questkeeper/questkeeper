@@ -12,8 +12,6 @@ class Spaces with _$Spaces {
     required String title,
     DateTime? updatedAt,
     String? color,
-    List<Tasks>? tasks,
-    List<Categories>? categories,
   }) = _Spaces;
 
   factory Spaces.fromJson(Map<String, dynamic> json) => _$SpacesFromJson(json);
