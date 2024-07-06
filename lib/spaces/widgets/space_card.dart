@@ -46,43 +46,7 @@ class SpaceCard extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               child: ListTile(
                 titleTextStyle: Theme.of(context).textTheme.headlineMedium,
-                trailing: space.id == null
-                    ? const SizedBox()
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              showSpaceBottomSheet(
-                                context: context,
-                                ref: ref,
-                                existingSpace: space,
-                              );
-                            },
-                            icon: const Icon(LucideIcons.pen),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return DeleteSpaceDialog(
-                                        space: space,
-                                        deleteSpace: () {
-                                          ref
-                                              .read(spacesManagerProvider
-                                                  .notifier)
-                                              .deleteSpace(space);
-                                          SnackbarService.showInfoSnackbar(
-                                              context,
-                                              "Space deleted successfully");
-                                        });
-                                  });
-                            },
-                            icon: const Icon(LucideIcons.trash),
-                          ),
-                        ],
-                      ),
+                trailing: SpaceActionWidgets(space: space, ref: ref),
                 title: Text(space.title),
               ),
             ),
@@ -120,3 +84,89 @@ class SpaceCard extends ConsumerWidget {
     );
   }
 }
+
+class SpaceActionWidgets extends StatelessWidget {
+  const SpaceActionWidgets({
+    super.key,
+    required this.space,
+    required this.ref,
+  });
+
+  final Spaces space;
+  final WidgetRef ref;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<SpaceAction>(
+      icon: const Icon(LucideIcons.menu),
+      iconSize: 32,
+      onSelected: (action) {
+        switch (action) {
+          case SpaceAction.newCategory:
+            showSpaceBottomSheet(
+                context: context, ref: ref, existingSpace: space);
+            break;
+          case SpaceAction.edit:
+            showSpaceBottomSheet(
+                context: context, ref: ref, existingSpace: space);
+            break;
+          case SpaceAction.delete:
+            showDialog(
+              context: context,
+              builder: (context) => DeleteSpaceDialog(
+                space: space,
+                deleteSpace: () {
+                  ref.read(spacesManagerProvider.notifier).deleteSpace(space);
+                  SnackbarService.showInfoSnackbar(
+                      context, "Space deleted successfully");
+                },
+              ),
+            );
+            break;
+        }
+      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      tooltip: 'Actions for your current space',
+      itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: SpaceAction.newCategory,
+          child: Row(
+            children: [
+              Icon(LucideIcons.folder_plus),
+              SizedBox(width: 8),
+              Text('New Category'),
+            ],
+          ),
+        ),
+        if (space.id != null) ...menuItemsSpaceNotNull,
+      ],
+    );
+  }
+}
+
+const menuItemsSpaceNotNull = [
+  PopupMenuItem(
+    value: SpaceAction.edit,
+    child: Row(
+      children: [
+        Icon(LucideIcons.pen),
+        SizedBox(width: 8),
+        Text('Edit'),
+      ],
+    ),
+  ),
+  PopupMenuItem(
+    value: SpaceAction.delete,
+    child: Row(
+      children: [
+        Icon(LucideIcons.trash),
+        SizedBox(width: 8),
+        Text('Delete'),
+      ],
+    ),
+  ),
+];
+
+enum SpaceAction { edit, delete, newCategory }
