@@ -1,5 +1,6 @@
 import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
 import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
+import 'package:assigngo_rewrite/spaces/providers/page_provider.dart';
 import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 void showSpaceBottomSheet({
   required BuildContext context,
   required WidgetRef ref,
-  required PageController pageController,
   Spaces? existingSpace,
 }) {
   final TextEditingController nameController =
@@ -18,6 +18,8 @@ void showSpaceBottomSheet({
     context: context,
     isScrollControlled: true,
     builder: (BuildContext context) {
+      final pageController = ref.watch(pageControllerProvider);
+      final currentPageIndex = pageController.page?.toInt() ?? 0;
       return Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -60,11 +62,19 @@ void showSpaceBottomSheet({
                   if (!isEditing) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (pageController.hasClients) {
-                        pageController.animateToPage(0,
+                        pageController.animateToPage(currentPageIndex,
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeInOut);
                       }
                     });
+                  } else {
+                    if (context.mounted) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (pageController.hasClients) {
+                          pageController.jumpToPage(currentPageIndex);
+                        }
+                      });
+                    }
                   }
 
                   if (context.mounted) {

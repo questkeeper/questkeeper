@@ -1,4 +1,5 @@
 import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
+import 'package:assigngo_rewrite/spaces/providers/page_provider.dart';
 import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
 import 'package:assigngo_rewrite/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:assigngo_rewrite/spaces/widgets/circle_bar.dart';
@@ -18,13 +19,7 @@ class AllSpacesScreen extends ConsumerStatefulWidget {
 class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   int currentPageValue = 0;
   final TextEditingController _nameController = TextEditingController();
-  late final PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController();
-  }
+  late PageController _pageController;
 
   @override
   void dispose() {
@@ -37,6 +32,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   Widget build(BuildContext context) {
     final spacesAsync =
         ref.watch(spacesManagerProvider.select((value) => value));
+
+    _pageController = ref.watch(pageControllerProvider);
 
     return SafeArea(
       child: spacesAsync.when(
@@ -58,7 +55,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                     showSpaceBottomSheet(
                       context: context,
                       ref: ref,
-                      pageController: _pageController,
                     );
                   }
                 },

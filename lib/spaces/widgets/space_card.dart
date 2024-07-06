@@ -2,6 +2,7 @@ import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
 import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
 import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
+import 'package:assigngo_rewrite/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:assigngo_rewrite/spaces/widgets/delete_space_dialog.dart';
 import 'package:assigngo_rewrite/spaces/widgets/space_category_tile.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
@@ -51,7 +52,13 @@ class SpaceCard extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showSpaceBottomSheet(
+                                context: context,
+                                ref: ref,
+                                existingSpace: space,
+                              );
+                            },
                             icon: const Icon(LucideIcons.pen),
                           ),
                           IconButton(
