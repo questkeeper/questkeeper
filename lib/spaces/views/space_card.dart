@@ -1,6 +1,7 @@
 import 'package:assigngo_rewrite/categories/models/categories_model.dart';
-import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
+import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
 import 'package:assigngo_rewrite/spaces/widgets/space_category_tile.dart';
+import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,14 +14,13 @@ class SpaceCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentSpace = ref.watch(spacesManagerProvider.select(
-      (value) => value.value?.firstWhere((s) => s.id == space.id),
-    ));
+    final tasks = ref.watch(tasksManagerProvider.select((value) =>
+        value.value?.where((task) => task.spaceId == space.id).toList()));
 
-    if (currentSpace == null) {
-      return const SizedBox.shrink(); // or some loading indicator
-    }
-
+    final currentSpaceCategories = ref.watch(categoriesManagerProvider
+        .select((value) => value.value?.where((category) {
+              return category.spaceId == space.id;
+            }).toList()));
     return Card(
       margin: const EdgeInsets.all(10),
       child: Container(
@@ -55,23 +55,31 @@ class SpaceCard extends ConsumerWidget {
                     ),
                   ],
                 ),
-                title: Text(currentSpace.title),
+                title: Text(space.title),
               ),
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: currentSpace.categories?.length != null
-                    ? currentSpace.categories!.length + 1
+                itemCount: currentSpaceCategories?.length != null
+                    ? currentSpaceCategories!.length + 1
                     : 0,
                 itemBuilder: (context, index) {
-                  if (index < currentSpace.categories!.length) {
-                    final category = currentSpace.categories![index];
-                    return SpaceCategoryTile(category: category);
+                  final categoryTasksList = tasks!.where((task) {
+                    return task.categoryId ==
+                        (index < currentSpaceCategories!.length
+                            ? currentSpaceCategories[index].id
+                            : null);
+                  }).toList();
+                  if (index < currentSpaceCategories!.length) {
+                    final category = currentSpaceCategories[index];
+                    return SpaceCategoryTile(
+                        category: category, tasks: categoryTasksList);
                   } else {
                     return SpaceCategoryTile(
+                      tasks: categoryTasksList,
                       category: Categories(
                         title: "Uncategorized",
-                        tasks: currentSpace.tasks,
+                        tasks: tasks,
                       ),
                     );
                   }
