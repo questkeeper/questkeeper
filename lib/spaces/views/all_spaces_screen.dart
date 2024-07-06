@@ -51,7 +51,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
             children: [
               Text(
                 'Create New Space',
-                style: Theme.of(context).textTheme.displayMedium,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
               TextField(
@@ -62,7 +62,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                 ),
                 autofocus: true,
               ),
-              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () async {
                   if (_nameController.text.isNotEmpty) {

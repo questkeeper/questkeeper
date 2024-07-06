@@ -39,9 +39,9 @@ class SpaceCard extends ConsumerWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               child: ListTile(
-                titleTextStyle: Theme.of(context).textTheme.displaySmall,
+                titleTextStyle: Theme.of(context).textTheme.headlineMedium,
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -64,7 +64,7 @@ class SpaceCard extends ConsumerWidget {
                     ? currentSpaceCategories!.length + 1
                     : 0,
                 itemBuilder: (context, index) {
-                  final categoryTasksList = tasks!.where((task) {
+                  final categoryTasksList = tasks?.where((task) {
                     return task.categoryId ==
                         (index < currentSpaceCategories!.length
                             ? currentSpaceCategories[index].id
