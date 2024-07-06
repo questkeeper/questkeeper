@@ -1,5 +1,3 @@
-import 'package:assigngo_rewrite/categories/models/categories_model.dart';
-import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'spaces_model.freezed.dart';
