@@ -29,14 +29,16 @@ class SpaceCategoryTile extends StatelessWidget {
           initiallyExpanded: true,
           title: Text(category.title,
               style: Theme.of(context).textTheme.titleMedium),
-          children: tasks!
-              .map((task) => Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: TaskCard(
-                    task: task,
-                    key: ValueKey(task.id),
-                  )))
-              .toList()),
+          children: tasks?.isNotEmpty == true && tasks != null
+              ? tasks!
+                  .map((task) => Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: TaskCard(
+                        task: task,
+                        key: ValueKey(task.id),
+                      )))
+                  .toList()
+              : []),
     );
   }
 }
