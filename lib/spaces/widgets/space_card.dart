@@ -2,6 +2,7 @@ import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
 import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
 import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
+import 'package:assigngo_rewrite/spaces/widgets/delete_space_dialog.dart';
 import 'package:assigngo_rewrite/spaces/widgets/space_category_tile.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:flutter/material.dart';
@@ -44,53 +45,37 @@ class SpaceCard extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               child: ListTile(
                 titleTextStyle: Theme.of(context).textTheme.headlineMedium,
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(LucideIcons.pen),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                  title: const Text("Delete Space"),
-                                  content: Text(
-                                    "Are you sure you want to delete this space?",
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
-                                  ),
-                                  actions: [
-                                    FilledButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text("Cancel"),
-                                    ),
-                                    FilledButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        ref
-                                            .read(
-                                                spacesManagerProvider.notifier)
-                                            .deleteSpace(space);
-
-                                        SnackbarService.showInfoSnackbar(
-                                            context,
-                                            "Space deleted successfully");
-                                      },
-                                      child: const Text("Delete"),
-                                    ),
-                                  ]);
-                            });
-                      },
-                      icon: const Icon(LucideIcons.trash),
-                    ),
-                  ],
-                ),
+                trailing: space.id == null
+                    ? const SizedBox()
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(LucideIcons.pen),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return DeleteSpaceDialog(
+                                        space: space,
+                                        deleteSpace: () {
+                                          ref
+                                              .read(spacesManagerProvider
+                                                  .notifier)
+                                              .deleteSpace(space);
+                                          SnackbarService.showInfoSnackbar(
+                                              context,
+                                              "Space deleted successfully");
+                                        });
+                                  });
+                            },
+                            icon: const Icon(LucideIcons.trash),
+                          ),
+                        ],
+                      ),
                 title: Text(space.title),
               ),
             ),
