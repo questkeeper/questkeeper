@@ -1,6 +1,7 @@
 import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
 import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
 import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
+import 'package:assigngo_rewrite/spaces/widgets/circle_bar.dart';
 import 'package:assigngo_rewrite/spaces/views/space_card.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -139,50 +140,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                   return SpaceCard(space: spaces[index]);
                 },
               ),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    margin: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            for (int i = 0; i < spaces.length; i++)
-                              if (i == currentPageValue) ...[
-                                circleBar(true)
-                                // circleBar(true)
-                              ] else
-                                GestureDetector(
-                                  onTap: () {
-                                    _pageController.animateToPage(i,
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        curve: Curves.easeInOut);
-                                  },
-                                  child: circleBar(false),
-                                ),
-                            IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    currentPageValue = spaces.length;
-                                    _pageController.animateToPage(spaces.length,
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        curve: Curves.easeInOut);
-                                  });
-                                },
-                                icon: const Icon(LucideIcons.plus,
-                                    size: 24, color: Colors.blue)),
-                          ],
-                        ),
-                        const SizedBox(height: 8.0),
-                      ],
-                    ),
-                  ))
+              _buildBottomBar(spaces),
             ],
           );
         },
@@ -190,17 +148,48 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
     );
   }
 
-  Widget circleBar(bool isActive) {
-    return AnimatedContainer(
-      padding: const EdgeInsets.all(8),
-      duration: const Duration(milliseconds: 150),
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      height: isActive ? 12 : 8,
-      width: isActive ? 12 : 8,
-      decoration: BoxDecoration(
-        color: isActive ? Colors.blue : Colors.grey,
-        borderRadius: BorderRadius.circular(12),
-      ),
-    );
+  Align _buildBottomBar(List<Spaces> spaces) {
+    return Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          margin: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  for (int i = 0; i < spaces.length; i++)
+                    if (i == currentPageValue) ...[
+                      const CircleBar(isActive: true),
+                      // circleBar(true)
+                    ] else
+                      GestureDetector(
+                        onTap: () {
+                          _pageController.animateToPage(i,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut);
+                        },
+                        child: const CircleBar(isActive: false),
+                      ),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          currentPageValue = spaces.length;
+                          _pageController.animateToPage(spaces.length,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut);
+                        });
+                      },
+                      icon: const Icon(LucideIcons.plus,
+                          size: 24, color: Colors.blue)),
+                ],
+              ),
+              const SizedBox(height: 8.0),
+            ],
+          ),
+        ));
   }
 }

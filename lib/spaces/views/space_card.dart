@@ -22,7 +22,7 @@ class SpaceCard extends ConsumerWidget {
               return category.spaceId == space.id;
             }).toList()));
     return Card(
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.all(12),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -39,9 +39,9 @@ class SpaceCard extends ConsumerWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 24),
               child: ListTile(
-                titleTextStyle: Theme.of(context).textTheme.titleLarge,
+                titleTextStyle: Theme.of(context).textTheme.displaySmall,
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

@@ -51,6 +51,8 @@ class _TabViewState extends ConsumerState<TabView> {
                   }
                 },
                 child: pages[_selectedIndex]),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.miniCenterDocked,
             floatingActionButton: FloatingActionButton(
               onPressed: () => {
                 Navigator.push(
