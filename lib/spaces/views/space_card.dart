@@ -1,4 +1,5 @@
 import 'package:assigngo_rewrite/categories/models/categories_model.dart';
+import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
 import 'package:assigngo_rewrite/spaces/widgets/space_category_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -12,6 +13,14 @@ class SpaceCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentSpace = ref.watch(spacesManagerProvider.select(
+      (value) => value.value?.firstWhere((s) => s.id == space.id),
+    ));
+
+    if (currentSpace == null) {
+      return const SizedBox.shrink(); // or some loading indicator
+    }
+
     return Card(
       margin: const EdgeInsets.all(10),
       child: Container(
@@ -46,25 +55,23 @@ class SpaceCard extends ConsumerWidget {
                     ),
                   ],
                 ),
-                title: Text(space.title),
+                title: Text(currentSpace.title),
               ),
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: space.categories?.length != null
-                    ? space.categories!.length + 1
+                itemCount: currentSpace.categories?.length != null
+                    ? currentSpace.categories!.length + 1
                     : 0,
                 itemBuilder: (context, index) {
-                  if (index < space.categories!.length) {
-                    // Display category and its tasks
-                    final category = space.categories![index];
+                  if (index < currentSpace.categories!.length) {
+                    final category = currentSpace.categories![index];
                     return SpaceCategoryTile(category: category);
                   } else {
-                    // Display uncategorized tasks
                     return SpaceCategoryTile(
                       category: Categories(
                         title: "Uncategorized",
-                        tasks: space.tasks,
+                        tasks: currentSpace.tasks,
                       ),
                     );
                   }

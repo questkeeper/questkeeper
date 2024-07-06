@@ -1,5 +1,6 @@
 import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
+import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
 import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
 import 'package:assigngo_rewrite/task_list/providers/current_task_provider.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
@@ -37,13 +38,24 @@ class _TaskCardState extends ConsumerState<TaskCard> {
       key: ValueKey(widget.task.id),
       confirmDismiss: (direction) {
         if (direction == DismissDirection.startToEnd) {
-          ref.read(tasksManagerProvider.notifier).toggleStar(widget.task);
+          ref
+              .read(tasksManagerProvider.notifier)
+              .toggleStar(task)
+              .then((updatedTask) {
+            ref.read(spacesManagerProvider.notifier).updateTaskInSpace(task);
+          });
+
           return Future.value(false);
           // return widget.filter == TasksFilter.starred
           //     ? Future.value(true)
           //     : Future.value(false);
         } else {
-          ref.read(tasksManagerProvider.notifier).toggleComplete(widget.task);
+          ref
+              .read(tasksManagerProvider.notifier)
+              .toggleComplete(task)
+              .then((_) {
+            ref.read(spacesManagerProvider.notifier).updateTaskInSpace(task);
+          });
           return Future.value(true);
         }
       },

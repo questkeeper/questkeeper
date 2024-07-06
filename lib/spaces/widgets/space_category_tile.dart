@@ -30,6 +30,7 @@ class SpaceCategoryTile extends StatelessWidget {
             .map((task) => Container(
                   margin: const EdgeInsets.all(8.0),
                   child: TaskCard(
+                    key: ValueKey(task.id),
                     task: task,
                   ),
                 ))

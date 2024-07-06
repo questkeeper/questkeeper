@@ -99,7 +99,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final spacesAsync = ref.watch(spacesManagerProvider);
+    final spacesAsync =
+        ref.watch(spacesManagerProvider.select((value) => value));
 
     return SafeArea(
       child: spacesAsync.when(
