@@ -78,29 +78,29 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
     final pageController = widget.ref.watch(pageControllerProvider);
     final currentPageIndex = pageController.page?.toInt() ?? 0;
 
-    return SafeArea(
-      child: Container(
-        decoration: selectedColor != null
-            ? BoxDecoration(
-                gradient: LinearGradient(
-                  colors: selectedColor!.toCardGradientColor(),
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomCenter,
-                ),
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
-              )
-            : BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
+    return Container(
+      decoration: selectedColor != null
+          ? BoxDecoration(
+              gradient: LinearGradient(
+                colors: selectedColor!.toCardGradientColor(),
+                begin: Alignment.topLeft,
+                end: Alignment.bottomCenter,
               ),
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 16,
-          right: 16,
-          top: 16,
-        ),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
+            )
+          : BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
+            ),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 24,
+        right: 24,
+        top: 16,
+      ),
+      child: SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

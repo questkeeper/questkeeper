@@ -1,4 +1,4 @@
-import 'package:flutter/painting.dart';
+import 'package:flutter/material.dart';
 
 extension ColorExtensions on Color {
   // This method creates a new color by adjusting the hue of the current color
@@ -17,9 +17,19 @@ extension ColorExtensions on Color {
 
   List<Color> toCardGradientColor() {
     return [
-      withOpacity(0.7),
-      withHueOffset(5).withOpacity(0.7),
-      withHueOffset(-35).withOpacity(0.7),
+      withOpacity(0.7).blendWith(Colors.black),
+      withHueOffset(5).withOpacity(0.7).blendWith(Colors.black),
+      withHueOffset(-35).withOpacity(0.7).blendWith(Colors.black),
     ];
+  }
+
+  Color blendWith(Color backgroundColor) {
+    double alpha = opacity;
+    return Color.fromRGBO(
+      (red * alpha + backgroundColor.red * (1 - alpha)).round(),
+      (green * alpha + backgroundColor.green * (1 - alpha)).round(),
+      (blue * alpha + backgroundColor.blue * (1 - alpha)).round(),
+      1,
+    );
   }
 }
