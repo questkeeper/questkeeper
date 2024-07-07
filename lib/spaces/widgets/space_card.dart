@@ -1,5 +1,7 @@
 import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
+import 'package:assigngo_rewrite/shared/extensions/color_extensions.dart';
+import 'package:assigngo_rewrite/shared/extensions/string_extensions.dart';
 import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
 import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
 import 'package:assigngo_rewrite/spaces/views/edit_space_bottom_sheet.dart';
@@ -25,6 +27,9 @@ class SpaceCard extends ConsumerWidget {
         .select((value) => value.value?.where((category) {
               return category.spaceId == space.id;
             }).toList()));
+
+    final baseColor =
+        space.color != null ? space.color!.toColor() : const Color(0xff00CED1);
     return Card(
       margin: const EdgeInsets.all(12),
       child: Container(
@@ -32,9 +37,9 @@ class SpaceCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
             colors: [
-              const Color(0xff00BFFF).withOpacity(0.7),
-              const Color(0xff00CED1).withOpacity(0.7),
-              const Color(0xff2E8B57).withOpacity(0.7),
+              baseColor.withOpacity(0.7),
+              baseColor.withHueOffset(5).withOpacity(0.7),
+              baseColor.withHueOffset(-35).withOpacity(0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomCenter,
