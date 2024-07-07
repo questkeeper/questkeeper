@@ -112,9 +112,8 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
             const SizedBox(height: 16),
             TextField(
               controller: widget.nameController,
-              decoration: const InputDecoration(
-                labelText: 'Space Name',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: widget.existingSpace?.title ?? 'Space Name',
               ),
               autofocus: true,
             ),
