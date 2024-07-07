@@ -9,7 +9,7 @@ extension HexColor on String {
     if (hex.length == 8) {
       return Color(int.parse("0x$hex"));
     } else {
-      throw const FormatException("Invalid hex color format");
+      return const Color(0xff00CED1);
     }
   }
 }
