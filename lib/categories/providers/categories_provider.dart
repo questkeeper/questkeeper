@@ -17,34 +17,50 @@ class CategoriesManager extends _$CategoriesManager {
 
   Future<List<Categories>> fetchCategories() async {
     try {
-      final categories = await _repository.getCategories();
-      return categories;
-    } catch (e) {
-      throw Exception("Failed to fetch categories");
+      return await _repository.getCategories();
+    } catch (error) {
+      state = AsyncValue.error(error, StackTrace.current);
+      throw Exception("Failed to fetch categories: $error");
     }
   }
 
   Future<void> createCategory(Categories category) async {
-    await _repository.createCategory(category);
-
-    await fetchCategories();
+    state = const AsyncValue.loading();
+    try {
+      await _repository.createCategory(category);
+      state = AsyncValue.data([...state.value ?? [], category]);
+    } catch (error) {
+      // Handle error
+      state = AsyncValue.error(error, StackTrace.current);
+    }
   }
 
   Future<void> updateCategory(Categories category) async {
-    await _repository.updateCategory(category);
-    await fetchCategories();
+    final oldState = state.value ?? [];
+    final categoryIndex = oldState.indexWhere((c) => c.id == category.id);
+    if (categoryIndex == -1) return;
+
+    final newState = List<Categories>.from(oldState);
+    newState[categoryIndex] = category;
+
+    state = AsyncValue.data(newState);
+
+    try {
+      await _repository.updateCategory(category);
+    } catch (error) {
+      // Handle error and possibly revert state
+      state = AsyncValue.error(error, StackTrace.current);
+    }
   }
 
   Future<void> deleteCategory(Categories category) async {
-    state = const AsyncLoading();
     try {
-      final result = await _repository.deleteCategory(category);
-      if (result.error != null) {
-        throw result.error!;
-      }
-      state = AsyncData(await fetchCategories());
-    } catch (e) {
-      state = AsyncError('Failed to delete category', StackTrace.current);
+      await _repository.deleteCategory(category);
+      state = AsyncValue.data(
+        (state.value ?? []).where((c) => c.id != category.id).toList(),
+      );
+    } catch (error) {
+      state = AsyncValue.error(error, StackTrace.current);
     }
   }
 }
