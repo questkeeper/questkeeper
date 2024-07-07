@@ -36,11 +36,7 @@ class SpaceCard extends ConsumerWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
-            colors: [
-              baseColor.withOpacity(0.7),
-              baseColor.withHueOffset(5).withOpacity(0.7),
-              baseColor.withHueOffset(-35).withOpacity(0.7),
-            ],
+            colors: baseColor.toCardGradientColor(),
             begin: Alignment.topLeft,
             end: Alignment.bottomCenter,
           ),
