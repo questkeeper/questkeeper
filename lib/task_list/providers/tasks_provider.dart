@@ -59,6 +59,10 @@ class TasksManager extends _$TasksManager {
     _updateTask(updatedTask, () => _repository.toggleStar(task));
   }
 
+  Future<void> updateTask(Tasks task) async {
+    _updateTask(task, () => _repository.updateTask(task));
+  }
+
   void _updateTask(
       Tasks updatedTask, Future<void> Function() repositoryAction) async {
     final oldState = state.value ?? [];
