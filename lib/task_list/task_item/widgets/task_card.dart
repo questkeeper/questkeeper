@@ -8,43 +8,27 @@ import 'package:assigngo_rewrite/task_list/task_item/views/assignment_screen.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TaskCard extends ConsumerStatefulWidget {
+class TaskCard extends ConsumerWidget {
   const TaskCard({
     super.key,
     required this.task,
     this.category,
-    // required this.filter,
   });
 
   final Tasks task;
   final Categories? category;
-  // final TasksFilter filter;
 
   @override
-  ConsumerState<TaskCard> createState() => _TaskCardState();
-}
-
-class _TaskCardState extends ConsumerState<TaskCard> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Tasks task = widget.task;
+  Widget build(BuildContext context, WidgetRef ref) {
     return Dismissible(
-      key: ValueKey(widget.task.id),
-      confirmDismiss: (direction) {
+      key: ValueKey(task.id),
+      confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          ref.read(tasksProvider.notifier).toggleStar(widget.task);
-          return Future.value(false);
-          // return widget.filter == TasksFilter.starred
-          //     ? Future.value(true)
-          //     : Future.value(false);
+          await ref.read(tasksManagerProvider.notifier).toggleStar(task);
+          return false;
         } else {
-          ref.read(tasksProvider.notifier).toggleComplete(widget.task);
-          return Future.value(true);
+          await ref.read(tasksManagerProvider.notifier).toggleComplete(task);
+          return true;
         }
       },
       background: Container(
@@ -86,35 +70,32 @@ class _TaskCardState extends ConsumerState<TaskCard> {
         ),
         splashColor: Colors.transparent,
         enableFeedback: true,
-        onTap: () => {
-          ref.read(currentTaskProvider.notifier).setCurrentTask(widget.task),
-          if (MediaQuery.of(context).size.width < 800)
-            {
-              // modal for mobile
-              showModalBottomSheet(
-                enableDrag: true,
-                isScrollControlled: true,
-                useSafeArea: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12.0),
-                    topRight: Radius.circular(12.0),
-                  ),
+        onTap: () {
+          if (MediaQuery.of(context).size.width < 800) {
+            showModalBottomSheet(
+              enableDrag: true,
+              isScrollControlled: true,
+              useSafeArea: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12.0),
+                  topRight: Radius.circular(12.0),
                 ),
-                showDragHandle: true,
-                context: context,
-                builder: (context) {
-                  return const TaskItemScreen();
-                },
-              )
-            }
+              ),
+              showDragHandle: true,
+              context: context,
+              builder: (context) {
+                ref.read(currentTaskProvider.notifier).setCurrentTask(task);
+                return const TaskItemScreen();
+              },
+            );
+          }
         },
         child: SizedBox(
-          // height: 150,
           width: double.infinity,
           child: Card(
-            color: widget.category != null && widget.category!.color != null
-                ? HexColor(widget.category!.color!)
+            color: category != null && category!.color != null
+                ? HexColor(category!.color!)
                 : Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0),
@@ -127,39 +108,34 @@ class _TaskCardState extends ConsumerState<TaskCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // if (widget.filter != TasksFilter.completed &&
-                  //     task.dueDate.isBefore(DateTime.now().toUtc()))
-                  const Chip(
+                  if (task.dueDate.isBefore(DateTime.now().toUtc()))
+                    const Chip(
                       label: Text("Overdue",
                           style: TextStyle(color: Colors.black)),
                       visualDensity: VisualDensity.compact,
-                      backgroundColor: Colors.redAccent),
+                      backgroundColor: Colors.redAccent,
+                    ),
                   if (task.dueDate.isAfter(DateTime.now().toUtc()) &&
                       task.dueDate.isBefore(
                           DateTime.now().add(const Duration(days: 1)).toUtc()))
                     const Chip(
-                        label: Text("Due Today",
-                            style: TextStyle(color: Colors.black)),
-                        visualDensity: VisualDensity.compact,
-                        backgroundColor: Colors.amber),
+                      label: Text("Due Today",
+                          style: TextStyle(color: Colors.black)),
+                      visualDensity: VisualDensity.compact,
+                      backgroundColor: Colors.amber,
+                    ),
                   Text(
-                    widget.task.title,
+                    task.title,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Text(
-                    "Due ${formatDate(widget.task.dueDate)}",
+                    "Due ${formatDate(task.dueDate)}",
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  // task.subject != null
-                  //     ? Text(
-                  //         task.subject!.name,
-                  //         style: Theme.of(context).textTheme.bodyMedium,
-                  //       )
-                  //     : const SizedBox.shrink(),
                   const SizedBox(height: 8.0),
                   Text(
                     softWrap: true,
-                    widget.task.description ?? "",
+                    task.description ?? "",
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ],

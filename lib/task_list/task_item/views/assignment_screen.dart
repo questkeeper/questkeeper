@@ -27,14 +27,8 @@ class _TaskItemScreenState extends ConsumerState<TaskItemScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    ref.read(currentTaskProvider.notifier).onDispose();
-  }
-
   void _updateTask(Tasks task) {
-    ref.read(tasksProvider.notifier).updateTask(task);
+    ref.read(tasksManagerProvider.notifier).updateTask(task);
   }
 
   void _updateTaskCategory(Tasks task) {
@@ -42,11 +36,11 @@ class _TaskItemScreenState extends ConsumerState<TaskItemScreen> {
       task = task.copyWith(categoryId: null);
     }
     ref.read(currentTaskProvider.notifier).updateTaskCategory(task.categoryId);
-    ref.read(tasksProvider.notifier).updateTask(task);
+    ref.read(tasksManagerProvider.notifier).updateTask(task);
   }
 
   void _deleteTask(Tasks task) {
-    ref.read(tasksProvider.notifier).deleteTask(task);
+    ref.read(tasksManagerProvider.notifier).deleteTask(task);
     ref.read(currentTaskProvider.notifier).setCurrentTask(null);
     Navigator.of(context).pop();
   }

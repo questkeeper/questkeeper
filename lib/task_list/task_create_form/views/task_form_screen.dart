@@ -49,7 +49,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
         categoryId: _categoryId,
       );
 
-      final tasksNotifier = ref.read(tasksProvider.notifier);
+      final tasksNotifier = ref.read(tasksManagerProvider.notifier);
       final result = await tasksNotifier.createTask(task);
 
       if (result.success) {
@@ -134,7 +134,8 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                                 titleController: _titleController,
                                 descriptionController: _descriptionController,
                                 dueDate: _dueDate,
-                                categoriesList: ref.watch(categoriesProvider),
+                                // categoriesList: ref.watch(categoriesProvider),
+                                categoriesList: const [],
                                 onDueDateChanged: (date) {
                                   setState(() {
                                     _dueDate = date!;

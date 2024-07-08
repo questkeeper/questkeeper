@@ -27,6 +27,7 @@ mixin _$Categories {
   String? get color => throw _privateConstructorUsedError;
   int? get spaceId => throw _privateConstructorUsedError;
   bool get archived => throw _privateConstructorUsedError;
+  List<Tasks>? get tasks => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -47,7 +48,8 @@ abstract class $CategoriesCopyWith<$Res> {
       DateTime? updatedAt,
       String? color,
       int? spaceId,
-      bool archived});
+      bool archived,
+      List<Tasks>? tasks});
 }
 
 /// @nodoc
@@ -70,6 +72,7 @@ class _$CategoriesCopyWithImpl<$Res, $Val extends Categories>
     Object? color = freezed,
     Object? spaceId = freezed,
     Object? archived = null,
+    Object? tasks = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -100,6 +103,10 @@ class _$CategoriesCopyWithImpl<$Res, $Val extends Categories>
           ? _value.archived
           : archived // ignore: cast_nullable_to_non_nullable
               as bool,
+      tasks: freezed == tasks
+          ? _value.tasks
+          : tasks // ignore: cast_nullable_to_non_nullable
+              as List<Tasks>?,
     ) as $Val);
   }
 }
@@ -119,7 +126,8 @@ abstract class _$$CategoriesImplCopyWith<$Res>
       DateTime? updatedAt,
       String? color,
       int? spaceId,
-      bool archived});
+      bool archived,
+      List<Tasks>? tasks});
 }
 
 /// @nodoc
@@ -140,6 +148,7 @@ class __$$CategoriesImplCopyWithImpl<$Res>
     Object? color = freezed,
     Object? spaceId = freezed,
     Object? archived = null,
+    Object? tasks = freezed,
   }) {
     return _then(_$CategoriesImpl(
       id: freezed == id
@@ -170,6 +179,10 @@ class __$$CategoriesImplCopyWithImpl<$Res>
           ? _value.archived
           : archived // ignore: cast_nullable_to_non_nullable
               as bool,
+      tasks: freezed == tasks
+          ? _value._tasks
+          : tasks // ignore: cast_nullable_to_non_nullable
+              as List<Tasks>?,
     ));
   }
 }
@@ -184,7 +197,9 @@ class _$CategoriesImpl implements _Categories {
       this.updatedAt,
       this.color,
       this.spaceId,
-      this.archived = false});
+      this.archived = false,
+      final List<Tasks>? tasks})
+      : _tasks = tasks;
 
   factory _$CategoriesImpl.fromJson(Map<String, dynamic> json) =>
       _$$CategoriesImplFromJson(json);
@@ -204,10 +219,19 @@ class _$CategoriesImpl implements _Categories {
   @override
   @JsonKey()
   final bool archived;
+  final List<Tasks>? _tasks;
+  @override
+  List<Tasks>? get tasks {
+    final value = _tasks;
+    if (value == null) return null;
+    if (_tasks is EqualUnmodifiableListView) return _tasks;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'Categories(id: $id, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, color: $color, spaceId: $spaceId, archived: $archived)';
+    return 'Categories(id: $id, title: $title, createdAt: $createdAt, updatedAt: $updatedAt, color: $color, spaceId: $spaceId, archived: $archived, tasks: $tasks)';
   }
 
   @override
@@ -224,13 +248,14 @@ class _$CategoriesImpl implements _Categories {
             (identical(other.color, color) || other.color == color) &&
             (identical(other.spaceId, spaceId) || other.spaceId == spaceId) &&
             (identical(other.archived, archived) ||
-                other.archived == archived));
+                other.archived == archived) &&
+            const DeepCollectionEquality().equals(other._tasks, _tasks));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, title, createdAt, updatedAt, color, spaceId, archived);
+  int get hashCode => Object.hash(runtimeType, id, title, createdAt, updatedAt,
+      color, spaceId, archived, const DeepCollectionEquality().hash(_tasks));
 
   @JsonKey(ignore: true)
   @override
@@ -254,7 +279,8 @@ abstract class _Categories implements Categories {
       final DateTime? updatedAt,
       final String? color,
       final int? spaceId,
-      final bool archived}) = _$CategoriesImpl;
+      final bool archived,
+      final List<Tasks>? tasks}) = _$CategoriesImpl;
 
   factory _Categories.fromJson(Map<String, dynamic> json) =
       _$CategoriesImpl.fromJson;
@@ -273,6 +299,8 @@ abstract class _Categories implements Categories {
   int? get spaceId;
   @override
   bool get archived;
+  @override
+  List<Tasks>? get tasks;
   @override
   @JsonKey(ignore: true)
   _$$CategoriesImplCopyWith<_$CategoriesImpl> get copyWith =>

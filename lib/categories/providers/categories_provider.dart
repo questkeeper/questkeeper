@@ -1,41 +1,66 @@
-import 'package:assigngo_rewrite/task_list/repositories/tasks_repository.dart';
 import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:assigngo_rewrite/categories/repositories/categories_repository.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final categoriesProvider =
-    StateNotifierProvider<CategoriesNotifier, List<Categories>>(
-  (ref) => CategoriesNotifier([]),
-);
+part 'categories_provider.g.dart';
 
-class CategoriesNotifier extends StateNotifier<List<Categories>> {
-  final CategoriesRepository _repository = CategoriesRepository();
-  final TasksRepository _tasksRepository = TasksRepository();
+@riverpod
+class CategoriesManager extends _$CategoriesManager {
+  final CategoriesRepository _repository;
 
-  CategoriesNotifier(super._state);
+  CategoriesManager() : _repository = CategoriesRepository();
 
-  Future<void> fetchCategories() async {
-    final categories = await _repository.getCategories();
-    state = categories;
+  @override
+  FutureOr<List<Categories>> build() {
+    return fetchCategories();
+  }
+
+  Future<List<Categories>> fetchCategories() async {
+    try {
+      return await _repository.getCategories();
+    } catch (error) {
+      state = AsyncValue.error(error, StackTrace.current);
+      throw Exception("Failed to fetch categories: $error");
+    }
   }
 
   Future<void> createCategory(Categories category) async {
-    await _repository.createCategory(category);
-
-    await fetchCategories();
+    state = const AsyncValue.loading();
+    try {
+      await _repository.createCategory(category);
+      state = AsyncValue.data([...state.value ?? [], category]);
+    } catch (error) {
+      // Handle error
+      state = AsyncValue.error(error, StackTrace.current);
+    }
   }
 
   Future<void> updateCategory(Categories category) async {
-    await _repository.updateCategory(category);
-    await fetchCategories();
+    final oldState = state.value ?? [];
+    final categoryIndex = oldState.indexWhere((c) => c.id == category.id);
+    if (categoryIndex == -1) return;
+
+    final newState = List<Categories>.from(oldState);
+    newState[categoryIndex] = category;
+
+    state = AsyncValue.data(newState);
+
+    try {
+      await _repository.updateCategory(category);
+    } catch (error) {
+      // Handle error and possibly revert state
+      state = AsyncValue.error(error, StackTrace.current);
+    }
   }
 
   Future<void> deleteCategory(Categories category) async {
-    final result = await _repository.deleteCategory(category);
-
-    if (result.success) {
-      state = state.where((e) => e.id != category.id).toList();
-      _tasksRepository.getTasks();
+    try {
+      await _repository.deleteCategory(category);
+      state = AsyncValue.data(
+        (state.value ?? []).where((c) => c.id != category.id).toList(),
+      );
+    } catch (error) {
+      state = AsyncValue.error(error, StackTrace.current);
     }
   }
 }

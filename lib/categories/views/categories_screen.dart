@@ -19,7 +19,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   void initState() {
     super.initState();
     // Fetch the categorys when the screen is initialized
-    ref.read(categoriesProvider.notifier).fetchCategories();
+    ref.read(categoriesManagerProvider.notifier).fetchCategories();
   }
 
   final TextEditingController _categoryName = TextEditingController();
@@ -27,7 +27,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final categorys = ref.watch(categoriesProvider);
+    final categorys = ref.watch(categoriesManagerProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +37,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: IconButton(
               onPressed: () {
-                ref.read(categoriesProvider.notifier).createCategory(
+                ref.read(categoriesManagerProvider.notifier).createCategory(
                       Categories(
                         title: 'New category! Edit me!',
                         color: primaryColor.hex,
@@ -59,9 +59,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             margin: const EdgeInsets.all(20),
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: categorys.length,
+              itemCount: categorys.asData?.value.length ?? 0,
               itemBuilder: (context, index) {
-                final category = categorys[index];
+                final category = categorys.asData!.value[index];
                 return Container(
                   margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                   child: InkWell(
@@ -193,13 +193,15 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                                   ),
                                                   onPressed: () {
                                                     ref
-                                                        .read(categoriesProvider
-                                                            .notifier)
+                                                        .read(
+                                                            categoriesManagerProvider
+                                                                .notifier)
                                                         .deleteCategory(
                                                             category);
                                                     ref
-                                                        .read(categoriesProvider
-                                                            .notifier)
+                                                        .read(
+                                                            categoriesManagerProvider
+                                                                .notifier)
                                                         .fetchCategories();
                                                     Navigator.pop(context);
                                                     Navigator.pop(context);
@@ -232,7 +234,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                     );
                                     if (newCategory != category) {
                                       ref
-                                          .read(categoriesProvider.notifier)
+                                          .read(categoriesManagerProvider
+                                              .notifier)
                                           .updateCategory(newCategory);
                                     }
 
