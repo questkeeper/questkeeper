@@ -27,12 +27,6 @@ class _TaskItemScreenState extends ConsumerState<TaskItemScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    ref.read(currentTaskProvider.notifier).onDispose();
-  }
-
   void _updateTask(Tasks task) {
     ref.read(tasksManagerProvider.notifier).updateTask(task);
   }

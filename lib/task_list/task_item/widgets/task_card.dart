@@ -1,6 +1,7 @@
 import 'package:assigngo_rewrite/categories/models/categories_model.dart';
 import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
 import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
+import 'package:assigngo_rewrite/task_list/providers/current_task_provider.dart';
 import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
 import 'package:assigngo_rewrite/shared/utils/format_date.dart';
 import 'package:assigngo_rewrite/task_list/task_item/views/assignment_screen.dart';
@@ -84,6 +85,7 @@ class TaskCard extends ConsumerWidget {
               showDragHandle: true,
               context: context,
               builder: (context) {
+                ref.read(currentTaskProvider.notifier).setCurrentTask(task);
                 return const TaskItemScreen();
               },
             );
