@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.assigngo</string>
+		<string>group.questkeeper</string>
 	</array>
 </dict>
 </plist>

@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "dev.ishanmisra.assigngo_rewrite"
+    namespace "app.questkeeper"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 

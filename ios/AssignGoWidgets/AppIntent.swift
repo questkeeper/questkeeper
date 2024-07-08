@@ -1,6 +1,6 @@
 //
 //  AppIntent.swift
-//  AssignGoWidgets
+//  QuestKeeperWidgets
 //
 //  Created by Ishan Misra on 4/12/24.
 //
