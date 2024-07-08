@@ -37,7 +37,7 @@ Future<void> main() async {
   try {
     if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
       homeWidget = HomeWidgetMobile();
-      homeWidget.initHomeWidget('group.assigngo');
+      homeWidget.initHomeWidget('group.questkeeper');
     }
   } catch (e) {
     debugPrint("Platform implementation error: $e");
@@ -63,7 +63,7 @@ class MyApp extends ConsumerWidget {
     MaterialTheme theme = MaterialTheme(textTheme);
 
     return MaterialApp(
-      title: 'AssignGo',
+      title: 'Quest Keeper',
       theme: brightness == Brightness.light
           ? theme.light().copyWith(
                 appBarTheme: components.appBarTheme,

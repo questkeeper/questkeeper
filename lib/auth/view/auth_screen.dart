@@ -44,14 +44,15 @@ class AuthScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                "Listify",
+                "Quest Keeper",
                 style: Theme.of(context).textTheme.displayLarge,
               ),
             ),
 
             SupaMagicAuth(
-              redirectUrl:
-                  kIsWeb ? "${Uri.base.toString()}/signin" : 'listify://signin',
+              redirectUrl: kIsWeb
+                  ? "${Uri.base.toString()}/signin"
+                  : 'questkeeper://signin',
               onSuccess: onSuccess,
               onError: onError,
             ),
@@ -64,7 +65,7 @@ class AuthScreen extends ConsumerWidget {
               ],
               socialButtonVariant: SocialButtonVariant.icon,
               colored: true,
-              redirectUrl: kIsWeb ? null : 'listify://signin',
+              redirectUrl: kIsWeb ? null : 'questkeeper://signin',
               onSuccess: onSuccess,
               onError: onError,
             ),

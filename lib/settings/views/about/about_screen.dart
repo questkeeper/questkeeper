@@ -39,7 +39,7 @@ class AboutScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'AssignGo',
+                      'Quest Keeper',
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                   ],
@@ -51,7 +51,7 @@ class AboutScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const ListTile(
-                    title: Text('AssignGo'),
+                    title: Text('Quest Keeper'),
                     // subtitle: Text('Version 1.0.0'),
                   ),
                   const ListTile(
