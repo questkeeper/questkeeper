@@ -11,16 +11,16 @@ for (const platform of platforms) {
     }`;
 
     if (platform === "macos") {
-      await $`zip -r build/macos/Build/Products/Release/AssignGo.app.zip build/macos/Build/Products/Release/assigngo_rewrite.app`;
+      await $`zip -r build/macos/Build/Products/Release/QuestKeeper.app.zip build/macos/Build/Products/Release/questkeeper.app`;
     }
 
     try {
-      await $`gh release delete-asset main assigngo_${platform}.zip`;
+      await $`gh release delete-asset main questkeeper_${platform}.zip`;
     } catch (e) {
       console.warn(`No asset to delete for ${platform}`);
     }
 
-    await $`gh release upload main build/${platform}/Build/Products/Release/AssignGo.app.zip > ${
+    await $`gh release upload main build/${platform}/Build/Products/Release/QuestKeeper.app.zip > ${
       file("upload.log")
     }`;
   } catch (e) {
