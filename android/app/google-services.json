@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "479691835174",
+    "project_id": "assigngo-d890c",
+    "storage_bucket": "assigngo-d890c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479691835174:android:6777d673619a007c3763e7",
+        "android_client_info": {
+          "package_name": "app.questkeeper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA71mAfcb4HlBkKnpcXSGTsDRixQ7YLa3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

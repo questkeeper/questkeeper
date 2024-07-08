@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>dev.ishanmisra.assigngo</string>
+	<string>app.questkeeper</string>
 	<key>PROJECT_ID</key>
 	<string>assigngo-d890c</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:479691835174:ios:edd9efaa419ca31d3763e7</string>
+	<string>1:479691835174:ios:a6fddf000f1cd2c33763e7</string>
 </dict>
 </plist>
