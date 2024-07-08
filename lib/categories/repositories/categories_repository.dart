@@ -1,5 +1,5 @@
-import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
-import 'package:assigngo_rewrite/categories/models/categories_model.dart';
+import 'package:questkeeper/shared/models/return_model/return_model.dart';
+import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CategoriesRepository {

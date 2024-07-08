@@ -1,5 +1,5 @@
-import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
-import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
+import 'package:questkeeper/task_list/models/tasks_model.dart';
+import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

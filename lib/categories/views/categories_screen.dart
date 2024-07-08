@@ -1,7 +1,7 @@
-import 'package:assigngo_rewrite/constants.dart';
-import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
-import 'package:assigngo_rewrite/categories/models/categories_model.dart';
-import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
+import 'package:questkeeper/constants.dart';
+import 'package:questkeeper/shared/utils/hex_color.dart';
+import 'package:questkeeper/categories/models/categories_model.dart';
+import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';

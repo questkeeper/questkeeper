@@ -1,8 +1,8 @@
-import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
-import 'package:assigngo_rewrite/spaces/views/all_spaces_screen.dart';
+import 'package:questkeeper/spaces/providers/spaces_provider.dart';
+import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:assigngo_rewrite/task_list/task_create_form/views/task_form_screen.dart';
-import 'package:assigngo_rewrite/settings/views/settings_screen.dart';
+import 'package:questkeeper/task_list/task_create_form/views/task_form_screen.dart';
+import 'package:questkeeper/settings/views/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

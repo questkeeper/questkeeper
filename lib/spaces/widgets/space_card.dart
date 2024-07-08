@@ -1,17 +1,17 @@
-import 'package:assigngo_rewrite/categories/models/categories_model.dart';
-import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
-import 'package:assigngo_rewrite/shared/extensions/color_extensions.dart';
-import 'package:assigngo_rewrite/shared/extensions/string_extensions.dart';
-import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
-import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
-import 'package:assigngo_rewrite/spaces/views/edit_space_bottom_sheet.dart';
-import 'package:assigngo_rewrite/spaces/widgets/delete_space_dialog.dart';
-import 'package:assigngo_rewrite/spaces/widgets/space_category_tile.dart';
-import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
+import 'package:questkeeper/categories/models/categories_model.dart';
+import 'package:questkeeper/categories/providers/categories_provider.dart';
+import 'package:questkeeper/shared/extensions/color_extensions.dart';
+import 'package:questkeeper/shared/extensions/string_extensions.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:questkeeper/spaces/providers/spaces_provider.dart';
+import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
+import 'package:questkeeper/spaces/widgets/delete_space_dialog.dart';
+import 'package:questkeeper/spaces/widgets/space_category_tile.dart';
+import 'package:questkeeper/task_list/providers/tasks_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
+import 'package:questkeeper/spaces/models/spaces_model.dart';
 
 class SpaceCard extends ConsumerWidget {
   const SpaceCard({super.key, required this.space});

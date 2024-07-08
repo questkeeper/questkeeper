@@ -1,21 +1,21 @@
 import 'dart:io';
 
-import 'package:assigngo_rewrite/auth/view/auth_password_screen.dart';
-import 'package:assigngo_rewrite/auth/view/auth_screen.dart';
-import 'package:assigngo_rewrite/auth/view/auth_gate.dart';
-import 'package:assigngo_rewrite/settings/views/about/about_screen.dart';
-import 'package:assigngo_rewrite/settings/views/account/account_screen.dart';
-import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_mobile.dart';
-import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_stub.dart';
-import 'package:assigngo_rewrite/shared/utils/text_theme.dart';
-import 'package:assigngo_rewrite/categories/views/categories_screen.dart';
+import 'package:questkeeper/auth/view/auth_password_screen.dart';
+import 'package:questkeeper/auth/view/auth_screen.dart';
+import 'package:questkeeper/auth/view/auth_gate.dart';
+import 'package:questkeeper/settings/views/about/about_screen.dart';
+import 'package:questkeeper/settings/views/account/account_screen.dart';
+import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
+import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
+import 'package:questkeeper/shared/utils/text_theme.dart';
+import 'package:questkeeper/categories/views/categories_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:assigngo_rewrite/theme.dart';
-import 'package:assigngo_rewrite/theme_components.dart';
+import 'package:questkeeper/theme.dart';
+import 'package:questkeeper/theme_components.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';

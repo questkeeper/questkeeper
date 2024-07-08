@@ -1,5 +1,5 @@
-import 'package:assigngo_rewrite/auth/view/auth_screen.dart';
-import 'package:assigngo_rewrite/tabs/tabview.dart';
+import 'package:questkeeper/auth/view/auth_screen.dart';
+import 'package:questkeeper/tabs/tabview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

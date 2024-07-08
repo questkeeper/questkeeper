@@ -1,13 +1,12 @@
-import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
-import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
-import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
-import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
-import 'package:assigngo_rewrite/task_list/subtasks/providers/subtasks_providers.dart';
-import 'package:assigngo_rewrite/task_list/widgets/date_time_picker.dart';
-import 'package:assigngo_rewrite/task_list/widgets/category_dropdown_field.dart';
-import 'package:assigngo_rewrite/shared/utils/format_date.dart';
-import 'package:assigngo_rewrite/categories/models/categories_model.dart';
-import 'package:assigngo_rewrite/categories/providers/categories_provider.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:questkeeper/task_list/models/tasks_model.dart';
+import 'package:questkeeper/task_list/providers/tasks_provider.dart';
+import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:questkeeper/task_list/subtasks/providers/subtasks_providers.dart';
+import 'package:questkeeper/task_list/widgets/date_time_picker.dart';
+import 'package:questkeeper/task_list/widgets/category_dropdown_field.dart';
+import 'package:questkeeper/shared/utils/format_date.dart';
+import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -50,52 +49,65 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
       );
 
       final tasksNotifier = ref.read(tasksManagerProvider.notifier);
-      final result = await tasksNotifier.createTask(task);
+      await tasksNotifier.createTask(task);
 
-      if (result.success) {
-        final taskData = result.data! as Tasks;
-        final subtasks = _subtasks.map((subtask) {
-          return subtask.copyWith(taskId: taskData.id!);
-        }).toList();
+      // Check if context is mounted
+      if (!mounted) return;
 
-        final subtasksResult = await ref
-            .read(subtasksProvider.notifier)
-            .createBatchSubtasks(subtasks);
+      final taskData = ref.watch(tasksManagerProvider.select((value) {
+        return value.value?.last;
+      }));
 
-        // Check if context is mounted
-        if (!mounted) return;
-
-        if (!subtasksResult.success) {
-          SnackbarService.showErrorSnackbar(
-            _context,
-            "Error creating subtasks: ${subtasksResult.message}",
-          );
-          return;
-        }
-
-        ScaffoldMessenger.of(_context).showSnackBar(
-          const SnackBar(
-            content: Text("Task created successfully"),
-          ),
-        );
-
-        Navigator.of(_context).pop();
-
-        _formKey.currentState!.reset();
-        _titleController.clear();
-        _descriptionController.clear();
-        setState(() {
-          _dueDate = DateTime.now();
-          _subtasks.clear();
-        });
-      } else {
-        // Check if context is mounted
-        if (!mounted) return;
+      if (taskData == null) {
         SnackbarService.showErrorSnackbar(
           _context,
-          "Error creating task: ${result.message}",
+          "Error creating task",
         );
+        return;
       }
+
+      final subtasks = _subtasks.map((subtask) {
+        return subtask.copyWith(taskId: taskData.id!);
+      }).toList();
+
+      final subtasksResult = await ref
+          .read(subtasksProvider.notifier)
+          .createBatchSubtasks(subtasks);
+
+      // Check if context is mounted
+      if (!mounted) return;
+
+      if (!subtasksResult.success) {
+        SnackbarService.showErrorSnackbar(
+          _context,
+          "Error creating subtasks: ${subtasksResult.message}",
+        );
+        return;
+      }
+
+      ScaffoldMessenger.of(_context).showSnackBar(
+        const SnackBar(
+          content: Text("Task created successfully"),
+        ),
+      );
+
+      Navigator.of(_context).pop();
+
+      _formKey.currentState!.reset();
+      _titleController.clear();
+      _descriptionController.clear();
+      setState(() {
+        _dueDate = DateTime.now();
+        _subtasks.clear();
+      });
+    } else {
+      // Check if context is mounted
+      if (!mounted) return;
+      SnackbarService.showErrorSnackbar(
+        _context,
+        "Error creating task: ",
+        // ${result.message}",
+      );
     }
   }
 

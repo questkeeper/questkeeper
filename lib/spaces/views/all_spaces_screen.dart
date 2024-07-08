@@ -1,9 +1,9 @@
-import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
-import 'package:assigngo_rewrite/spaces/providers/page_provider.dart';
-import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
-import 'package:assigngo_rewrite/spaces/views/edit_space_bottom_sheet.dart';
-import 'package:assigngo_rewrite/spaces/widgets/circle_bar.dart';
-import 'package:assigngo_rewrite/spaces/widgets/space_card.dart';
+import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:questkeeper/spaces/providers/page_provider.dart';
+import 'package:questkeeper/spaces/providers/spaces_provider.dart';
+import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
+import 'package:questkeeper/spaces/widgets/circle_bar.dart';
+import 'package:questkeeper/spaces/widgets/space_card.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';

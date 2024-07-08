@@ -1,4 +1,4 @@
-import 'package:assigngo_rewrite/categories/models/categories_model.dart';
+import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:flutter/material.dart';
 
 class CategoryDropdownField extends StatelessWidget {

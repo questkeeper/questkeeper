@@ -1,6 +1,6 @@
-import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
-import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
-import 'package:assigngo_rewrite/task_list/subtasks/repositories/subtasks_repository.dart';
+import 'package:questkeeper/shared/models/return_model/return_model.dart';
+import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:questkeeper/task_list/subtasks/repositories/subtasks_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,12 +1,12 @@
 // ignore_for_file: unnecessary_getters_setters
 // Code breaks if I change the getters/setters to public.
 
-import 'package:assigngo_rewrite/categories/models/categories_model.dart';
-import 'package:assigngo_rewrite/categories/repositories/categories_repository.dart';
-import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
-import 'package:assigngo_rewrite/task_list/repositories/tasks_repository.dart';
-import 'package:assigngo_rewrite/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
-import 'package:assigngo_rewrite/task_list/subtasks/repositories/subtasks_repository.dart';
+import 'package:questkeeper/categories/models/categories_model.dart';
+import 'package:questkeeper/categories/repositories/categories_repository.dart';
+import 'package:questkeeper/task_list/models/tasks_model.dart';
+import 'package:questkeeper/task_list/repositories/tasks_repository.dart';
+import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:questkeeper/task_list/subtasks/repositories/subtasks_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

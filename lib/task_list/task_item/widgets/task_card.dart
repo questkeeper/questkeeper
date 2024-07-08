@@ -1,10 +1,10 @@
-import 'package:assigngo_rewrite/categories/models/categories_model.dart';
-import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
-import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
-import 'package:assigngo_rewrite/task_list/providers/current_task_provider.dart';
-import 'package:assigngo_rewrite/task_list/providers/tasks_provider.dart';
-import 'package:assigngo_rewrite/shared/utils/format_date.dart';
-import 'package:assigngo_rewrite/task_list/task_item/views/assignment_screen.dart';
+import 'package:questkeeper/categories/models/categories_model.dart';
+import 'package:questkeeper/shared/utils/hex_color.dart';
+import 'package:questkeeper/task_list/models/tasks_model.dart';
+import 'package:questkeeper/task_list/providers/current_task_provider.dart';
+import 'package:questkeeper/task_list/providers/tasks_provider.dart';
+import 'package:questkeeper/shared/utils/format_date.dart';
+import 'package:questkeeper/task_list/task_item/views/assignment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

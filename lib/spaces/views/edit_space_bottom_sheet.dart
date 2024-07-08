@@ -1,8 +1,8 @@
-import 'package:assigngo_rewrite/shared/extensions/color_extensions.dart';
-import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
-import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
-import 'package:assigngo_rewrite/spaces/providers/page_provider.dart';
-import 'package:assigngo_rewrite/spaces/providers/spaces_provider.dart';
+import 'package:questkeeper/shared/extensions/color_extensions.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:questkeeper/spaces/providers/page_provider.dart';
+import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,4 +1,4 @@
-import 'package:assigngo_rewrite/constants.dart';
+import 'package:questkeeper/constants.dart';
 import 'package:flutter/material.dart';
 
 class SnackbarService {

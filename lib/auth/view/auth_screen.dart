@@ -1,8 +1,8 @@
-import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:assigngo_rewrite/auth/providers/auth_provider.dart';
+import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 class AuthScreen extends ConsumerWidget {
