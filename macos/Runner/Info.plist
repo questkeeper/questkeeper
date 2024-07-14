@@ -34,12 +34,12 @@
     	<dict>
 			<key>CFBundleURLName</key>
 			<!-- abstract name for this URL type (you can leave it blank) -->
-			<string>Quest Keeper</string>
+			<string>QuestKeeper</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<!-- your schemes -->
 				<string>questkeeper</string>
-				<string>ap.questkeeper</string>
+				<string>app.questkeeper</string>
         	</array>
     	</dict>
 	</array>
