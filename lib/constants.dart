@@ -1,4 +1,4 @@
-import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
+import 'package:questkeeper/shared/utils/hex_color.dart';
 
 final primaryColor = HexColor("#a86fd1");
 final secondaryColor = HexColor("#FFA751");

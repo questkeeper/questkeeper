@@ -34,12 +34,12 @@
     	<dict>
 			<key>CFBundleURLName</key>
 			<!-- abstract name for this URL type (you can leave it blank) -->
-			<string>listify</string>
+			<string>QuestKeeper</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<!-- your schemes -->
-				<string>listify</string>
-				<string>listify.ishanmisra.dev</string>
+				<string>questkeeper</string>
+				<string>app.questkeeper</string>
         	</array>
     	</dict>
 	</array>

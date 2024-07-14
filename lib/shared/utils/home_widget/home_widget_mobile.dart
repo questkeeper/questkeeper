@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:assigngo_rewrite/shared/utils/format_date.dart';
-import 'package:assigngo_rewrite/shared/utils/home_widget/home_widget_stub.dart';
-import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
+import 'package:questkeeper/shared/utils/format_date.dart';
+import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
+import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
 
@@ -29,10 +29,10 @@ class HomeWidgetMobile implements HomeWidgetInterface {
           "assignments", const JsonEncoder().convert(tasksJson));
 
       HomeWidget.updateWidget(
-        name: 'AssignGoWidgets',
-        iOSName: 'AssignGoWidgets',
-        androidName: 'AssignGo',
-        qualifiedAndroidName: 'dev.ishanmisra.assigngo',
+        name: 'Quest Keeper',
+        iOSName: 'Quest Keeper',
+        androidName: 'Quest Keeper',
+        qualifiedAndroidName: 'app.questkeeper',
       );
     } catch (e) {
       debugPrint("Error updating home widget: $e");

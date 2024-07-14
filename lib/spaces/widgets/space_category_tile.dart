@@ -1,7 +1,7 @@
-import 'package:assigngo_rewrite/categories/models/categories_model.dart';
-import 'package:assigngo_rewrite/shared/utils/hex_color.dart';
-import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
-import 'package:assigngo_rewrite/task_list/task_item/widgets/task_card.dart';
+import 'package:questkeeper/categories/models/categories_model.dart';
+import 'package:questkeeper/shared/utils/hex_color.dart';
+import 'package:questkeeper/task_list/models/tasks_model.dart';
+import 'package:questkeeper/task_list/task_item/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 
 class SpaceCategoryTile extends StatelessWidget {

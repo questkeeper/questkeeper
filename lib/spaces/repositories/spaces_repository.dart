@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
-import 'package:assigngo_rewrite/shared/models/return_model/return_model.dart';
+import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:questkeeper/shared/models/return_model/return_model.dart';
 
 class SpacesRepository {
   SpacesRepository();

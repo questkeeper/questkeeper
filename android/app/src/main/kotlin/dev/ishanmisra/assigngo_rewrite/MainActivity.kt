@@ -1,4 +1,4 @@
-package dev.ishanmisra.assigngo_rewrite
+package app.questkeeper
 
 import io.flutter.embedding.android.FlutterActivity
 

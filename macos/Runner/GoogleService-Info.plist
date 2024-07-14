@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.assigngoRewrite</string>
+	<string>app.questkeeper.macos</string>
 	<key>PROJECT_ID</key>
 	<string>assigngo-d890c</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:479691835174:ios:538d86ccbdb48d703763e7</string>
+	<string>1:479691835174:ios:c0d4ddc476aaa1e13763e7</string>
 </dict>
 </plist>

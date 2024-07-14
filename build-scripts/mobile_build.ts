@@ -19,11 +19,11 @@ try {
 // Update gh release with new build using gh cli
 try {
   await $`gh release delete-asset main app-release.aab`;
-  await $`gh release delete-asset main assigngo_rewrite.ipa`;
+  await $`gh release delete-asset main questkeeper.ipa`;
 } catch (e) {
   console.warn("No assets to delete");
 }
 
 console.info("Uploading new assets to GitHub release");
-await $`gh release upload main build/app/outputs/bundle/release/app-release.aab build/ios/ipa/assigngo_rewrite.ipa`;
+await $`gh release upload main build/app/outputs/bundle/release/app-release.aab build/ios/ipa/questkeeper.ipa`;
 console.info("Assets uploaded successfully");

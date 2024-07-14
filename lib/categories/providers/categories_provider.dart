@@ -1,5 +1,5 @@
-import 'package:assigngo_rewrite/categories/models/categories_model.dart';
-import 'package:assigngo_rewrite/categories/repositories/categories_repository.dart';
+import 'package:questkeeper/categories/models/categories_model.dart';
+import 'package:questkeeper/categories/repositories/categories_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'categories_provider.g.dart';

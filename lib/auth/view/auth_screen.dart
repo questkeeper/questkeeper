@@ -1,8 +1,8 @@
-import 'package:assigngo_rewrite/shared/widgets/snackbar.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:assigngo_rewrite/auth/providers/auth_provider.dart';
+import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 class AuthScreen extends ConsumerWidget {
@@ -44,14 +44,15 @@ class AuthScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                "Listify",
+                "Quest Keeper",
                 style: Theme.of(context).textTheme.displayLarge,
               ),
             ),
 
             SupaMagicAuth(
-              redirectUrl:
-                  kIsWeb ? "${Uri.base.toString()}/signin" : 'listify://signin',
+              redirectUrl: kIsWeb
+                  ? "${Uri.base.toString()}/signin"
+                  : 'questkeeper://signin',
               onSuccess: onSuccess,
               onError: onError,
             ),
@@ -64,7 +65,7 @@ class AuthScreen extends ConsumerWidget {
               ],
               socialButtonVariant: SocialButtonVariant.icon,
               colored: true,
-              redirectUrl: kIsWeb ? null : 'listify://signin',
+              redirectUrl: kIsWeb ? null : 'questkeeper://signin',
               onSuccess: onSuccess,
               onError: onError,
             ),

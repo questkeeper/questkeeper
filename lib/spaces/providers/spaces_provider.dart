@@ -1,5 +1,5 @@
-import 'package:assigngo_rewrite/spaces/models/spaces_model.dart';
-import 'package:assigngo_rewrite/spaces/repositories/spaces_repository.dart';
+import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:questkeeper/spaces/repositories/spaces_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'spaces_provider.g.dart';

@@ -1,5 +1,5 @@
-import 'package:assigngo_rewrite/constants.dart';
-import 'package:assigngo_rewrite/settings/widgets/settings_card.dart';
+import 'package:questkeeper/constants.dart';
+import 'package:questkeeper/settings/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

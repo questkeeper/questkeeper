@@ -1,4 +1,4 @@
-import 'package:assigngo_rewrite/task_list/models/tasks_model.dart';
+import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'categories_model.freezed.dart';
