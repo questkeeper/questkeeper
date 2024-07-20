@@ -20,6 +20,10 @@ class CategoriesRepository {
     final jsonCategory = category.toJson();
     final int id = jsonCategory["id"];
 
+    jsonCategory.remove('createdAt');
+    jsonCategory.remove('updatedAt');
+    jsonCategory.remove('tasks');
+
     try {
       final result = await supabase
           .from('categories')
@@ -45,6 +49,7 @@ class CategoriesRepository {
     jsonCategory.remove('id');
     jsonCategory.remove('createdAt');
     jsonCategory.remove('updatedAt');
+    jsonCategory.remove('tasks');
 
     try {
       final result =

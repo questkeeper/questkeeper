@@ -1,5 +1,6 @@
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
+import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
 import 'package:questkeeper/shared/extensions/color_extensions.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
@@ -66,9 +67,10 @@ class SpaceCard extends ConsumerWidget {
                   if (index < currentSpaceCategories!.length) {
                     final category = currentSpaceCategories[index];
                     return SpaceCategoryTile(
-                        category: category, tasks: categoryTasksList);
+                        ref: ref, category: category, tasks: categoryTasksList);
                   } else {
                     return SpaceCategoryTile(
+                      ref: ref,
                       tasks: categoryTasksList,
                       category: Categories(
                         title: "Uncategorized",
@@ -104,7 +106,7 @@ class SpaceActionWidgets extends StatelessWidget {
       onSelected: (action) {
         switch (action) {
           case SpaceAction.newCategory:
-            showSpaceBottomSheet(
+            showCategoryBottomSheet(
                 context: context, ref: ref, existingSpace: space);
             break;
           case SpaceAction.edit:

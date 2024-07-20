@@ -25,12 +25,13 @@ class CategoriesManager extends _$CategoriesManager {
   }
 
   Future<void> createCategory(Categories category) async {
+    final oldState = state.value ?? [];
     state = const AsyncValue.loading();
     try {
       await _repository.createCategory(category);
       state = AsyncValue.data([...state.value ?? [], category]);
     } catch (error) {
-      // Handle error
+      state = AsyncValue.data(oldState);
       state = AsyncValue.error(error, StackTrace.current);
     }
   }
@@ -48,7 +49,8 @@ class CategoriesManager extends _$CategoriesManager {
     try {
       await _repository.updateCategory(category);
     } catch (error) {
-      // Handle error and possibly revert state
+      // Revert state
+      state = AsyncValue.data(oldState);
       state = AsyncValue.error(error, StackTrace.current);
     }
   }

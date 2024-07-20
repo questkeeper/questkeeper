@@ -8,7 +8,6 @@ import 'package:questkeeper/settings/views/account/account_screen.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
-import 'package:questkeeper/categories/views/categories_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -63,7 +62,7 @@ class MyApp extends ConsumerWidget {
     MaterialTheme theme = MaterialTheme(textTheme);
 
     return MaterialApp(
-      title: 'Quest Keeper',
+      title: 'QuestKeeper',
       theme: brightness == Brightness.light
           ? theme.light().copyWith(
                 appBarTheme: components.appBarTheme,
@@ -87,7 +86,6 @@ class MyApp extends ConsumerWidget {
         '/signin': (context) => const AuthScreen(),
         '/signin/password': (context) => const SignInPasswordScreen(),
         '/home': (context) => const TabView(),
-        '/categories': (context) => const CategoriesScreen(),
 
         // Settings stuff
         '/settings/account': (context) => const AccountScreen(),
