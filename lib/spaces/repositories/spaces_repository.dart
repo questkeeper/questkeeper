@@ -53,8 +53,11 @@ class SpacesRepository {
     jsonSpace.remove("updated_at");
 
     try {
-      final updatedSpace =
-          await supabase.from("spaces").update(jsonSpace).eq("id", space.id!);
+      final updatedSpace = await supabase
+          .from("spaces")
+          .update(jsonSpace)
+          .eq("id", space.id!)
+          .select();
 
       debugPrint("Updated space: $updatedSpace");
 
@@ -63,7 +66,6 @@ class SpacesRepository {
           message: "Space updated successfully",
           success: true);
     } catch (error) {
-      debugPrint("Error updating space: $error");
       return ReturnModel(
           message: "Error updating space item",
           success: false,

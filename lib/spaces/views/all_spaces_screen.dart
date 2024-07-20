@@ -24,7 +24,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _pageController.dispose();
     super.dispose();
   }
 
