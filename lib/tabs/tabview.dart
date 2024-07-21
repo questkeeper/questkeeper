@@ -1,10 +1,10 @@
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:questkeeper/task_list/task_create_form/views/task_form_screen.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
 
 class TabView extends ConsumerStatefulWidget {
   const TabView({super.key});
@@ -28,7 +28,7 @@ class _TabViewState extends ConsumerState<TabView> {
     final List<Widget> pages = [
       const AllSpacesScreen(),
       const AllSpacesScreen(),
-      const TaskFormScreen(),
+      const AllSpacesScreen(),
       const SettingsScreen(),
     ];
 
@@ -55,12 +55,11 @@ class _TabViewState extends ConsumerState<TabView> {
                 FloatingActionButtonLocation.miniCenterDocked,
             floatingActionButton: FloatingActionButton(
               onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TaskFormScreen(),
-                  ),
-                )
+                showTaskBottomSheet(
+                  context: context,
+                  ref: ref,
+                  existingTask: null,
+                ),
               },
               child: const Icon(LucideIcons.plus),
             ),
@@ -127,12 +126,11 @@ class _TabViewState extends ConsumerState<TabView> {
                         child: pages[_selectedIndex]),
                     floatingActionButton: FloatingActionButton(
                       onPressed: () => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const TaskFormScreen(),
-                          ),
-                        )
+                        showTaskBottomSheet(
+                          context: context,
+                          ref: ref,
+                          existingTask: null,
+                        ),
                       },
                       child: const Icon(LucideIcons.plus),
                     ),
