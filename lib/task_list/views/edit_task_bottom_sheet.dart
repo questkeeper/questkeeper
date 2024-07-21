@@ -1,5 +1,6 @@
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
+import 'package:questkeeper/shared/utils/format_date.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,9 @@ import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/task_list/providers/tasks_provider.dart';
+import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
+import 'package:questkeeper/task_list/widgets/category_dropdown_field.dart';
+import 'package:questkeeper/task_list/widgets/date_time_picker.dart';
 
 void showTaskBottomSheet({
   required BuildContext context,
@@ -31,6 +35,22 @@ void showTaskBottomSheet({
       TextEditingController(text: existingTask?.description);
   final isEditing = existingTask != null;
 
+  Future<void> createTask(Tasks task) async {
+    await ref.read(tasksManagerProvider.notifier).createTask(
+          task.copyWith(
+            spaceId: existingSpace?.id,
+          ),
+        );
+  }
+
+  Future<void> updateTask(Tasks task) async {
+    await ref.read(tasksManagerProvider.notifier).updateTask(
+          task.copyWith(
+            spaceId: existingSpace?.id,
+          ),
+        );
+  }
+
   showModalBottomSheet(
     context: context,
     enableDrag: true,
@@ -46,6 +66,8 @@ void showTaskBottomSheet({
         existingTask: existingTask,
         existingSpace: existingSpace,
         categoriesList: categoriesList,
+        createTask: createTask,
+        updateTask: updateTask,
       );
     },
   );
@@ -59,6 +81,8 @@ class _TaskBottomSheetContent extends StatefulWidget {
   final Tasks? existingTask;
   final Spaces? existingSpace;
   final Future<List<Categories>> categoriesList;
+  final Future<void> Function(Tasks task) createTask;
+  final Future<void> Function(Tasks task) updateTask;
 
   const _TaskBottomSheetContent({
     required this.nameController,
@@ -68,6 +92,8 @@ class _TaskBottomSheetContent extends StatefulWidget {
     this.existingTask,
     this.existingSpace,
     required this.categoriesList,
+    required this.createTask,
+    required this.updateTask,
   });
 
   @override
@@ -78,6 +104,50 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.nameController.dispose();
+    widget.descriptionController.dispose();
+    super.dispose();
+  }
+
+  final formKey = GlobalKey<FormState>();
+  DateTime dueDate = DateTime.now();
+  final List<Subtask> subtasks = [];
+  int? categoryId;
+
+  Future<void> _submitForm() async {
+    setState(() {});
+
+    if (formKey.currentState!.validate()) {
+      final task = Tasks(
+        title: widget.nameController.text,
+        dueDate: DateTime.now(),
+        description: widget.descriptionController.text,
+        categoryId: categoryId,
+      );
+
+      widget.isEditing
+          ? await widget.updateTask(task)
+          : await widget.createTask(task);
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Task created successfully"),
+        ),
+      );
+
+      Navigator.of(context).pop();
+    } else {
+      if (!mounted) return;
+      SnackbarService.showErrorSnackbar(
+        context,
+        "Error creating task",
+      );
+    }
   }
 
   @override
@@ -102,54 +172,32 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
               widget.isEditing ? 'Edit Task' : 'Create New Task',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            Text(
-              widget.existingSpace!.title,
-            ),
             const SizedBox(height: 16),
-            TextField(
-              controller: widget.nameController,
-              decoration: InputDecoration(
-                labelText: widget.existingTask?.title ?? 'Task Name',
-              ),
-              autofocus: true,
+            AssignmentForm(
+              onFormSubmitted: () {
+                return Future.value();
+              },
+              formKey: formKey,
+              titleController: widget.nameController,
+              descriptionController: widget.descriptionController,
+              dueDate: dueDate,
+              categoriesList: widget.categoriesList,
+              onDueDateChanged: (date) {
+                setState(() {
+                  dueDate = date!;
+                });
+              },
+              categoryId: widget.existingTask?.categoryId!.toString() ?? '',
+              onCategoryChanged: (id) {
+                setState(() {
+                  categoryId = int.tryParse(id!);
+                });
+              },
             ),
             const SizedBox(height: 16),
             FilledButton(
               onPressed: () async {
-                if (widget.nameController.text.isNotEmpty) {
-                  if (widget.isEditing) {
-                    await widget.ref
-                        .read(tasksManagerProvider.notifier)
-                        .updateTask(
-                          widget.existingTask!.copyWith(
-                            title: widget.nameController.text,
-                            description: widget.descriptionController.text,
-                            spaceId: widget.existingSpace?.id,
-                          ),
-                        );
-                  } else {
-                    await widget.ref
-                        .read(tasksManagerProvider.notifier)
-                        .createTask(
-                          Tasks(
-                            title: widget.nameController.text,
-                            spaceId: widget.existingSpace?.id,
-                            description: widget.descriptionController.text,
-                            dueDate: DateTime.now(),
-                          ),
-                        );
-                  }
-                  if (context.mounted) Navigator.pop(context);
-                  widget.nameController.clear();
-                  if (context.mounted) {
-                    SnackbarService.showSuccessSnackbar(
-                      context,
-                      widget.isEditing
-                          ? 'Task updated successfully'
-                          : 'Task created successfully',
-                    );
-                  }
-                }
+                await _submitForm();
               },
               child: Text(widget.isEditing ? 'Update Task' : 'Create Task'),
             ),
@@ -171,5 +219,106 @@ Spaces? getCurrentSpace(WidgetRef ref, PageController pageController,
     return spaces[currentPage];
   } else {
     return spaces.last;
+  }
+}
+
+class AssignmentForm extends StatefulWidget {
+  const AssignmentForm({
+    super.key,
+    required this.formKey,
+    required this.titleController,
+    required this.descriptionController,
+    required this.dueDate,
+    required this.onDueDateChanged,
+    required this.categoryId,
+    required this.onCategoryChanged,
+    required this.onFormSubmitted,
+    required this.categoriesList,
+  });
+
+  final GlobalKey<FormState> formKey;
+  final TextEditingController titleController;
+  final TextEditingController descriptionController;
+  final DateTime dueDate;
+  final void Function(DateTime?) onDueDateChanged;
+  final String categoryId;
+  final void Function(String?) onCategoryChanged;
+  final Future<void> Function() onFormSubmitted;
+  final Future<List<Categories>> categoriesList;
+
+  @override
+  State<AssignmentForm> createState() => _AssignmentFormState();
+}
+
+class _AssignmentFormState extends State<AssignmentForm> {
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: widget.formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          TextFormField(
+            controller: widget.titleController,
+            decoration: const InputDecoration(labelText: "Title"),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter a title";
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: widget.descriptionController,
+            decoration: const InputDecoration(labelText: "Description"),
+            maxLines: 3,
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: TextEditingController(
+                    text: formatDate(widget.dueDate),
+                  ),
+                  decoration: const InputDecoration(labelText: "Due Date"),
+                  onTap: () async {
+                    await showDateTimePicker(
+                      context,
+                      widget.dueDate,
+                      widget.onDueDateChanged,
+                    );
+                  },
+                  readOnly: true,
+                ),
+              ),
+              const SizedBox(width: 20),
+              FutureBuilder<List<Categories>>(
+                future: widget.categoriesList,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Expanded(child: LinearProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Expanded(
+                        child: Text('Error loading categories'));
+                  } else if (snapshot.hasData) {
+                    return Expanded(
+                      child: CategoryDropdownField(
+                        categoriesList: snapshot.data!,
+                        onCategoryChanged: widget.onCategoryChanged,
+                      ),
+                    );
+                  } else {
+                    return const Expanded(child: Text('No categories found'));
+                  }
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
   }
 }
