@@ -1,67 +1,63 @@
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:questkeeper/task_list/subtasks/repositories/subtasks_repository.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final subtasksProvider = ChangeNotifierProvider((ref) => SubtasksNotifier());
+part 'subtasks_providers.g.dart';
 
-class SubtasksNotifier extends ChangeNotifier {
+@riverpod
+class SubtasksManager extends _$SubtasksManager {
   final SubtasksRepository _subtasksRepository = SubtasksRepository();
 
-  List<Subtask> subtasks = [];
+  @override
+  FutureOr<List<Subtask>> build() {
+    return [];
+  }
 
   Future<ReturnModel> createSubtask(Subtask subtask) async {
+    state = AsyncValue.data([...state.value ?? [], subtask]);
     final result = await _subtasksRepository.createSubtask(subtask);
     if (!result.success) {
-      subtasks.remove(subtask);
-      notifyListeners();
+      state = AsyncValue.data((state.value ?? [])..remove(subtask));
     }
     return result;
   }
 
   Future<ReturnModel> createBatchSubtasks(List<Subtask> subtasks) async {
+    state = AsyncValue.data([...state.value ?? [], ...subtasks]);
     final result = await _subtasksRepository.createBatchSubtasks(subtasks);
     if (!result.success) {
-      this.subtasks.removeWhere((subtask) => subtasks.contains(subtask));
-      notifyListeners();
+      state = AsyncValue.data((state.value ?? [])
+        ..removeWhere((subtask) => subtasks.contains(subtask)));
     }
     return result;
   }
 
-  static _updateSubtaskState(Subtask subtask, List<Subtask> subtasks) {
-    return subtasks.map((oldSubtask) {
-      if (oldSubtask.id == subtask.id) {
-        return subtask;
-      }
-      return oldSubtask;
-    }).toList();
-  }
-
   Future<ReturnModel> updateSubtask(Subtask subtask) async {
-    subtasks = _updateSubtaskState(subtask, subtasks);
-    notifyListeners();
-
+    _updateSubtaskState(subtask);
     final result = await _subtasksRepository.updateSubtask(subtask);
     if (!result.success) {
-      subtasks = _updateSubtaskState(subtask, subtasks);
-      notifyListeners();
+      _updateSubtaskState(subtask);
     }
     return result;
   }
 
   Future<ReturnModel> toggleSubtaskDone(Subtask subtask) async {
-    _updateSubtaskState(
-        subtask.copyWith(completed: !subtask.completed), subtasks);
-    notifyListeners();
-
-    final result = await _subtasksRepository.updateSubtask(subtask);
+    final updatedSubtask = subtask.copyWith(completed: !subtask.completed);
+    _updateSubtaskState(updatedSubtask);
+    final result = await _subtasksRepository.updateSubtask(updatedSubtask);
     if (!result.success) {
-      _updateSubtaskState(
-          subtask.copyWith(completed: !subtask.completed), subtasks);
-      notifyListeners();
+      _updateSubtaskState(subtask);
     }
-
     return result;
+  }
+
+  void _updateSubtaskState(Subtask subtask) {
+    state = AsyncValue.data((state.value ?? []).map((oldSubtask) {
+      if (oldSubtask.id == subtask.id) {
+        return subtask;
+      }
+      return oldSubtask;
+    }).toList());
   }
 }
