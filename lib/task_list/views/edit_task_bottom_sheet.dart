@@ -10,7 +10,7 @@ import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/task_list/providers/tasks_provider.dart';
 import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:questkeeper/task_list/subtasks/providers/subtasks_providers.dart';
-import 'package:questkeeper/task_list/widgets/assignments_form.dart';
+import 'package:questkeeper/task_list/widgets/task_form.dart';
 
 void showTaskBottomSheet({
   required BuildContext context,
@@ -215,7 +215,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
-          AssignmentForm(
+          TaskForm(
             onFormSubmitted: () {
               return Future.value();
             },

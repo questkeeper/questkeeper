@@ -48,6 +48,7 @@ class TasksManager extends _$TasksManager {
       return createdTask.data.id;
     } catch (error) {
       // Handle error
+      return null;
     }
   }
 

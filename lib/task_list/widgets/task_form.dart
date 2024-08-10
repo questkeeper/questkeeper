@@ -5,8 +5,8 @@ import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_mo
 import 'package:questkeeper/task_list/widgets/category_dropdown_field.dart';
 import 'package:questkeeper/task_list/widgets/date_time_picker.dart';
 
-class AssignmentForm extends StatefulWidget {
-  const AssignmentForm({
+class TaskForm extends StatefulWidget {
+  const TaskForm({
     super.key,
     required this.formKey,
     required this.titleController,
@@ -32,10 +32,10 @@ class AssignmentForm extends StatefulWidget {
   final Future<List<Subtask>> subtasks;
 
   @override
-  State<AssignmentForm> createState() => _AssignmentFormState();
+  State<TaskForm> createState() => _TaskFormState();
 }
 
-class _AssignmentFormState extends State<AssignmentForm> {
+class _TaskFormState extends State<TaskForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -193,92 +193,6 @@ class _AssignmentFormState extends State<AssignmentForm> {
               }
             },
           ),
-          // Container(
-          //   padding: const EdgeInsets.all(8.0),
-          //   alignment: Alignment.centerLeft,
-          //   child: Row(
-          //     children: [
-          //       Text(
-          //         "Subtasks",
-          //         style: Theme.of(context).textTheme.headlineSmall,
-          //       ),
-          //       IconButton(
-          //         icon: const Icon(Icons.add_box_outlined),
-          //         onPressed: () {
-          //           setState(() {
-          //             widget.subtasks.then((value) {
-          //               value.add(const Subtask(
-          //                 taskId: -1,
-          //                 title: '',
-          //                 priority: 1,
-          //               ));
-          //             });
-          //           });
-          //         },
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // SingleChildScrollView(
-          //   child: FutureBuilder<List<Subtask>>(
-          //     future: widget.subtasks,
-          //     builder: (context, snapshot) {
-          //       if (snapshot.connectionState == ConnectionState.waiting) {
-          //         return const LinearProgressIndicator();
-          //       } else if (snapshot.hasError) {
-          //         return const Text('Error loading categories');
-          //       } else if (snapshot.hasData) {
-          //         final subtasks = snapshot.data!;
-          //         return SizedBox(
-          //           child: ListView.builder(
-          //             shrinkWrap: true,
-          //             itemCount: subtasks.length,
-          //             itemBuilder: (context, index) {
-          //               final subtask = subtasks[index];
-          //               return CheckboxListTile(
-          //                 enableFeedback: true,
-          //                 subtitle: Text(
-          //                   "Priority: ${subtask.priority}",
-          //                   style: Theme.of(context)
-          //                       .textTheme
-          //                       .bodySmall
-          //                       ?.copyWith(color: Colors.amber),
-          //                 ),
-          //                 value: subtask.completed,
-          //                 title: TextField(
-          //                   // readOnly: readOnly,
-          //                   decoration: InputDecoration(
-          //                     border: InputBorder.none,
-          //                     hintText: subtask!.title,
-          //                     hintStyle: Theme.of(context).textTheme.bodyLarge,
-          //                   ),
-          //                   style: Theme.of(context).textTheme.bodyLarge,
-          //                   onSubmitted: (String value) {
-          //                     final Subtask updatedSubtask =
-          //                         subtask.copyWith(title: value);
-          //                     // _updateSubtask(updatedSubtask);
-          //                   },
-          //                 ),
-          //                 onChanged: (bool? value) {
-          //                   try {
-          //                     if (value == null) {
-          //                       return;
-          //                     }
-          //                     // _subtaskComplete(subtask);
-          //                   } catch (error) {
-          //                     debugPrint("Error completing subtask: $error");
-          //                   }
-          //                 },
-          //               );
-          //             },
-          //           ),
-          //         );
-          //       } else {
-          //         return const Text('No subtasks found');
-          //       }
-          //     },
-          //   ),
-          // ),
         ],
       ),
     );
