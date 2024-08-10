@@ -23,9 +23,9 @@ class SubtasksManager extends _$SubtasksManager {
     return result;
   }
 
-  Future<ReturnModel> createBatchSubtasks(List<Subtask> subtasks) async {
+  Future<ReturnModel> createBulkSubtasks(List<Subtask> subtasks) async {
     state = AsyncValue.data([...state.value ?? [], ...subtasks]);
-    final result = await _subtasksRepository.createBatchSubtasks(subtasks);
+    final result = await _subtasksRepository.createBulkSubtasks(subtasks);
     if (!result.success) {
       state = AsyncValue.data((state.value ?? [])
         ..removeWhere((subtask) => subtasks.contains(subtask)));
@@ -50,6 +50,13 @@ class SubtasksManager extends _$SubtasksManager {
       _updateSubtaskState(subtask);
     }
     return result;
+  }
+
+  Future<List<Subtask>> getSubtasksByTaskId(int taskId) async {
+    final subtasks = await _subtasksRepository.getSubtasks(taskId);
+    state = AsyncValue.data(subtasks.data);
+
+    return subtasks.data;
   }
 
   void _updateSubtaskState(Subtask subtask) {

@@ -37,7 +37,7 @@ class SubtasksRepository {
     }
   }
 
-  Future<ReturnModel> createBatchSubtasks(List<Subtask> subtasks) async {
+  Future<ReturnModel> createBulkSubtasks(List<Subtask> subtasks) async {
     try {
       final subtasksJson = subtasks.map((subtask) {
         final subtaskJson = subtask.toJson();

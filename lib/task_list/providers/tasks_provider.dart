@@ -40,10 +40,12 @@ class TasksManager extends _$TasksManager {
     }
   }
 
-  Future<void> createTask(Tasks task) async {
+  Future<int?> createTask(Tasks task) async {
     try {
-      await _repository.createTask(task);
+      final createdTask = await _repository.createTask(task);
       state = AsyncValue.data([...state.value ?? [], task]);
+
+      return createdTask.data.id;
     } catch (error) {
       // Handle error
     }
