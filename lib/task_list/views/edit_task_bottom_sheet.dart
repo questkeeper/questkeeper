@@ -176,21 +176,17 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
       }
 
       subtasks = (await widget.subtasksList).map((e) {
-        return e.copyWith(taskId: taskId);
+        return e.copyWith(taskId: taskId, id: e.id);
       }).toList();
 
       if (subtasks.isNotEmpty) {
         await widget.ref
             .read(subtasksManagerProvider.notifier)
-            .createBulkSubtasks(subtasks);
+            .upsertBulkSubtasks(subtasks);
       }
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Task created successfully"),
-        ),
-      );
+      SnackbarService.showSuccessSnackbar(context, "Task created successfully");
 
       Navigator.of(context).pop();
     } else {
@@ -230,7 +226,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                 dueDate = date!;
               });
             },
-            categoryId: widget.existingTask?.categoryId!.toString() ?? '',
+            categoryId: widget.existingTask?.categoryId?.toString() ?? '',
             onCategoryChanged: (id) {
               setState(() {
                 categoryId = int.tryParse(id!);

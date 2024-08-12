@@ -23,9 +23,9 @@ class SubtasksManager extends _$SubtasksManager {
     return result;
   }
 
-  Future<ReturnModel> createBulkSubtasks(List<Subtask> subtasks) async {
+  Future<ReturnModel> upsertBulkSubtasks(List<Subtask> subtasks) async {
     state = AsyncValue.data([...state.value ?? [], ...subtasks]);
-    final result = await _subtasksRepository.createBulkSubtasks(subtasks);
+    final result = await _subtasksRepository.upsertBulkSubtasks(subtasks);
     if (!result.success) {
       state = AsyncValue.data((state.value ?? [])
         ..removeWhere((subtask) => subtasks.contains(subtask)));

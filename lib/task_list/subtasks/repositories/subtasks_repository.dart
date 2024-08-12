@@ -37,16 +37,38 @@ class SubtasksRepository {
     }
   }
 
-  Future<ReturnModel> createBulkSubtasks(List<Subtask> subtasks) async {
+  Future<ReturnModel> upsertBulkSubtasks(List<Subtask> subtasks) async {
     try {
-      final subtasksJson = subtasks.map((subtask) {
-        final subtaskJson = subtask.toJson();
-        subtaskJson.remove("id");
-        return subtaskJson;
-      }).toList();
+      final batchDeleteSubtasks = [];
+      final subtasksJson = subtasks
+          .map((subtask) {
+            final subtaskJson = subtask.toJson();
+            if (subtaskJson["id"] == null) {
+              subtaskJson.remove("id");
+            }
+
+            if (subtaskJson["title"] == null || subtaskJson["title"] == "") {
+              return null;
+            }
+
+            if (subtask.priority == -1) {
+              batchDeleteSubtasks.add(subtask.id);
+              return null;
+            }
+
+            return subtaskJson;
+          })
+          .whereType<Map<String, dynamic>>() // get rid of null vals
+          .toList();
+
+      if (batchDeleteSubtasks.isNotEmpty) {
+        for (var element in batchDeleteSubtasks) {
+          await supabase.from("subtasks").delete().eq("id", element);
+        }
+      }
 
       final newSubtasks =
-          await supabase.from("subtasks").insert(subtasksJson).select();
+          await supabase.from("subtasks").upsert(subtasksJson).select();
 
       return ReturnModel(
           success: true,
