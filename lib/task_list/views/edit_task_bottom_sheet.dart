@@ -146,6 +146,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
   DateTime dueDate = DateTime.now();
   int? categoryId;
   List<Subtask> subtasks = [];
+  final Map<String, TextEditingController> subtasksControllers = {};
 
   Future<void> _submitForm() async {
     setState(() {});
@@ -175,9 +176,23 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
         return;
       }
 
-      subtasks = (await widget.subtasksList).map((e) {
-        return e.copyWith(taskId: taskId, id: e.id);
-      }).toList();
+      subtasks = await widget.subtasksList;
+
+      for (int i = 0; i < subtasks.length; i++) {
+        final subtask = subtasks[i];
+        String controllerId;
+
+        if (subtasksControllers[subtask.id.toString()] == null) {
+          controllerId = "tempkey-$i";
+        } else {
+          controllerId = subtask.id.toString();
+        }
+
+        subtasks[i] = subtask.copyWith(
+            taskId: taskId,
+            id: subtask.id,
+            title: subtasksControllers[controllerId]!.text);
+      }
 
       if (subtasks.isNotEmpty) {
         await widget.ref
@@ -232,6 +247,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                 categoryId = int.tryParse(id!);
               });
             },
+            subtasksControllers: subtasksControllers,
           ),
           const SizedBox(height: 16),
           FilledButton(

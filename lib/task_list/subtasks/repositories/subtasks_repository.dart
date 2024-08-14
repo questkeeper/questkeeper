@@ -40,14 +40,20 @@ class SubtasksRepository {
   Future<ReturnModel> upsertBulkSubtasks(List<Subtask> subtasks) async {
     try {
       final batchDeleteSubtasks = [];
-      final subtasksJson = subtasks
+      final batchInsertSubtasks = [];
+      final returnValue = [];
+      final batchUpdateSubtasks = [];
+
+      subtasks
           .map((subtask) {
             final subtaskJson = subtask.toJson();
-            if (subtaskJson["id"] == null) {
-              subtaskJson.remove("id");
+            if (subtaskJson["title"] == null || subtaskJson["title"] == "") {
+              return null;
             }
 
-            if (subtaskJson["title"] == null || subtaskJson["title"] == "") {
+            if (subtaskJson["id"] == null) {
+              subtaskJson.remove("id");
+              batchInsertSubtasks.add(subtaskJson);
               return null;
             }
 
@@ -56,6 +62,7 @@ class SubtasksRepository {
               return null;
             }
 
+            batchUpdateSubtasks.add(subtaskJson);
             return subtaskJson;
           })
           .whereType<Map<String, dynamic>>() // get rid of null vals
@@ -67,13 +74,23 @@ class SubtasksRepository {
         }
       }
 
-      final newSubtasks =
-          await supabase.from("subtasks").upsert(subtasksJson).select();
+      if (batchUpdateSubtasks.isNotEmpty) {
+        returnValue.addAll(await supabase
+            .from("subtasks")
+            .upsert(batchUpdateSubtasks)
+            .select());
+      }
+
+      if (batchInsertSubtasks.isNotEmpty) {
+        returnValue.addAll(await supabase
+            .from("subtasks")
+            .insert(batchInsertSubtasks)
+            .select());
+      }
 
       return ReturnModel(
           success: true,
-          data:
-              newSubtasks.map((subtask) => Subtask.fromJson(subtask)).toList(),
+          data: returnValue.map((e) => Subtask.fromJson(e)).toList(),
           message: "Subtasks created successfully");
     } catch (error) {
       return ReturnModel(success: false, message: error.toString());
