@@ -18,6 +18,7 @@ class TaskForm extends StatefulWidget {
     required this.onFormSubmitted,
     required this.categoriesList,
     required this.subtasks,
+    required this.subtasksControllers,
   });
 
   final GlobalKey<FormState> formKey;
@@ -30,12 +31,35 @@ class TaskForm extends StatefulWidget {
   final Future<void> Function() onFormSubmitted;
   final Future<List<Categories>> categoriesList;
   final Future<List<Subtask>> subtasks;
+  final Map<String, TextEditingController> subtasksControllers;
 
   @override
   State<TaskForm> createState() => _TaskFormState();
 }
 
 class _TaskFormState extends State<TaskForm> {
+  @override
+  void initState() {
+    super.initState();
+
+    widget.subtasks.then((subtasks) {
+      setState(() {
+        for (final subtask in subtasks) {
+          widget.subtasksControllers[subtask.id.toString()] =
+              TextEditingController(text: subtask.title);
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    for (final controller in widget.subtasksControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -116,13 +140,16 @@ class _TaskFormState extends State<TaskForm> {
                   onPressed: () {
                     setState(() {
                       widget.subtasks.then((value) {
-                        value.add(Subtask(
-                          id: value.length + 1,
+                        value.add(const Subtask(
                           taskId: -1,
                           title: '',
                           priority: 1,
                         ));
                       });
+
+                      widget.subtasksControllers[
+                              "tempkey-${widget.subtasksControllers.length}"] =
+                          TextEditingController();
                     });
                   },
                 ),
@@ -144,47 +171,80 @@ class _TaskFormState extends State<TaskForm> {
                   itemCount: subtasks.length,
                   itemBuilder: (context, index) {
                     final subtask = subtasks[index];
-                    return CheckboxListTile(
-                      enableFeedback: true,
-                      // TODO: Eventually add priority to subtasks
-                      // subtitle: Text(
-                      //   "Priority: ${subtask.priority}",
-                      //   style: Theme.of(context)
-                      //       .textTheme
-                      //       .bodySmall
-                      //       ?.copyWith(color: Colors.amber),
-                      // ),
-                      value: subtask.completed,
-                      key: ValueKey(subtask.id),
-                      title: TextField(
-                        // readOnly: readOnly,
-                        decoration: InputDecoration(
-                          border: const UnderlineInputBorder(),
-                          label: const Text('Subtask title'),
-                          hintText: subtask.title,
-                          hintStyle: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        onChanged: (String value) {
-                          setState(() {
-                            subtasks[index] = subtask.copyWith(title: value);
-                          });
-                        },
+                    if (subtask.priority == -1) {
+                      return const SizedBox.shrink();
+                    }
+                    return Dismissible(
+                      key: Key(subtask.id != null
+                          ? subtask.id.toString()
+                          : "tempkey-$index"),
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 16),
+                        child: const Icon(Icons.delete, color: Colors.white),
                       ),
-                      onChanged: (bool? value) {
-                        try {
-                          if (value == null) {
-                            return;
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) {
+                        setState(() {
+                          if (subtask.id != null) {
+                            subtasks[index] = subtask.copyWith(priority: -1);
                           }
-
-                          setState(() {
-                            subtasks[index] =
-                                subtask.copyWith(completed: value);
-                          });
-                        } catch (error) {
-                          debugPrint("Error completing subtask: $error");
-                        }
+                        });
                       },
+                      child: ListTile(
+                        leading: Checkbox(
+                          value: subtask.completed,
+                          onChanged: (bool? value) {
+                            if (value != null) {
+                              setState(() {
+                                subtasks[index] =
+                                    subtask.copyWith(completed: value);
+                              });
+                            }
+                          },
+                        ),
+                        title: TextFormField(
+                          controller: widget.subtasksControllers[
+                              subtask.id != null
+                                  ? subtask.id.toString()
+                                  : "tempkey-$index"],
+                          maxLength: 80,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Subtask title',
+                            counterText: '',
+                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    decoration: subtask.completed
+                                        ? TextDecoration.lineThrough
+                                        : null,
+                                  ),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            DropdownButton<int>(
+                              value: subtask.priority,
+                              items: [1, 2, 3].map((int value) {
+                                return DropdownMenuItem<int>(
+                                  value: value,
+                                  child: Text(List.filled(value, '!').join('')),
+                                );
+                              }).toList(),
+                              onChanged: (int? newValue) {
+                                if (newValue != null) {
+                                  setState(() {
+                                    subtasks[index] =
+                                        subtask.copyWith(priority: newValue);
+                                  });
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 );
