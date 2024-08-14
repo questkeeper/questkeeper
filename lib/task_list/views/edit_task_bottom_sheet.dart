@@ -42,11 +42,9 @@ void showTaskBottomSheet({
   final isEditing = existingTask != null;
 
   Future<int?> createTask(Tasks task) async {
-    final newTaskId = await ref.read(tasksManagerProvider.notifier).createTask(
-          task.copyWith(
-            spaceId: existingSpace?.id,
-          ),
-        );
+    task = task.copyWith(spaceId: existingSpace?.id);
+    final newTaskId =
+        await ref.read(tasksManagerProvider.notifier).createTask(task);
 
     return newTaskId;
   }
@@ -86,6 +84,7 @@ void showTaskBottomSheet({
           existingTask: existingTask,
           existingSpace: existingSpace,
           categoriesList: categoriesList,
+          spacesList: spacesList,
           subtasksList: subtasksList,
           createTask: createTask,
           updateTask: updateTask,
@@ -103,6 +102,7 @@ class _TaskBottomSheetContent extends StatefulWidget {
   final Tasks? existingTask;
   final Spaces? existingSpace;
   final Future<List<Categories>> categoriesList;
+  final AsyncValue<List<Spaces>>? spacesList;
   final Future<List<Subtask>> subtasksList;
   final Future<int?> Function(Tasks task) createTask;
   final Future<void> Function(Tasks task) updateTask;
@@ -115,6 +115,7 @@ class _TaskBottomSheetContent extends StatefulWidget {
     this.existingTask,
     this.existingSpace,
     required this.categoriesList,
+    required this.spacesList,
     required this.subtasksList,
     required this.createTask,
     required this.updateTask,
@@ -140,6 +141,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
   final formKey = GlobalKey<FormState>();
   DateTime dueDate = DateTime.now();
   int? categoryId;
+  int? spaceId;
   List<Subtask> subtasks = [];
   final Map<String, TextEditingController> subtasksControllers = {};
 
@@ -147,14 +149,21 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
     setState(() {});
 
     if (formKey.currentState!.validate()) {
-      final task = Tasks(
+      Tasks task = Tasks(
         title: widget.nameController.text,
         dueDate: DateTime.now(),
         description: widget.descriptionController.text,
         categoryId: categoryId,
       );
 
-      if (widget.isEditing) {
+      if (widget.isEditing && widget.existingTask != null) {
+        final currTask = widget.existingTask;
+        task = task.copyWith(
+          id: currTask!.id,
+          updatedAt: currTask.updatedAt,
+          createdAt: currTask.createdAt,
+        );
+
         await widget.updateTask(task);
       }
 
@@ -234,17 +243,28 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     descriptionController: widget.descriptionController,
                     dueDate: dueDate,
                     categoriesList: widget.categoriesList,
+                    spacesList: widget.spacesList,
                     subtasks: widget.subtasksList,
+                    currentSpaceId: widget.existingSpace?.id,
+                    categoryId:
+                        widget.existingTask?.categoryId?.toString() ?? '',
+                    onSpaceChanged: (id) {
+                      setState(() {
+                        spaceId = int.tryParse(id!);
+                      });
+                    },
                     onDueDateChanged: (date) {
                       setState(() {
                         dueDate = date!;
                       });
                     },
-                    categoryId:
-                        widget.existingTask?.categoryId?.toString() ?? '',
                     onCategoryChanged: (id) {
                       setState(() {
-                        categoryId = int.tryParse(id!);
+                        if (id == null.toString()) {
+                          categoryId = null;
+                        } else {
+                          categoryId = int.tryParse(id!);
+                        }
                       });
                     },
                     subtasksControllers: subtasksControllers,

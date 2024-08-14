@@ -23,7 +23,9 @@ class CategoryDropdownField extends StatelessWidget {
         ] +
         this.categoriesList;
     return DropdownButtonFormField<String>(
-      value: defaultCategoryId ?? categoriesList.first.id.toString(),
+      value: defaultCategoryId == null || defaultCategoryId == ""
+          ? categoriesList.first.id.toString()
+          : defaultCategoryId,
       onChanged: onCategoryChanged,
       isExpanded: true,
       items: categoriesList

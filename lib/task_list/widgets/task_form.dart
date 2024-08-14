@@ -122,6 +122,7 @@ class _TaskFormState extends State<TaskForm> {
                       child: CategoryDropdownField(
                         categoriesList: snapshot.data!,
                         onCategoryChanged: widget.onCategoryChanged,
+                        defaultCategoryId: widget.categoryId,
                       ),
                     );
                   } else {
