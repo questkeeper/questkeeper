@@ -17,7 +17,7 @@ class CategoryDropdownField extends StatelessWidget {
   Widget build(BuildContext context) {
     final categoriesList = [
           const Categories(
-            id: -1,
+            id: null,
             title: "Select a category",
           ),
         ] +

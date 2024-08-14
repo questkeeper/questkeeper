@@ -37,21 +37,60 @@ class SubtasksRepository {
     }
   }
 
-  Future<ReturnModel> createBatchSubtasks(List<Subtask> subtasks) async {
+  Future<ReturnModel> upsertBulkSubtasks(List<Subtask> subtasks) async {
     try {
-      final subtasksJson = subtasks.map((subtask) {
-        final subtaskJson = subtask.toJson();
-        subtaskJson.remove("id");
-        return subtaskJson;
-      }).toList();
+      final batchDeleteSubtasks = [];
+      final batchInsertSubtasks = [];
+      final returnValue = [];
+      final batchUpdateSubtasks = [];
 
-      final newSubtasks =
-          await supabase.from("subtasks").insert(subtasksJson).select();
+      subtasks
+          .map((subtask) {
+            final subtaskJson = subtask.toJson();
+            if (subtaskJson["title"] == null || subtaskJson["title"] == "") {
+              return null;
+            }
+
+            if (subtaskJson["id"] == null) {
+              subtaskJson.remove("id");
+              batchInsertSubtasks.add(subtaskJson);
+              return null;
+            }
+
+            if (subtask.priority == -1) {
+              batchDeleteSubtasks.add(subtask.id);
+              return null;
+            }
+
+            batchUpdateSubtasks.add(subtaskJson);
+            return subtaskJson;
+          })
+          .whereType<Map<String, dynamic>>() // get rid of null vals
+          .toList();
+
+      if (batchDeleteSubtasks.isNotEmpty) {
+        for (var element in batchDeleteSubtasks) {
+          await supabase.from("subtasks").delete().eq("id", element);
+        }
+      }
+
+      if (batchUpdateSubtasks.isNotEmpty) {
+        returnValue.addAll(await supabase
+            .from("subtasks")
+            .upsert(batchUpdateSubtasks)
+            .select());
+      }
+
+      if (batchInsertSubtasks.isNotEmpty) {
+        returnValue.addAll(await supabase
+            .from("subtasks")
+            .insert(batchInsertSubtasks)
+            .select());
+      }
 
       return ReturnModel(
           success: true,
-          data:
-              newSubtasks.map((subtask) => Subtask.fromJson(subtask)).toList(),
+          data: returnValue.map((e) => Subtask.fromJson(e)).toList(),
           message: "Subtasks created successfully");
     } catch (error) {
       return ReturnModel(success: false, message: error.toString());

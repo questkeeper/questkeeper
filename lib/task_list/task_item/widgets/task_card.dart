@@ -1,12 +1,13 @@
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/shared/utils/hex_color.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
-import 'package:questkeeper/task_list/providers/current_task_provider.dart';
 import 'package:questkeeper/task_list/providers/tasks_provider.dart';
 import 'package:questkeeper/shared/utils/format_date.dart';
-import 'package:questkeeper/task_list/task_item/views/assignment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
+import 'package:questkeeper/task_list/task_item/widgets/task_notification_dot.dart';
 
 class TaskCard extends ConsumerWidget {
   const TaskCard({
@@ -71,24 +72,9 @@ class TaskCard extends ConsumerWidget {
         splashColor: Colors.transparent,
         enableFeedback: true,
         onTap: () {
+          // FIXME: this will probably break stuff.
           if (MediaQuery.of(context).size.width < 800) {
-            showModalBottomSheet(
-              enableDrag: true,
-              isScrollControlled: true,
-              useSafeArea: true,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12.0),
-                  topRight: Radius.circular(12.0),
-                ),
-              ),
-              showDragHandle: true,
-              context: context,
-              builder: (context) {
-                ref.read(currentTaskProvider.notifier).setCurrentTask(task);
-                return const TaskItemScreen();
-              },
-            );
+            showTaskBottomSheet(context: context, ref: ref, existingTask: task);
           }
         },
         child: SizedBox(
@@ -103,41 +89,55 @@ class TaskCard extends ConsumerWidget {
             elevation: 2.0,
             child: Container(
               padding: const EdgeInsets.all(12.0),
-              margin: const EdgeInsets.all(6.0),
+              margin: const EdgeInsets.all(2.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (task.dueDate.isBefore(DateTime.now().toUtc()))
-                    const Chip(
-                      label: Text("Overdue",
-                          style: TextStyle(color: Colors.black)),
-                      visualDensity: VisualDensity.compact,
-                      backgroundColor: Colors.redAccent,
-                    ),
-                  if (task.dueDate.isAfter(DateTime.now().toUtc()) &&
-                      task.dueDate.isBefore(
-                          DateTime.now().add(const Duration(days: 1)).toUtc()))
-                    const Chip(
-                      label: Text("Due Today",
-                          style: TextStyle(color: Colors.black)),
-                      visualDensity: VisualDensity.compact,
-                      backgroundColor: Colors.amber,
-                    ),
-                  Text(
-                    task.title,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  Row(
+                    children: [
+                      if (task.starred)
+                        const Padding(
+                          padding: EdgeInsets.only(right: 4.0),
+                          child: Icon(
+                            LucideIcons.star,
+                            color: Colors.amber,
+                            size: 16,
+                          ),
+                        ),
+                      Text(
+                        task.title,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const Spacer(),
+                      if (!task.completed &&
+                          task.dueDate.isAtSameMomentAs(DateTime.now()
+                              .subtract(const Duration(days: 1))
+                              .toUtc()))
+                        const TaskNotificationDot(
+                            notificationType: NotificationDotType.warning),
+                      if (!task.completed &&
+                          task.dueDate.isBefore(DateTime.now()) &&
+                          task.dueDate.isBefore(
+                              DateTime.now().subtract(const Duration(days: 1))))
+                        const TaskNotificationDot(
+                            notificationType: NotificationDotType.danger),
+                    ],
                   ),
                   Text(
                     "Due ${formatDate(task.dueDate)}",
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    softWrap: true,
-                    task.description ?? "",
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
+                  if (task.description != null && task.description!.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        softWrap: true,
+                        maxLines: 1,
+                        task.description ?? "",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    )
                 ],
               ),
             ),
