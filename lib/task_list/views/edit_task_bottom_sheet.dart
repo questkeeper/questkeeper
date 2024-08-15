@@ -139,9 +139,11 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
   }
 
   final formKey = GlobalKey<FormState>();
-  DateTime dueDate = DateTime.now();
+  late DateTime dueDate = widget.existingTask?.dueDate ?? DateTime.now();
   int? categoryId;
   int? spaceId;
+  bool hasCategoryChanged = false;
+  bool hasSpaceChanged = false;
   List<Subtask> subtasks = [];
   final Map<String, TextEditingController> subtasksControllers = {};
 
@@ -151,9 +153,10 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
     if (formKey.currentState!.validate()) {
       Tasks task = Tasks(
         title: widget.nameController.text,
-        dueDate: DateTime.now(),
+        dueDate: dueDate,
         description: widget.descriptionController.text,
-        categoryId: categoryId,
+        categoryId:
+            hasCategoryChanged ? categoryId : widget.existingTask?.categoryId,
       );
 
       if (widget.isEditing && widget.existingTask != null) {
@@ -249,6 +252,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     categoryId:
                         widget.existingTask?.categoryId?.toString() ?? '',
                     onSpaceChanged: (id) {
+                      hasSpaceChanged = true;
                       setState(() {
                         spaceId = int.tryParse(id!);
                       });
@@ -259,6 +263,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                       });
                     },
                     onCategoryChanged: (id) {
+                      hasCategoryChanged = true;
                       setState(() {
                         if (id == null.toString()) {
                           categoryId = null;
