@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/shared/utils/format_date.dart';
+import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
 import 'package:questkeeper/task_list/widgets/category_dropdown_field.dart';
 import 'package:questkeeper/task_list/widgets/date_time_picker.dart';
@@ -17,8 +19,11 @@ class TaskForm extends StatefulWidget {
     required this.onCategoryChanged,
     required this.onFormSubmitted,
     required this.categoriesList,
+    required this.onSpaceChanged,
+    required this.spacesList,
     required this.subtasks,
     required this.subtasksControllers,
+    required this.currentSpaceId,
   });
 
   final GlobalKey<FormState> formKey;
@@ -30,8 +35,11 @@ class TaskForm extends StatefulWidget {
   final void Function(String?) onCategoryChanged;
   final Future<void> Function() onFormSubmitted;
   final Future<List<Categories>> categoriesList;
+  final AsyncValue<List<Spaces>>? spacesList;
   final Future<List<Subtask>> subtasks;
   final Map<String, TextEditingController> subtasksControllers;
+  final int? currentSpaceId;
+  final void Function(String?) onSpaceChanged;
 
   @override
   State<TaskForm> createState() => _TaskFormState();
@@ -84,25 +92,23 @@ class _TaskFormState extends State<TaskForm> {
             maxLines: 3,
           ),
           const SizedBox(height: 20),
+          TextFormField(
+            controller: TextEditingController(
+              text: formatDate(widget.dueDate),
+            ),
+            decoration: const InputDecoration(labelText: "Due Date"),
+            onTap: () async {
+              await showDateTimePicker(
+                context,
+                widget.dueDate,
+                widget.onDueDateChanged,
+              );
+            },
+            readOnly: true,
+          ),
+          const SizedBox(height: 20),
           Row(
             children: [
-              Expanded(
-                child: TextFormField(
-                  controller: TextEditingController(
-                    text: formatDate(widget.dueDate),
-                  ),
-                  decoration: const InputDecoration(labelText: "Due Date"),
-                  onTap: () async {
-                    await showDateTimePicker(
-                      context,
-                      widget.dueDate,
-                      widget.onDueDateChanged,
-                    );
-                  },
-                  readOnly: true,
-                ),
-              ),
-              const SizedBox(width: 20),
               FutureBuilder<List<Categories>>(
                 future: widget.categoriesList,
                 builder: (context, snapshot) {
@@ -116,6 +122,7 @@ class _TaskFormState extends State<TaskForm> {
                       child: CategoryDropdownField(
                         categoriesList: snapshot.data!,
                         onCategoryChanged: widget.onCategoryChanged,
+                        defaultCategoryId: widget.categoryId,
                       ),
                     );
                   } else {
@@ -123,6 +130,17 @@ class _TaskFormState extends State<TaskForm> {
                   }
                 },
               ),
+              // TODO: Eventually switch to using spaces list
+              // const SizedBox(width: 20),
+              // widget.spacesList!.asData == null
+              //     ? const Expanded(child: LinearProgressIndicator())
+              //     : Expanded(
+              //         child: SpacesDropdownField(
+              //           spacesList: widget.spacesList!.asData?.value ?? [],
+              //           defaultSpaceId: widget.currentSpaceId?.toString(),
+              //           onSpacesChanged: widget.onSpaceChanged,
+              //         ),
+              //       ),
             ],
           ),
           const SizedBox(height: 20),
