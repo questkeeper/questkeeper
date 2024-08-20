@@ -111,15 +111,15 @@ class TaskCard extends ConsumerWidget {
                       ),
                       const Spacer(),
                       if (!task.completed &&
-                          task.dueDate.isAtSameMomentAs(DateTime.now()
-                              .subtract(const Duration(days: 1))
-                              .toUtc()))
+                          task.dueDate.isAfter(DateTime.now().toUtc()) &&
+                          task.dueDate
+                                  .difference(DateTime.now().toUtc())
+                                  .inDays <
+                              1)
                         const TaskNotificationDot(
                             notificationType: NotificationDotType.warning),
                       if (!task.completed &&
-                          task.dueDate.isBefore(DateTime.now()) &&
-                          task.dueDate.isBefore(
-                              DateTime.now().subtract(const Duration(days: 1))))
+                          task.dueDate.isBefore(DateTime.now().toUtc()))
                         const TaskNotificationDot(
                             notificationType: NotificationDotType.danger),
                     ],
