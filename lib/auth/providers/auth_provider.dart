@@ -63,13 +63,9 @@ class AuthNotifier extends StateNotifier<SignInState> {
     String? currentDeviceId = prefs.getString("deviceId");
     String? currentToken = prefs.getString("token");
 
-    debugPrint("Current Token: $currentToken, New Token: $token");
-
     if (currentToken == token) {
       return;
     }
-
-    debugPrint("Making a call to createPushTarget");
 
     if (currentDeviceId != null) {
       await supabase.from("profiles").update({
@@ -108,14 +104,14 @@ class AuthNotifier extends StateNotifier<SignInState> {
   // Set up FCM
   Future<void> setFirebaseMessaging() async {
     // await clearToken();
-    debugPrint('Setting up FCM');
     String? token;
     NotificationSettings settings =
         await FirebaseMessaging.instance.requestPermission(
       provisional: true,
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    if (settings.authorizationStatus == AuthorizationStatus.provisional ||
+        settings.authorizationStatus == AuthorizationStatus.authorized) {
       FirebaseMessaging.instance.onTokenRefresh.listen((token) {
         // Handle new or refreshed APNs token
         saveToken(token);
@@ -144,50 +140,7 @@ class AuthNotifier extends StateNotifier<SignInState> {
       } else {
         // Handle the case where the initial token retrieval fails.
         // You might want to retry later or provide user feedback.
-        debugPrint("FCM Token is null");
       }
     }
-    // } else {
-    //   debugPrint("User declined permission");
-    // }
-
-    // if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
-    //   FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    //     alert: true,
-    //     badge: true,
-    //     sound: true,
-    //   );
-
-    //   token = await FirebaseMessaging.instance.getAPNSToken();
-    //   debugPrint("APNS Token: $token");
-    // } else {
-    //   token = await FirebaseMessaging.instance.getToken();
-    //   debugPrint("FCM Token: $token");
-    // }
-
-    // if (token == null) {
-    //   debugPrint('Token is null');
-    //   return;
-    // }
-
-    // debugPrint("Making a call to createPushTarget");
-
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // final currentDeviceId = prefs.getString("deviceId");
-
-    // if (currentDeviceId != null) {
-    //   await supabase.from("profiles").update({
-    //     "fcm_token": token,
-    //   }).eq("device_id", currentDeviceId);
-    // } else {
-    //   final deviceId = await supabase.from("profiles").insert({
-    //     "fcm_token": token,
-    //   }).select();
-
-    //   prefs.setString("deviceId", deviceId.first["device_id"]);
-    // }
-
-    // debugPrint("Token: $token, Device ID: ${prefs.getString("deviceId")}");
   }
 }
