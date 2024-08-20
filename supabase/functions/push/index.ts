@@ -1,104 +1,94 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { Novu } from "npm:@novu/node";
 
-interface Notification {
-  id: number;
-  user_id: string;
-  taskId: number;
-  dueDate: string;
-  delivered: boolean;
-  message: string;
-  title: string;
-}
+const supabaseUrl = Deno.env.get("SUPABASE_URL") as string;
+const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") as string;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-interface NotificationTransaction {
-  id: number;
-  notificationId: number;
-  transactionId: number;
-  scheduledAt: Date;
-}
+const apiEndpointUrl = Deno.env.get("API_ENDPOINT") as string;
+const apiServerKey = Deno.env.get("API_SERVER_KEY") as string;
 
-interface WebhookPayload {
-  type: "INSERT" | "UPDATE" | "DELETE";
-  table: string;
-  record: Notification;
-  schema: "public";
-  old_record: Notification | null;
-}
+async function sendFCMNotificationToGroup(
+  notification: unknown,
+) {
+  const response = await fetch(
+    `${apiEndpointUrl}/send`,
+    {
+      method: "POST",
+      headers: {
+        "X-API-KEY": apiServerKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        notification,
+      }),
+    },
+  );
 
-const supabase = createClient(
-  Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-);
-
-const novu = new Novu(Deno.env.get("NOVU_API_KEY")!);
-
-Deno.serve(async (req) => {
-  console.info("Received request", req);
-  const webhookPayload: WebhookPayload = await req.json();
-  console.info("Received payload", webhookPayload);
-  const payload = webhookPayload.record;
-
-  // TODO: Get the user's preferences for notification times
-  // Current setup is temporary
-  const times = [12, 24, 48];
-  const sendAtArray = [];
-  const transactionIds: string[] = [];
-
-  let resData = {
-    success: true,
-    error: null,
-    message: "Notification scheduled successfully",
-  };
-
-  const dueAt = new Date(payload.dueDate);
-
-  try {
-    for (let i = 0; i < times.length; i++) {
-      const time = times[i];
-      const sendAt = new Date(dueAt.getTime() - time * 60 * 60 * 1000);
-
-      // Skip if the sendAt time is in the past
-      if (sendAt < new Date()) {
-        continue;
-      }
-
-      sendAtArray.push(sendAt);
-      const transaction = await novu.trigger("schedulepush", {
-        payload: {
-          sendAt: sendAt.toISOString(),
-          payload: {
-            title: payload.title,
-            message: payload.message,
-          },
-        },
-        to: {
-          subscriberId: payload.user_id,
-        },
-      });
-
-      transactionIds.push(transaction.data.data.transactionId);
-    }
-
-    await supabase
-      .from("notification_transactions")
-      .insert(
-        sendAtArray.map((sendAt) => ({
-          notificationId: payload.id,
-          scheduledAt: sendAt,
-          transactionId: transactionIds.shift(),
-        })),
-      );
-  } catch (error) {
-    console.error(error);
-    resData = {
-      success: false,
-      error: error,
-      message: "Failed to schedule notification",
-    };
+  if (!response.ok) {
+    throw new Error(`Failed to send notification: ${response.statusText}`);
   }
 
-  return new Response(JSON.stringify(resData), {
-    headers: { "Content-Type": "application/json" },
-  });
+  return await response.json();
+}
+
+Deno.serve(async (_: Request) => {
+  const nowUTC = new Date().toUTCString();
+  // Convert "nowUTC" to closest minute floor
+
+  // Get the current minute and convert it back to iso string
+  const minTime = new Date(new Date(nowUTC).setSeconds(0, 0)).toISOString();
+  const maxTime = new Date(new Date(nowUTC).setSeconds(59, 999)).toISOString();
+
+  const { data: notifications, error } = await supabase
+    .from("notification_schedule")
+    .select("*")
+    .gte("scheduled_at", minTime)
+    .lte("scheduled_at", maxTime)
+    .order("scheduled_at");
+
+  if (error) {
+    console.error("Error fetching notifications:", error);
+    return new Response(
+      JSON.stringify({
+        error: "Failed to fetch notifications",
+        message: error.message,
+      }),
+      { status: 500 },
+    );
+  }
+
+  const results = [];
+
+  for (const notification of notifications) {
+    try {
+      // Send FCM notification to the user's device group
+      await sendFCMNotificationToGroup(
+        notification,
+      );
+
+      // Delete the sent notification
+      const { error: deleteError } = await supabase
+        .from("notification_schedule")
+        .delete()
+        .eq("id", notification.id);
+
+      if (deleteError) {
+        throw new Error(`Failed to delete notification ${notification.id}`);
+      }
+
+      results.push({ id: notification.id, status: "sent" });
+    } catch (error) {
+      console.error(`Error processing notification ${notification.id}:`, error);
+      results.push({
+        id: notification.id,
+        status: "failed",
+        error: error.message,
+      });
+    }
+  }
+
+  return new Response(
+    JSON.stringify({ message: "Notifications processed", results }),
+    { headers: { "Content-Type": "application/json" } },
+  );
 });
