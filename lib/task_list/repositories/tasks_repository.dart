@@ -28,6 +28,9 @@ class TasksRepository {
     jsonTask.remove("createdAt");
     jsonTask.remove("updatedAt");
 
+    jsonTask["dueDate"] =
+        DateTime.parse(jsonTask["dueDate"]).toUtc().toIso8601String();
+
     try {
       final newTask = await supabase.from("tasks").insert(jsonTask).select();
 
@@ -92,10 +95,16 @@ class TasksRepository {
   }
 
   Future<ReturnModel> updateTask(Tasks task) async {
+    final jsonTask = task.toJson();
+    jsonTask.remove("createdAt");
+    jsonTask.remove("updatedAt");
+
+    jsonTask["dueDate"] =
+        DateTime.parse(jsonTask["dueDate"]).toUtc().toIso8601String();
     try {
       await supabase
           .from("tasks")
-          .update(task.toJson())
+          .update(jsonTask)
           .eq("id", task.id.toString());
 
       return const ReturnModel(
