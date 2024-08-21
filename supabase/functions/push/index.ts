@@ -67,12 +67,12 @@ Deno.serve(async (_: Request) => {
       );
 
       // Delete the sent notification
-      const { error: deleteError } = await supabase
+      const { error } = await supabase
         .from("notification_schedule")
-        .delete()
+        .update({ sent: true, sent_at: nowUTC })
         .eq("id", notification.id);
 
-      if (deleteError) {
+      if (error) {
         throw new Error(`Failed to delete notification ${notification.id}`);
       }
 
