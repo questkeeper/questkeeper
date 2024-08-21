@@ -28,8 +28,11 @@ class CategoriesManager extends _$CategoriesManager {
     final oldState = state.value ?? [];
     state = const AsyncValue.loading();
     try {
-      await _repository.createCategory(category);
-      state = AsyncValue.data([...state.value ?? [], category]);
+      final createCategoryReturn = await _repository.createCategory(category);
+      state = AsyncValue.data([
+        ...state.value ?? [],
+        Categories.fromJson(createCategoryReturn.data)
+      ]);
     } catch (error) {
       state = AsyncValue.data(oldState);
       state = AsyncValue.error(error, StackTrace.current);
