@@ -59,8 +59,8 @@ class AuthScreen extends ConsumerWidget {
 
             SupaSocialsAuth(
               socialProviders: const [
-                OAuthProvider.apple,
-                OAuthProvider.google,
+                // OAuthProvider.apple,
+                // OAuthProvider.google,
                 OAuthProvider.discord
               ],
               socialButtonVariant: SocialButtonVariant.icon,
