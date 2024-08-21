@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.6.0+1
+version: 0.5.0+1
 
 environment:
   sdk: ">=3.3.3 <4.0.0"
@@ -46,13 +46,13 @@ dependencies:
   firebase_messaging: ^15.0.4
   flex_color_picker: ^3.5.1
   url_launcher: ^6.3.0
-  supabase: ^2.2.7
-  supabase_flutter: ^2.5.11
-  supabase_auth_ui: ^0.5.0
+  supabase: ^2.3.0
+  supabase_flutter: ^2.6.0
+  supabase_auth_ui: ^0.5.1
   home_widget: ^0.6.0
-  shared_preferences: ^2.3.1
+  shared_preferences: ^2.3.2
   flutter_lucide: ^1.4.0
-  riverpod_generator: ^2.4.2
+  riverpod_generator: ^2.4.3
   rename_app: ^1.6.1
 dev_dependencies:
   flutter_test:
@@ -65,10 +65,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
   build_runner: ^2.4.12
-  custom_lint: ^0.6.4
-  riverpod_lint: ^2.3.12
+  custom_lint: ^0.6.5
+  riverpod_lint: ^2.3.13
   json_serializable: ^6.8.0
-  msix: ^3.16.7
+  msix: ^3.16.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
