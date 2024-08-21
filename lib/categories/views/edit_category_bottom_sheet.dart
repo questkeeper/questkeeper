@@ -124,7 +124,7 @@ class _CategoryBottomSheetContentState
                         .updateCategory(
                           widget.existingCategory!.copyWith(
                               title: widget.nameController.text,
-                              spaceId: widget.existingSpace?.id,
+                              spaceId: widget.existingCategory?.spaceId,
                               color: selectedColor?.hex),
                         );
                   } else {
