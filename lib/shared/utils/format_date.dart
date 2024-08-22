@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
 String formatDate(DateTime date) {
+  date = date.toLocal();
   final today = DateTime.now();
 
   if (date.isAfter(today.subtract(const Duration(days: 1))) &&

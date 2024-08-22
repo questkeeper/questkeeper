@@ -3,7 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
-import 'package:supabase_auth_ui/supabase_auth_ui.dart';
+import 'package:supabase/supabase.dart';
+import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
+    show SupaMagicAuth; // Overriding the supa auth UI with own flow
+import 'package:supabase_auth_ui/supabase_auth_ui.dart'
+    show SupaSocialsAuth, SocialButtonVariant, OAuthProvider;
 
 class AuthScreen extends ConsumerWidget {
   const AuthScreen({super.key});
@@ -11,9 +15,7 @@ class AuthScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void onSuccess(Session response) async {
-      debugPrint("Foreground notification options");
       await ref.read(authProvider.notifier).setFirebaseMessaging();
-      debugPrint("Firebase messaging set");
       if (context.mounted) {
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/home',
@@ -23,7 +25,6 @@ class AuthScreen extends ConsumerWidget {
     }
 
     void onError(error) {
-      debugPrint("Error: $error");
       SnackbarService.showErrorSnackbar(
         context,
         error.toString(),
@@ -44,23 +45,26 @@ class AuthScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                "Quest Keeper",
-                style: Theme.of(context).textTheme.displayLarge,
+                "QuestKeeper",
+                style: Theme.of(context).textTheme.displayMedium,
               ),
             ),
 
-            SupaMagicAuth(
-              redirectUrl: kIsWeb
-                  ? "${Uri.base.toString()}/signin"
-                  : 'questkeeper://signin',
-              onSuccess: onSuccess,
-              onError: onError,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SupaMagicAuth(
+                redirectUrl: kIsWeb
+                    ? "${Uri.base.toString()}/signin"
+                    : 'questkeeper://signin',
+                onSuccess: onSuccess,
+                onError: onError,
+              ),
             ),
 
             SupaSocialsAuth(
               socialProviders: const [
-                OAuthProvider.apple,
-                OAuthProvider.google,
+                // OAuthProvider.apple,
+                // OAuthProvider.google,
                 OAuthProvider.discord
               ],
               socialButtonVariant: SocialButtonVariant.icon,
@@ -74,13 +78,6 @@ class AuthScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/signin/password');
-                  },
-                  child: const Text('Sign In with Password'),
-                ),
-                // ),
                 TextButton.icon(
                   icon: const Icon(Icons.launch_rounded),
                   onPressed: () {},
