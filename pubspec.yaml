@@ -55,6 +55,7 @@ dependencies:
   riverpod_generator: ^2.4.3
   rename_app: ^1.6.1
   email_validator: ^2.1.17
+  sentry_flutter: ^8.7.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

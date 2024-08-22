@@ -10,6 +10,7 @@ import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,10 +43,14 @@ Future<void> main() async {
     debugPrint("Platform implementation error: $e");
   }
 
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://87811f2d260a89b1fd9f3ccc4c3ee423@o4507823426895872.ingest.us.sentry.io/4507823429976064';
+      options.tracesSampleRate = 1.0;
+      options.profilesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(const ProviderScope(child: MyApp())),
   );
 }
 
