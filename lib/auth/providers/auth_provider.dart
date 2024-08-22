@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/auth/models/auth_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,49 +13,6 @@ final authProvider = StateNotifierProvider<AuthNotifier, SignInState>((ref) {
 class AuthNotifier extends StateNotifier<SignInState> {
   AuthNotifier() : super(SignInState(otpSent: false));
   SupabaseClient supabase = Supabase.instance.client;
-
-  final emailController = TextEditingController();
-  final otpController = TextEditingController();
-
-  Future<void> signIn() async {
-    try {
-      if (state.otpSent) {
-        final res = await supabase.auth.verifyOTP(
-          email: emailController.text,
-          token: otpController.text,
-          type: OtpType.email,
-        );
-
-        if (res.user == null) {
-          throw Exception("OTP is incorrect");
-        }
-      } else {
-        if (state.otpSent) {
-          throw Exception("User ID is null");
-        }
-        await supabase.auth.signInWithOtp(email: emailController.text);
-        state = state.copyWith(otpSent: true, userId: emailController.text);
-      }
-    } catch (error) {
-      state = state.copyWith(error: error.toString(), userId: null);
-    }
-  }
-
-  Future<void> passwordSignIn() async {
-    try {
-      // final response = await account.createEmailPasswordSession(
-      //     email: emailController.text, password: otpController.text);
-
-      // if (!response.current) {
-      //   throw Exception("Password is incorrect");
-      // }
-
-      // state = state.copyWith(otpSent: true, userId: response.userId);
-      // userId = response.userId;
-    } catch (error) {
-      state = state.copyWith(error: error.toString(), userId: null);
-    }
-  }
 
   Future<void> saveToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -116,16 +72,6 @@ class AuthNotifier extends StateNotifier<SignInState> {
         // Handle new or refreshed APNs token
         saveToken(token);
       });
-
-      // if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
-      // String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-      // if (apnsToken != null) {
-      //   saveToken(apnsToken);
-      // } else {
-      // Handle the case where the initial token retrieval fails.
-      // You might want to retry later or provide user feedback.
-      //   debugPrint("APNS Token is null");
-      // }
 
       FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
         alert: true,
