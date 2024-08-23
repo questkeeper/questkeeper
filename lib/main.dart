@@ -4,7 +4,6 @@ import 'package:questkeeper/auth/view/auth_password_screen.dart';
 import 'package:questkeeper/auth/view/auth_screen.dart';
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
-import 'package:questkeeper/settings/views/account/account_screen.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
@@ -100,7 +99,6 @@ class MyApp extends ConsumerWidget {
         '/home': (context) => const TabView(),
 
         // Settings stuff
-        '/settings/account': (context) => const AccountScreen(),
         '/settings/about': (context) => const AboutScreen()
       },
     );
