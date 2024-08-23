@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/shared/utils/format_date.dart';
@@ -154,7 +155,7 @@ class _TaskFormState extends State<TaskForm> {
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 IconButton(
-                  icon: const Icon(Icons.add_box_outlined),
+                  icon: const Icon(LucideIcons.square_plus),
                   onPressed: () {
                     setState(() {
                       widget.subtasks.then((value) {
@@ -200,7 +201,8 @@ class _TaskFormState extends State<TaskForm> {
                         color: Colors.red,
                         alignment: Alignment.centerRight,
                         padding: const EdgeInsets.only(right: 16),
-                        child: const Icon(Icons.delete, color: Colors.white),
+                        child:
+                            const Icon(LucideIcons.trash, color: Colors.white),
                       ),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
