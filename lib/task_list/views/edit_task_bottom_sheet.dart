@@ -322,9 +322,11 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
 
 Spaces? getCurrentSpace(WidgetRef ref, PageController pageController,
     AsyncValue<List<Spaces>>? spacesList) {
-  if (spacesList!.asData == null) return null;
+  if (spacesList != null && spacesList.asData == null) return null;
 
-  final spaces = spacesList.asData!.value;
+  final spaces = spacesList?.asData!.value;
+  if (spaces == null) return null;
+
   final currentPage = pageController.page?.round() ?? 0;
 
   if (currentPage < spaces.length) {
