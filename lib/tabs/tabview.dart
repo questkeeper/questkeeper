@@ -89,13 +89,13 @@ class _TabViewState extends ConsumerState<TabView> {
                 key: const Key('feedback_button'),
                 heroTag: 'feedback_button',
                 onPressed: () async {
-                  var user = await Supabase.instance.client.auth.getUser();
+                  var user = Supabase.instance.client.auth.currentUser;
                   if (!context.mounted) {
                     return;
                   }
                   BetterFeedback.of(context).showAndUploadToSentry(
-                      name: user.user?.id ?? 'Unknown',
-                      email: user.user?.email ?? 'Unknown@questkeeper.app');
+                      name: user?.id ?? 'Unknown',
+                      email: user?.email ?? 'Unknown@questkeeper.app');
                 },
                 enableFeedback: true,
                 mini: true,
