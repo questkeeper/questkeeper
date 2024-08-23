@@ -45,12 +45,6 @@ class SettingsScreen extends StatelessWidget {
                       onTap: notYetImplemented),
                   const Divider(),
                   SettingsCard(
-                      title: 'Account',
-                      description: 'Manage your account',
-                      icon: LucideIcons.user,
-                      onTap: () =>
-                          Navigator.pushNamed(context, '/settings/account')),
-                  SettingsCard(
                       title: 'Feedback',
                       description: 'Send us your feedback',
                       icon: LucideIcons.bug,
@@ -83,6 +77,10 @@ class SettingsScreen extends StatelessWidget {
                                         context, "/signin"),
                                 });
                       }),
+                  const Divider(),
+                  const Text(
+                      textAlign: TextAlign.center,
+                      'To delete your account, please message us at contact@questkeeper.app'),
                 ],
               ),
             ],
