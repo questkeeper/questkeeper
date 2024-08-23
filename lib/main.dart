@@ -16,6 +16,7 @@ import 'tabs/tabview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/theme.dart';
 import 'package:questkeeper/theme_components.dart';
+import 'package:feedback_sentry/feedback_sentry.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -50,7 +51,13 @@ Future<void> main() async {
       options.tracesSampleRate = 1.0;
       options.profilesSampleRate = 1.0;
     },
-    appRunner: () => runApp(const ProviderScope(child: MyApp())),
+    appRunner: () => runApp(
+      const ProviderScope(
+        child: BetterFeedback(
+          child: MyApp(),
+        ),
+      ),
+    ),
   );
 }
 
