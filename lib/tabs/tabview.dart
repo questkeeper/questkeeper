@@ -17,7 +17,7 @@ class TabView extends ConsumerStatefulWidget {
 
 class _TabViewState extends ConsumerState<TabView> {
   // Tabs for "Home", "Game", "Add task"
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) async {
     setState(() {
