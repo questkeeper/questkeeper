@@ -2,6 +2,7 @@ import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/settings/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -10,22 +11,17 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void notYetImplemented() {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Not yet implemented'),
-          duration: Duration(seconds: 1),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      SnackbarService.showErrorSnackbar(context, 'Not yet implemented');
     }
+
+    final user = Supabase.instance.client.auth.currentUser;
 
     return Scaffold(
       appBar: AppBar(
-        surfaceTintColor: Colors.transparent,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        toolbarHeight: 100,
         title: Text(
-          'Settings',
+          user?.email?.split('@')[0] ?? 'Settings',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
       ),
@@ -34,20 +30,6 @@ class SettingsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              const CircleAvatar(
-                radius: 50,
-                child: Icon(
-                  Icons.account_circle,
-                  size: 50,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'John Doe',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 10),
               Column(
                 children: [
                   const Divider(),
@@ -73,15 +55,12 @@ class SettingsScreen extends StatelessWidget {
                       description: 'Send us your feedback',
                       icon: LucideIcons.bug,
                       onTap: () async {
-                        var user =
-                            await Supabase.instance.client.auth.getUser();
                         if (!context.mounted) {
                           return;
                         }
                         BetterFeedback.of(context).showAndUploadToSentry(
-                            name: user.user?.id ?? 'Unknown',
-                            email:
-                                user.user?.email ?? 'Unknown@questkeeper.app');
+                            name: user?.id ?? 'Unknown',
+                            email: user?.email ?? 'Unknown@questkeeper.app');
                       }),
                   const Divider(),
                   SettingsCard(
