@@ -1,4 +1,5 @@
-import 'package:questkeeper/constants.dart';
+import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/settings/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -51,58 +52,56 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   const Divider(),
                   SettingsCard(
-                      backgroundColor: primaryColor,
-                      title: 'Categories',
-                      description: 'Add, delete, or archive your categories',
-                      icon: Icons.subject,
-                      onTap: () => Navigator.pushNamed(context, '/categories')),
-                  const Divider(),
-                  SettingsCard(
                       title: 'Notifications',
                       description: 'Manage your notifications',
-                      icon: Icons.notifications,
-                      // onTap: () => Navigator.pushNamed(
-                      //     context, '/settings/notifications')),
+                      icon: LucideIcons.bell_ring,
                       onTap: notYetImplemented),
                   SettingsCard(
                       title: 'Theme',
                       description: 'Change the app theme',
-                      icon: Icons.info,
+                      icon: LucideIcons.palette,
                       onTap: notYetImplemented),
-                  // onTap: () =>
-                  //     Navigator.pushNamed(context, '/settings/theme')),
                   const Divider(),
                   SettingsCard(
                       title: 'Account',
                       description: 'Manage your account',
-                      icon: Icons.account_circle,
+                      icon: LucideIcons.user,
                       onTap: () =>
                           Navigator.pushNamed(context, '/settings/account')),
                   SettingsCard(
                       title: 'Feedback',
                       description: 'Send us your feedback',
-                      icon: Icons.info,
-                      onTap: notYetImplemented),
-                  // onTap: () =>
-                  //     Navigator.pushNamed(context, '/settings/feedback')),
+                      icon: LucideIcons.bug,
+                      onTap: () async {
+                        var user =
+                            await Supabase.instance.client.auth.getUser();
+                        if (!context.mounted) {
+                          return;
+                        }
+                        BetterFeedback.of(context).showAndUploadToSentry(
+                            name: user.user?.id ?? 'Unknown',
+                            email:
+                                user.user?.email ?? 'Unknown@questkeeper.app');
+                      }),
                   const Divider(),
                   SettingsCard(
                       title: 'About',
                       description: 'About the app',
-                      icon: Icons.info,
+                      icon: LucideIcons.info,
                       onTap: () =>
                           Navigator.pushNamed(context, '/settings/about')),
                   SettingsCard(
                       title: 'Sign out',
                       description: 'Sign out',
-                      icon: Icons.logout,
+                      icon: LucideIcons.log_out,
                       backgroundColor: Colors.red,
                       onTap: () async {
                         await Supabase.instance.client.auth
                             .signOut()
                             .then((value) => {
-                                  Navigator.pushReplacementNamed(
-                                      context, "/signin"),
+                                  if (context.mounted)
+                                    Navigator.pushReplacementNamed(
+                                        context, "/signin"),
                                 });
                       }),
                 ],
