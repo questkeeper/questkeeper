@@ -55,6 +55,8 @@ class _TabViewState extends ConsumerState<TabView> {
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.miniCenterDocked,
               floatingActionButton: FloatingActionButton(
+                key: const Key('add_task_button_mobile'),
+                heroTag: 'add_task_button_mobile',
                 onPressed: () => {
                   showTaskBottomSheet(
                     context: context,
@@ -85,6 +87,7 @@ class _TabViewState extends ConsumerState<TabView> {
                   16, // Adjust this value to position the button horizontally
               child: FloatingActionButton(
                 key: const Key('feedback_button'),
+                heroTag: 'feedback_button',
                 onPressed: () async {
                   var user = await Supabase.instance.client.auth.getUser();
                   if (!context.mounted) {
@@ -139,6 +142,8 @@ class _TabViewState extends ConsumerState<TabView> {
                         },
                         child: pages[_selectedIndex]),
                     floatingActionButton: FloatingActionButton(
+                      key: const Key('add_task_button'),
+                      heroTag: 'add_task_button',
                       onPressed: () => {
                         showTaskBottomSheet(
                           context: context,
