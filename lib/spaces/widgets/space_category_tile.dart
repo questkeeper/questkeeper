@@ -59,13 +59,17 @@ class SpaceCategoryTile extends ConsumerWidget {
                   category.title,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                IconButton(
-                  icon: const Icon(LucideIcons.pen),
-                  onPressed: () {
-                    showCategoryBottomSheet(
-                        context: context, ref: ref, existingCategory: category);
-                  },
-                ),
+                category.id != null
+                    ? IconButton(
+                        icon: const Icon(LucideIcons.pen),
+                        onPressed: () {
+                          showCategoryBottomSheet(
+                              context: context,
+                              ref: ref,
+                              existingCategory: category);
+                        },
+                      )
+                    : Container(),
               ],
             ),
             collapsedBackgroundColor: category.color
