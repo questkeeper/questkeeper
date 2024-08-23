@@ -57,6 +57,7 @@ dependencies:
   email_validator: ^2.1.17
   sentry_flutter: ^8.7.0
   feedback_sentry: ^3.0.1
+  package_info_plus: ^8.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
