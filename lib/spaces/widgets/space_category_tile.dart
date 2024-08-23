@@ -27,7 +27,8 @@ class SpaceCategoryTile extends ConsumerWidget {
       loading: () => const CircularProgressIndicator(),
       error: (error, stack) => Text('Error: $error'),
       data: (collapseState) {
-        final isCollapsed = collapseState[category.id] ?? false;
+        final isCollapsed =
+            (collapseState[category.id] ?? false) || category.id == null;
 
         return Container(
           padding: const EdgeInsets.all(8),
