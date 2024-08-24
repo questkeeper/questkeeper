@@ -8,8 +8,12 @@ class TasksRepository {
 
   final supabase = Supabase.instance.client;
 
-  Future<List<Tasks>> getTasks() async {
-    final tasks = await supabase.from("tasks").select().order("dueDate");
+  Future<List<Tasks>> getTasks({bool isCompleted = false}) async {
+    final tasks = await supabase
+        .from("tasks")
+        .select()
+        .eq("completed", isCompleted)
+        .order("dueDate");
 
     final List<Tasks> tasksList = tasks.map((e) => Tasks.fromJson(e)).toList();
 
