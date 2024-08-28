@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -97,6 +98,12 @@ class AboutScreen extends StatelessWidget {
                 showLicensePage(
                   context: context,
                 );
+              },
+            ),
+            ListTile(
+              title: const Text("Clear local data"),
+              onTap: () async {
+                AuthNotifier().clearToken();
               },
             ),
             const ListTile(
