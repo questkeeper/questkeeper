@@ -1,4 +1,5 @@
 import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -18,6 +19,16 @@ class TabView extends ConsumerStatefulWidget {
 class _TabViewState extends ConsumerState<TabView> {
   // Tabs for "Home", "Game", "Add task"
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
+      if (data.event == AuthChangeEvent.signedIn) {
+        await AuthNotifier().setFirebaseMessaging();
+      }
+    });
+  }
 
   void _onItemTapped(int index) async {
     setState(() {
