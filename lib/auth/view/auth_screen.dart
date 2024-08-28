@@ -3,7 +3,6 @@ import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:supabase/supabase.dart';
 import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
     show SupaMagicAuth; // Overriding the supa auth UI with own flow
@@ -17,7 +16,6 @@ class AuthScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void onSuccess(Session response) async {
-      await ref.read(authProvider.notifier).setFirebaseMessaging();
       if (context.mounted) {
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/home',
