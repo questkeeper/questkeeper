@@ -31,6 +31,8 @@ class SpaceCategoryTile extends ConsumerWidget {
             (collapseState[category.id] ?? false) || category.id == null;
 
         return Container(
+          margin:
+              category.id == null ? const EdgeInsets.only(bottom: 48) : null,
           padding: const EdgeInsets.all(8),
           child: ExpansionTile(
             key: PageStorageKey(category.id),
