@@ -222,99 +222,103 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
-                  Text(
-                    widget.isEditing ? 'Edit Task' : 'Create New Task',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  TaskForm(
-                    onFormSubmitted: () {
-                      return Future.value();
-                    },
-                    formKey: formKey,
-                    titleController: widget.nameController,
-                    descriptionController: widget.descriptionController,
-                    dueDate: dueDate,
-                    categoriesList: widget.categoriesList,
-                    spacesList: widget.spacesList,
-                    subtasks: widget.subtasksList,
-                    currentSpaceId: widget.existingSpace?.id,
-                    categoryId:
-                        widget.existingTask?.categoryId?.toString() ?? '',
-                    onSpaceChanged: (id) {
-                      hasSpaceChanged = true;
-                      setState(() {
-                        spaceId = int.tryParse(id!);
-                      });
-                    },
-                    onDueDateChanged: (date) {
-                      setState(() {
-                        dueDate = date!;
-                      });
-                    },
-                    onCategoryChanged: (id) {
-                      hasCategoryChanged = true;
-                      setState(() {
-                        if (id == null.toString()) {
-                          categoryId = null;
-                        } else {
-                          categoryId = int.tryParse(id!);
-                        }
-                      });
-                    },
-                    subtasksControllers: subtasksControllers,
-                  ),
-                  const SizedBox(height: 16),
-                ],
-              ),
-            ),
-          ),
-          !widget.isEditing
-              ? const SizedBox()
-              : ActionButtons(
-                  currentTask: widget.existingTask!,
-                  toggleStarTask: (task) async {
-                    await widget.ref
-                        .read(tasksManagerProvider.notifier)
-                        .toggleStar(task);
-                  },
-                  toggleCompleteTask: (task) async {
-                    await widget.ref
-                        .read(tasksManagerProvider.notifier)
-                        .toggleComplete(task);
-                  },
-                  deleteTask: (task) async {
-                    await widget.ref
-                        .read(tasksManagerProvider.notifier)
-                        .deleteTask(task);
-                  },
-                  size: MediaQuery.of(context).size,
-                ),
-          SizedBox(
-            width: double.infinity,
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: FilledButton(
-                  onPressed: () async {
-                    await _submitForm();
-                  },
-                  child: Text(widget.isEditing ? 'Update Task' : 'Create Task'),
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    Text(
+                      widget.isEditing ? 'Edit Task' : 'Create New Task',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 16),
+                    TaskForm(
+                      onFormSubmitted: () {
+                        return Future.value();
+                      },
+                      formKey: formKey,
+                      titleController: widget.nameController,
+                      descriptionController: widget.descriptionController,
+                      dueDate: dueDate,
+                      categoriesList: widget.categoriesList,
+                      spacesList: widget.spacesList,
+                      subtasks: widget.subtasksList,
+                      currentSpaceId: widget.existingSpace?.id,
+                      categoryId:
+                          widget.existingTask?.categoryId?.toString() ?? '',
+                      onSpaceChanged: (id) {
+                        hasSpaceChanged = true;
+                        setState(() {
+                          spaceId = int.tryParse(id!);
+                        });
+                      },
+                      onDueDateChanged: (date) {
+                        setState(() {
+                          dueDate = date!;
+                        });
+                      },
+                      onCategoryChanged: (id) {
+                        hasCategoryChanged = true;
+                        setState(() {
+                          if (id == null.toString()) {
+                            categoryId = null;
+                          } else {
+                            categoryId = int.tryParse(id!);
+                          }
+                        });
+                      },
+                      subtasksControllers: subtasksControllers,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                 ),
               ),
             ),
-          ),
-        ],
+            !widget.isEditing
+                ? const SizedBox()
+                : ActionButtons(
+                    currentTask: widget.existingTask!,
+                    toggleStarTask: (task) async {
+                      await widget.ref
+                          .read(tasksManagerProvider.notifier)
+                          .toggleStar(task);
+                    },
+                    toggleCompleteTask: (task) async {
+                      await widget.ref
+                          .read(tasksManagerProvider.notifier)
+                          .toggleComplete(task);
+                    },
+                    deleteTask: (task) async {
+                      await widget.ref
+                          .read(tasksManagerProvider.notifier)
+                          .deleteTask(task);
+                    },
+                    size: MediaQuery.of(context).size,
+                  ),
+            SizedBox(
+              width: double.infinity,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: FilledButton(
+                    onPressed: () async {
+                      await _submitForm();
+                    },
+                    child:
+                        Text(widget.isEditing ? 'Update Task' : 'Create Task'),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
