@@ -105,11 +105,15 @@ class TaskCard extends ConsumerWidget {
                             size: 16,
                           ),
                         ),
-                      Text(
-                        task.title,
-                        style: Theme.of(context).textTheme.titleLarge,
+                      Expanded(
+                        child: Text(
+                          task.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8.0),
                       if (!task.completed &&
                           task.dueDate.isAfter(DateTime.now().toUtc()) &&
                           task.dueDate
@@ -124,17 +128,25 @@ class TaskCard extends ConsumerWidget {
                             notificationType: NotificationDotType.danger),
                     ],
                   ),
-                  Text(
-                    "Due ${formatDate(task.dueDate)}",
-                    style: Theme.of(context).textTheme.bodyMedium,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      "Due ${formatDate(task.dueDate)}",
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: task.dueDate.isBefore(DateTime.now().toUtc())
+                                ? Colors.red
+                                : Colors.grey,
+                          ),
+                    ),
                   ),
                   if (task.description != null && task.description!.isNotEmpty)
                     Container(
                       margin: const EdgeInsets.only(top: 8.0),
                       child: Text(
+                        task.description ?? "",
                         softWrap: true,
                         maxLines: 1,
-                        task.description ?? "",
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     )

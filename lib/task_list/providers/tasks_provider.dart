@@ -53,8 +53,11 @@ class TasksManager extends _$TasksManager {
   }
 
   Future<void> toggleComplete(Tasks task) async {
-    final updatedTask = task.copyWith(completed: !task.completed);
-    _updateTask(updatedTask, () => _repository.toggleComplete(task));
+    _repository.toggleComplete(task);
+    // Remove it from the list
+    state = AsyncValue.data(
+      (state.value ?? []).where((a) => a.id != task.id).toList(),
+    );
   }
 
   Future<void> toggleStar(Tasks task) async {

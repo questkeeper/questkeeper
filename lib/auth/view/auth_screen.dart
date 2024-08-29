@@ -1,13 +1,14 @@
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:supabase/supabase.dart';
 import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
     show SupaMagicAuth; // Overriding the supa auth UI with own flow
 import 'package:supabase_auth_ui/supabase_auth_ui.dart'
     show SupaSocialsAuth, SocialButtonVariant, OAuthProvider;
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthScreen extends ConsumerWidget {
   const AuthScreen({super.key});
@@ -15,7 +16,6 @@ class AuthScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void onSuccess(Session response) async {
-      await ref.read(authProvider.notifier).setFirebaseMessaging();
       if (context.mounted) {
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/home',
@@ -79,8 +79,10 @@ class AuthScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton.icon(
-                  icon: const Icon(Icons.launch_rounded),
-                  onPressed: () {},
+                  icon: const Icon(LucideIcons.shield_alert),
+                  onPressed: () {
+                    launchUrl(Uri.parse("https://questkeeper.app/privacy"));
+                  },
                   label: const Text("Privacy Policy"),
                 ),
               ],

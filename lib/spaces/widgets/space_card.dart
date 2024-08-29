@@ -67,10 +67,11 @@ class SpaceCard extends ConsumerWidget {
                   if (index < currentSpaceCategories!.length) {
                     final category = currentSpaceCategories[index];
                     return SpaceCategoryTile(
-                        ref: ref, category: category, tasks: categoryTasksList);
+                      category: category,
+                      tasks: categoryTasksList,
+                    );
                   } else {
                     return SpaceCategoryTile(
-                      ref: ref,
                       tasks: categoryTasksList,
                       category: Categories(
                         title: "Uncategorized",

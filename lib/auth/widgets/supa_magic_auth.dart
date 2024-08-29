@@ -120,7 +120,7 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
                 );
                 if (context.mounted) {
                   SnackbarService.showInfoSnackbar(
-                      context, "Check your email!");
+                      context, "Check your email for a link to login!");
                 }
               } on AuthException catch (error) {
                 if (widget.onError == null && context.mounted) {

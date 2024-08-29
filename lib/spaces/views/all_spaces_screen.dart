@@ -65,7 +65,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.add_circle_outline, size: 48),
+                          Icon(LucideIcons.circle_plus, size: 48),
                           Text('Create a new space'),
                         ],
                       ),

@@ -1,4 +1,3 @@
-import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
@@ -17,7 +16,6 @@ class SignInPasswordScreen extends ConsumerWidget {
         );
       }
 
-      await ref.read(authProvider.notifier).setFirebaseMessaging();
       if (context.mounted) {
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/home',

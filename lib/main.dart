@@ -4,17 +4,18 @@ import 'package:questkeeper/auth/view/auth_password_screen.dart';
 import 'package:questkeeper/auth/view/auth_screen.dart';
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
-import 'package:questkeeper/settings/views/account/account_screen.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/theme.dart';
 import 'package:questkeeper/theme_components.dart';
+import 'package:feedback_sentry/feedback_sentry.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -42,9 +43,19 @@ Future<void> main() async {
     debugPrint("Platform implementation error: $e");
   }
 
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://87811f2d260a89b1fd9f3ccc4c3ee423@o4507823426895872.ingest.us.sentry.io/4507823429976064';
+      options.tracesSampleRate = 1.0;
+      options.profilesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(
+      const ProviderScope(
+        child: BetterFeedback(
+          child: MyApp(),
+        ),
+      ),
     ),
   );
 }
@@ -88,7 +99,6 @@ class MyApp extends ConsumerWidget {
         '/home': (context) => const TabView(),
 
         // Settings stuff
-        '/settings/account': (context) => const AccountScreen(),
         '/settings/about': (context) => const AboutScreen()
       },
     );

@@ -1,5 +1,7 @@
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
+import 'package:questkeeper/categories/widgets/delete_category_dialog.dart';
 import 'package:questkeeper/shared/extensions/color_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
@@ -115,40 +117,81 @@ class _CategoryBottomSheetContentState
               onColorChanged: _updateColor,
               color: selectedColor ?? Colors.blue,
             ),
-            FilledButton(
-              onPressed: () async {
-                if (widget.nameController.text.isNotEmpty) {
-                  if (widget.isEditing) {
-                    await widget.ref
-                        .read(categoriesManagerProvider.notifier)
-                        .updateCategory(
-                          widget.existingCategory!.copyWith(
-                              title: widget.nameController.text,
-                              spaceId: widget.existingCategory?.spaceId,
-                              color: selectedColor?.hex),
-                        );
-                  } else {
-                    await widget.ref
-                        .read(categoriesManagerProvider.notifier)
-                        .createCategory(Categories(
-                            title: widget.nameController.text,
-                            spaceId: widget.existingSpace?.id,
-                            color: selectedColor?.hex));
-                  }
-                  if (context.mounted) Navigator.pop(context);
-                  widget.nameController.clear();
-                  if (context.mounted) {
-                    SnackbarService.showSuccessSnackbar(
-                      context,
-                      widget.isEditing
-                          ? 'Category updated successfully'
-                          : 'Category created successfully',
-                    );
-                  }
-                }
-              },
-              child: Text(
-                  widget.isEditing ? 'Update Category' : 'Create Category'),
+
+            Flex(
+              direction: Axis.horizontal,
+              children: [
+                widget.isEditing
+                    ? IconButton.outlined(
+                        onPressed: () {
+                          if (widget.isEditing) {
+                            deleteCategory() {
+                              Navigator.of(context).pop();
+                              widget.ref
+                                  .read(categoriesManagerProvider.notifier)
+                                  .deleteCategory(widget.existingCategory!);
+                              SnackbarService.showSuccessSnackbar(
+                                context,
+                                'Category deleted successfully',
+                              );
+                            }
+
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return DeleteCategoryDialog(
+                                      category: widget.existingCategory!,
+                                      deleteCategory: deleteCategory);
+                                });
+                          }
+                        },
+                        iconSize: 24,
+                        icon: const Icon(
+                          LucideIcons.trash,
+                          color: Colors.redAccent,
+                        ),
+                      )
+                    : const SizedBox(),
+                SizedBox(width: widget.isEditing ? 16 : 0),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () async {
+                      if (widget.nameController.text.isNotEmpty) {
+                        if (widget.isEditing) {
+                          await widget.ref
+                              .read(categoriesManagerProvider.notifier)
+                              .updateCategory(
+                                widget.existingCategory!.copyWith(
+                                    title: widget.nameController.text,
+                                    spaceId: widget.existingCategory?.spaceId,
+                                    color: selectedColor?.hex),
+                              );
+                        } else {
+                          await widget.ref
+                              .read(categoriesManagerProvider.notifier)
+                              .createCategory(Categories(
+                                  title: widget.nameController.text,
+                                  spaceId: widget.existingSpace?.id,
+                                  color: selectedColor?.hex));
+                        }
+                        if (context.mounted) Navigator.pop(context);
+                        widget.nameController.clear();
+                        if (context.mounted) {
+                          SnackbarService.showSuccessSnackbar(
+                            context,
+                            widget.isEditing
+                                ? 'Category updated successfully'
+                                : 'Category created successfully',
+                          );
+                        }
+                      }
+                    },
+                    child: Text(widget.isEditing
+                        ? 'Update Category'
+                        : 'Create Category'),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
