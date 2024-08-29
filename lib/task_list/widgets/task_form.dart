@@ -79,6 +79,9 @@ class _TaskFormState extends State<TaskForm> {
           TextFormField(
             controller: widget.titleController,
             decoration: const InputDecoration(labelText: "Title"),
+            onTapOutside: (_) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return "Please enter a title";
@@ -91,6 +94,9 @@ class _TaskFormState extends State<TaskForm> {
             controller: widget.descriptionController,
             decoration: const InputDecoration(labelText: "Description"),
             maxLines: 3,
+            onTapOutside: (_) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
           ),
           const SizedBox(height: 20),
           TextFormField(
