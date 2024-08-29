@@ -20,12 +20,8 @@ void showSpaceBottomSheet({
 
   showModalBottomSheet(
     context: context,
-    enableDrag: true,
-    isDismissible: true,
     showDragHandle: true,
     isScrollControlled: true,
-    backgroundColor: Colors
-        .transparent, // Make the background transparent to show the gradient
     builder: (BuildContext context) {
       return _SpaceBottomSheetContent(
         nameController: nameController,
@@ -112,15 +108,26 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
             const SizedBox(height: 16),
             TextField(
               controller: widget.nameController,
-              decoration: InputDecoration(
-                labelText: widget.existingSpace?.title ?? 'Space Name',
+              decoration: const InputDecoration(
+                labelText: 'Space Name',
               ),
               autofocus: true,
             ),
             const SizedBox(height: 16),
             // Button to show the color picker dialog
             ColorPicker(
+              key: UniqueKey(),
+              title: Text("Select color",
+                  style: Theme.of(context).textTheme.headlineSmall),
+              selectedPickerTypeColor: selectedColor,
               onColorChanged: _updateColor,
+              pickersEnabled: const <ColorPickerType, bool>{
+                ColorPickerType.custom: false,
+                ColorPickerType.accent: true,
+                ColorPickerType.primary: false,
+                ColorPickerType.bw: true,
+                ColorPickerType.wheel: false,
+              },
               color: selectedColor ?? Colors.blue,
             ),
             FilledButton(
