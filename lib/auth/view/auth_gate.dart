@@ -1,4 +1,4 @@
-import 'package:questkeeper/auth/view/auth_screen.dart';
+import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/tabs/tabview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,7 +21,7 @@ class AuthGate extends ConsumerWidget {
     final currentSessionAsync = ref.watch(currentSessionProvider);
 
     return currentSessionAsync.when(
-      data: (session) => session != null ? const TabView() : const AuthScreen(),
+      data: (session) => session != null ? const TabView() : const AuthSpaces(),
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, _) => Text('Error: $error'),
     );
