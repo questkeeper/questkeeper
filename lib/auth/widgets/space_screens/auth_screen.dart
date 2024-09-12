@@ -18,7 +18,7 @@ class AuthScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     void onSuccess(Session response) async {
       if (context.mounted) {
-        if (response.user.userMetadata?['display_name'] == null) {
+        if (response.user.userMetadata?['username'] == null) {
           ref.read(authPageControllerProvider).nextPage(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeIn,
