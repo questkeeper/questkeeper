@@ -31,8 +31,12 @@ mixin _$Tasks {
   bool get completed => throw _privateConstructorUsedError;
   bool get starred => throw _privateConstructorUsedError;
 
+  /// Serializes this Tasks to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Tasks
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $TasksCopyWith<Tasks> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -64,6 +68,8 @@ class _$TasksCopyWithImpl<$Res, $Val extends Tasks>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Tasks
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -151,6 +157,8 @@ class __$$TasksImplCopyWithImpl<$Res>
       _$TasksImpl _value, $Res Function(_$TasksImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Tasks
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -278,12 +286,14 @@ class _$TasksImpl implements _Tasks {
             (identical(other.starred, starred) || other.starred == starred));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, createdAt, updatedAt, title,
       dueDate, categoryId, spaceId, description, completed, starred);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Tasks
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$TasksImplCopyWith<_$TasksImpl> get copyWith =>
@@ -332,8 +342,11 @@ abstract class _Tasks implements Tasks {
   bool get completed;
   @override
   bool get starred;
+
+  /// Create a copy of Tasks
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$TasksImplCopyWith<_$TasksImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

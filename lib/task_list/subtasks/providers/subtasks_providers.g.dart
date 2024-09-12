@@ -6,7 +6,7 @@ part of 'subtasks_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$subtasksManagerHash() => r'fd35db50a9cbe6120873168dee00597e7a22991d';
+String _$subtasksManagerHash() => r'c7a91c45ff6dbc1af3c1aa8fc6b3f9c39855a815';
 
 /// See also [SubtasksManager].
 @ProviderFor(SubtasksManager)

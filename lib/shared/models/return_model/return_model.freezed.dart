@@ -21,7 +21,9 @@ mixin _$ReturnModel {
   dynamic get data => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ReturnModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ReturnModelCopyWith<ReturnModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -45,6 +47,8 @@ class _$ReturnModelCopyWithImpl<$Res, $Val extends ReturnModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ReturnModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -93,6 +97,8 @@ class __$$ReturnModelImplCopyWithImpl<$Res>
       _$ReturnModelImpl _value, $Res Function(_$ReturnModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ReturnModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -157,7 +163,9 @@ class _$ReturnModelImpl implements _ReturnModel {
   int get hashCode => Object.hash(runtimeType, message, success,
       const DeepCollectionEquality().hash(data), error);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ReturnModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ReturnModelImplCopyWith<_$ReturnModelImpl> get copyWith =>
@@ -179,8 +187,11 @@ abstract class _ReturnModel implements ReturnModel {
   dynamic get data;
   @override
   String? get error;
+
+  /// Create a copy of ReturnModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ReturnModelImplCopyWith<_$ReturnModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
