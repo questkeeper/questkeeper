@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,8 +14,7 @@ class ProfileRepository {
         'Bearer ${Supabase.instance.client.auth.currentSession!.accessToken}'
   };
   Future<ReturnModel> getMyProfile() async {
-    final response = await http.get(
-        Uri.parse('http://localhost:8787/v1/social/profile/me'),
+    final response = await http.get(Uri.parse('$baseApiUri/social/profile/me'),
         headers: header);
 
     if (response.statusCode != 200) {
@@ -31,8 +31,7 @@ class ProfileRepository {
   }
 
   Future<ReturnModel> updateUsername(String username) async {
-    final response = await http.post(
-        Uri.parse('http://localhost:8787/v1/social/profile/me'),
+    final response = await http.post(Uri.parse('$baseApiUri/social/profile/me'),
         body: const JsonEncoder().convert({"username": username}),
         headers: header);
 
@@ -51,7 +50,7 @@ class ProfileRepository {
 
   Future<ReturnModel> getProfile(String username) async {
     final response = await http.get(
-        Uri.parse('http://localhost:8787/v1/social/profile/$username'),
+        Uri.parse('$baseApiUri/v1/social/profile/$username'),
         headers: header);
 
     if (response.statusCode != 200) {
