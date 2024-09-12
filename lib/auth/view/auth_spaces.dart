@@ -32,13 +32,13 @@ class _AuthSpacesState extends ConsumerState<AuthSpaces> {
           scrollDirection: Axis.horizontal,
           dragStartBehavior: DragStartBehavior.down,
           controller: ref.read(authPageControllerProvider),
-          children: const [
-            AuthSpaceCard(currentSpaceScreen: AuthScreen()),
+          children: [
+            const AuthSpaceCard(currentSpaceScreen: AuthScreen()),
             AuthSpaceCard(
               currentSpaceScreen: UsernameScreen(),
-              baseColor: Color(0xfffb8b24),
+              baseColor: const Color(0xfffb8b24),
             ),
-            AuthSpaceCard(
+            const AuthSpaceCard(
               currentSpaceScreen: PetScreen(),
               baseColor: Colors.cyan,
             ),
