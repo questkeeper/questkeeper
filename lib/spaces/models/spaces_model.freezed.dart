@@ -25,8 +25,12 @@ mixin _$Spaces {
   DateTime? get updatedAt => throw _privateConstructorUsedError;
   String? get color => throw _privateConstructorUsedError;
 
+  /// Serializes this Spaces to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Spaces
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SpacesCopyWith<Spaces> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -48,6 +52,8 @@ class _$SpacesCopyWithImpl<$Res, $Val extends Spaces>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Spaces
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -95,6 +101,8 @@ class __$$SpacesImplCopyWithImpl<$Res>
       _$SpacesImpl _value, $Res Function(_$SpacesImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Spaces
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -159,11 +167,13 @@ class _$SpacesImpl implements _Spaces {
             (identical(other.color, color) || other.color == color));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, title, updatedAt, color);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Spaces
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SpacesImplCopyWith<_$SpacesImpl> get copyWith =>
@@ -194,8 +204,11 @@ abstract class _Spaces implements Spaces {
   DateTime? get updatedAt;
   @override
   String? get color;
+
+  /// Create a copy of Spaces
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SpacesImplCopyWith<_$SpacesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +18,20 @@ class AuthScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     void onSuccess(Session response) async {
       if (context.mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/home',
-          (route) => false,
-        );
+        if (response.user.userMetadata?['username'] == null) {
+          ref.read(authPageControllerProvider).nextPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeIn,
+              );
+
+          return;
+        } else {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/home',
+            (route) => false,
+          );
+          return;
+        }
       }
     }
 
@@ -31,8 +42,7 @@ class AuthScreen extends ConsumerWidget {
       );
     }
 
-    return Scaffold(
-        body: Align(
+    return Align(
       alignment: Alignment.center,
       child: Container(
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 0),
@@ -90,6 +100,6 @@ class AuthScreen extends ConsumerWidget {
           ],
         ),
       ),
-    ));
+    );
   }
 }

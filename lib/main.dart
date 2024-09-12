@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:questkeeper/auth/view/auth_password_screen.dart';
-import 'package:questkeeper/auth/view/auth_screen.dart';
 import 'package:questkeeper/auth/view/auth_gate.dart';
+import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
@@ -94,7 +94,7 @@ class MyApp extends ConsumerWidget {
       themeMode: ThemeMode.system,
       home: const AuthGate(),
       routes: {
-        '/signin': (context) => const AuthScreen(),
+        '/signin': (context) => const AuthSpaces(),
         '/signin/password': (context) => const SignInPasswordScreen(),
         '/home': (context) => const TabView(),
 

@@ -26,8 +26,12 @@ mixin _$Subtask {
   bool get completed => throw _privateConstructorUsedError;
   int get taskId => throw _privateConstructorUsedError;
 
+  /// Serializes this Subtask to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Subtask
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SubtaskCopyWith<Subtask> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -49,6 +53,8 @@ class _$SubtaskCopyWithImpl<$Res, $Val extends Subtask>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Subtask
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -101,6 +107,8 @@ class __$$SubtaskImplCopyWithImpl<$Res>
       _$SubtaskImpl _value, $Res Function(_$SubtaskImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Subtask
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -180,12 +188,14 @@ class _$SubtaskImpl implements _Subtask {
             (identical(other.taskId, taskId) || other.taskId == taskId));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, title, priority, completed, taskId);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Subtask
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SubtaskImplCopyWith<_$SubtaskImpl> get copyWith =>
@@ -219,8 +229,11 @@ abstract class _Subtask implements Subtask {
   bool get completed;
   @override
   int get taskId;
+
+  /// Create a copy of Subtask
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SubtaskImplCopyWith<_$SubtaskImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
