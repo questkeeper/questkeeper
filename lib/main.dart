@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:questkeeper/auth/view/auth_password_screen.dart';
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
+import 'package:questkeeper/familiars/views/familiars_view.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
@@ -99,7 +100,10 @@ class MyApp extends ConsumerWidget {
         '/home': (context) => const TabView(),
 
         // Settings stuff
-        '/settings/about': (context) => const AboutScreen()
+        '/settings/about': (context) => const AboutScreen(),
+
+        // Familiars stuff
+        '/familiars': (context) => const FamiliarsView(),
       },
     );
   }
