@@ -46,7 +46,14 @@ Future<void> main() async {
   }
 
   if (isDebug) {
-    const ProviderScope(child: MyApp());
+    // Run app without sentry
+    runApp(
+      const ProviderScope(
+        child: BetterFeedback(
+          child: MyApp(),
+        ),
+      ),
+    );
   } else {
     await SentryFlutter.init(
       (options) {
