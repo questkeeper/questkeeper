@@ -1,5 +1,6 @@
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
+import 'package:questkeeper/familiars/views/familiars_view.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -39,7 +40,9 @@ class _TabViewState extends ConsumerState<TabView> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
+      const FamiliarsView(),
       const AllSpacesScreen(),
+      const AllSpacesScreen(), // Placeholder for arcade
       const SettingsScreen(),
     ];
 
@@ -81,14 +84,20 @@ class _TabViewState extends ConsumerState<TabView> {
                 type: BottomNavigationBarType.fixed,
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
+                    icon: Icon(LucideIcons.paw_print),
+                    label: 'Familiars',
+                  ),
+                  BottomNavigationBarItem(
                     icon: Icon(LucideIcons.eclipse),
                     label: 'Spaces',
                   ),
                   BottomNavigationBarItem(
+                      icon: Icon(LucideIcons.handshake), label: 'Friends'),
+                  BottomNavigationBarItem(
                       icon: Icon(LucideIcons.user_cog), label: 'Settings'),
                 ],
                 currentIndex: _selectedIndex,
-                selectedItemColor: Colors.accents.first,
+                selectedItemColor: Colors.green,
                 onTap: _onItemTapped,
               ),
             ),
@@ -125,15 +134,16 @@ class _TabViewState extends ConsumerState<TabView> {
                   labelType: NavigationRailLabelType.all,
                   destinations: const <NavigationRailDestination>[
                     NavigationRailDestination(
-                        icon: Icon(LucideIcons.list_start),
-                        label: Text('Home')),
+                        icon: Icon(LucideIcons.paw_print),
+                        label: Text('Familiars')),
                     NavigationRailDestination(
                         icon: Icon(LucideIcons.eclipse), label: Text('Spaces')),
                     NavigationRailDestination(
-                        icon: Icon(LucideIcons.trophy), label: Text('Arcade')),
+                        icon: Icon(LucideIcons.handshake),
+                        label: Text('Friends')),
                     NavigationRailDestination(
                         icon: Icon(LucideIcons.user_cog),
-                        label: Text('Profile')),
+                        label: Text('Settings')),
                   ],
                 ),
                 const VerticalDivider(thickness: 1, width: 1),

@@ -414,6 +414,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.0"
+  flame_tiled:
+    dependency: "direct main"
+    description:
+      name: flame_tiled
+      sha256: bb00888e0893413ffeb083e24cee3d5f7c08cbae5d8df551f14a564fdf7c5282
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.20.3"
   flex_color_picker:
     dependency: "direct main"
     description:
@@ -1247,6 +1255,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.2"
+  tiled:
+    dependency: transitive
+    description:
+      name: tiled
+      sha256: "988a57a07df280bb4a5d722c9e400b282d8d9a652b5a2afc8b68e1308bbf8222"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.2"
   timing:
     dependency: transitive
     description:
