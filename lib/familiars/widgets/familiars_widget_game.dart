@@ -7,7 +7,7 @@ class FamiliarsWidgetGame extends FlameGame {
   late SpriteAnimation idleAnimation;
   late SpriteAnimation sleepAnimation;
   late SpriteAnimation sleepTransitionAnimation;
-  late TiledMap map;
+  TiledComponent? mapComponent;
 
   double idleTime = 0;
   final double idleDuration = 5;
@@ -16,13 +16,11 @@ class FamiliarsWidgetGame extends FlameGame {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    final component = await TiledComponent.load('main_map.tmx',
-        Vector2.all(32)); // Clip this so it doesn't leave parent container
-    add(component);
+    mapComponent = await TiledComponent.load('main_map.tmx', Vector2.all(32));
+    add(mapComponent!);
 
     final spriteSheet = await images.load('red_panda_sprites.png');
 
-    // Create the idle animation (first row)
     idleAnimation = SpriteAnimation.fromFrameData(
       spriteSheet,
       SpriteAnimationData.sequenced(
@@ -40,11 +38,10 @@ class FamiliarsWidgetGame extends FlameGame {
         textureSize: Vector2.all(32),
         stepTime: 0.15,
         loop: false,
-        texturePosition: Vector2(0, 32 * 5), // Start at the fifth row
+        texturePosition: Vector2(0, 32 * 5),
       ),
     );
 
-    // Create the second animation (second row)
     sleepAnimation = SpriteAnimation.fromFrameData(
       spriteSheet,
       SpriteAnimationData.sequenced(
@@ -52,47 +49,51 @@ class FamiliarsWidgetGame extends FlameGame {
         textureSize: Vector2(32, 32),
         stepTime: 0.15,
         loop: true,
-        texturePosition: Vector2(0, 32 * 6), // Start at the sixth row
+        texturePosition: Vector2(0, 32 * 6),
       ),
     );
 
     redPanda = SpriteAnimationComponent(
       animation: idleAnimation,
       size: Vector2.all(96),
+      // Center the red panda in the game
+      position: Vector2(size.x / 2, size.y / 2 - 64),
     );
 
-    redPanda.position = size / 2 - redPanda.size / 2;
     add(redPanda);
+
+    camera.viewfinder.anchor = Anchor.topLeft;
   }
 
-  // @override
-  // void update(double dt) {
-  //   super.update(dt);
+  @override
+  void onGameResize(Vector2 canvasSize) {
+    super.onGameResize(canvasSize);
 
-  //   idleTime += dt;
-  //   if (idleTime >= idleDuration) {
-  //     idleTime = 0;
-  //     switchToSleepAnimation();
-  //   }
+    // Check if the map is loaded
+    if (mapComponent == null) {
+      return; // Skip resizing if map is not loaded yet
+    }
 
-  //   // Keep the second animation only, don't switch back
-  //   if (redPanda.animation == sleepAnimation) {
-  //     idleTime = 0;
-  //   }
-  // }
+    if (mapComponent != null) {
+      // Resize the map to fit the screen width
+      final scale = canvasSize.x / mapComponent!.width;
+      mapComponent!.scale = Vector2.all(scale);
+    }
 
-  // void switchToSleepAnimation() {
-  //   if (redPanda.animation == idleAnimation) {
-  //     redPanda.animation = sleepTransitionAnimation;
-  //     redPanda.animation = sleepAnimation;
-  //   } else {
-  //     redPanda.animation = idleAnimation;
-  //   }
-  // }
+    // Position the red panda
+    redPanda.position = Vector2(
+      canvasSize.x / 2,
+      canvasSize.y - redPanda.height / 2,
+    );
+  }
 
   @override
   void update(double dt) {
     super.update(dt);
+
+    if (mapComponent == null) {
+      return; // Skip update if map is not loaded yet
+    }
 
     idleTime += dt;
     if (idleTime >= idleDuration && redPanda.animation == idleAnimation) {
@@ -109,7 +110,7 @@ class FamiliarsWidgetGame extends FlameGame {
   }
 
   void wakeUp() {
-    redPanda.animation = idleAnimation;
+    redPanda.animation = idleAnimation.reversed();
     idleTime = 0;
   }
 }
