@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:questkeeper/auth/view/auth_password_screen.dart';
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
+import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/familiars/views/familiars_view.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
@@ -44,21 +45,25 @@ Future<void> main() async {
     debugPrint("Platform implementation error: $e");
   }
 
-  await SentryFlutter.init(
-    (options) {
-      options.dsn =
-          'https://87811f2d260a89b1fd9f3ccc4c3ee423@o4507823426895872.ingest.us.sentry.io/4507823429976064';
-      options.tracesSampleRate = 1.0;
-      options.profilesSampleRate = 1.0;
-    },
-    appRunner: () => runApp(
-      const ProviderScope(
-        child: BetterFeedback(
-          child: MyApp(),
+  if (isDebug) {
+    const ProviderScope(child: MyApp());
+  } else {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn =
+            'https://87811f2d260a89b1fd9f3ccc4c3ee423@o4507823426895872.ingest.us.sentry.io/4507823429976064';
+        options.tracesSampleRate = 1.0;
+        options.profilesSampleRate = 1.0;
+      },
+      appRunner: () => runApp(
+        const ProviderScope(
+          child: BetterFeedback(
+            child: MyApp(),
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class MyApp extends ConsumerWidget {
