@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
 import 'package:questkeeper/friends/providers/friends_provider.dart';
+import 'package:questkeeper/friends/widgets/friend_search.dart';
 
 class FriendsList extends ConsumerStatefulWidget {
   const FriendsList({super.key});
@@ -48,6 +49,22 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                 child: _buildFriendsList(
               friendsList.length > 3 ? friendsList.sublist(3) : [],
             )),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                decoration: const InputDecoration(
+                  hintText: 'Filter or add friends',
+                  prefixIcon: Icon(Icons.search),
+                ),
+                onSubmitted: (query) {
+                  showSearch(
+                    context: context,
+                    delegate: FriendSearchDelegate(),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
