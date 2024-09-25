@@ -1,6 +1,7 @@
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/familiars/views/familiars_view.dart';
+import 'package:questkeeper/friends/views/friends_list.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -42,7 +43,7 @@ class _TabViewState extends ConsumerState<TabView> {
     final List<Widget> pages = [
       const FamiliarsView(),
       const AllSpacesScreen(),
-      const AllSpacesScreen(), // Placeholder for arcade
+      const FriendsList(), // Placeholder for arcade
       const SettingsScreen(),
     ];
 
