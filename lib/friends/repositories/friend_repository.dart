@@ -27,15 +27,15 @@ class FriendRepository {
     }
   }
 
-  // Future<Friend> getFriendById(String id) async {
-  //   final response = await http.get(Uri.parse('$apiUrl/friends/$id'));
+  Future<Friend> getFriendById(String id) async {
+    final response = await http.get(Uri.parse('$baseApiUri/friends/$id'));
 
-  //   if (response.statusCode == 200) {
-  //     return Friend.fromJson(json.decode(response.body));
-  //   } else {
-  //     throw Exception('Failed to load friend');
-  //   }
-  // }
+    if (response.statusCode == 200) {
+      return Friend.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load friend');
+    }
+  }
 
   Future<void> addFriend(Friend friend) async {
     final response = await http.post(
