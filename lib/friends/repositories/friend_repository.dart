@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
+import 'package:questkeeper/friends/models/user_search_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FriendRepository {
@@ -27,6 +29,34 @@ class FriendRepository {
     }
   }
 
+  Future<Map<String, List<UserSearchResult>>> fetchPendingFriends() async {
+    final response = await http
+        .get(Uri.parse('$baseApiUri/social/friends/pending'), headers: header);
+
+    try {
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        // Get sent and received requests
+        final sentRequests = data
+            .where((element) => element['status'] == 'sent')
+            .map((json) => UserSearchResult.fromJson(json))
+            .toList();
+        final receivedRequests = data
+            .where((element) => element['status'] == 'received')
+            .map((json) => UserSearchResult.fromJson(json))
+            .toList();
+
+        return {'sent': sentRequests, 'received': receivedRequests};
+      } else {
+        debugPrint(response.body);
+        throw Exception('Failed to load pending friends');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return {'sent': [], 'received': []};
+    }
+  }
+
   Future<Friend> getFriendById(String id) async {
     final response = await http.get(Uri.parse('$baseApiUri/friends/$id'));
 
@@ -37,36 +67,42 @@ class FriendRepository {
     }
   }
 
-  Future<void> addFriend(Friend friend) async {
+  Future<void> addFriend(String username) async {
     final response = await http.post(
-      Uri.parse('$baseApiUri/social/friends'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(friend.toJson()),
+      Uri.parse('$baseApiUri/social/friends/request'),
+      headers: header,
+      body: json.encode({'username': username}),
     );
 
-    if (response.statusCode != 201) {
+    if (response.statusCode != 200) {
       throw Exception('Failed to add friend');
     }
   }
 
-  Future<void> updateFriend(Friend friend) async {
-    final response = await http.put(
-      Uri.parse('$baseApiUri/social/friends/${friend.userId}'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(friend.toJson()),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to update friend');
-    }
-  }
-
-  Future<void> deleteFriend(String id) async {
-    final response =
-        await http.delete(Uri.parse('$baseApiUri/social/friends/$id'));
+  Future<void> removeFriend(String username) async {
+    final response = await http.delete(
+        Uri.parse('$baseApiUri/social/friends/$username'),
+        headers: header);
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete friend');
+    }
+  }
+
+  Future<List<UserSearchResult>> searchUserProfile(String username) async {
+    final response = await http.get(
+        Uri.parse('$baseApiUri/social/friends/search?username=$username'),
+        headers: header);
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      debugPrint(data.toString());
+      final usersList =
+          data.map((json) => UserSearchResult.fromMap(json)).toList();
+
+      return usersList;
+    } else {
+      throw Exception('Failed to search user profile');
     }
   }
 }
