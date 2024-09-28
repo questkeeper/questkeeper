@@ -35,15 +35,14 @@ class FriendRepository {
 
     try {
       if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        // Get sent and received requests
-        final sentRequests = data
-            .where((element) => element['status'] == 'sent')
-            .map((json) => UserSearchResult.fromJson(json))
+        List<UserSearchResult> sentRequests = json
+            .decode(response.body)['sent']
+            .map<UserSearchResult>((json) => UserSearchResult.fromMap(json))
             .toList();
-        final receivedRequests = data
-            .where((element) => element['status'] == 'received')
-            .map((json) => UserSearchResult.fromJson(json))
+
+        List<UserSearchResult> receivedRequests = json
+            .decode(response.body)['received']
+            .map<UserSearchResult>((json) => UserSearchResult.fromMap(json))
             .toList();
 
         return {'sent': sentRequests, 'received': receivedRequests};
