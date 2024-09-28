@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:questkeeper/friends/models/user_search_model.dart';
+import 'package:questkeeper/friends/repositories/friend_repository.dart';
 
 class FriendSearchDelegate extends SearchDelegate {
+  final FriendRepository _repository = FriendRepository();
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -25,8 +29,26 @@ class FriendSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return const Center(
-      child: Text('Search results'),
+    return FutureBuilder<List<UserSearchResult>>(
+      future: _repository.searchUserProfile(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No results found'));
+        } else {
+          debugPrint('Results found: ${snapshot.data!.length}');
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              final friend = snapshot.data![index];
+              return userSearchResultTile(friend, context);
+            },
+          );
+        }
+      },
     );
   }
 
@@ -53,6 +75,40 @@ class FriendSearchDelegate extends SearchDelegate {
             bottom: Radius.circular(16),
           ),
         ),
+      ),
+    );
+  }
+
+// Get context
+  Widget userSearchResultTile(UserSearchResult user, BuildContext context) {
+    final isPending = user.status == 'pending';
+    final isFriend = user.status == 'friend';
+    return Card(
+      margin: const EdgeInsets.all(8),
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Theme.of(context).focusColor,
+      child: ListTile(
+        title: Text(user.username),
+        subtitle: Text(!isFriend && !isPending ? 'Not friends' : user.status!),
+        trailing: isFriend
+            ? IconButton(
+                icon: const Icon(LucideIcons.check),
+                onPressed: () {},
+              )
+            : isPending
+                ? IconButton(
+                    icon: const Icon(LucideIcons.x),
+                    onPressed: () {
+                      _repository.removeFriend(user.username);
+                    },
+                  )
+                : IconButton(
+                    icon: const Icon(LucideIcons.plus),
+                    onPressed: () {
+                      _repository.addFriend(user.username);
+                    },
+                  ),
       ),
     );
   }
