@@ -1,5 +1,4 @@
 import 'package:questkeeper/friends/models/friend_model.dart';
-import 'package:questkeeper/friends/models/user_search_model.dart';
 import 'package:questkeeper/friends/repositories/friend_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -36,10 +35,10 @@ class FriendsManager extends _$FriendsManager {
     }
   }
 
-  Future<void> removeFriend(Friend friend) async {
+  Future<void> removeFriend(String username) async {
     state = const AsyncValue.loading();
     try {
-      await _repository.removeFriend(friend.username);
+      await _repository.removeFriend(username);
       await refreshFriends();
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -52,15 +51,6 @@ class FriendsManager extends _$FriendsManager {
       state = AsyncValue.data(await ref.refresh(friendsManagerProvider.future));
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
-
-  Future<Map<String, List<UserSearchResult>>> pendingRequests() async {
-    try {
-      var pending = await _repository.fetchPendingFriends();
-      return pending;
-    } catch (e) {
-      throw Exception("Error fetching pending friends: $e");
     }
   }
 }
