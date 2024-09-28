@@ -25,16 +25,6 @@ class FriendsManager extends _$FriendsManager {
     }
   }
 
-  Future<void> addFriend(String username) async {
-    state = const AsyncValue.loading();
-    try {
-      await _repository.addFriend(username);
-      await refreshFriends();
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
-
   Future<void> removeFriend(String username) async {
     state = const AsyncValue.loading();
     try {

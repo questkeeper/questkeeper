@@ -29,8 +29,8 @@ class FriendsRequestManager extends _$FriendsRequestManager {
   Future<void> acceptRequest(UserSearchResult request) async {
     state = const AsyncValue.loading();
     try {
-      // await _repository.acceptFriendRequest(request.username);
-      await refreshPendingRequests();
+      await _repository.acceptFriendRequest(request.username);
+      _refreshFriendsAndRequests();
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
@@ -39,7 +39,7 @@ class FriendsRequestManager extends _$FriendsRequestManager {
   Future<void> rejectRequest(UserSearchResult request) async {
     state = const AsyncValue.loading();
     try {
-      // await _repository.rejectFriendRequest(request.username);
+      await _repository.rejectFriendRequest(request.username);
       await refreshPendingRequests();
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -49,12 +49,8 @@ class FriendsRequestManager extends _$FriendsRequestManager {
   Future<void> refreshPendingRequests() async {
     state = const AsyncValue.loading();
     try {
-      state = AsyncValue.data(await ref.refresh(
-        friendsRequestManagerProvider.future,
-      ));
-      // Call friendsManagerProvider and refresh
-      await (friendsManagerProvider.notifier as FriendsManager)
-          .refreshFriends();
+      state = AsyncValue.data(
+          await ref.refresh(friendsRequestManagerProvider.future));
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
@@ -63,7 +59,7 @@ class FriendsRequestManager extends _$FriendsRequestManager {
   Future<void> sendRequest(String username) async {
     state = const AsyncValue.loading();
     try {
-      await _repository.addFriend(username);
+      await _repository.requestFriend(username);
       await refreshPendingRequests();
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -78,5 +74,12 @@ class FriendsRequestManager extends _$FriendsRequestManager {
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
+  }
+
+  void _refreshFriendsAndRequests() {
+    ref.invalidate(friendsManagerProvider);
+    ref.invalidate(friendsRequestManagerProvider);
+    ref.read(friendsManagerProvider.notifier).refreshFriends();
+    ref.read(friendsRequestManagerProvider.notifier).refreshPendingRequests();
   }
 }

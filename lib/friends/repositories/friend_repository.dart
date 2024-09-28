@@ -66,7 +66,7 @@ class FriendRepository {
     }
   }
 
-  Future<void> addFriend(String username) async {
+  Future<void> requestFriend(String username) async {
     final response = await http.post(
       Uri.parse('$baseApiUri/social/friends/request'),
       headers: header,
@@ -75,6 +75,31 @@ class FriendRepository {
 
     if (response.statusCode != 200) {
       throw Exception('Failed to add friend');
+    }
+  }
+
+  Future<void> acceptFriendRequest(String username) async {
+    final response = await http.post(
+      Uri.parse('$baseApiUri/social/friends/accept'),
+      headers: header,
+      body: json.encode({'username': username}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to accept friend request');
+    }
+  }
+
+  // Also used for canceling a sent friend request
+  Future<void> rejectFriendRequest(String username) async {
+    final response = await http.post(
+      Uri.parse('$baseApiUri/social/friends/reject'),
+      headers: header,
+      body: json.encode({'username': username}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to reject friend request');
     }
   }
 
