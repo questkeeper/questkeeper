@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:questkeeper/friends/models/user_search_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/friends/providers/friends_request_provider.dart';
 import 'package:questkeeper/friends/widgets/user_search_result_tile.dart';
 
-class FriendRequestBottomSheet extends StatelessWidget {
+class FriendRequestBottomSheet extends ConsumerWidget {
   const FriendRequestBottomSheet({
     super.key,
-    required this.sentRequests,
-    required this.receivedRequests,
   });
 
-  final List<UserSearchResult> sentRequests;
-  final List<UserSearchResult> receivedRequests;
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pendingRequestsAsyncValue = ref.watch(friendsRequestManagerProvider);
+    final pendingRequests = pendingRequestsAsyncValue.asData?.value ?? {};
+    final sentRequests = pendingRequests['sent'] ?? [];
+    final receivedRequests = pendingRequests['received'] ?? [];
+
     return Column(
       children: [
         sentRequests.isNotEmpty

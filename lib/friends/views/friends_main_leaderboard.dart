@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
-import 'package:questkeeper/friends/models/user_search_model.dart';
 import 'package:questkeeper/friends/providers/friends_provider.dart';
 import 'package:questkeeper/friends/providers/friends_request_provider.dart';
 import 'package:questkeeper/friends/widgets/friend_list_tile.dart';
@@ -17,16 +16,11 @@ class FriendsList extends ConsumerStatefulWidget {
 }
 
 class _FriendsListState extends ConsumerState<FriendsList> {
-  void _showPendingRequestsBottomSheet(BuildContext context,
-      Map<String, List<UserSearchResult>> pendingRequests) {
+  void _showPendingRequestsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        final sentRequests = pendingRequests['sent'] ?? [];
-        final receivedRequests = pendingRequests['received'] ?? [];
-
-        return FriendRequestBottomSheet(
-            sentRequests: sentRequests, receivedRequests: receivedRequests);
+        return const FriendRequestBottomSheet();
       },
     );
   }
@@ -108,8 +102,8 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                             pendingRequests['received']!.length) >
                         0
                     ? TextButton.icon(
-                        onPressed: () => _showPendingRequestsBottomSheet(
-                            context, pendingRequests),
+                        onPressed: () =>
+                            _showPendingRequestsBottomSheet(context),
                         icon: const Icon(LucideIcons.user_plus),
                         label: Text(
                             "Pending Requests (${pendingRequests['sent']!.length + pendingRequests['received']!.length})"),
