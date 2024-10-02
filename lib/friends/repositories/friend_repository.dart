@@ -37,7 +37,8 @@ class FriendRepository {
       if (response.statusCode == 200) {
         List<UserSearchResult> sentRequests = json
             .decode(response.body)['sent']
-            .map<UserSearchResult>((json) => UserSearchResult.fromMap(json))
+            .map<UserSearchResult>(
+                (json) => UserSearchResult.fromMap(json).copyWith(sent: true))
             .toList();
 
         List<UserSearchResult> receivedRequests = json
@@ -47,11 +48,9 @@ class FriendRepository {
 
         return {'sent': sentRequests, 'received': receivedRequests};
       } else {
-        debugPrint(response.body);
         throw Exception('Failed to load pending friends');
       }
     } catch (e) {
-      debugPrint(e.toString());
       return {'sent': [], 'received': []};
     }
   }
@@ -97,6 +96,8 @@ class FriendRepository {
       headers: header,
       body: json.encode({'username': username}),
     );
+
+    debugPrint(response.body);
 
     if (response.statusCode != 200) {
       throw Exception('Failed to reject friend request');
