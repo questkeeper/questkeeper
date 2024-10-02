@@ -5,21 +5,25 @@ class UserSearchResult {
   final String userId;
   final String username;
   final String? status;
+  final bool? sent;
   UserSearchResult({
     required this.userId,
     required this.username,
     this.status,
+    this.sent,
   });
 
   UserSearchResult copyWith({
     String? userId,
     String? username,
     String? status,
+    bool? sent,
   }) {
     return UserSearchResult(
       userId: userId ?? this.userId,
       username: username ?? this.username,
       status: status ?? this.status,
+      sent: sent ?? this.sent,
     );
   }
 
@@ -28,6 +32,7 @@ class UserSearchResult {
       'userId': userId,
       'username': username,
       'status': status,
+      'sent': sent,
     };
   }
 
@@ -36,6 +41,7 @@ class UserSearchResult {
       userId: map['userId'] as String,
       username: map['username'] as String,
       status: map['status'] != null ? map['status'] as String : null,
+      sent: map['sent'] != null ? map['sent'] as bool : null,
     );
   }
 
@@ -45,8 +51,9 @@ class UserSearchResult {
       UserSearchResult.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() =>
-      'UserSearchResult(userId: $userId, username: $username, status: $status)';
+  String toString() {
+    return 'UserSearchResult(userId: $userId, username: $username, status: $status, sent: $sent)';
+  }
 
   @override
   bool operator ==(covariant UserSearchResult other) {
@@ -54,9 +61,15 @@ class UserSearchResult {
 
     return other.userId == userId &&
         other.username == username &&
-        other.status == status;
+        other.status == status &&
+        other.sent == sent;
   }
 
   @override
-  int get hashCode => userId.hashCode ^ username.hashCode ^ status.hashCode;
+  int get hashCode {
+    return userId.hashCode ^
+        username.hashCode ^
+        status.hashCode ^
+        sent.hashCode;
+  }
 }
