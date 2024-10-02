@@ -9,11 +9,9 @@ class UserSearchResultTile extends ConsumerWidget {
   const UserSearchResultTile({
     super.key,
     required this.user,
-    this.sent, // Checks if I sent the request or received it
   });
 
   final UserSearchResult user;
-  final bool? sent;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,6 +21,7 @@ class UserSearchResultTile extends ConsumerWidget {
     final friendsManager = ref.watch(friendsManagerProvider.notifier);
     final isPending = user.status == 'pending';
     final isFriend = user.status == 'friend';
+    final sent = user.sent;
     return Card(
       margin: const EdgeInsets.all(8),
       elevation: 3,
@@ -32,67 +31,118 @@ class UserSearchResultTile extends ConsumerWidget {
       child: Column(
         children: [
           ListTile(
-              title: Text(user.username),
-              subtitle:
-                  Text(!isFriend && !isPending ? 'Not friends' : user.status!),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      if (isFriend) {
-                        friendsManager.removeFriend(user.username);
-                      } else if (isPending) {
-                        friendRequestManager.rejectRequest(user);
-                      } else {
-                        if (sent == true) {
-                          friendRequestManager.acceptRequest(user);
-                        } else {
-                          friendRequestManager.sendRequest(user.username);
-                        }
-                      }
-                    },
-                    icon: Icon(
-                      isFriend
-                          ? LucideIcons.x
-                          : isPending
-                              ? LucideIcons.x
-                              : LucideIcons.plus,
-                      size: 16,
-                    ),
-                    label: Text(
-                      switch (isFriend) {
-                        true => 'Remove',
-                        false => isPending
-                            ? sent == true
-                                ? 'Reject'
-                                : 'Cancel'
-                            : 'Send',
-                      },
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: sent == true
-                        ? const SizedBox()
-                        : FilledButton.icon(
-                            onPressed: () {
-                              if (isPending) {
-                                friendRequestManager.acceptRequest(user);
-                              } else {
-                                friendRequestManager.sendRequest(user.username);
-                              }
-                            },
-                            label: Text(
-                              isPending ? 'Accept' : 'Request',
-                            ),
-                            icon: const Icon(LucideIcons.check),
-                          ),
-                  ),
-                ],
-              )),
+            title: Text(user.username),
+            subtitle: Text(_getSubtitleText(isFriend, isPending, sent)),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: _buildActionButtons(
+                isFriend: isFriend,
+                isPending: isPending,
+                sent: sent,
+                onRemoveFriend: () =>
+                    friendsManager.removeFriend(user.username),
+                onRejectRequest: () => friendRequestManager.rejectRequest(user),
+                onAcceptRequest: () => friendRequestManager.acceptRequest(user),
+                onSendRequest: () =>
+                    friendRequestManager.sendRequest(user.username),
+              ),
+            ),
+          )
         ],
+      ),
+    );
+  }
+
+  String _getSubtitleText(bool isFriend, bool isPending, bool? sent) {
+    if (isFriend) return user.status ?? 'Friends';
+    if (isPending) {
+      return sent == true ? 'Request sent' : 'Request received';
+    }
+    return 'Not friends';
+  }
+
+  List<Widget> _buildActionButtons({
+    required bool isFriend,
+    required bool isPending,
+    required bool? sent,
+    required VoidCallback onRemoveFriend,
+    required VoidCallback onRejectRequest,
+    required VoidCallback onAcceptRequest,
+    required VoidCallback onSendRequest,
+  }) {
+    if (isFriend) {
+      return [
+        _buildButton(
+          icon: LucideIcons.x,
+          label: 'Remove',
+          onPressed: onRemoveFriend,
+        ),
+      ];
+    }
+
+    if (isPending) {
+      debugPrint('Sent: $sent');
+      if (sent == true) {
+        return [
+          _buildButton(
+            icon: LucideIcons.x,
+            label: 'Cancel',
+            onPressed: onRejectRequest,
+          ),
+        ];
+      } else {
+        return [
+          _buildButton(
+            icon: LucideIcons.x,
+            label: 'Reject',
+            onPressed: onRejectRequest,
+          ),
+          const SizedBox(width: 8),
+          _buildButton(
+            icon: LucideIcons.check,
+            label: 'Accept',
+            onPressed: onAcceptRequest,
+            isFilled: true,
+          ),
+        ];
+      }
+    }
+
+    // Not friends and no pending request
+    return [
+      _buildButton(
+        icon: LucideIcons.plus,
+        label: 'Send Request',
+        onPressed: onSendRequest,
+        isFilled: true,
+      ),
+    ];
+  }
+
+  Widget _buildButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    bool isFilled = false,
+  }) {
+    final button = isFilled
+        ? FilledButton.icon as Widget Function({
+            required VoidCallback onPressed,
+            required Widget icon,
+            required Widget label,
+          })
+        : ElevatedButton.icon as Widget Function({
+            required VoidCallback onPressed,
+            required Widget icon,
+            required Widget label,
+          });
+
+    return button(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 16),
+      label: Text(
+        label,
+        style: const TextStyle(fontSize: 12),
       ),
     );
   }
