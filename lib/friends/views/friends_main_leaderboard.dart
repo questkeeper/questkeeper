@@ -18,6 +18,11 @@ class FriendsList extends ConsumerStatefulWidget {
 class _FriendsListState extends ConsumerState<FriendsList> {
   void _showPendingRequestsBottomSheet(BuildContext context) {
     showModalBottomSheet(
+      enableDrag: true,
+      isDismissible: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      useSafeArea: true,
       context: context,
       builder: (BuildContext context) {
         return const FriendRequestBottomSheet();

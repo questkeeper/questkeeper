@@ -96,6 +96,7 @@ class MyApp extends ConsumerWidget {
                 outlinedButtonTheme: components.outlinedButtonTheme,
                 elevatedButtonTheme: components.elevatedButtonTheme,
                 filledButtonTheme: components.filledButtonTheme,
+                bottomSheetTheme: components.bottomSheetTheme,
               )
           : theme.dark().copyWith(
                 appBarTheme: components.appBarTheme,
@@ -104,6 +105,7 @@ class MyApp extends ConsumerWidget {
                 outlinedButtonTheme: components.outlinedButtonTheme,
                 elevatedButtonTheme: components.elevatedButtonTheme,
                 filledButtonTheme: components.filledButtonTheme,
+                bottomSheetTheme: components.bottomSheetTheme,
               ),
       themeMode: ThemeMode.system,
       home: const AuthGate(),
