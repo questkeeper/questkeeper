@@ -43,7 +43,7 @@ class FriendSearchDelegate extends SearchDelegate {
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               final friend = snapshot.data![index];
-              return UserSearchResultTile(user: friend, context: context);
+              return UserSearchResultTile(user: friend);
             },
           );
         }
