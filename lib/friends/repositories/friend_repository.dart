@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
@@ -97,8 +96,6 @@ class FriendRepository {
       body: json.encode({'username': username}),
     );
 
-    debugPrint(response.body);
-
     if (response.statusCode != 200) {
       throw Exception('Failed to reject friend request');
     }
@@ -121,7 +118,6 @@ class FriendRepository {
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      debugPrint(data.toString());
       final usersList =
           data.map((json) => UserSearchResult.fromMap(json)).toList();
 

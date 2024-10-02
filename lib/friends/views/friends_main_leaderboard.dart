@@ -57,16 +57,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
           style: Theme.of(context).textTheme.headlineLarge,
         ),
         elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(LucideIcons.user_plus),
-              iconSize: 32,
-            ),
-          ),
-        ],
+        scrolledUnderElevation: 0,
       ),
       body: Column(
         children: [
