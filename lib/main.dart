@@ -5,7 +5,7 @@ import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/familiars/views/familiars_view.dart';
-import 'package:questkeeper/friends/views/friends_list.dart';
+import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
