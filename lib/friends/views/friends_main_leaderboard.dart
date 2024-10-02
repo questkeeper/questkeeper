@@ -25,11 +25,13 @@ class _FriendsListState extends ConsumerState<FriendsList> {
     );
   }
 
-  Widget _buildFriendsList(List<Friend> friendsList) {
+  Widget _buildFriendsList(List<Friend> friendsList, bool isPodiumActive) {
     return friendsList.isEmpty
         ? Center(
             child: Text(
-              'No friends yet. Add some!',
+              isPodiumActive
+                  ? "No more friends to show!"
+                  : 'No friends yet. Add some!',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           )
@@ -75,6 +77,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                     Expanded(
                       child: _buildFriendsList(
                         friendsList.length > 3 ? friendsList.sublist(3) : [],
+                        friendsList.isNotEmpty,
                       ),
                     ),
                   ],
@@ -162,6 +165,13 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                       ),
                     ),
                     const SizedBox(height: 8),
+                    Text(
+                      friendsList[i].username,
+                      style: TextStyle(
+                        fontSize: i == 1 ? 24 : 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
                     Text(
                       '${friendsList[i].points} points',
                       style: TextStyle(
