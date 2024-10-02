@@ -5,6 +5,11 @@ import 'package:questkeeper/friends/widgets/user_search_result_tile.dart';
 
 class FriendSearchDelegate extends SearchDelegate {
   final FriendRepository _repository = FriendRepository();
+
+  FriendSearchDelegate({required String initialQuery}) {
+    query = initialQuery; // Assign the initial query
+  }
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -53,6 +58,9 @@ class FriendSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    if (query.isNotEmpty) {
+      return buildResults(context); // Automatically show results
+    }
     return const Center(
       child: Text('Search suggestions'),
     );
@@ -66,7 +74,7 @@ class FriendSearchDelegate extends SearchDelegate {
     final theme = Theme.of(context);
     return theme.copyWith(
       appBarTheme: theme.appBarTheme.copyWith(
-        toolbarHeight: 100,
+        toolbarHeight: 90,
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         shape: const RoundedRectangleBorder(

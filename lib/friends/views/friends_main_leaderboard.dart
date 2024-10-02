@@ -113,7 +113,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
               onSubmitted: (query) {
                 showSearch(
                   context: context,
-                  delegate: FriendSearchDelegate(),
+                  delegate: FriendSearchDelegate(initialQuery: query),
                   query: query,
                 );
               },
