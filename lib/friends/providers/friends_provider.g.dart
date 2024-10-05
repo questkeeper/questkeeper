@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'profile_provider.dart';
+part of 'friends_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$profileManagerHash() => r'3240c5f0d6186531bf6c15f03b403c6fba5c5189';
+String _$friendsManagerHash() => r'6517b2d6a7c42e3f924aa84f45bca62fb9a961de';
 
-/// See also [ProfileManager].
-@ProviderFor(ProfileManager)
-final profileManagerProvider =
-    AutoDisposeAsyncNotifierProvider<ProfileManager, Profile>.internal(
-  ProfileManager.new,
-  name: r'profileManagerProvider',
+/// See also [FriendsManager].
+@ProviderFor(FriendsManager)
+final friendsManagerProvider =
+    AutoDisposeAsyncNotifierProvider<FriendsManager, List<Friend>>.internal(
+  FriendsManager.new,
+  name: r'friendsManagerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$profileManagerHash,
+      : _$friendsManagerHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ProfileManager = AutoDisposeAsyncNotifier<Profile>;
+typedef _$FriendsManager = AutoDisposeAsyncNotifier<List<Friend>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

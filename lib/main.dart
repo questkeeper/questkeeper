@@ -5,6 +5,7 @@ import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/familiars/views/familiars_view.dart';
+import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
@@ -95,6 +96,7 @@ class MyApp extends ConsumerWidget {
                 outlinedButtonTheme: components.outlinedButtonTheme,
                 elevatedButtonTheme: components.elevatedButtonTheme,
                 filledButtonTheme: components.filledButtonTheme,
+                bottomSheetTheme: components.bottomSheetTheme,
               )
           : theme.dark().copyWith(
                 appBarTheme: components.appBarTheme,
@@ -103,6 +105,7 @@ class MyApp extends ConsumerWidget {
                 outlinedButtonTheme: components.outlinedButtonTheme,
                 elevatedButtonTheme: components.elevatedButtonTheme,
                 filledButtonTheme: components.filledButtonTheme,
+                bottomSheetTheme: components.bottomSheetTheme,
               ),
       themeMode: ThemeMode.system,
       home: const AuthGate(),
@@ -116,6 +119,9 @@ class MyApp extends ConsumerWidget {
 
         // Familiars stuff
         '/familiars': (context) => const FamiliarsView(),
+
+        // Friends
+        "/friends": (context) => const FriendsList(),
       },
     );
   }

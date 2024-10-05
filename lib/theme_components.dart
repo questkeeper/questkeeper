@@ -101,5 +101,17 @@ class ComponentsTheme {
     inputDecorationTheme: inputDecorationTheme(),
     elevatedButtonTheme: elevatedButtonTheme(),
     filledButtonTheme: filledButtonTheme(),
+    bottomSheetTheme: bottomSheetTheme(),
   );
+
+  static BottomSheetThemeData bottomSheetTheme() {
+    return const BottomSheetThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12.0),
+          topRight: Radius.circular(12.0),
+        ),
+      ),
+    );
+  }
 }
