@@ -47,7 +47,10 @@ class FriendRequestBottomSheet extends ConsumerWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final request = sentRequests[index];
-                    return UserSearchResultTile(user: request);
+                    return UserSearchResultTile(
+                      user: request,
+                      query: '',
+                    );
                   },
                   childCount: sentRequests.length,
                 ),
@@ -69,7 +72,10 @@ class FriendRequestBottomSheet extends ConsumerWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final request = receivedRequests[index];
-                    return UserSearchResultTile(user: request);
+                    return UserSearchResultTile(
+                      user: request,
+                      query: '',
+                    );
                   },
                   childCount: receivedRequests.length,
                 ),

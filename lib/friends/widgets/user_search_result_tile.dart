@@ -4,24 +4,42 @@ import 'package:questkeeper/friends/models/user_search_model.dart';
 import 'package:questkeeper/friends/providers/friends_provider.dart';
 import 'package:questkeeper/friends/providers/friends_request_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/friends/widgets/friend_search.dart';
 
 class UserSearchResultTile extends ConsumerWidget {
   const UserSearchResultTile({
     super.key,
     required this.user,
+    required this.query,
   });
 
   final UserSearchResult user;
+  final String query;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Get the ref to the request state
     final friendRequestManager =
         ref.watch(friendsRequestManagerProvider.notifier);
     final friendsManager = ref.watch(friendsManagerProvider.notifier);
+
     final isPending = user.status == 'pending';
     final isFriend = user.status == 'friend';
     final sent = user.sent;
+
+    void reloadSearch() {
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      } else {
+        showSearch(
+          context: context,
+          delegate: FriendSearchDelegate(
+            initialQuery: query,
+          ),
+          query: query,
+        );
+      }
+    }
+
     return Card(
       margin: const EdgeInsets.all(8),
       elevation: 3,
@@ -36,16 +54,25 @@ class UserSearchResultTile extends ConsumerWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: _buildActionButtons(
-                isFriend: isFriend,
-                isPending: isPending,
-                sent: sent,
-                onRemoveFriend: () =>
-                    friendsManager.removeFriend(user.username),
-                onRejectRequest: () => friendRequestManager.rejectRequest(user),
-                onAcceptRequest: () => friendRequestManager.acceptRequest(user),
-                onSendRequest: () =>
-                    friendRequestManager.sendRequest(user.username),
-              ),
+                  isFriend: isFriend,
+                  isPending: isPending,
+                  sent: sent,
+                  onRemoveFriend: () {
+                    friendsManager.removeFriend(user.username);
+                    reloadSearch();
+                  },
+                  onRejectRequest: () {
+                    friendRequestManager.rejectRequest(user);
+                    reloadSearch();
+                  },
+                  onAcceptRequest: () {
+                    friendRequestManager.acceptRequest(user);
+                    reloadSearch();
+                  },
+                  onSendRequest: () {
+                    friendRequestManager.sendRequest(user.username);
+                    reloadSearch();
+                  }),
             ),
           )
         ],

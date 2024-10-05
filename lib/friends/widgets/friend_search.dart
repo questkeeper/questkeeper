@@ -6,8 +6,10 @@ import 'package:questkeeper/friends/widgets/user_search_result_tile.dart';
 class FriendSearchDelegate extends SearchDelegate {
   final FriendRepository _repository = FriendRepository();
 
-  FriendSearchDelegate({required String initialQuery}) {
-    query = initialQuery; // Assign the initial query
+  FriendSearchDelegate({
+    required String initialQuery,
+  }) {
+    query = initialQuery;
   }
 
   @override
@@ -48,7 +50,7 @@ class FriendSearchDelegate extends SearchDelegate {
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               final friend = snapshot.data![index];
-              return UserSearchResultTile(user: friend);
+              return UserSearchResultTile(user: friend, query: query);
             },
           );
         }
