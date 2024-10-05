@@ -81,7 +81,6 @@ class UserSearchResultTile extends ConsumerWidget {
     }
 
     if (isPending) {
-      debugPrint('Sent: $sent');
       if (sent == true) {
         return [
           _buildButton(

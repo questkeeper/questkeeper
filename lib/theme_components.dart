@@ -106,8 +106,6 @@ class ComponentsTheme {
 
   static BottomSheetThemeData bottomSheetTheme() {
     return const BottomSheetThemeData(
-      modalBackgroundColor: Colors.transparent,
-      backgroundColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(12.0),
