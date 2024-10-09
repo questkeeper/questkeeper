@@ -50,7 +50,7 @@ class ProfileRepository {
 
   Future<ReturnModel> getProfile(String username) async {
     final response = await http.get(
-        Uri.parse('$baseApiUri/v1/social/profile/$username'),
+        Uri.parse('$baseApiUri/social/profile/$username'),
         headers: header);
 
     if (response.statusCode != 200) {
