@@ -1,29 +1,57 @@
+import 'dart:convert';
+
+import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
-import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class TasksRepository {
   TasksRepository();
+  final header = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization':
+        'Bearer ${Supabase.instance.client.auth.currentSession!.accessToken}'
+  };
 
   final supabase = Supabase.instance.client;
 
   Future<List<Tasks>> getTasks({bool isCompleted = false}) async {
-    final tasks = await supabase
-        .from("tasks")
-        .select()
-        .eq("completed", isCompleted)
-        .order("dueDate");
+    final response =
+        await http.get(Uri.parse('$baseApiUri/core/tasks'), headers: header);
 
-    final List<Tasks> tasksList = tasks.map((e) => Tasks.fromJson(e)).toList();
+    try {
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        final tasks = data.map((json) => Tasks.fromJson(json)).toList();
 
-    return tasksList;
+        return tasks;
+      } else {
+        throw Exception('Failed to load tasks: ${response.body}');
+      }
+    } catch (error) {
+      Sentry.captureException(error);
+      return [];
+    }
   }
 
   Future<Tasks> getTask(int id) async {
-    final task = await supabase.from("tasks").select().eq("id", id).single();
+    try {
+      final task = await http.get(Uri.parse('$baseApiUri/core/tasks/$id'),
+          headers: header);
 
-    return Tasks.fromJson(task);
+      return Tasks.fromJson(json.decode(task.body));
+    } catch (error) {
+      Sentry.captureException(error);
+      return Tasks(
+        id: id,
+        title: "Error",
+        description: "Error getting task",
+        dueDate: DateTime.now(),
+      );
+    }
   }
 
   Future<ReturnModel> createTask(Tasks task) async {
@@ -31,21 +59,21 @@ class TasksRepository {
     jsonTask.remove("id");
     jsonTask.remove("createdAt");
     jsonTask.remove("updatedAt");
+    jsonTask["userId"] = Supabase.instance.client.auth.currentUser!.id;
 
     jsonTask["dueDate"] =
         DateTime.parse(jsonTask["dueDate"]).toUtc().toIso8601String();
 
     try {
-      final newTask = await supabase.from("tasks").insert(jsonTask).select();
-
-      debugPrint("New task: $newTask");
+      final newTask = await http.post(Uri.parse('$baseApiUri/core/tasks'),
+          headers: header, body: json.encode(jsonTask));
 
       return ReturnModel(
-          data: Tasks.fromJson(newTask.first),
+          data: Tasks.fromJson(json.decode(newTask.body)),
           message: "Task created successfully",
           success: true);
     } catch (error) {
-      debugPrint("Error creating task: $error");
+      Sentry.captureException(error);
       return ReturnModel(
           message: "Error creating task item",
           success: false,
@@ -55,11 +83,16 @@ class TasksRepository {
 
   Future<ReturnModel> toggleStar(Tasks task) async {
     try {
-      await supabase
-          .from("tasks")
-          .update({"starred": !task.starred}).eq("id", task.id!);
-      return const ReturnModel(
-          message: "Task starred successfully", success: true);
+      final response = await http.patch(
+          Uri.parse('$baseApiUri/core/tasks/${task.id}/toggleStar'),
+          headers: header);
+
+      if (response.statusCode == 200) {
+        return const ReturnModel(
+            message: "Task starred successfully", success: true);
+      } else {
+        throw Exception('Failed to star task');
+      }
     } catch (error) {
       return ReturnModel(
           message: "Error starring task item",
@@ -70,12 +103,16 @@ class TasksRepository {
 
   Future<ReturnModel> toggleComplete(Tasks task) async {
     try {
-      await supabase
-          .from("tasks")
-          .update({"completed": !task.completed}).eq("id", task.id!);
+      final response = await http.patch(
+          Uri.parse('$baseApiUri/core/tasks/${task.id}/toggleComplete'),
+          headers: header);
 
-      return const ReturnModel(
-          message: "Task completed successfully", success: true);
+      if (response.statusCode == 200) {
+        return const ReturnModel(
+            message: "Task completed successfully", success: true);
+      } else {
+        throw Exception('Failed to complete task');
+      }
     } catch (error) {
       return ReturnModel(
           message: "Error completing task item",
@@ -86,7 +123,13 @@ class TasksRepository {
 
   Future<ReturnModel> deleteTask(Tasks task) async {
     try {
-      await supabase.from("tasks").delete().eq("id", task.id.toString());
+      final response = await http.delete(
+          Uri.parse('$baseApiUri/core/tasks/${task.id}'),
+          headers: header);
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete task');
+      }
 
       return ReturnModel(
           message: "Successfully deleted ${task.title}", success: true);
@@ -102,14 +145,19 @@ class TasksRepository {
     final jsonTask = task.toJson();
     jsonTask.remove("createdAt");
     jsonTask.remove("updatedAt");
+    jsonTask["userId"] = Supabase.instance.client.auth.currentUser!.id;
 
     jsonTask["dueDate"] =
         DateTime.parse(jsonTask["dueDate"]).toUtc().toIso8601String();
     try {
-      await supabase
-          .from("tasks")
-          .update(jsonTask)
-          .eq("id", task.id.toString());
+      final response = await http.put(
+          Uri.parse('$baseApiUri/core/tasks/${task.id}'),
+          headers: header,
+          body: json.encode(jsonTask));
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update task');
+      }
 
       return const ReturnModel(
           message: "Task updated successfully", success: true);
