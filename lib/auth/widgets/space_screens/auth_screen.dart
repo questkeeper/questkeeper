@@ -1,5 +1,6 @@
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
+import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,19 +18,25 @@ class AuthScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void onSuccess(Session response) async {
-      if (context.mounted) {
-        if (response.user.userMetadata?['username'] == null) {
+      try {
+        await ref.read(profileManagerProvider.future);
+
+        if (context.mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/home',
+            (route) => false,
+          );
+          return;
+        }
+
+        throw Exception("Context not mounted");
+      } catch (e) {
+        if (context.mounted) {
           ref.read(authPageControllerProvider).nextPage(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeIn,
               );
 
-          return;
-        } else {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            '/home',
-            (route) => false,
-          );
           return;
         }
       }
