@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
@@ -5,50 +7,76 @@ import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase/supabase.dart';
 import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
     show SupaMagicAuth; // Overriding the supa auth UI with own flow
 import 'package:supabase_auth_ui/supabase_auth_ui.dart'
     show SupaSocialsAuth, SocialButtonVariant, OAuthProvider;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AuthScreen extends ConsumerWidget {
+class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    void onSuccess(Session response) async {
-      try {
-        await ref.read(profileManagerProvider.future);
+  ConsumerState<AuthScreen> createState() => _AuthScreenState();
+}
 
-        if (context.mounted) {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            '/home',
-            (route) => false,
-          );
-          return;
-        }
+class _AuthScreenState extends ConsumerState<AuthScreen> {
+  late final StreamSubscription<AuthState> _authStateSubscription;
 
-        throw Exception("Context not mounted");
-      } catch (e) {
-        if (context.mounted) {
-          ref.read(authPageControllerProvider).nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeIn,
-              );
+  @override
+  void initState() {
+    super.initState();
+    _authStateSubscription =
+        Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final session = data.session;
+      if (session != null) {
+        onSuccess(session);
+      }
+    });
+  }
 
-          return;
-        }
+  @override
+  void dispose() {
+    _authStateSubscription.cancel();
+    super.dispose();
+  }
+
+  void onSuccess(Session response) async {
+    try {
+      await ref.read(profileManagerProvider.future);
+
+      if (mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/home',
+          (route) => false,
+        );
+        return;
+      }
+
+      throw Exception("Context not mounted");
+    } catch (e) {
+      if (mounted) {
+        ref.read(authPageControllerProvider).nextPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeIn,
+            );
+        return;
       }
     }
+  }
 
-    void onError(error) {
+  void onError(error) {
+    if (mounted) {
       SnackbarService.showErrorSnackbar(
         context,
         error.toString(),
       );
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.center,
       child: Container(

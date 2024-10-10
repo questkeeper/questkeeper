@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -33,7 +31,6 @@ class SupaMagicAuth extends StatefulWidget {
 class _SupaMagicAuthState extends State<SupaMagicAuth> {
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
-  late final StreamSubscription<AuthState> _gotrueSubscription;
   late final SupabaseClient supabase;
 
   bool _isLoading = false;
@@ -42,19 +39,11 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
   void initState() {
     super.initState();
     supabase = Supabase.instance.client;
-    _gotrueSubscription =
-        Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      final session = data.session;
-      if (session != null && mounted) {
-        widget.onSuccess(session);
-      }
-    });
   }
 
   @override
   void dispose() {
     _email.dispose();
-    _gotrueSubscription.cancel();
     super.dispose();
   }
 
@@ -135,7 +124,7 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
                 if (widget.onError == null && context.mounted) {
                   SnackbarService.showErrorSnackbar(
                     context,
-                    'An unexpected error occured: $error',
+                    'An unexpected error occurred: $error',
                   );
                 } else {
                   widget.onError?.call(error);
