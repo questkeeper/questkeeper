@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
+// import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:questkeeper/shared/extensions/text_formatter_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 
 class UsernameScreen extends ConsumerWidget {
@@ -39,6 +40,9 @@ class UsernameScreen extends ConsumerWidget {
                   prefixIcon: Icon(LucideIcons.user),
                   label: Text("Enter your username"),
                 ),
+                inputFormatters: [
+                  LowerCaseTextFormatter(),
+                ],
               ),
             ),
             const SizedBox(height: 8),
@@ -65,11 +69,17 @@ class UsernameScreen extends ConsumerWidget {
                       .updateUsername(controller.text);
 
                   if (response.success) {
-                    ref.read(authPageControllerProvider).nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeIn,
-                        );
+                    // ref.read(authPageControllerProvider).nextPage(
+                    //       duration: const Duration(milliseconds: 300),
+                    //       curve: Curves.easeIn,
+                    //     );
+
                     if (context.mounted) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/home',
+                        (route) => false,
+                      );
+
                       SnackbarService.showSuccessSnackbar(
                           context, response.message);
                     }

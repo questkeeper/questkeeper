@@ -17,7 +17,7 @@ class ProfileRepository {
     final response = await http.get(Uri.parse('$baseApiUri/social/profile/me'),
         headers: header);
 
-    if (response.statusCode != 200) {
+    if (response.statusCode != 200 || response.body.isEmpty) {
       return ReturnModel(
           message: "Error fetching profile",
           success: false,
@@ -38,10 +38,12 @@ class ProfileRepository {
     if (response.statusCode != 200) {
       return ReturnModel(
           message: response.statusCode == 409
-              ? response.body
+              ? "Username already taken"
               : "Error updating username",
           success: false,
-          error: response.body);
+          error: response.statusCode == 409
+              ? "Username already taken"
+              : response.body);
     } else {
       return const ReturnModel(
           message: "Username updated successfully", success: true);
