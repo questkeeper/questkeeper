@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
@@ -22,23 +20,13 @@ class AuthScreen extends ConsumerStatefulWidget {
 }
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
-  late final StreamSubscription<AuthState> _authStateSubscription;
-
   @override
   void initState() {
     super.initState();
-    _authStateSubscription =
-        Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      final session = data.session;
-      if (session != null) {
-        onSuccess(session);
-      }
-    });
   }
 
   @override
   void dispose() {
-    _authStateSubscription.cancel();
     super.dispose();
   }
 
