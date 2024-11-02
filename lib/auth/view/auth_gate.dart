@@ -1,4 +1,5 @@
 import 'package:questkeeper/auth/view/auth_spaces.dart';
+import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/tabs/tabview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final currentSessionProvider = FutureProvider<UserResponse?>((ref) async {
   try {
     final user = await Supabase.instance.client.auth.getUser();
+    await ref.read(profileManagerProvider.future);
+
     return user;
   } catch (error) {
     return null;

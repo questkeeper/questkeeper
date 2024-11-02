@@ -5,7 +5,7 @@ class LowerCaseTextFormatter extends TextInputFormatter {
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
     return TextEditingValue(
-      text: newValue.text.toLowerCase(),
+      text: newValue.text.toLowerCase().replaceAll(" ", "_"),
       selection: newValue.selection,
     );
   }

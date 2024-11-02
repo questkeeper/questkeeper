@@ -54,8 +54,6 @@ import UIKit
 
 extension AppDelegate: MessagingDelegate {
   func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-    debugPrint("Firebase registration token: \(fcmToken ??
-      "No token received before setting up Flutter channel")")
     flutterChannel?.invokeMethod("onToken", arguments: fcmToken)
   }
 }

@@ -71,6 +71,9 @@ class AuthNotifier {
     NotificationSettings settings =
         await FirebaseMessaging.instance.requestPermission(
       provisional: true,
+      alert: true,
+      badge: true,
+      sound: true,
     );
 
     FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
