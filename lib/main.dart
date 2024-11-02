@@ -39,6 +39,7 @@ Future<void> main() async {
   );
 
   HomeWidgetInterface? homeWidget;
+  NotificationHandler.initialize();
 
   try {
     if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
@@ -88,7 +89,6 @@ class MyApp extends ConsumerWidget {
     TextTheme textTheme = createTextTheme(context, "Nunito", "Poppins");
 
     MaterialTheme theme = MaterialTheme(textTheme);
-    NotificationHandler.initialize();
 
     return MaterialApp(
       title: 'QuestKeeper',
