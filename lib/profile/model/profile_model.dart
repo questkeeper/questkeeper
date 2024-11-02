@@ -7,12 +7,14 @@ class Profile {
   final String created_at;
   final String updated_at;
   final int points;
+  final bool? isPro;
   Profile({
     required this.user_id,
     required this.username,
     required this.created_at,
     required this.updated_at,
     required this.points,
+    this.isPro,
   });
 
   Profile copyWith({
@@ -21,6 +23,7 @@ class Profile {
     String? created_at,
     String? updated_at,
     int? points,
+    bool? isPro,
   }) {
     return Profile(
       user_id: user_id ?? this.user_id,
@@ -28,6 +31,7 @@ class Profile {
       created_at: created_at ?? this.created_at,
       updated_at: updated_at ?? this.updated_at,
       points: points ?? this.points,
+      isPro: isPro ?? this.isPro,
     );
   }
 
@@ -38,6 +42,7 @@ class Profile {
       'created_at': created_at,
       'updated_at': updated_at,
       'points': points,
+      'isPro': isPro,
     };
   }
 
@@ -48,6 +53,7 @@ class Profile {
       created_at: map['created_at'] as String,
       updated_at: map['updated_at'] as String,
       points: map['points'] as int,
+      isPro: map['isPro'] != null ? map['isPro'] as bool : null,
     );
   }
 
@@ -58,7 +64,7 @@ class Profile {
 
   @override
   String toString() {
-    return 'Profile(user_id: $user_id, username: $username, created_at: $created_at, updated_at: $updated_at, points: $points)';
+    return 'Profile(user_id: $user_id, username: $username, created_at: $created_at, updated_at: $updated_at, points: $points, isPro: $isPro)';
   }
 
   @override
@@ -69,7 +75,8 @@ class Profile {
         other.username == username &&
         other.created_at == created_at &&
         other.updated_at == updated_at &&
-        other.points == points;
+        other.points == points &&
+        other.isPro == isPro;
   }
 
   @override
@@ -78,6 +85,7 @@ class Profile {
         username.hashCode ^
         created_at.hashCode ^
         updated_at.hashCode ^
-        points.hashCode;
+        points.hashCode ^
+        isPro.hashCode;
   }
 }
