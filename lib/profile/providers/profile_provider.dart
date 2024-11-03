@@ -39,7 +39,9 @@ class ProfileManager extends _$ProfileManager {
   Future<ReturnModel> updateUsername(String username) async {
     state = const AsyncValue.loading();
     try {
-      await _repository.updateUsername(username);
+      final result = await _repository.updateUsername(username);
+      if (!result.success) return result;
+
       await fetchProfile();
 
       return const ReturnModel(

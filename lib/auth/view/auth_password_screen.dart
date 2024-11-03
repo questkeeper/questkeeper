@@ -8,30 +8,6 @@ class SignInPasswordScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void onSuccess(AuthResponse response) async {
-      if (!response.session!.user.email!.endsWith("@questkeeper.app")) {
-        return SnackbarService.showErrorSnackbar(
-          context,
-          'Not allowed to sign in with email',
-        );
-      }
-
-      if (context.mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/home',
-          (route) => false,
-        );
-      }
-    }
-
-    void onError(error) {
-      debugPrint("Error: $error");
-      SnackbarService.showErrorSnackbar(
-        context,
-        error.toString(),
-      );
-    }
-
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -41,8 +17,18 @@ class SignInPasswordScreen extends ConsumerWidget {
             onToggleSignIn: (_) {
               Navigator.pop(context);
             },
-            onError: onError,
-            onSignInComplete: onSuccess,
+            onError: (Object error) {
+              SnackbarService.showErrorSnackbar(
+                context,
+                error.toString(),
+              );
+            },
+            onSignInComplete: (AuthResponse response) {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/home',
+                (route) => false,
+              );
+            },
             onSignUpComplete: (AuthResponse response) {
               Supabase.instance.client.auth.signOut();
               Navigator.pop(context);

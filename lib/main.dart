@@ -7,11 +7,14 @@ import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/familiars/views/familiars_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
+import 'package:questkeeper/shared/notifications/notification_handler.dart';
+import 'package:questkeeper/shared/notifications/notification_service.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
@@ -36,6 +39,7 @@ Future<void> main() async {
   );
 
   HomeWidgetInterface? homeWidget;
+  NotificationHandler.initialize();
 
   try {
     if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
@@ -122,6 +126,19 @@ class MyApp extends ConsumerWidget {
 
         // Friends
         "/friends": (context) => const FriendsList(),
+      },
+      builder: (context, child) {
+        return StreamBuilder<String>(
+          stream: NotificationService().messageStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                SnackbarService.showSuccessSnackbar(context, snapshot.data!);
+              });
+            }
+            return child ?? const SizedBox();
+          },
+        );
       },
     );
   }
