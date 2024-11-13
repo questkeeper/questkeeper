@@ -14,42 +14,43 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  riverpod: ^2.5.1
-  flutter_riverpod: ^2.5.1
-  riverpod_annotation: ^2.3.5
+  riverpod: ^2.6.1
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
   freezed: ^2.5.7
   freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0
   intl: ^0.19.0
   google_fonts: ^6.2.1
-  firebase_core: ^3.4.1
-  firebase_messaging: ^15.1.1
-  flex_color_picker: ^3.5.1
-  url_launcher: ^6.3.0
-  supabase: ^2.3.0
-  supabase_flutter: ^2.6.0
-  supabase_auth_ui: ^0.5.1
+  firebase_core: ^3.8.0
+  firebase_messaging: ^15.1.5
+  flex_color_picker: ^3.6.0
+  url_launcher: ^6.3.1
+  supabase: ^2.5.0
+  supabase_flutter: ^2.8.0
+  supabase_auth_ui: ^0.5.4
   home_widget: ^0.7.0
-  shared_preferences: ^2.3.2
+  shared_preferences: ^2.3.3
   flutter_lucide: ^1.4.0
-  riverpod_generator: ^2.4.3
+  riverpod_generator: ^2.6.2
   rename_app: ^1.6.1
   email_validator: ^2.1.17
-  sentry_flutter: ^8.9.0
-  feedback_sentry: ^3.0.1
-  package_info_plus: ^8.0.2
-  device_info_plus: ^10.1.2
+  sentry_flutter: ^8.10.1
+  feedback_sentry: ^3.1.0
+  package_info_plus: ^8.1.1
+  device_info_plus: ^11.1.1
   http: ^1.2.2
-  flame: ^1.19.0
-  flame_tiled: ^1.20.3
+  flame: ^1.21.0
+  flame_tiled: ^1.21.0
+  rhttp: ^0.9.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^4.0.0
-  build_runner: ^2.4.12
-  custom_lint: ^0.6.7
-  riverpod_lint: ^2.3.13
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  custom_lint: ^0.7.0
+  riverpod_lint: ^2.6.2
   json_serializable: ^6.8.0
   msix: ^3.16.8
 
@@ -60,5 +61,8 @@ flutter:
   assets:
     - assets/images/
     - assets/tiles/
+    - assets/images/characters/red_panda/
+    - assets/images/characters/pidgeon/
+    - assets/images/characters/ferret/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

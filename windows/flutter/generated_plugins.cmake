@@ -5,11 +5,12 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
   firebase_core
+  sentry_flutter
   url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
-  sentry_flutter
+  rhttp
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)
