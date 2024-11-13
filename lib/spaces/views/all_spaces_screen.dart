@@ -1,10 +1,11 @@
+import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:questkeeper/spaces/providers/game_height_provider.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
-import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
+import 'package:questkeeper/spaces/widgets/animated_game_container.dart';
 import 'package:questkeeper/spaces/widgets/circle_bar.dart';
 import 'package:questkeeper/spaces/widgets/space_card.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,21 +18,19 @@ class AllSpacesScreen extends ConsumerStatefulWidget {
 }
 
 class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
-  int currentPageValue = 0;
-  final TextEditingController _nameController = TextEditingController();
   late PageController _pageController;
+  final FamiliarsWidgetGame _game = FamiliarsWidgetGame();
+  int currentPageValue = 0;
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final spacesAsync =
-        ref.watch(spacesManagerProvider.select((value) => value));
-
+    final spacesAsync = ref.watch(spacesManagerProvider);
+    final heightFactor = ref.watch(gameHeightProvider);
     _pageController = ref.watch(pageControllerProvider);
 
     return SafeArea(
@@ -41,38 +40,43 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
         data: (spaces) {
           return Stack(
             children: [
-              PageView.builder(
-                scrollDirection: Axis.horizontal,
-                controller: _pageController,
-                dragStartBehavior: DragStartBehavior.down,
-                onPageChanged: (int page) {
-                  setState(() {
-                    currentPageValue = page;
-                  });
-                  if (page == spaces.length) {
-                    // When the "Create New Space" page is reached, show the bottom sheet
-                    showSpaceBottomSheet(
-                      context: context,
-                      ref: ref,
-                    );
-                  }
-                },
-                itemCount: spaces.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == spaces.length) {
-                    // Last page is the "Create New Space" page
-                    return const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(LucideIcons.circle_plus, size: 48),
-                          Text('Create a new space'),
-                        ],
-                      ),
-                    );
-                  }
-                  return SpaceCard(space: spaces[index]);
-                },
+              Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(4.0),
+                    child: AnimatedGameContainer(
+                        game: _game, heightFactor: heightFactor),
+                  ),
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _pageController,
+                      onPageChanged: (page) {
+                        // Handle page changes - animate familiar if needed
+                        currentPageValue = page;
+                        final isForward =
+                            page > (ref.read(pageControllerProvider).page ?? 0);
+                        _game.animateEntry(
+                          isForward ? Direction.left : Direction.right,
+                        );
+                      },
+                      itemCount: spaces.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == spaces.length) {
+                          return const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(LucideIcons.circle_plus, size: 48),
+                                Text('Create a new space'),
+                              ],
+                            ),
+                          );
+                        }
+                        return SpaceCard(space: spaces[index]);
+                      },
+                    ),
+                  ),
+                ],
               ),
               _buildBottomBar(spaces),
             ],
