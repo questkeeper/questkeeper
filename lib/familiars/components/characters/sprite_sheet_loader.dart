@@ -37,6 +37,14 @@ class SpriteSheetLoader {
           final frameData = entry.value as Map<String, dynamic>;
           final frameInfo = frameData['frame'] as Map<String, dynamic>;
 
+          if (frameData['empty'] == true) {
+            return Frame(
+              position: Vector2.zero(),
+              size: Vector2.zero(),
+              duration: 0,
+            );
+          }
+
           return Frame(
             position: Vector2(
               frameInfo['x'].toDouble(),
@@ -51,9 +59,19 @@ class SpriteSheetLoader {
         }).toList();
 
         if (stateFrames.isNotEmpty) {
-          animations[state] = stateFrames;
+          animations[state] = stateFrames
+              .where((frame) => frame.size != Vector2.zero())
+              .toList();
         }
       }
+    }
+
+    // Check if multiple idle animations are present and combine them
+    if (animations.containsKey(CharacterState.idle) &&
+        animations.containsKey(CharacterState.idle2)) {
+      animations[CharacterState.idle]!
+          .addAll(animations[CharacterState.idle2]!);
+      animations.remove(CharacterState.idle2);
     }
 
     return CharacterSprites(
@@ -67,6 +85,7 @@ class SpriteSheetLoader {
   static CharacterState? _mapLayerToState(String layerName) {
     switch (layerName) {
       case 'idle':
+        return CharacterState.idle;
       case 'idle2':
         return CharacterState.idle;
       case 'movement':

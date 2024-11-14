@@ -15,7 +15,20 @@ class CharacterSpriteComponent extends SpriteAnimationComponent {
     required this.spriteSheet,
   }) : super(size: Vector2.all(96), anchor: Anchor.topCenter) {
     // Initialize with idle animation
-    updateAnimation(spriteSheet);
+    if (animation != null && animation?.loop == false) {
+      animation!.loop = true;
+    }
+
+    if (sprites.animations.containsKey(CharacterState.idle)) {
+      updateAnimation(spriteSheet);
+    }
+
+    if (animationTicker != null) {
+      animationTicker!.onComplete = () {
+        animationTicker!.onComplete = null;
+        updateAnimation(spriteSheet);
+      };
+    }
   }
 
   void updateAnimation(Image spriteSheet) {
