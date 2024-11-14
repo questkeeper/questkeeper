@@ -43,6 +43,7 @@ dependencies:
   flame: ^1.21.0
   flame_tiled: ^1.21.0
   rhttp: ^0.9.1
+  cached_network_image: ^3.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -61,8 +62,5 @@ flutter:
   assets:
     - assets/images/
     - assets/tiles/
-    - assets/images/characters/red_panda/
-    - assets/images/characters/pidgeon/
-    - assets/images/characters/ferret/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
