@@ -19,7 +19,7 @@ class AnimatedGameContainer extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       height: heightFactor > 0.3
-          ? MediaQuery.of(context).size.width *
+          ? MediaQuery.sizeOf(context).width *
               (3 / 4) // Height based on aspect ratio
           : 60, // Height for minimized state
       child: Stack(
