@@ -4,6 +4,7 @@ import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/repositories/profile_repository.dart';
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'profile_provider.g.dart';
 
@@ -31,6 +32,10 @@ class ProfileManager extends _$ProfileManager {
         return Profile.fromJson(profile);
       }
     } catch (e) {
+      Sentry.captureException(
+        e,
+        stackTrace: StackTrace.current,
+      );
       state = AsyncValue.error(e, StackTrace.current);
       throw Exception("Error fetching profile: $e");
     }
@@ -47,6 +52,10 @@ class ProfileManager extends _$ProfileManager {
       return const ReturnModel(
           message: "Username updated successfully", success: true);
     } catch (e) {
+      Sentry.captureException(
+        e,
+        stackTrace: StackTrace.current,
+      );
       state = AsyncValue.error(e, StackTrace.current);
 
       return ReturnModel(
