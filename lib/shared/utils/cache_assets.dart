@@ -27,14 +27,12 @@ class CacheAssetsManager {
       for (final timeOfDayType in TimeOfDayType.values) {
         final String url = supabaseStorageClient.from("assets").getPublicUrl(
             "backgrounds/${background["name"]}/${timeOfDayType.toString().split(".").last}.png");
-        debugPrint("Fetching metadata for $url");
         backgroundUrls.add(url);
         backgroundCacheTasks.add(_cacheImage(url));
       }
     }
 
     await Future.wait(backgroundCacheTasks);
-    debugPrint("Cached ${backgroundUrls.length} backgrounds and 0 characters");
   }
 
   Future<void> _cacheImage(String url) async {
