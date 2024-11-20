@@ -1,4 +1,6 @@
 import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
+import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
+import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/providers/game_height_provider.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
@@ -10,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AllSpacesScreen extends ConsumerStatefulWidget {
   const AllSpacesScreen({super.key});
@@ -20,16 +24,41 @@ class AllSpacesScreen extends ConsumerStatefulWidget {
 
 class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late PageController _pageController;
-  final FamiliarsWidgetGame _game = FamiliarsWidgetGame();
+  late final FamiliarsWidgetGame _game;
+  final SupabaseStorageClient storageClient = Supabase.instance.client.storage;
   ValueNotifier<int> currentPageValue = ValueNotifier(0);
   ValueNotifier<bool> showGameNotifier = ValueNotifier(true);
+  late final String initialBackgroundUrl;
+  late final SharedPreferences prefs;
+  late String backgroundColor;
+
+  void setBackgroundColor(Spaces space, String dateType) {
+    backgroundColor =
+        prefs.getString("background_${space.spaceType}_$dateType") ?? "#000000";
+  }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       _pageController = ref.read(pageControllerProvider);
       _pageController.addListener(_updatePage);
+
+      final spaces = await ref.read(spacesManagerProvider.future);
+      if (spaces.isNotEmpty) {
+        final dateType = DateTime.now().getTimeOfDayType();
+        initialBackgroundUrl = storageClient
+            .from("assets")
+            .getPublicUrl("backgrounds/${spaces[0].spaceType}/$dateType.png");
+
+        prefs = await SharedPreferences.getInstance();
+        setBackgroundColor(spaces[0], dateType);
+
+        _game = FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl);
+
+        // Force a rebuild to ensure the game is properly initialized
+        if (mounted) setState(() {});
+      }
     });
   }
 
@@ -79,6 +108,16 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                       controller: _pageController,
                       onPageChanged: (page) {
                         currentPageValue = ValueNotifier(page);
+
+                        final dateType = DateTime.now().getTimeOfDayType();
+
+                        _game.updateBackground(
+                            page,
+                            page == spaces.length || page == spaces.length - 1
+                                ? initialBackgroundUrl
+                                : storageClient.from("assets").getPublicUrl(
+                                    "backgrounds/${spaces[page].spaceType}/$dateType.png"));
+
                         final isForward =
                             page > (ref.read(pageControllerProvider).page ?? 0);
                         _game.animateEntry(
@@ -99,6 +138,19 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                       },
                       itemCount: spaces.length + 1,
                       itemBuilder: (context, index) {
+                        String spaceBackgroundColor = index == spaces.length
+                            ? "#000000"
+                            : prefs.getString(
+                                    "background_${spaces[index].spaceType}_${DateTime.now().getTimeOfDayType()}") ??
+                                "#000000";
+
+                        final initalBackgroundUrlSplit =
+                            initialBackgroundUrl.split("/");
+                        spaceBackgroundColor = index == spaces.length - 1
+                            ? prefs.getString(
+                                    "background_${initalBackgroundUrlSplit[initalBackgroundUrlSplit.length - 2]}_${DateTime.now().getTimeOfDayType()}") ??
+                                "#000000"
+                            : spaceBackgroundColor;
                         if (index == spaces.length) {
                           return const Center(
                             child: Column(
@@ -110,7 +162,9 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                             ),
                           );
                         }
-                        return SpaceCard(space: spaces[index]);
+                        return SpaceCard(
+                            space: spaces[index],
+                            backgroundColorHex: spaceBackgroundColor);
                       },
                     ),
                   ),

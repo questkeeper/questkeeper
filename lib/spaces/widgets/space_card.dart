@@ -15,9 +15,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 
 class SpaceCard extends ConsumerStatefulWidget {
-  const SpaceCard({super.key, required this.space});
+  const SpaceCard(
+      {super.key, required this.space, required this.backgroundColorHex});
 
   final Spaces space;
+  final String backgroundColorHex;
 
   @override
   ConsumerState<SpaceCard> createState() => _SpaceCardState();
@@ -42,7 +44,6 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
   void _onScroll() {
     if (_scrollController.offset <= 0 && _isMinimized) {
       if (_scrollController.position.maxScrollExtent <= 0) {
-        debugPrint("In here");
         ref.read(gameHeightProvider.notifier).state = 1.0;
         if (_isMinimized) setState(() => _isMinimized = false);
 
@@ -74,7 +75,7 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: "#96C1CB".toColor(),
+          color: widget.backgroundColorHex.toColor(),
         ),
         child: Column(
           children: [

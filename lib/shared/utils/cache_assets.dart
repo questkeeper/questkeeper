@@ -6,16 +6,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CacheAssetsManager {
   final cacheManager = DefaultCacheManager();
   final supabaseStorageClient = Supabase.instance.client.storage;
+  late final SharedPreferences prefs;
 
   Future<void> fetchAllMetadata() async {
     final backgroundMetadataUrl = supabaseStorageClient
         .from("assets")
         .getPublicUrl("backgrounds/metadata.json");
+    prefs = await SharedPreferences.getInstance();
 
     final List<String> backgroundUrls = [];
     final List<Future<void>> backgroundCacheTasks = [];
@@ -25,10 +28,18 @@ class CacheAssetsManager {
 
     for (final background in backgroundMetadata["backgroundTypes"]) {
       for (final timeOfDayType in TimeOfDayType.values) {
+        final timeOfDayString = timeOfDayType.toString().split(".").last;
         final String url = supabaseStorageClient.from("assets").getPublicUrl(
-            "backgrounds/${background["name"]}/${timeOfDayType.toString().split(".").last}.png");
+            "backgrounds/${background["name"]}/$timeOfDayString.png");
         backgroundUrls.add(url);
         backgroundCacheTasks.add(_cacheImage(url));
+
+        // Store the color codes in local storage
+        prefs.setString(
+          "background_${background["name"]}_$timeOfDayString",
+          background["colorCodes"]
+              [timeOfDayType.index % background["colorCodes"].length],
+        );
       }
     }
 
@@ -48,6 +59,7 @@ class CacheAssetsManager {
       final File file = await cacheManager
           .getSingleFile(url, headers: {"Cache-Control": "no-cache"});
       final String content = await file.readAsString();
+
       return jsonDecode(content) as Map<String, dynamic>;
     } catch (e) {
       debugPrint("Error fetching metadata for $url: $e");
