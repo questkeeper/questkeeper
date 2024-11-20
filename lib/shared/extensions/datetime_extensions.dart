@@ -1,4 +1,4 @@
-enum TimeOfDayType { morning, dusk, night }
+enum TimeOfDayType { day, dusk, night }
 
 extension DatetimeExtensions on DateTime {
   TimeOfDayType getTimeOfDayType() {
@@ -6,7 +6,7 @@ extension DatetimeExtensions on DateTime {
     if (hour >= 4 && hour < 6) {
       return TimeOfDayType.dusk;
     } else if (hour >= 6 && hour < 12) {
-      return TimeOfDayType.morning;
+      return TimeOfDayType.day;
     } else if (hour >= 15 && hour < 18) {
       return TimeOfDayType.dusk;
     } else {
