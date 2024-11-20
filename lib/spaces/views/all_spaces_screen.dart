@@ -1,6 +1,5 @@
 import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
 import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
-import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/providers/game_height_provider.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
@@ -32,11 +31,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late final SharedPreferences prefs;
   late String backgroundColor;
 
-  void setBackgroundColor(Spaces space, String dateType) {
-    backgroundColor =
-        prefs.getString("background_${space.spaceType}_$dateType") ?? "#000000";
-  }
-
   @override
   void initState() {
     super.initState();
@@ -52,7 +46,9 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
             .getPublicUrl("backgrounds/${spaces[0].spaceType}/$dateType.png");
 
         prefs = await SharedPreferences.getInstance();
-        setBackgroundColor(spaces[0], dateType);
+        backgroundColor =
+            prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
+                "#000000";
 
         _game = FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl);
 
@@ -113,7 +109,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
 
                         _game.updateBackground(
                             page,
-                            page == spaces.length || page == spaces.length - 1
+                            page == spaces.length
                                 ? initialBackgroundUrl
                                 : storageClient.from("assets").getPublicUrl(
                                     "backgrounds/${spaces[page].spaceType}/$dateType.png"));
@@ -144,13 +140,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                                     "background_${spaces[index].spaceType}_${DateTime.now().getTimeOfDayType()}") ??
                                 "#000000";
 
-                        final initalBackgroundUrlSplit =
-                            initialBackgroundUrl.split("/");
-                        spaceBackgroundColor = index == spaces.length - 1
-                            ? prefs.getString(
-                                    "background_${initalBackgroundUrlSplit[initalBackgroundUrlSplit.length - 2]}_${DateTime.now().getTimeOfDayType()}") ??
-                                "#000000"
-                            : spaceBackgroundColor;
                         if (index == spaces.length) {
                           return const Center(
                             child: Column(
