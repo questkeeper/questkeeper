@@ -29,14 +29,10 @@ class AnimatedGameContainer extends StatelessWidget {
             duration: const Duration(milliseconds: 200),
             opacity: heightFactor > 0.3 ? 1.0 : 0.0,
             child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-              child: Container(
-                color: Colors.black,
-                child: Transform.scale(
-                  scale: 1.03,
-                  child: GameWidget(game: game),
-                ),
-              ),
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16.0),
+                  topRight: Radius.circular(16.0)),
+              child: GameWidget(game: game),
             ),
           ),
           // Text with opacity animation

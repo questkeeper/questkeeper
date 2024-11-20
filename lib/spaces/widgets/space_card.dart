@@ -72,9 +72,13 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
             }).toList()));
 
     return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(12),
+            bottomRight: Radius.circular(12),
+          ),
           color: widget.backgroundColorHex.toColor(),
         ),
         child: Column(
