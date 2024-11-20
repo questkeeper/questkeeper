@@ -12,7 +12,7 @@ class SpacesRepository {
     final spaces = await supabase.from("spaces").select().order("created_at");
 
     final List<Spaces> spacesList =
-        spaces.map((e) => Spaces.fromJson(e)).toList();
+        spaces.map((e) => Spaces.fromMap(e)).toList();
 
     return spacesList;
   }
@@ -20,22 +20,23 @@ class SpacesRepository {
   Future<Spaces> getSpace(int id) async {
     final space = await supabase.from("spaces").select().eq("id", id).single();
 
-    return Spaces.fromJson(space);
+    return Spaces.fromMap(space);
   }
 
   Future<ReturnModel> createSpace(Spaces space) async {
-    final Map<String, dynamic> jsonSpace = space.toJson();
+    final Map<String, dynamic> jsonSpace = space.toMap();
     jsonSpace.remove("id");
     jsonSpace.remove("tasks");
     jsonSpace.remove("categories");
 
     try {
-      final newSpace = await supabase.from("spaces").insert(jsonSpace).select();
+      final newSpace =
+          await supabase.from("spaces").insert(jsonSpace).select().single();
 
       debugPrint("New space: $newSpace");
 
       return ReturnModel(
-          data: Spaces.fromJson(newSpace.first),
+          data: Spaces.fromMap(newSpace),
           message: "Space created successfully",
           success: true);
     } catch (error) {
@@ -48,7 +49,7 @@ class SpacesRepository {
   }
 
   Future<ReturnModel> updateSpace(Spaces space) async {
-    final Map<String, dynamic> jsonSpace = space.toJson();
+    final Map<String, dynamic> jsonSpace = space.toMap();
     jsonSpace.remove("created_at");
     jsonSpace.remove("updated_at");
 
@@ -57,12 +58,13 @@ class SpacesRepository {
           .from("spaces")
           .update(jsonSpace)
           .eq("id", space.id!)
-          .select();
+          .select()
+          .single();
 
       debugPrint("Updated space: $updatedSpace");
 
       return ReturnModel(
-          data: Spaces.fromJson(updatedSpace.first),
+          data: Spaces.fromMap(updatedSpace),
           message: "Space updated successfully",
           success: true);
     } catch (error) {
