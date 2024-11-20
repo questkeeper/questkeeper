@@ -1,16 +1,19 @@
 enum TimeOfDayType { day, dusk, night }
 
 extension DatetimeExtensions on DateTime {
-  TimeOfDayType getTimeOfDayType() {
+  String getTimeOfDayType() {
     final hour = this.hour;
-    if (hour >= 4 && hour < 6) {
-      return TimeOfDayType.dusk;
-    } else if (hour >= 6 && hour < 12) {
-      return TimeOfDayType.day;
-    } else if (hour >= 15 && hour < 18) {
-      return TimeOfDayType.dusk;
+    late final TimeOfDayType type;
+    if (hour >= 3 && hour < 6) {
+      type = TimeOfDayType.dusk;
+    } else if (hour >= 6 && hour < 16) {
+      type = TimeOfDayType.day;
+    } else if (hour >= 16 && hour < 19) {
+      type = TimeOfDayType.dusk;
     } else {
-      return TimeOfDayType.night;
+      type = TimeOfDayType.night;
     }
+
+    return type.toString().split(".").last;
   }
 }
