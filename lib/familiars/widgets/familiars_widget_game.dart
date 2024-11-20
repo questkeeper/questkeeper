@@ -1,93 +1,134 @@
-import 'package:flame/events.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+import 'dart:ui' as ui;
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
-import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/material.dart';
+import 'package:questkeeper/familiars/components/characters/character_sprite_component.dart';
+import 'package:questkeeper/familiars/components/characters/character_state.dart';
+import 'package:questkeeper/familiars/components/characters/sprite_sheet_loader.dart';
+import 'package:questkeeper/familiars/components/clock_component.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class FamiliarsWidgetGame extends FlameGame with TapDetector {
-  late SpriteAnimationComponent redPanda;
-  late SpriteAnimation idleAnimation;
-  late SpriteAnimation sleepAnimation;
-  late SpriteAnimation sleepTransitionAnimation;
-  late SpriteAnimation attackAnimation;
-  late SpriteAnimation jumpToAnimation;
-  TiledComponent? mapComponent;
+Future<ui.Image> loadSpriteSheet(String url) async {
+  final imageProvider = CachedNetworkImageProvider(url);
+  final completer = Completer<ui.Image>();
+  imageProvider.resolve(const ImageConfiguration()).addListener(
+    ImageStreamListener((ImageInfo info, _) {
+      if (!completer.isCompleted) completer.complete(info.image);
+    }),
+  );
+  return completer.future;
+}
+
+enum Direction { left, right, none }
+
+class FamiliarsWidgetGame extends FlameGame {
+  FamiliarsWidgetGame({required this.backgroundPath});
+  final String backgroundPath;
+  late CharacterSpriteComponent redPanda;
+  late SpriteComponent mapComponent;
+  bool _isMapInitialized = false, _isCharacterInitialized = false;
+  final supabaseClient = Supabase.instance.client;
+
+  double heightFactor = 1.0;
+  bool isAnimatingEntry = false;
+  Vector2? targetPosition;
+  Direction entryDirection = Direction.none;
+
+  late ClockComponent clock;
 
   double idleTime = 0;
   final double idleDuration = 5;
+
+  Future<void> updateBackground(int page, String updatedBackgroundPath) async {
+    if (!_isMapInitialized) return;
+
+    final backgroundPath = updatedBackgroundPath;
+    try {
+      final newImage = await loadSpriteSheet(backgroundPath);
+      mapComponent.sprite = Sprite(newImage);
+    } catch (e) {
+      debugPrint('Failed to update background: $e');
+    }
+  }
+
+  Future<void> loadCharacter({String characterId = "red_panda"}) async {
+    // Load JSON from Supabase/storage
+    final spriteSheetJsonData = utf8.decode(await supabaseClient.storage
+        .from('assets')
+        .download('characters/$characterId/sprite_sheet.json'));
+
+    // Load sprite sheet image
+    final spriteSheetUrl = supabaseClient.storage.from("assets").getPublicUrl(
+          'characters/$characterId/sprite_sheet.png',
+        );
+
+    // Parse and create character sprites
+    final characterSprites = await SpriteSheetLoader.loadFromJson(
+      spriteSheetJsonData,
+      characterId,
+    );
+
+    // Create component and add to game
+    final spriteComponent = CharacterSpriteComponent(
+      sprites: characterSprites,
+      spriteSheet: await loadSpriteSheet(spriteSheetUrl),
+    );
+
+    redPanda = spriteComponent;
+    add(redPanda);
+
+    // Load animations
+    redPanda.animation!;
+    spriteComponent.setState(CharacterState.sleep);
+  }
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
 
-    mapComponent = await TiledComponent.load('main_map.tmx', Vector2.all(32));
-    add(mapComponent!);
+    try {
+      mapComponent = SpriteComponent(
+        sprite: Sprite(
+          await loadSpriteSheet(backgroundPath),
+        ),
+        size: size,
+      );
 
-    final spriteSheet = await images.load('red_panda_sprites.png');
+      add(mapComponent);
+      _isMapInitialized = true;
 
-    idleAnimation = SpriteAnimation.fromFrameData(
-      spriteSheet,
-      SpriteAnimationData.sequenced(
-        amount: 6,
-        textureSize: Vector2.all(32),
-        stepTime: 0.15,
-        loop: true,
-      ),
-    );
+      await loadCharacter();
+      _isCharacterInitialized = true;
+      final randomYOffset = size.y / 4;
+      final randomXOffset = size.x / 4;
+      final randomXPlusOrMinus =
+          (randomXOffset * 2) * (Random().nextBool() ? 1 : -1);
+      redPanda.position =
+          Vector2(randomXPlusOrMinus, (size.y - 48 - randomYOffset));
 
-    sleepTransitionAnimation = SpriteAnimation.fromFrameData(
-      spriteSheet,
-      SpriteAnimationData.sequenced(
-        amount: 8,
-        textureSize: Vector2.all(32),
-        stepTime: 0.15,
-        loop: false,
-        texturePosition: Vector2(0, 32 * 5),
-      ),
-    );
+      clock = ClockComponent(
+        position: Vector2(
+          (size.x / 2) - 23,
+          38,
+        ),
+        size: Vector2(128, 128), // Match your sprite size
+      );
 
-    sleepAnimation = SpriteAnimation.fromFrameData(
-      spriteSheet,
-      SpriteAnimationData.sequenced(
-        amount: 8,
-        textureSize: Vector2(32, 32),
-        stepTime: 0.15,
-        loop: true,
-        texturePosition: Vector2(0, 32 * 6),
-      ),
-    );
+      add(clock);
+    } catch (e) {
+      debugPrint('Failed to load background: $e');
+    }
+  }
 
-    jumpToAnimation = SpriteAnimation.fromFrameData(
-      spriteSheet,
-      SpriteAnimationData.sequenced(
-        amount: 8,
-        textureSize: Vector2(32, 32),
-        stepTime: 0.15,
-        loop: false,
-        texturePosition: Vector2(0, 32 * 2),
-      ),
-    );
-
-    attackAnimation = SpriteAnimation.fromFrameData(
-      spriteSheet,
-      SpriteAnimationData.sequenced(
-        amount: 8,
-        textureSize: Vector2(32, 32),
-        stepTime: 0.15,
-        loop: false,
-        texturePosition: Vector2(0, 32 * 3),
-      ),
-    );
-
-    redPanda = SpriteAnimationComponent(
-      animation: idleAnimation,
-      size: Vector2.all(96),
-      // Center the red panda in the game
-      position: Vector2(size.x / 2, size.y / 2 - 64),
-    );
-
-    add(redPanda);
-
-    camera.viewfinder.anchor = Anchor.topLeft;
+  // Add method to update height factor
+  void updateHeightFactor(double factor) {
+    heightFactor = factor;
+    onGameResize(size);
   }
 
   bool shouldScaleToSquare(Vector2 size) {
@@ -98,32 +139,27 @@ class FamiliarsWidgetGame extends FlameGame with TapDetector {
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
 
-    if (mapComponent == null) {
-      return;
-    }
+    if (!_isMapInitialized || !_isCharacterInitialized) return;
+
+    // Apply height factor to the game size
+    final adjustedSize = Vector2(size.x, size.y * heightFactor);
 
     late final double scale;
-    if (shouldScaleToSquare(size)) {
-      // Swap width and height for calculations when rotated
-      final temp = mapComponent!.width;
-      mapComponent!.width = mapComponent!.height;
-      mapComponent!.height = temp;
-
-      scale = (size.x * 2 / mapComponent!.width);
-      redPanda.position = Vector2(size.x / 2, size.y / 2 - 64);
-      redPanda.scale = Vector2.all(1.5);
+    if (shouldScaleToSquare(adjustedSize)) {
+      final temp = mapComponent.width;
+      mapComponent.width = mapComponent.height;
+      mapComponent.height = temp;
+      scale = (adjustedSize.x * 2 / mapComponent.width);
     } else {
-      scale = size.y / mapComponent!.height;
-      redPanda.position = Vector2(size.x / 2, size.y / 2 - 64);
-      redPanda.scale = Vector2.all(1);
+      scale = adjustedSize.y / mapComponent.height;
     }
 
-    mapComponent!.scale = Vector2.all(scale);
+    mapComponent.scale = Vector2.all(scale);
 
-    // Position the red panda
+    // Update red panda position based on height factor
     redPanda.position = Vector2(
-      size.x / 2,
-      size.y / 2 - 64,
+      adjustedSize.x / 2,
+      redPanda.position.y / 2 + adjustedSize.y / 3,
     );
   }
 
@@ -131,102 +167,67 @@ class FamiliarsWidgetGame extends FlameGame with TapDetector {
   void update(double dt) {
     super.update(dt);
 
-    if (mapComponent == null) {
-      return; // Skip update if map is not loaded yet
+    if (!_isMapInitialized) return;
+
+    // Handle entry animation
+    if (isAnimatingEntry && targetPosition != null) {
+      final direction = entryDirection == Direction.left ? 1 : -1;
+      redPanda.position.x += 300 * dt * direction;
+
+      if ((direction > 0 && redPanda.position.x >= targetPosition!.x) ||
+          (direction < 0 && redPanda.position.x <= targetPosition!.x)) {
+        redPanda.position.x = targetPosition!.x;
+        redPanda.setState(CharacterState.idle);
+        isAnimatingEntry = false;
+        targetPosition = null;
+        entryDirection = Direction.none;
+      }
     }
 
     idleTime += dt;
-    if (idleTime >= idleDuration && redPanda.animation == idleAnimation) {
+    if (idleTime >= idleDuration) {
       idleTime = 0;
       startSleepTransition();
     }
   }
 
   void startSleepTransition() {
-    redPanda.animation = sleepTransitionAnimation;
+    redPanda.animation?.loop = false;
     redPanda.animationTicker?.onComplete = () {
-      redPanda.animation = sleepAnimation;
+      redPanda.setState(CharacterState.sleep);
     };
   }
 
   void wakeUp() {
     // Reverse the transition animation and then play idle animation
-    redPanda.animation = sleepTransitionAnimation.reversed();
+    redPanda.setState(CharacterState.idle);
     redPanda.animationTicker?.onComplete = () {
-      redPanda.animation = idleAnimation;
+      redPanda.setState(CharacterState.idle);
     };
     idleTime = 0;
   }
 
-  @override
-  void onTapDown(TapDownInfo info) {
-    // Check if the tap position intersects with the red panda's position and size
-    final tapPosition = info.eventPosition.widget;
-    if (redPanda.containsPoint(tapPosition)) {
-      wakeUp(); // Trigger wake up animation
-      return;
-    }
+  void animateEntry(Direction direction) {
+    if (isAnimatingEntry) return;
 
-    if (redPanda.animation == jumpToAnimation) {
-      return; // Skip if red panda is already jumping
-    }
+    isAnimatingEntry = true;
+    entryDirection = direction;
 
-    final distance = tapPosition - redPanda.position;
-    bool attack = false;
-    final currentScale = redPanda.scale.x;
-    if (distance.x > 0) {
-      attack = distance.x < 140;
-      redPanda.scale = Vector2(currentScale.abs(), currentScale.abs());
-    } else {
-      attack = distance.x > -20;
-      redPanda.scale = Vector2(-currentScale.abs(), currentScale.abs());
-    }
+    // Set initial position off-screen
+    final startX =
+        direction == Direction.left ? -redPanda.width : size.x + redPanda.width;
+    final targetX = size.x / 2;
 
-    final distanceX = distance.x;
+    redPanda.position.x = startX;
+    targetPosition = Vector2(targetX, redPanda.position.y);
 
-    if (attack) {
-      redPanda.animation = attackAnimation;
-      // Move redpanda to the right directly after jump at frame 3
-      redPanda.animationTicker!.onFrame = (frame) {
-        if (frame == 3) {
-          redPanda.position.x += 3;
-        }
-        if (frame == 4) {
-          redPanda.position.x += 7;
-        }
-      };
+    // Set appropriate scale based on direction
+    redPanda.scale = Vector2(
+      direction == Direction.left ? 1 : -1,
+      1,
+    );
 
-      redPanda.animationTicker?.onComplete = () {
-        redPanda.animation = idleAnimation;
-      };
-
-      return;
-    } else {
-      redPanda.animation = jumpToAnimation;
-
-      if (distanceX < 0) {
-        redPanda.position.add(Vector2(0, 10));
-      }
-
-      const int totalFrames = 8;
-      final moveXPerFrame = distanceX / totalFrames;
-      // final moveYPerFrame = distanceY / totalFrames;
-
-      redPanda.animationTicker!.onFrame = (frame) {
-        if (frame >= 1 && frame <= 6) {
-          redPanda.position.add(Vector2(moveXPerFrame, 0));
-        }
-
-        if (frame == 8) {
-          redPanda.position.add(Vector2(0, 10));
-        }
-      };
-
-      redPanda.animationTicker?.onComplete = () {
-        redPanda.animation = idleAnimation;
-      };
-    }
-
-    return;
+    // Start run animation
+    redPanda.setState(CharacterState.movement);
   }
 }
