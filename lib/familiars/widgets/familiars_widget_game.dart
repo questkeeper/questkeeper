@@ -44,13 +44,18 @@ class FamiliarsWidgetGame extends FlameGame {
   double idleTime = 0;
   final double idleDuration = 5;
 
-  Future<void> updateBackground(int page, String updatedBackgroundPath) async {
+  Future<void> updateBackground(int page, String? updatedBackgroundPath) async {
     if (!_isMapInitialized) return;
 
     final backgroundPath = updatedBackgroundPath;
     try {
-      final newImage = await loadSpriteSheet(backgroundPath);
-      mapComponent.sprite = Sprite(newImage);
+      if (backgroundPath == null) {
+        mapComponent.sprite = Sprite(await loadSpriteSheet(
+            'https://placehold.co/1080x810/000000/FFFFF/png'));
+      } else {
+        final newImage = await loadSpriteSheet(backgroundPath);
+        mapComponent.sprite = Sprite(newImage);
+      }
     } catch (e) {
       debugPrint('Failed to update background: $e');
     }
