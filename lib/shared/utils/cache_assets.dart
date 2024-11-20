@@ -1,0 +1,59 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class CacheAssetsManager {
+  final cacheManager = DefaultCacheManager();
+  final supabaseStorageClient = Supabase.instance.client.storage;
+
+  Future<void> fetchAllMetadata() async {
+    final backgroundMetadataUrl = supabaseStorageClient
+        .from("assets")
+        .getPublicUrl("backgrounds/metadata.json");
+
+    final List<String> backgroundUrls = [];
+    final List<Future<void>> backgroundCacheTasks = [];
+
+    final backgroundMetadata =
+        await _fetchMetadataFromUrl(backgroundMetadataUrl);
+
+    for (final background in backgroundMetadata["backgroundTypes"]) {
+      for (final timeOfDayType in TimeOfDayType.values) {
+        final String url = supabaseStorageClient.from("assets").getPublicUrl(
+            "backgrounds/${background["name"]}/${timeOfDayType.toString().split(".").last}.png");
+        debugPrint("Fetching metadata for $url");
+        backgroundUrls.add(url);
+        backgroundCacheTasks.add(_cacheImage(url));
+      }
+    }
+
+    await Future.wait(backgroundCacheTasks);
+    debugPrint("Cached ${backgroundUrls.length} backgrounds and 0 characters");
+  }
+
+  Future<void> _cacheImage(String url) async {
+    try {
+      CachedNetworkImageProvider(url);
+    } catch (e) {
+      debugPrint("Error caching image $url: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>> _fetchMetadataFromUrl(String url) async {
+    try {
+      final File file = await cacheManager
+          .getSingleFile(url, headers: {"Cache-Control": "no-cache"});
+      final String content = await file.readAsString();
+      return jsonDecode(content) as Map<String, dynamic>;
+    } catch (e) {
+      debugPrint("Error fetching metadata for $url: $e");
+      return {}; // Return an empty map on failure
+    }
+  }
+}

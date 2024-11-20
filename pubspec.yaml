@@ -45,6 +45,7 @@ dependencies:
   rhttp: ^0.9.1
   cached_network_image: ^3.4.1
   flame_riverpod: ^5.4.5
+  flutter_cache_manager: ^3.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
