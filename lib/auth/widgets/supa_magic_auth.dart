@@ -31,6 +31,8 @@ class SupaMagicAuth extends StatefulWidget {
 class _SupaMagicAuthState extends State<SupaMagicAuth> {
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
+  final _password = TextEditingController();
+  bool _passwordVisible = false;
   late final SupabaseClient supabase;
 
   bool _isLoading = false;
@@ -44,7 +46,56 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
   @override
   void dispose() {
     _email.dispose();
+    _password.dispose();
     super.dispose();
+  }
+
+  Future<void> _loginOtp(BuildContext context) async {
+    try {
+      await supabase.auth.signInWithOtp(
+        email: _email.text,
+        emailRedirectTo: widget.redirectUrl,
+      );
+
+      if (context.mounted) {
+        SnackbarService.showInfoSnackbar(context, "Check your email for a link to login!");
+      }
+    } on AuthException catch (error) {
+      if (widget.onError == null && context.mounted) {
+        SnackbarService.showErrorSnackbar(context, error.message,);
+      } else {
+        widget.onError?.call(error);
+      }
+    } catch (error) {
+      if (widget.onError == null && context.mounted) {
+        SnackbarService.showErrorSnackbar(context, "An unexpected error occurred: $error");
+      } else {
+        widget.onError?.call(error);
+      }
+    }
+  }
+
+  Future<void> _loginPassword(BuildContext context) async {
+    try {
+      await supabase.auth.signInWithPassword(
+        email: _email.text,
+        password: _password.text,
+      );
+
+      if (context.mounted) {
+        Navigator.of(context).pushNamed("/home");
+      }
+    } on AuthException catch (error) {
+      if (widget.onError == null && context.mounted) {
+        SnackbarService.showErrorSnackbar(context, error.message);
+      } else {
+        widget.onError?.call(error);
+      }
+    } catch (error) {
+      if (widget.onError == null && context.mounted) {
+        SnackbarService.showErrorSnackbar(context, "An unexpected error occurred: $error");
+      }
+    }
   }
 
   @override
@@ -65,13 +116,38 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
               }
               return null;
             },
+            onChanged: (value) {
+              setState(() {
+                _passwordVisible = value.endsWith("@questkeeper.app");
+              });
+            },
             decoration: const InputDecoration(
               prefixIcon: Icon(LucideIcons.mail),
               label: Text("Enter your email"),
             ),
             controller: _email,
           ),
+
+          // Padding
           const SizedBox(height: 16),
+
+          // Password field - visible for @questkeeper.app emails
+          _passwordVisible
+              ? TextFormField(
+                  keyboardType: TextInputType.text,
+                  obscureText: true,
+                  autofillHints: const [AutofillHints.password],
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(LucideIcons.lock),
+                    label: Text("Test account password"),
+                  ),
+                  controller: _password,
+                )
+              : const SizedBox(),
+
+          // Padding
+          const SizedBox(height: 16),
+
           FilledButton(
             child: (_isLoading)
                 ? SizedBox(
@@ -94,47 +170,18 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
                 _isLoading = true;
               });
 
-              if (_email.text.endsWith("@questkeeper.app")) {
-                setState(() {
-                  _isLoading = false;
-                });
-                Navigator.of(context).pushNamed('/signin/password');
-                return;
+              if (_passwordVisible && _password.text.isNotEmpty) {
+                await _loginPassword(context);
+              } else {
+                await _loginOtp(context);
               }
 
-              try {
-                await supabase.auth.signInWithOtp(
-                  email: _email.text,
-                  emailRedirectTo: widget.redirectUrl,
-                );
-                if (context.mounted) {
-                  SnackbarService.showInfoSnackbar(
-                      context, "Check your email for a link to login!");
-                }
-              } on AuthException catch (error) {
-                if (widget.onError == null && context.mounted) {
-                  SnackbarService.showErrorSnackbar(
-                    context,
-                    error.message,
-                  );
-                } else {
-                  widget.onError?.call(error);
-                }
-              } catch (error) {
-                if (widget.onError == null && context.mounted) {
-                  SnackbarService.showErrorSnackbar(
-                    context,
-                    'An unexpected error occurred: $error',
-                  );
-                } else {
-                  widget.onError?.call(error);
-                }
-              }
               setState(() {
                 _isLoading = false;
               });
             },
           ),
+
           const SizedBox(height: 10),
         ],
       ),
