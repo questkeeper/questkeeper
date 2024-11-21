@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -101,9 +103,76 @@ class AboutScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              title: const Text("Clear local data"),
+              leading: Icon(LucideIcons.heart),
+              title: const Text("Special thanks to:"),
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Special thanks to:'),
+                    content: Column(
+                      children: [
+                        ListTile(
+                          title: const Text('asifpx_'),
+                          subtitle: const Text(
+                              'Environments and backgrounds\nTap for x.com'),
+                          onTap: () => launchUrl(
+                            Uri.parse('https://x.com/asifpx_'),
+                          ),
+                          isThreeLine: true,
+                        ),
+                        ListTile(
+                          title: const Text('Elthen'),
+                          subtitle:
+                              const Text('Animal sprites\nTap for patreon'),
+                          onTap: () => launchUrl(
+                            Uri.parse('https://www.patreon.com/elthen'),
+                          ),
+                          isThreeLine: true,
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Close'),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+            ListTile(
+              leading: Icon(LucideIcons.trash),
+              title: const Text(
+                "Clear local data",
+                style: TextStyle(
+                  color: Colors.redAccent,
+                ),
+              ),
               onTap: () async {
                 AuthNotifier().clearToken();
+                await SharedPreferences.getInstance().then((prefs) {
+                  prefs.clear();
+                });
+
+                // Clear cache manager
+                final CacheManager cacheManager = DefaultCacheManager();
+                await cacheManager.emptyCache();
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Local data cleared'),
+                    ),
+                  );
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/login',
+                    (route) => false,
+                  );
+                }
               },
             ),
             const ListTile(
