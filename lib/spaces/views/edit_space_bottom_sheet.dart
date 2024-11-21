@@ -1,11 +1,13 @@
-import 'package:questkeeper/shared/extensions/color_extensions.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:questkeeper/shared/extensions/string_extensions.dart';
+import 'package:questkeeper/shared/utils/cache_assets.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void showSpaceBottomSheet({
   required BuildContext context,
@@ -15,8 +17,6 @@ void showSpaceBottomSheet({
   final TextEditingController nameController =
       TextEditingController(text: existingSpace?.title);
   final isEditing = existingSpace != null;
-  Color? initialColor =
-      existingSpace?.color != null ? existingSpace!.color!.toColor : null;
 
   showModalBottomSheet(
     context: context,
@@ -28,9 +28,9 @@ void showSpaceBottomSheet({
         .transparent, // Make the background transparent to show the gradient
     builder: (BuildContext context) {
       return _SpaceBottomSheetContent(
+        spaceType: existingSpace?.spaceType ?? "office",
         nameController: nameController,
         isEditing: isEditing,
-        initialColor: initialColor,
         ref: ref,
         existingSpace: existingSpace,
       );
@@ -40,15 +40,15 @@ void showSpaceBottomSheet({
 
 class _SpaceBottomSheetContent extends StatefulWidget {
   final TextEditingController nameController;
+  final String spaceType;
   final bool isEditing;
-  final Color? initialColor;
   final WidgetRef ref;
   final Spaces? existingSpace;
 
   const _SpaceBottomSheetContent({
     required this.nameController,
+    required this.spaceType,
     required this.isEditing,
-    required this.initialColor,
     required this.ref,
     this.existingSpace,
   });
@@ -59,17 +59,34 @@ class _SpaceBottomSheetContent extends StatefulWidget {
 }
 
 class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
-  Color? selectedColor;
+  final SupabaseStorageClient storage = Supabase.instance.client.storage;
+  final String backgroundMetadataUrl = Supabase.instance.client.storage
+      .from("assets")
+      .getPublicUrl("backgrounds/metadata.json");
+  late int selectedIdx;
+  List<dynamic>? backgroundTypes;
 
   @override
   void initState() {
     super.initState();
-    selectedColor = widget.initialColor;
+    selectedIdx = 0; // Default value
+    _loadBackgroundTypes();
   }
 
-  void _updateColor(Color color) {
+  Future<void> _loadBackgroundTypes() async {
+    final metadata =
+        await CacheAssetsManager().fetchMetadataFromUrl(backgroundMetadataUrl);
     setState(() {
-      selectedColor = color;
+      backgroundTypes = metadata["backgroundTypes"];
+      if (widget.existingSpace != null) {
+        selectedIdx = backgroundTypes?.indexWhere((element) =>
+                element["name"] == widget.existingSpace?.spaceType) ??
+            0;
+
+        if (selectedIdx < 0) {
+          selectedIdx = 0;
+        }
+      }
     });
   }
 
@@ -79,21 +96,10 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
     final currentPageIndex = pageController.page?.toInt() ?? 0;
 
     return Container(
-      decoration: selectedColor != null
-          ? BoxDecoration(
-              gradient: LinearGradient(
-                colors: selectedColor!.toCardGradientColor(),
-                begin: Alignment.topLeft,
-                end: Alignment.bottomCenter,
-              ),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(12)),
-            )
-          : BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(12)),
-            ),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+      ),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
         left: 24,
@@ -118,28 +124,70 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
               autofocus: true,
             ),
             const SizedBox(height: 16),
-            // Button to show the color picker dialog
-            ColorPicker(
-              onColorChanged: _updateColor,
-              color: selectedColor ?? Colors.blue,
+            Text(
+              'Select Space Type',
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.start,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: storage.from("assets").getPublicUrl(
+                    "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/day.png"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: backgroundTypes == null
+                  ? const CircularProgressIndicator()
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        for (var i = 0; i < backgroundTypes!.length; i++)
+                          ChoiceChip(
+                            key: ValueKey(i),
+                            selected: selectedIdx == i,
+                            color: WidgetStateProperty.all(
+                              backgroundTypes![i]["colorCodes"][0]
+                                  .toString()
+                                  .toColor(),
+                            ),
+                            onSelected: (isSelected) {
+                              setState(() {
+                                selectedIdx = i;
+                              });
+                            },
+                            checkmarkColor: Colors.black,
+                            label: Text(
+                              backgroundTypes![i]["friendlyName"],
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
             ),
             FilledButton(
               onPressed: () async {
-                if (widget.nameController.text.isNotEmpty) {
+                if (widget.nameController.text.isNotEmpty &&
+                    backgroundTypes != null) {
                   if (widget.isEditing) {
                     await widget.ref
                         .read(spacesManagerProvider.notifier)
                         .updateSpace(
                           widget.existingSpace!.copyWith(
                               title: widget.nameController.text,
-                              color: selectedColor?.hex),
+                              spaceType: backgroundTypes?[selectedIdx]["name"]),
                         );
                   } else {
                     await widget.ref
                         .read(spacesManagerProvider.notifier)
                         .createSpace(Spaces(
                             title: widget.nameController.text,
-                            color: selectedColor?.hex));
+                            spaceType: backgroundTypes?[selectedIdx]["name"]));
                   }
                   if (context.mounted) Navigator.pop(context);
                   widget.nameController.clear();

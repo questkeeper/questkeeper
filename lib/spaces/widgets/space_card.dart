@@ -1,9 +1,9 @@
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
-import 'package:questkeeper/shared/extensions/color_extensions.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:questkeeper/spaces/providers/game_height_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:questkeeper/spaces/widgets/delete_space_dialog.dart';
@@ -14,13 +14,55 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 
-class SpaceCard extends ConsumerWidget {
-  const SpaceCard({super.key, required this.space});
+class SpaceCard extends ConsumerStatefulWidget {
+  const SpaceCard(
+      {super.key, required this.space, required this.backgroundColorHex});
 
   final Spaces space;
+  final String backgroundColorHex;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SpaceCard> createState() => _SpaceCardState();
+}
+
+class _SpaceCardState extends ConsumerState<SpaceCard> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isMinimized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.offset <= 0 && _isMinimized) {
+      if (_scrollController.position.maxScrollExtent <= 0) {
+        ref.read(gameHeightProvider.notifier).state = 1.0;
+        if (_isMinimized) setState(() => _isMinimized = false);
+
+        return;
+      }
+      ref.read(gameHeightProvider.notifier).state = 1.0;
+      setState(() => _isMinimized = false);
+    }
+    // Check if we're scrolling down
+    else if (_scrollController.offset > 0 && !_isMinimized) {
+      ref.read(gameHeightProvider.notifier).state =
+          0.3; // Minimized height factor
+      setState(() => _isMinimized = true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final space = widget.space;
     final tasks = ref.watch(tasksManagerProvider.select((value) =>
         value.value?.where((task) => task.spaceId == space.id).toList()));
 
@@ -29,18 +71,15 @@ class SpaceCard extends ConsumerWidget {
               return category.spaceId == space.id;
             }).toList()));
 
-    final baseColor =
-        space.color != null ? space.color!.toColor() : const Color(0xff00CED1);
     return Card(
-      margin: const EdgeInsets.all(12),
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(
-            colors: baseColor.toCardGradientColor(),
-            begin: Alignment.topLeft,
-            end: Alignment.bottomCenter,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(12),
+            bottomRight: Radius.circular(12),
           ),
+          color: widget.backgroundColorHex.toColor(),
         ),
         child: Column(
           children: [
@@ -53,33 +92,40 @@ class SpaceCard extends ConsumerWidget {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: currentSpaceCategories?.length != null
-                    ? currentSpaceCategories!.length + 1
-                    : 0,
-                itemBuilder: (context, index) {
-                  final categoryTasksList = tasks?.where((task) {
-                    return task.categoryId ==
-                        (index < currentSpaceCategories!.length
-                            ? currentSpaceCategories[index].id
-                            : null);
-                  }).toList();
-                  if (index < currentSpaceCategories!.length) {
-                    final category = currentSpaceCategories[index];
-                    return SpaceCategoryTile(
-                      category: category,
-                      tasks: categoryTasksList,
-                    );
-                  } else {
-                    return SpaceCategoryTile(
-                      tasks: categoryTasksList,
-                      category: Categories(
-                        title: "Uncategorized",
-                        tasks: tasks,
-                      ),
-                    );
-                  }
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (notification) {
+                  return false;
                 },
+                child: ListView.builder(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: currentSpaceCategories?.length != null
+                      ? currentSpaceCategories!.length + 1
+                      : 0,
+                  itemBuilder: (context, index) {
+                    final categoryTasksList = tasks?.where((task) {
+                      return task.categoryId ==
+                          (index < currentSpaceCategories!.length
+                              ? currentSpaceCategories[index].id
+                              : null);
+                    }).toList();
+                    if (index < currentSpaceCategories!.length) {
+                      final category = currentSpaceCategories[index];
+                      return SpaceCategoryTile(
+                        category: category,
+                        tasks: categoryTasksList,
+                      );
+                    } else {
+                      return SpaceCategoryTile(
+                        tasks: categoryTasksList,
+                        category: Categories(
+                          title: "Uncategorized",
+                          tasks: tasks,
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ],

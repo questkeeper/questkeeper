@@ -18,7 +18,7 @@ class SpacesManager extends _$SpacesManager {
   Future<List<Spaces>> fetchSpaces() async {
     try {
       var spaces = await _repository.getSpaces();
-      spaces.add(const Spaces(title: "Unassigned", id: null));
+      spaces.add(Spaces(title: "Unassigned", id: null, spaceType: "office"));
       return spaces;
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);

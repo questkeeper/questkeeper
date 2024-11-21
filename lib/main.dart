@@ -3,17 +3,19 @@ import 'dart:io';
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/constants.dart';
-import 'package:questkeeper/familiars/views/familiars_view.dart';
+import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
 import 'package:questkeeper/shared/notifications/notification_handler.dart';
 import 'package:questkeeper/shared/notifications/notification_service.dart';
+import 'package:questkeeper/shared/utils/cache_assets.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:rhttp/rhttp.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
@@ -31,6 +33,8 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await Rhttp.init();
+
   await Supabase.initialize(
     url: "https://mzudaknbrzixjkvjqayw.supabase.co",
     anonKey:
@@ -39,6 +43,13 @@ Future<void> main() async {
 
   HomeWidgetInterface? homeWidget;
   NotificationHandler.initialize();
+
+  try {
+    CacheAssetsManager().fetchAllMetadata();
+    debugPrint("Fetched metadata");
+  } catch (e) {
+    debugPrint("Error in cache assets: $e");
+  }
 
   try {
     if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
@@ -120,7 +131,7 @@ class MyApp extends ConsumerWidget {
         '/settings/about': (context) => const AboutScreen(),
 
         // Familiars stuff
-        '/familiars': (context) => const FamiliarsView(),
+        '/badges': (context) => const QuestsView(),
 
         // Friends
         "/friends": (context) => const FriendsList(),
