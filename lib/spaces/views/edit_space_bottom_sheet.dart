@@ -83,7 +83,7 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
                 element["name"] == widget.existingSpace?.spaceType) ??
             0;
 
-        if (selectedIdx == -1) {
+        if (selectedIdx < 0) {
           selectedIdx = 0;
         }
       }

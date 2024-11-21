@@ -47,7 +47,7 @@ Future<void> main() async {
 
   try {
     CacheAssetsManager().fetchAllMetadata();
-    debugPrint("Fetched metadata: ");
+    debugPrint("Fetched metadata");
   } catch (e) {
     debugPrint("Error in cache assets: $e");
   }

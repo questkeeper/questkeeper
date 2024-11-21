@@ -50,8 +50,10 @@ class FamiliarsWidgetGame extends FlameGame {
     final backgroundPath = updatedBackgroundPath;
     try {
       if (backgroundPath == null) {
-        mapComponent.sprite = Sprite(await loadSpriteSheet(
-            'https://placehold.co/1080x810/000000/FFFFF/png'));
+        mapComponent.sprite = Sprite(await loadSpriteSheet(supabaseClient
+            .storage
+            .from("assets")
+            .getPublicUrl("placeholder.png")));
       } else {
         final newImage = await loadSpriteSheet(backgroundPath);
         mapComponent.sprite = Sprite(newImage);
@@ -151,9 +153,9 @@ class FamiliarsWidgetGame extends FlameGame {
 
     late final double scale;
     if (shouldScaleToSquare(adjustedSize)) {
-      final temp = mapComponent.width;
+      final width = mapComponent.width;
       mapComponent.width = mapComponent.height;
-      mapComponent.height = temp;
+      mapComponent.height = width;
       scale = (adjustedSize.x * 2 / mapComponent.width);
     } else {
       scale = adjustedSize.y / mapComponent.height;
@@ -164,7 +166,7 @@ class FamiliarsWidgetGame extends FlameGame {
     // Update red panda position based on height factor
     redPanda.position = Vector2(
       adjustedSize.x / 2,
-      redPanda.position.y / 2 + adjustedSize.y / 3,
+      (redPanda.position.y / 2) + (adjustedSize.y / 3),
     );
   }
 

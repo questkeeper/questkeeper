@@ -169,7 +169,7 @@ class AboutScreen extends StatelessWidget {
                     ),
                   );
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/login',
+                    '/signin',
                     (route) => false,
                   );
                 }
