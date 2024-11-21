@@ -1,14 +1,40 @@
 import 'dart:convert';
 
 import 'package:flame/game.dart';
+import 'package:flutter/services.dart';
 import 'package:questkeeper/familiars/components/characters/character_sprites.dart';
 import 'package:questkeeper/familiars/components/characters/character_state.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class SpriteSheetLoader {
-  // Load and parse sprite sheet data from JSON
+  static const String _defaultSpriteSheetJsonPath = 'assets/red_panda.json';
   static Future<CharacterSprites> loadFromJson(
       String jsonString, String characterId) async {
-    final data = json.decode(jsonString);
+    try {
+      return await _loadCharacterSpriteSheetFromJson(jsonString, characterId);
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+        hint: Hint.withAttachment(
+          SentryAttachment.fromByteData(
+            utf8.encode(jsonString).buffer.asByteData(),
+            'sprite_sheet.json',
+          ),
+        ),
+        withScope: (p0) => p0.setContexts('spriteSheetLoaderJson', jsonString),
+      );
+
+      return await _loadCharacterSpriteSheetFromJson(
+        await rootBundle.loadString(_defaultSpriteSheetJsonPath),
+        characterId,
+      );
+    }
+  }
+
+  static Future<CharacterSprites> _loadCharacterSpriteSheetFromJson(
+      String jsonString, String characterId) async {
+    final Map<String, dynamic> data = json.decode(jsonString);
     final frames = data['frames'] as Map<String, dynamic>;
     final meta = data['meta'] as Map<String, dynamic>;
 
