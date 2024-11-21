@@ -24,7 +24,7 @@ class CacheAssetsManager {
     final List<Future<void>> backgroundCacheTasks = [];
 
     final backgroundMetadata =
-        await _fetchMetadataFromUrl(backgroundMetadataUrl);
+        await fetchMetadataFromUrl(backgroundMetadataUrl);
 
     for (final background in backgroundMetadata["backgroundTypes"]) {
       for (final timeOfDayType in TimeOfDayType.values) {
@@ -54,7 +54,7 @@ class CacheAssetsManager {
     }
   }
 
-  Future<Map<String, dynamic>> _fetchMetadataFromUrl(String url) async {
+  Future<Map<String, dynamic>> fetchMetadataFromUrl(String url) async {
     try {
       final File file = await cacheManager
           .getSingleFile(url, headers: {"Cache-Control": "no-cache"});
