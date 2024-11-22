@@ -88,19 +88,25 @@ Future<void> main() async {
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
+  ColorScheme _colorScheme(Color? primary, Brightness brightness) {
+    final Color seed = primary ?? Colors.purple;
+
+    final ColorScheme scheme = ColorScheme.fromSeed(
+      seedColor: seed,
+      brightness: brightness,
+    );
+
+    return scheme.harmonized();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = createTextTheme(context, "Roboto", "Nunito");
 
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
-        // Use the dynamic oclors + the new components theme
         final ThemeData lightTheme = ThemeData(
-          colorScheme: lightColorScheme ??
-              ColorScheme.fromSeed(
-                seedColor: Colors.purple,
-                brightness: Brightness.light,
-              ),
+          colorScheme: _colorScheme(lightColorScheme?.primary, Brightness.light),
           textTheme: textTheme,
           useMaterial3: true,
         ).copyWith(
@@ -111,11 +117,7 @@ class MyApp extends ConsumerWidget {
         );
 
         final ThemeData darkTheme = ThemeData(
-          colorScheme: darkColorScheme ??
-              ColorScheme.fromSeed(
-                seedColor: Colors.purple,
-                brightness: Brightness.dark,
-              ),
+          colorScheme: _colorScheme(darkColorScheme?.primary, Brightness.dark),
           textTheme: textTheme,
           useMaterial3: true,
         ).copyWith(
