@@ -78,105 +78,107 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
     final spacesAsync = ref.watch(spacesManagerProvider);
     final heightFactor = ref.watch(gameHeightProvider);
 
-    return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
-        key: const Key('add_task_button_mobile'),
-        heroTag: 'add_task_button_mobile',
-        onPressed: () => {
-          showTaskBottomSheet(
-            context: context,
-            ref: ref,
-            existingTask: null,
-          ),
-        },
-        child: const Icon(LucideIcons.plus),
-      ),
-      body: spacesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) {
-          Sentry.captureException(
-            error,
-            stackTrace: stack,
-          );
-          return Center(child: Text('Error: $error'));
-        },
-        data: (spaces) {
-          return Stack(
-            children: [
-              Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 4),
-                    child: AnimatedGameContainer(
-                      game: _game,
-                      heightFactor: heightFactor,
+    return SafeArea(
+      child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: FloatingActionButton(
+          key: const Key('add_task_button_mobile'),
+          heroTag: 'add_task_button_mobile',
+          onPressed: () => {
+            showTaskBottomSheet(
+              context: context,
+              ref: ref,
+              existingTask: null,
+            ),
+          },
+          child: const Icon(LucideIcons.plus),
+        ),
+        body: spacesAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) {
+            Sentry.captureException(
+              error,
+              stackTrace: stack,
+            );
+            return Center(child: Text('Error: $error'));
+          },
+          data: (spaces) {
+            return Stack(
+              children: [
+                Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 4),
+                      child: AnimatedGameContainer(
+                        game: _game,
+                        heightFactor: heightFactor,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: PageView.builder(
-                      controller: _pageController,
-                      onPageChanged: (page) {
-                        currentPageValue = ValueNotifier(page);
+                    Expanded(
+                      child: PageView.builder(
+                        controller: _pageController,
+                        onPageChanged: (page) {
+                          currentPageValue = ValueNotifier(page);
 
-                        final dateType = DateTime.now().getTimeOfDayType();
+                          final dateType = DateTime.now().getTimeOfDayType();
 
-                        _game.updateBackground(
-                            page,
-                            page == spaces.length
-                                ? initialBackgroundUrl
-                                : storageClient.from("assets").getPublicUrl(
-                                    "backgrounds/${spaces[page].spaceType}/$dateType.png"));
+                          _game.updateBackground(
+                              page,
+                              page == spaces.length
+                                  ? initialBackgroundUrl
+                                  : storageClient.from("assets").getPublicUrl(
+                                      "backgrounds/${spaces[page].spaceType}/$dateType.png"));
 
-                        final isForward =
-                            page > (ref.read(pageControllerProvider).page ?? 0);
-                        _game.animateEntry(
-                          isForward ? Direction.left : Direction.right,
-                        );
-
-                        if (currentPageValue.value == spaces.length) {
-                          showSpaceBottomSheet(
-                            context: context,
-                            ref: ref,
+                          final isForward = page >
+                              (ref.read(pageControllerProvider).page ?? 0);
+                          _game.animateEntry(
+                            isForward ? Direction.left : Direction.right,
                           );
-                          ref.read(gameHeightProvider.notifier).state = 0.3;
-                        }
 
-                        if (!isForward && page == spaces.length - 1) {
-                          ref.read(gameHeightProvider.notifier).state = 1.0;
-                        }
-                      },
-                      itemCount: spaces.length + 1,
-                      itemBuilder: (context, index) {
-                        String spaceBackgroundColor = index == spaces.length
-                            ? "#000000"
-                            : prefs.getString(
-                                    "background_${spaces[index].spaceType}_${DateTime.now().getTimeOfDayType()}") ??
-                                "#000000";
+                          if (currentPageValue.value == spaces.length) {
+                            showSpaceBottomSheet(
+                              context: context,
+                              ref: ref,
+                            );
+                            ref.read(gameHeightProvider.notifier).state = 0.3;
+                          }
 
-                        if (index == spaces.length) {
-                          return const Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(LucideIcons.circle_plus, size: 48),
-                                Text('Create a new space'),
-                              ],
-                            ),
-                          );
-                        }
-                        return SpaceCard(
-                            space: spaces[index],
-                            backgroundColorHex: spaceBackgroundColor);
-                      },
+                          if (!isForward && page == spaces.length - 1) {
+                            ref.read(gameHeightProvider.notifier).state = 1.0;
+                          }
+                        },
+                        itemCount: spaces.length + 1,
+                        itemBuilder: (context, index) {
+                          String spaceBackgroundColor = index == spaces.length
+                              ? "#000000"
+                              : prefs.getString(
+                                      "background_${spaces[index].spaceType}_${DateTime.now().getTimeOfDayType()}") ??
+                                  "#000000";
+
+                          if (index == spaces.length) {
+                            return const Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(LucideIcons.circle_plus, size: 48),
+                                  Text('Create a new space'),
+                                ],
+                              ),
+                            );
+                          }
+                          return SpaceCard(
+                              space: spaces[index],
+                              backgroundColorHex: spaceBackgroundColor);
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              CircleProgressBar(spaces: spaces)
-            ],
-          );
-        },
+                  ],
+                ),
+                CircleProgressBar(spaces: spaces)
+              ],
+            );
+          },
+        ),
       ),
     );
   }
