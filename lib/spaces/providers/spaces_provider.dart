@@ -1,3 +1,5 @@
+import 'package:faker/faker.dart';
+import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/repositories/spaces_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -19,6 +21,24 @@ class SpacesManager extends _$SpacesManager {
     try {
       var spaces = await _repository.getSpaces();
       spaces.add(Spaces(title: "Unassigned", id: null, spaceType: "office"));
+
+      if (isDebug) {
+        spaces.add(Spaces(
+          title: faker.animal.name(),
+          spaceType: "office",
+        ));
+
+        spaces.add(Spaces(
+          title: faker.animal.name(),
+          spaceType: "living_room",
+        ));
+
+        spaces.add(Spaces(
+          title: faker.animal.name(),
+          spaceType: "school",
+        ));
+      }
+
       return spaces;
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
