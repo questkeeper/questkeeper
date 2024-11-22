@@ -10,6 +10,7 @@ import 'package:questkeeper/spaces/widgets/space_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -77,8 +78,21 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
     final spacesAsync = ref.watch(spacesManagerProvider);
     final heightFactor = ref.watch(gameHeightProvider);
 
-    return SafeArea(
-      child: spacesAsync.when(
+    return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        key: const Key('add_task_button_mobile'),
+        heroTag: 'add_task_button_mobile',
+        onPressed: () => {
+          showTaskBottomSheet(
+            context: context,
+            ref: ref,
+            existingTask: null,
+          ),
+        },
+        child: const Icon(LucideIcons.plus),
+      ),
+      body: spacesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) {
           Sentry.captureException(

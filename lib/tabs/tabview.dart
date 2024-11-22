@@ -63,20 +63,6 @@ class _TabViewState extends ConsumerState<TabView> {
                     }
                   },
                   child: pages[_selectedIndex]),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.miniCenterDocked,
-              floatingActionButton: FloatingActionButton(
-                key: const Key('add_task_button_mobile'),
-                heroTag: 'add_task_button_mobile',
-                onPressed: () => {
-                  showTaskBottomSheet(
-                    context: context,
-                    ref: ref,
-                    existingTask: null,
-                  ),
-                },
-                child: const Icon(LucideIcons.plus),
-              ),
               bottomNavigationBar: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
                 items: const <BottomNavigationBarItem>[
