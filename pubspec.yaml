@@ -31,7 +31,7 @@ dependencies:
   supabase_auth_ui: ^0.5.4
   home_widget: ^0.7.0
   shared_preferences: ^2.3.3
-  flutter_lucide: ^1.4.0
+  flutter_lucide: ^1.5.0
   riverpod_generator: ^2.6.3
   rename_app: ^1.6.1
   email_validator: ^2.1.17
@@ -42,12 +42,13 @@ dependencies:
   http: ^1.2.2
   flame: ^1.21.0
   flame_tiled: ^1.21.0
-  rhttp: ^0.9.1
+  rhttp: ^0.9.2
   cached_network_image: ^3.4.1
   flame_riverpod: ^5.4.5
   flutter_cache_manager: ^3.4.1
   faker: ^2.2.0
   uuid: ^4.5.1
+  dice_bear: ^0.1.7
 dev_dependencies:
   flutter_test:
     sdk: flutter
