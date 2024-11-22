@@ -16,6 +16,7 @@ import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:questkeeper/theme_components.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
@@ -89,32 +90,47 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    TextTheme textTheme = createTextTheme(context, "Nunito", "Poppins");
+    TextTheme textTheme = createTextTheme(context, "Roboto", "Nunito");
 
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
+        // Use the dynamic oclors + the new components theme
+        final ThemeData lightTheme = ThemeData(
+          colorScheme: lightColorScheme ??
+              ColorScheme.fromSeed(
+                seedColor: Colors.purple,
+                brightness: Brightness.light,
+              ),
+          textTheme: textTheme,
+          useMaterial3: true,
+        ).copyWith(
+          elevatedButtonTheme: ComponentsTheme.elevatedButtonTheme(),
+          filledButtonTheme: ComponentsTheme.filledButtonTheme(),
+          inputDecorationTheme: ComponentsTheme.inputDecorationTheme(),
+          appBarTheme: ComponentsTheme.appBarTheme(),
+        );
+
+        final ThemeData darkTheme = ThemeData(
+          colorScheme: darkColorScheme ??
+              ColorScheme.fromSeed(
+                seedColor: Colors.purple,
+                brightness: Brightness.dark,
+              ),
+          textTheme: textTheme,
+          useMaterial3: true,
+        ).copyWith(
+          elevatedButtonTheme: ComponentsTheme.elevatedButtonTheme(),
+          filledButtonTheme: ComponentsTheme.filledButtonTheme(),
+          inputDecorationTheme: ComponentsTheme.inputDecorationTheme(),
+          appBarTheme: ComponentsTheme.appBarTheme(),
+        );
+
         return MaterialApp(
           title: 'QuestKeeper',
           themeMode: ThemeMode.system,
           home: const AuthGate(),
-          theme: ThemeData(
-            colorScheme: lightColorScheme ??
-                ColorScheme.fromSeed(
-                  seedColor: Colors.purple,
-                  brightness: Brightness.light,
-                ),
-            textTheme: textTheme,
-            useMaterial3: true,
-          ),
-          darkTheme: ThemeData(
-            colorScheme: darkColorScheme ??
-                ColorScheme.fromSeed(
-                  seedColor: Colors.purple,
-                  brightness: Brightness.dark,
-                ),
-            textTheme: textTheme,
-            useMaterial3: true,
-          ),
+          theme: lightTheme,
+          darkTheme: darkTheme,
           routes: {
             '/signin': (context) => const AuthSpaces(),
             '/home': (context) => const TabView(),
