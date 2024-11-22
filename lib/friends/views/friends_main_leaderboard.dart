@@ -7,6 +7,7 @@ import 'package:questkeeper/friends/widgets/friend_list_tile.dart';
 import 'package:questkeeper/friends/widgets/friend_request_bottom_sheet.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
 import 'package:questkeeper/friends/widgets/sort_menu.dart';
+import 'package:questkeeper/shared/widgets/trophy_avatar.dart';
 
 class FriendsList extends ConsumerStatefulWidget {
   const FriendsList({super.key});
@@ -63,6 +64,22 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                 },
                 itemBuilder: (context, index) {
                   final friend = sorted[index];
+                  const top3 = [0, 1, 2];
+                  if (top3.contains(index)) {
+                    return Stack(
+                      alignment: Alignment.centerLeft,
+                      children: [
+                        FriendListTile(friend: friend),
+                        Positioned(
+                          left: 40,
+                          child: TrophyAvatar(
+                            trophyType: TrophyType.values[index],
+                            radius: 30,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
                   return FriendListTile(friend: friend);
                 },
               ),

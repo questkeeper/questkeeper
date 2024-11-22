@@ -68,5 +68,6 @@ flutter:
   assets:
     - assets/images/
     - assets/tiles/
+    - assets/trophy/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
