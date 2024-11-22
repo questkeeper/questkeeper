@@ -3,10 +3,10 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
 import 'package:questkeeper/friends/providers/friends_provider.dart';
-import 'package:questkeeper/friends/providers/friends_request_provider.dart';
 import 'package:questkeeper/friends/widgets/friend_list_tile.dart';
 import 'package:questkeeper/friends/widgets/friend_request_bottom_sheet.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
+import 'package:questkeeper/friends/widgets/sort_menu.dart';
 
 class FriendsList extends ConsumerStatefulWidget {
   const FriendsList({super.key});
@@ -16,6 +16,75 @@ class FriendsList extends ConsumerStatefulWidget {
 }
 
 class _FriendsListState extends ConsumerState<FriendsList> {
+  var _sortSettings = SortSettings();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final asyncValue = ref.watch(friendsManagerProvider);
+    // final pendingRequestsAsyncValue = ref.watch(friendsRequestManagerProvider);
+
+    if (asyncValue.isLoading || !asyncValue.hasValue) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (asyncValue.hasError) {
+      // TODO do something with these values
+      final error = asyncValue.error!;
+      final stack = asyncValue.stackTrace!;
+
+      return const Center(
+        child: Text("Failed to fetch friends list"),
+      );
+    }
+
+    var unsorted = asyncValue.value!;
+    var sorted = _sortSettings.sorted(unsorted.toList(growable: false));
+
+    return SafeArea(
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(LucideIcons.search),
+          onPressed: () {
+            showSearch(
+              context: context,
+              delegate: FriendSearchDelegate(),
+            );
+          },
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.separated(
+                itemCount: sorted.length,
+                padding: const EdgeInsets.all(16),
+                separatorBuilder: (context, index) {
+                  return const SizedBox(height: 16);
+                },
+                itemBuilder: (context, index) {
+                  final friend = sorted[index];
+                  return FriendListTile(friend: friend);
+                },
+              ),
+            ),
+            Container(
+              color: theme.colorScheme.surfaceContainerLow,
+              padding: EdgeInsets.all(20),
+              child: _SortWidget(
+                settings: _sortSettings,
+                onChange: (settings) {
+                  setState(() {
+                    _sortSettings = settings;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showPendingRequestsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       enableDrag: true,
@@ -29,165 +98,99 @@ class _FriendsListState extends ConsumerState<FriendsList> {
       },
     );
   }
+}
 
-  Widget _buildFriendsList(List<Friend> friendsList, bool isPodiumActive) {
-    return friendsList.isEmpty
-        ? Center(
-            child: Text(
-              isPodiumActive
-                  ? "No more friends to show!"
-                  : 'No friends yet. Add some!',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          )
-        : ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: friendsList.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 16),
-            itemBuilder: (context, index) {
-              final friend = friendsList[index];
-              return FriendListTile(friend: friend);
-            },
-          );
-  }
+class SortSettings {
+  var type = _SortType.points;
+  var direction = _SortDirection.descending;
 
-  @override
-  Widget build(BuildContext context) {
-    final friendsListAsyncValue = ref.watch(friendsManagerProvider);
-    final pendingRequestsAsyncValue = ref.watch(friendsRequestManagerProvider);
+  List<Friend> sorted(List<Friend> list) {
+    list.sort((first, second) {
+      switch (type) {
+        case _SortType.alphabetical:
+          return first.username.compareTo(second.username);
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 100,
-        title: Text(
-          'Friends',
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: friendsListAsyncValue.when(
-              data: (friendsList) {
-                return Column(
-                  children: [
-                    _podiumBuilder(
-                      friendsList.length > 3
-                          ? friendsList.sublist(0, 3)
-                          : friendsList,
-                    ),
-                    const SizedBox(height: 16),
-                    Expanded(
-                      child: _buildFriendsList(
-                        friendsList.length > 3 ? friendsList.sublist(3) : [],
-                        friendsList.isNotEmpty,
-                      ),
-                    ),
-                  ],
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) => const Center(
-                child: Text('Failed to fetch friends list.'),
-              ),
-            ),
-          ),
-          pendingRequestsAsyncValue.when(
-            data: (pendingRequests) =>
-                // Get total length of both sent and received requests
-                (pendingRequests['sent']!.length +
-                            pendingRequests['received']!.length) >
-                        0
-                    ? TextButton.icon(
-                        onPressed: () =>
-                            _showPendingRequestsBottomSheet(context),
-                        icon: const Icon(LucideIcons.user_plus),
-                        label: Text(
-                            "Pending Requests (${pendingRequests['sent']!.length + pendingRequests['received']!.length})"),
-                      )
-                    : const SizedBox.shrink(),
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Filter or add friends',
-                prefixIcon: Icon(LucideIcons.search),
-              ),
-              onSubmitted: (query) {
-                showSearch(
-                  context: context,
-                  delegate: FriendSearchDelegate(
-                    initialQuery: query,
-                  ),
-                  query: query,
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
+        case _SortType.points:
+          return second.points.compareTo(first.points);
+      }
+    });
 
-  Widget _podiumBuilder(List<Friend> friendsList) {
-    if (friendsList.length > 1) {
-      final temp = friendsList[0];
-      friendsList[0] = friendsList[1];
-      friendsList[1] = temp;
+    if (direction == _SortDirection.ascending) {
+      list = list.reversed.toList();
     }
 
-    return friendsList.isEmpty
-        ? const SizedBox()
-        : Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (var i = 0; i < friendsList.length; i++)
-                Column(
-                  children: [
-                    Container(
-                      // border
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: i == 1 ? Colors.amber : Colors.green,
-                          width: i == 1 ? 4 : 2,
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
-                      child: CircleAvatar(
-                        radius: i == 1 ? 75 : 50,
-                        child: Text(
-                          friendsList[i].username[0].toUpperCase(),
-                          style: TextStyle(
-                            fontSize: i == 1 ? 48 : 24,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      friendsList[i].username,
-                      style: TextStyle(
-                        fontSize: i == 1 ? 24 : 16,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${friendsList[i].points} points',
-                      style: TextStyle(
-                        fontSize: i == 1 ? 16 : 12,
-                      ),
-                    ),
-                  ],
-                ),
-            ],
-          );
+    return list;
   }
+}
+
+typedef OnChangeSettings = void Function(SortSettings settings);
+
+class _SortWidget extends StatefulWidget {
+  const _SortWidget({
+    required this.settings,
+    required this.onChange,
+  });
+
+  final SortSettings settings;
+  final OnChangeSettings onChange;
+
+  @override
+  State<StatefulWidget> createState() => _SortWidgetState();
+}
+
+class _SortWidgetState extends State<_SortWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Sorting type
+        SortMenu(
+          values: _SortType.values,
+          selected: widget.settings.type,
+          onSelection: (value) {
+            widget.settings.type = value as _SortType;
+            widget.onChange.call(widget.settings);
+          },
+        ),
+
+        const SizedBox(width: 10),
+
+        // Sorting direction
+        SortMenu(
+          values: _SortDirection.values,
+          selected: widget.settings.direction,
+          onSelection: (value) {
+            widget.settings.direction = value as _SortDirection;
+            widget.onChange.call(widget.settings);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+enum _SortType implements SortValue {
+  points("Points", LucideIcons.arrow_down_1_0),
+  alphabetical("Alphabetical", LucideIcons.arrow_down_a_z);
+
+  const _SortType(this.display, this.iconData);
+
+  @override
+  final String display;
+
+  @override
+  final IconData? iconData;
+}
+
+enum _SortDirection implements SortValue {
+  ascending("Ascending", LucideIcons.arrow_down_z_a),
+  descending("Descending", LucideIcons.arrow_down_a_z);
+
+  const _SortDirection(this.display, this.iconData);
+
+  @override
+  final String display;
+
+  @override
+  final IconData? iconData;
 }

@@ -10,6 +10,7 @@ const firebaseVapidKey =
 const bool isDebug = bool.fromEnvironment('dart.vm.product') == false;
 
 // Base URI for the API
-const String baseApiUri = isDebug
-    ? "https://localhost:8787/v1"
-    : "https://api.questkeeper.app/v1";
+// const String baseApiUri = isDebug
+//     ? "https://localhost:8787/v1"
+//     : "https://api.questkeeper.app/v1";
+const String baseApiUri = "https://api.questkeeper.app/v1";

@@ -32,7 +32,7 @@ class FriendsManager extends _$FriendsManager {
           friends.add(Friend(
               userId: uuid.v4(),
               username: faker.internet.userName(),
-              points: random.nextInt(100000).toString(),
+              points: random.nextInt(100000),
           ));
         }
       }

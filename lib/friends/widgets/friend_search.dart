@@ -7,9 +7,9 @@ class FriendSearchDelegate extends SearchDelegate {
   final FriendRepository _repository = FriendRepository();
 
   FriendSearchDelegate({
-    required String initialQuery,
+    String? initialQuery,
   }) {
-    query = initialQuery;
+    query = initialQuery ?? "";
   }
 
   @override

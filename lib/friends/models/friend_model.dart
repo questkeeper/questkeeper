@@ -4,7 +4,7 @@ import 'dart:convert';
 class Friend {
   final String userId;
   final String username;
-  final String points;
+  final int points;
   Friend({
     required this.userId,
     required this.username,
@@ -14,7 +14,7 @@ class Friend {
   Friend copyWith({
     String? userId,
     String? username,
-    String? points,
+    int? points,
   }) {
     return Friend(
       userId: userId ?? this.userId,
@@ -35,7 +35,7 @@ class Friend {
     return Friend(
       userId: map['userId'] as String,
       username: map['username'] as String,
-      points: map['points'] as String,
+      points: int.parse(map['points']),
     );
   }
 

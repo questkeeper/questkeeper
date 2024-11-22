@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
+import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 
 class FriendListTile extends StatelessWidget {
   final Friend friend;
@@ -8,46 +10,25 @@ class FriendListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
+    return ListTile(
+      isThreeLine: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.blue.shade100,
-              child: Text(
-                friend.username[0].toUpperCase(),
-                style: TextStyle(fontSize: 24, color: Colors.blue.shade800),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    friend.username,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${friend.points} ${int.tryParse(friend.points) == null ? "" : "points"}',
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.more_vert),
-              onPressed: () {
-                // TODO: Implement more options functionality
-              },
-            ),
-          ],
-        ),
+      tileColor: Theme.of(context).cardColor,
+      leading: AvatarWidget(
+        seed: friend.userId,
+        radius: 30,
+      ),
+      trailing: IconButton(
+        icon: const Icon(LucideIcons.ellipsis_vertical),
+        onPressed: () {},
+      ),
+      title: Text(
+        friend.username,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+      subtitle: Text(
+        '${friend.points} points',
+        style: Theme.of(context).textTheme.labelLarge,
       ),
     );
   }
