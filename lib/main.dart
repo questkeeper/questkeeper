@@ -15,7 +15,6 @@ import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
-import 'package:rhttp/rhttp.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
@@ -32,8 +31,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  await Rhttp.init();
 
   await Supabase.initialize(
     url: "https://mzudaknbrzixjkvjqayw.supabase.co",
