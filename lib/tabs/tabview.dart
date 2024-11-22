@@ -51,18 +51,19 @@ class _TabViewState extends ConsumerState<TabView> {
           return Stack(children: [
             Scaffold(
               body: RefreshIndicator(
-                  onRefresh: () {
-                    if (ref.read(spacesManagerProvider).isLoading ||
-                        ref.read(spacesManagerProvider).isRefreshing) {
-                      return Future
-                          .value(); // Do nothing if already loading or refreshing
-                    } else {
-                      return ref
-                          .read(spacesManagerProvider.notifier)
-                          .refreshSpaces();
-                    }
-                  },
-                  child: pages[_selectedIndex]),
+                onRefresh: () {
+                  if (ref.read(spacesManagerProvider).isLoading ||
+                      ref.read(spacesManagerProvider).isRefreshing) {
+                    return Future
+                        .value(); // Do nothing if already loading or refreshing
+                  } else {
+                    return ref
+                        .read(spacesManagerProvider.notifier)
+                        .refreshSpaces();
+                  }
+                },
+                child: pages[_selectedIndex],
+              ),
               bottomNavigationBar: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
                 items: const <BottomNavigationBarItem>[
@@ -75,12 +76,16 @@ class _TabViewState extends ConsumerState<TabView> {
                     label: 'Spaces',
                   ),
                   BottomNavigationBarItem(
-                      icon: Icon(LucideIcons.handshake), label: 'Friends'),
+                    icon: Icon(LucideIcons.handshake),
+                    label: 'Friends',
+                  ),
                   BottomNavigationBarItem(
-                      icon: Icon(LucideIcons.user_cog), label: 'Settings'),
+                    icon: Icon(LucideIcons.user_cog),
+                    label: 'Settings',
+                  ),
                 ],
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
                 currentIndex: _selectedIndex,
-                selectedItemColor: Colors.green,
                 onTap: _onItemTapped,
               ),
             ),
@@ -98,7 +103,8 @@ class _TabViewState extends ConsumerState<TabView> {
                   }
                   BetterFeedback.of(context).showAndUploadToSentry(
                       name: user?.id ?? 'Unknown',
-                      email: user?.email ?? 'Unknown@questkeeper.app');
+                      email: user?.email ?? 'unknown@questkeeper.app',
+                  );
                 },
                 enableFeedback: true,
                 mini: true,
