@@ -49,6 +49,7 @@ dependencies:
   uuid: ^4.5.1
   dice_bear: ^0.1.7
   skeletonizer: ^1.4.2
+  dynamic_color: ^1.7.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

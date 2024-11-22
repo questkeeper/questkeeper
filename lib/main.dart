@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/constants.dart';
@@ -19,8 +20,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'tabs/tabview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:questkeeper/theme.dart';
-import 'package:questkeeper/theme_components.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -90,59 +89,58 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final components = ComponentsTheme.componentsThemeData;
-
-    final brightness = View.of(context).platformDispatcher.platformBrightness;
     TextTheme textTheme = createTextTheme(context, "Nunito", "Poppins");
 
-    MaterialTheme theme = MaterialTheme(textTheme);
+    return DynamicColorBuilder(
+      builder: (lightColorScheme, darkColorScheme) {
+        return MaterialApp(
+          title: 'QuestKeeper',
+          themeMode: ThemeMode.system,
+          home: const AuthGate(),
+          theme: ThemeData(
+            colorScheme: lightColorScheme ??
+                ColorScheme.fromSeed(
+                  seedColor: Colors.purple,
+                  brightness: Brightness.light,
+                ),
+            textTheme: textTheme,
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: darkColorScheme ??
+                ColorScheme.fromSeed(
+                  seedColor: Colors.purple,
+                  brightness: Brightness.dark,
+                ),
+            textTheme: textTheme,
+            useMaterial3: true,
+          ),
+          routes: {
+            '/signin': (context) => const AuthSpaces(),
+            '/home': (context) => const TabView(),
 
-    return MaterialApp(
-      title: 'QuestKeeper',
-      theme: brightness == Brightness.light
-          ? theme.light().copyWith(
-                appBarTheme: components.appBarTheme,
-                inputDecorationTheme: components.inputDecorationTheme,
-                textButtonTheme: components.textButtonTheme,
-                outlinedButtonTheme: components.outlinedButtonTheme,
-                elevatedButtonTheme: components.elevatedButtonTheme,
-                filledButtonTheme: components.filledButtonTheme,
-                bottomSheetTheme: components.bottomSheetTheme,
-              )
-          : theme.dark().copyWith(
-                appBarTheme: components.appBarTheme,
-                inputDecorationTheme: components.inputDecorationTheme,
-                textButtonTheme: components.textButtonTheme,
-                outlinedButtonTheme: components.outlinedButtonTheme,
-                elevatedButtonTheme: components.elevatedButtonTheme,
-                filledButtonTheme: components.filledButtonTheme,
-                bottomSheetTheme: components.bottomSheetTheme,
-              ),
-      themeMode: ThemeMode.system,
-      home: const AuthGate(),
-      routes: {
-        '/signin': (context) => const AuthSpaces(),
-        '/home': (context) => const TabView(),
+            // Settings stuff
+            '/settings/about': (context) => const AboutScreen(),
 
-        // Settings stuff
-        '/settings/about': (context) => const AboutScreen(),
+            // Familiars stuff
+            '/badges': (context) => const QuestsView(),
 
-        // Familiars stuff
-        '/badges': (context) => const QuestsView(),
-
-        // Friends
-        "/friends": (context) => const FriendsList(),
-      },
-      builder: (context, child) {
-        return StreamBuilder<String>(
-          stream: NotificationService().messageStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                SnackbarService.showSuccessSnackbar(context, snapshot.data!);
-              });
-            }
-            return child ?? const SizedBox();
+            // Friends
+            "/friends": (context) => const FriendsList(),
+          },
+          builder: (context, child) {
+            return StreamBuilder<String>(
+              stream: NotificationService().messageStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    SnackbarService.showSuccessSnackbar(
+                        context, snapshot.data!);
+                  });
+                }
+                return child ?? const SizedBox();
+              },
+            );
           },
         );
       },
