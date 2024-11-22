@@ -7,6 +7,7 @@ import 'package:questkeeper/settings/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -30,14 +31,15 @@ class SettingsScreen extends ConsumerWidget {
                 FutureBuilder(
                   future: ref.watch(profileManagerProvider.future),
                   builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final userProfile = snapshot.data as Profile;
-                      return Row(
+                    return Skeletonizer(
+                      enabled: !snapshot.hasData,
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          AvatarWidget(
-                            seed: userProfile.user_id,
-                          ),
+                          snapshot.hasData
+                              ? AvatarWidget(
+                                  seed: (snapshot.data as Profile).user_id)
+                              : const CircleAvatar(radius: 50),
                           const SizedBox(width: 20),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,34 +51,38 @@ class SettingsScreen extends ConsumerWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    userProfile.username,
+                                    snapshot.hasData
+                                        ? (snapshot.data as Profile).username
+                                        : 'Username Loading',
                                     style: Theme.of(context)
                                         .textTheme
                                         .headlineSmall,
                                   ),
-                                  userProfile.isPro == true
-                                      ? Text('PRO',
-                                          style: TextStyle(
-                                              color: Colors.greenAccent))
-                                      : const SizedBox(),
+                                  if (snapshot.hasData &&
+                                      (snapshot.data as Profile).isPro == true)
+                                    const Text('PRO',
+                                        style: TextStyle(
+                                            color: Colors.greenAccent))
                                 ],
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                '${userProfile.points} points',
+                                snapshot.hasData
+                                    ? '${(snapshot.data as Profile).points} points'
+                                    : '0 points',
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                               Text(
-                                'Account since ${userProfile.created_at.split("T")[0]}',
+                                snapshot.hasData
+                                    ? 'Account since ${(snapshot.data as Profile).created_at.split("T")[0]}'
+                                    : 'Account since 2024-01-01',
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ],
                           ),
                         ],
-                      );
-                    } else {
-                      return const LinearProgressIndicator();
-                    }
+                      ),
+                    );
                   },
                 ),
                 Column(

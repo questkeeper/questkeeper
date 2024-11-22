@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class AvatarWidget extends StatefulWidget {
-  const AvatarWidget({super.key, required this.seed});
+  const AvatarWidget({super.key, required this.seed, this.radius = 50});
 
   final String seed;
+  final double radius;
   @override
   AvatarWidgetState createState() => AvatarWidgetState();
 }
@@ -15,7 +17,6 @@ class AvatarWidgetState extends State<AvatarWidget> {
   @override
   void initState() {
     super.initState();
-    _loadAvatar();
   }
 
   Future<void> _loadAvatar() async {
@@ -27,10 +28,18 @@ class AvatarWidgetState extends State<AvatarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: 50,
-      backgroundImage: avatarImage,
-      child: avatarImage == null ? CircularProgressIndicator() : null,
+    return FutureBuilder(
+      future: _loadAvatar(),
+      builder: (context, snapshot) {
+        return Skeletonizer(
+          enabled: snapshot.connectionState == ConnectionState.waiting,
+          child: CircleAvatar(
+            radius: widget.radius,
+            backgroundImage: avatarImage,
+            child: avatarImage == null ? CircularProgressIndicator() : null,
+          ),
+        );
+      },
     );
   }
 }
