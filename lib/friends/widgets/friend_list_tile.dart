@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
+import 'package:questkeeper/friends/repositories/friend_repository.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/shared/widgets/trophy_avatar.dart';
 
 class FriendListTile extends StatelessWidget {
@@ -38,9 +40,51 @@ class FriendListTile extends StatelessWidget {
                 trophyType: top3[position.toString()]!,
               ),
             ),
-          IconButton(
-            icon: const Icon(LucideIcons.ellipsis_vertical),
-            onPressed: () {},
+          PopupMenuButton(
+            icon: Icon(LucideIcons.ellipsis_vertical),
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                  child: ListTile(
+                    leading: Icon(LucideIcons.user),
+                    title: Text('View Profile'),
+                  ),
+                ),
+                PopupMenuItem(
+                  child: ListTile(
+                    leading: Icon(LucideIcons.redo),
+                    title: Text('Nudge'),
+                    onTap: () async {
+                      try {
+                        final response = await FriendRepository()
+                            .nudgeFriend(friend.username);
+
+                        if (context.mounted) {
+                          if (response.success) {
+                            SnackbarService.showSuccessSnackbar(
+                                context, response.message);
+                          } else {
+                            SnackbarService.showErrorSnackbar(
+                                context, response.message);
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          SnackbarService.showErrorSnackbar(
+                              context, e.toString());
+                        }
+                      }
+                    },
+                  ),
+                ),
+                PopupMenuItem(
+                  child: ListTile(
+                    leading: Icon(LucideIcons.ban),
+                    title: Text('Block User'),
+                  ),
+                ),
+              ];
+            },
           ),
         ],
       ),
