@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
 import 'package:questkeeper/friends/models/user_search_model.dart';
+import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FriendRepository {
@@ -124,6 +125,24 @@ class FriendRepository {
       return usersList;
     } else {
       throw Exception('Failed to search user profile');
+    }
+  }
+
+  Future<ReturnModel> nudgeFriend(String username) async {
+    final response = await http.post(
+      Uri.parse('$baseApiUri/social/friends/nudge'),
+      headers: header,
+      body: json.encode({'username': username}),
+    );
+
+    if (response.statusCode == 200) {
+      return ReturnModel(
+        message: await json.decode(response.body)['message'],
+        success: true,
+        data: json.decode(response.body),
+      );
+    } else {
+      throw Exception('Failed to nudge friend');
     }
   }
 }
