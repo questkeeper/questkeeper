@@ -7,7 +7,11 @@ import 'package:questkeeper/friends/widgets/friend_list_tile.dart';
 import 'package:questkeeper/friends/widgets/friend_request_bottom_sheet.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
 import 'package:questkeeper/friends/widgets/sort_menu.dart';
-import 'package:questkeeper/shared/widgets/trophy_avatar.dart';
+import 'package:questkeeper/profile/model/profile_model.dart';
+import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:questkeeper/shared/widgets/avatar_widget.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class FriendsList extends ConsumerStatefulWidget {
   const FriendsList({super.key});
@@ -30,9 +34,13 @@ class _FriendsListState extends ConsumerState<FriendsList> {
     }
 
     if (asyncValue.hasError) {
-      // TODO do something with these values
       final error = asyncValue.error!;
       final stack = asyncValue.stackTrace!;
+
+      Sentry.captureException(
+        error,
+        stackTrace: stack,
+      );
 
       return const Center(
         child: Text("Failed to fetch friends list"),
@@ -55,6 +63,82 @@ class _FriendsListState extends ConsumerState<FriendsList> {
         ),
         body: Column(
           children: [
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: FutureBuilder(
+                future: ref.watch(profileManagerProvider.future),
+                builder: (context, snapshot) {
+                  return Skeletonizer(
+                    enabled: !snapshot.hasData,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            snapshot.hasData
+                                ? AvatarWidget(
+                                    seed: (snapshot.data as Profile).user_id)
+                                : const CircleAvatar(radius: 50),
+                            const SizedBox(width: 20),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      snapshot.hasData
+                                          ? (snapshot.data as Profile).username
+                                          : 'Username Loading',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall,
+                                    ),
+                                    if (snapshot.hasData &&
+                                        (snapshot.data as Profile).isPro ==
+                                            true)
+                                      const Text('PRO',
+                                          style: TextStyle(
+                                              color: Colors.greenAccent))
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  snapshot.hasData
+                                      ? '${(snapshot.data as Profile).points} points'
+                                      : '0 points',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text(
+                                  snapshot.hasData
+                                      ? 'Account since ${(snapshot.data as Profile).created_at.split("T")[0]}'
+                                      : 'Account since 2024-01-01',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: theme.colorScheme.onSurface
+                                            .withOpacity(0.6),
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
             Expanded(
               child: ListView.separated(
                 itemCount: sorted.length,
@@ -64,23 +148,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                 },
                 itemBuilder: (context, index) {
                   final friend = sorted[index];
-                  const top3 = [0, 1, 2];
-                  if (top3.contains(index)) {
-                    return Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        FriendListTile(friend: friend),
-                        Positioned(
-                          left: 40,
-                          child: TrophyAvatar(
-                            trophyType: TrophyType.values[index],
-                            radius: 30,
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                  return FriendListTile(friend: friend);
+                  return FriendListTile(friend: friend, position: index + 1);
                 },
               ),
             ),
