@@ -64,7 +64,6 @@ Future<void> main() async {
     if (Platform.isAndroid || Platform.isIOS || kIsWeb) {
       mixpanel = MixpanelManager.instance;
       mixpanel.init('bd3ae9764e0e2c1990a1559325ac6e8a');
-      mixpanel.setFlushInterval(5);
       mixpanel.track('App Opened');
     }
   } catch (e) {
