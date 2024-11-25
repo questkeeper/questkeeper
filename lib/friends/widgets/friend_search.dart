@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/friends/models/user_search_model.dart';
 import 'package:questkeeper/friends/repositories/friend_repository.dart';
 import 'package:questkeeper/friends/widgets/user_search_result_tile.dart';
 
 class FriendSearchDelegate extends SearchDelegate {
   final FriendRepository _repository = FriendRepository();
+  Timer? _debounce;
 
   FriendSearchDelegate({
     String? initialQuery,
@@ -16,9 +19,10 @@ class FriendSearchDelegate extends SearchDelegate {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: const Icon(Icons.clear),
+        icon: const Icon(LucideIcons.x),
         onPressed: () {
           query = '';
+          _debounce?.cancel(); // Cancel ongoing debounce
         },
       ),
     ];
@@ -27,17 +31,33 @@ class FriendSearchDelegate extends SearchDelegate {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.arrow_back),
+      icon: const Icon(LucideIcons.arrow_left),
       onPressed: () {
         close(context, null);
       },
     );
   }
 
+  Future<List<UserSearchResult>> _debouncedSearch(String query) async {
+    _debounce?.cancel(); // Cancel any existing debounce
+    final completer = Completer<List<UserSearchResult>>();
+
+    _debounce = Timer(const Duration(milliseconds: 300), () async {
+      try {
+        final results = await _repository.searchUserProfile(query);
+        completer.complete(results);
+      } catch (e) {
+        completer.completeError(e);
+      }
+    });
+
+    return completer.future;
+  }
+
   @override
   Widget buildResults(BuildContext context) {
     return FutureBuilder<List<UserSearchResult>>(
-      future: _repository.searchUserProfile(query),
+      future: _debouncedSearch(query),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -86,5 +106,11 @@ class FriendSearchDelegate extends SearchDelegate {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel(); // Clean up debounce timer
+    super.dispose();
   }
 }
