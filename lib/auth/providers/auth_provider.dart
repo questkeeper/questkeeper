@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -7,6 +11,36 @@ class AuthNotifier {
   AuthNotifier() : super();
   SupabaseClient supabase = Supabase.instance.client;
   bool _firebaseMessagingInitialized = false;
+
+  void sendDeviceDataToMixpanel() async {
+    DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final Map<String, dynamic> deviceInfo;
+
+    if (Platform.isIOS) {
+      IosDeviceInfo iosDeviceInfo = await deviceInfoPlugin.iosInfo;
+      deviceInfo = {
+        "deviceIdentifier": iosDeviceInfo.identifierForVendor,
+        "os": 'iOS ${iosDeviceInfo.systemName} ${iosDeviceInfo.systemVersion}',
+        "device": '${iosDeviceInfo.name} ${iosDeviceInfo.model}',
+        "appVersion": packageInfo.version,
+      };
+
+      MixpanelManager.instance.setUserProperties(deviceInfo);
+    } else {
+      AndroidDeviceInfo androidDeviceInfo = await deviceInfoPlugin.androidInfo;
+      deviceInfo = {
+        "deviceIdentifier": androidDeviceInfo.id,
+        "os":
+            'Android ${androidDeviceInfo.version.release} ${androidDeviceInfo.version.sdkInt}',
+        "device":
+            '${androidDeviceInfo.manufacturer} ${androidDeviceInfo.model}',
+        "appVersion": packageInfo.version,
+      };
+
+      MixpanelManager.instance.setUserProperties(deviceInfo);
+    }
+  }
 
   Future<void> _saveToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
