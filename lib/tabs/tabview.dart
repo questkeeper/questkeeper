@@ -2,6 +2,8 @@ import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
+import 'package:questkeeper/shared/extensions/platform_extensions.dart';
+import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -20,6 +22,12 @@ class TabView extends ConsumerStatefulWidget {
 
 class _TabViewState extends ConsumerState<TabView> {
   int _selectedIndex = 1;
+  static const List<Widget> pages = [
+    QuestsView(),
+    AllSpacesScreen(),
+    FriendsList(), // Placeholder for arcade
+    SettingsScreen(),
+  ];
 
   @override
   void initState() {
@@ -32,17 +40,18 @@ class _TabViewState extends ConsumerState<TabView> {
     setState(() {
       _selectedIndex = index;
     });
+
+    if (PlatformExtensions.isMobile) {
+      MixpanelManager.instance.track("TabView", properties: {
+        "tab": index,
+        "tabName": pages[index].runtimeType.toString(),
+        "action": "Tab change",
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = [
-      const QuestsView(),
-      const AllSpacesScreen(),
-      const FriendsList(), // Placeholder for arcade
-      const SettingsScreen(),
-    ];
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final double width = constraints.maxWidth;
@@ -84,7 +93,8 @@ class _TabViewState extends ConsumerState<TabView> {
                     label: 'Settings',
                   ),
                 ],
-                backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+                backgroundColor:
+                    Theme.of(context).colorScheme.surfaceContainerLow,
                 currentIndex: _selectedIndex,
                 onTap: _onItemTapped,
               ),
@@ -102,8 +112,8 @@ class _TabViewState extends ConsumerState<TabView> {
                     return;
                   }
                   BetterFeedback.of(context).showAndUploadToSentry(
-                      name: user?.id ?? 'Unknown',
-                      email: user?.email ?? 'unknown@questkeeper.app',
+                    name: user?.id ?? 'Unknown',
+                    email: user?.email ?? 'unknown@questkeeper.app',
                   );
                 },
                 enableFeedback: true,

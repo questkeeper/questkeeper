@@ -12,6 +12,8 @@ import 'package:questkeeper/shared/notifications/notification_service.dart';
 import 'package:questkeeper/shared/utils/cache_assets.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
+import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
+import 'package:questkeeper/shared/utils/mixpanel/mixpanel_stub.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +42,7 @@ Future<void> main() async {
 
   HomeWidgetInterface? homeWidget;
   NotificationHandler.initialize();
+  MixpanelInterface? mixpanel;
 
   try {
     CacheAssetsManager().fetchAllMetadata();
@@ -55,6 +58,16 @@ Future<void> main() async {
     }
   } catch (e) {
     debugPrint("Platform implementation error: $e");
+  }
+
+  try {
+    if (Platform.isAndroid || Platform.isIOS || kIsWeb) {
+      mixpanel = MixpanelManager.instance;
+      mixpanel.init('bd3ae9764e0e2c1990a1559325ac6e8a');
+      mixpanel.track('App Opened');
+    }
+  } catch (e) {
+    debugPrint("Mixpanel error: $e");
   }
 
   if (isDebug) {
