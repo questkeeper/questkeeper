@@ -87,6 +87,8 @@ Future<void> main() async {
             'https://87811f2d260a89b1fd9f3ccc4c3ee423@o4507823426895872.ingest.us.sentry.io/4507823429976064';
         options.tracesSampleRate = 1.0;
         options.profilesSampleRate = 1.0;
+        options.experimental.replay.sessionSampleRate = 1.0;
+        options.experimental.replay.onErrorSampleRate = 1.0;
       },
       appRunner: () => runApp(
         const ProviderScope(
