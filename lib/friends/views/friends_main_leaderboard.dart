@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
 import 'package:questkeeper/friends/providers/friends_provider.dart';
+import 'package:questkeeper/friends/providers/friends_request_provider.dart';
 import 'package:questkeeper/friends/widgets/friend_list_tile.dart';
 import 'package:questkeeper/friends/widgets/friend_request_bottom_sheet.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
@@ -27,7 +28,6 @@ class _FriendsListState extends ConsumerState<FriendsList> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final asyncValue = ref.watch(friendsManagerProvider);
-    // final pendingRequestsAsyncValue = ref.watch(friendsRequestManagerProvider);
 
     if (asyncValue.isLoading || !asyncValue.hasValue) {
       return const Center(child: CircularProgressIndicator());
@@ -151,6 +151,35 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                   return FriendListTile(friend: friend, position: index + 1);
                 },
               ),
+            ),
+            Consumer(
+              builder: (context, ref, child) {
+                return ref.watch(friendsRequestManagerProvider).when(
+                      data: (requests) {
+                        return requests.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    _showPendingRequestsBottomSheet(context);
+                                  },
+                                  icon: const Icon(LucideIcons.bell_plus),
+                                  label: const Text('Pending Requests'),
+                                ),
+                              )
+                            : const SizedBox();
+                      },
+                      loading: () => const CircularProgressIndicator(),
+                      error: (error, stack) {
+                        Sentry.captureException(
+                          error,
+                          stackTrace: stack,
+                        );
+
+                        return const Text('Failed to fetch pending requests');
+                      },
+                    );
+              },
             ),
             Container(
               color: theme.colorScheme.surfaceContainerLow,
