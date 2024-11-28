@@ -11,6 +11,7 @@ import 'package:questkeeper/friends/widgets/sort_menu.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -148,7 +149,10 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                 },
                 itemBuilder: (context, index) {
                   final friend = sorted[index];
-                  return FriendListTile(friend: friend, position: index + 1);
+                  return FriendListTile(
+                      friend: friend,
+                      position: index + 1,
+                      onRemove: removeFriendHandler);
                 },
               ),
             ),
@@ -156,7 +160,9 @@ class _FriendsListState extends ConsumerState<FriendsList> {
               builder: (context, ref, child) {
                 return ref.watch(friendsRequestManagerProvider).when(
                       data: (requests) {
-                        return requests.isNotEmpty
+                        return requests.isNotEmpty &&
+                                (requests['sent']!.isNotEmpty ||
+                                    requests['received']!.isNotEmpty)
                             ? Padding(
                                 padding: const EdgeInsets.all(8),
                                 child: ElevatedButton.icon(
@@ -208,9 +214,18 @@ class _FriendsListState extends ConsumerState<FriendsList> {
       useSafeArea: true,
       context: context,
       builder: (BuildContext context) {
-        return const FriendRequestBottomSheet();
+        return const FriendRequestBottomSheet(
+          key: Key('friend_request_bottom_sheet'),
+        );
       },
     );
+  }
+
+  void removeFriendHandler(Friend friend) {
+    ref.read(friendsManagerProvider.notifier).removeFriend(friend.username);
+    Navigator.of(context).pop(); // Close the popup menu
+
+    SnackbarService.showSuccessSnackbar(context, 'Friend removed');
   }
 }
 
