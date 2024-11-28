@@ -25,6 +25,13 @@ class FriendsList extends ConsumerStatefulWidget {
 class _FriendsListState extends ConsumerState<FriendsList> {
   var _sortSettings = SortSettings();
 
+  Future<void> _refreshFriendsList() async {
+    // ignore: unused_result
+    await ref.refresh(friendsManagerProvider.future);
+    // ignore: unused_result
+    ref.refresh(friendsRequestManagerProvider);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -141,19 +148,22 @@ class _FriendsListState extends ConsumerState<FriendsList> {
               ),
             ),
             Expanded(
-              child: ListView.separated(
-                itemCount: sorted.length,
-                padding: const EdgeInsets.all(16),
-                separatorBuilder: (context, index) {
-                  return const SizedBox(height: 16);
-                },
-                itemBuilder: (context, index) {
-                  final friend = sorted[index];
-                  return FriendListTile(
-                      friend: friend,
-                      position: index + 1,
-                      onRemove: removeFriendHandler);
-                },
+              child: RefreshIndicator(
+                onRefresh: _refreshFriendsList,
+                child: ListView.separated(
+                  itemCount: sorted.length,
+                  padding: const EdgeInsets.all(16),
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(height: 16);
+                  },
+                  itemBuilder: (context, index) {
+                    final friend = sorted[index];
+                    return FriendListTile(
+                        friend: friend,
+                        position: index + 1,
+                        onRemove: removeFriendHandler);
+                  },
+                ),
               ),
             ),
             Consumer(
