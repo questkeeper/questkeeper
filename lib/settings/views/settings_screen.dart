@@ -93,7 +93,8 @@ class SettingsScreen extends ConsumerWidget {
                         title: 'Notifications',
                         description: 'Manage your notifications',
                         icon: LucideIcons.bell_ring,
-                        onTap: notYetImplemented),
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/notifications')),
                     SettingsCard(
                         title: 'Theme',
                         description: 'Change the app theme',
