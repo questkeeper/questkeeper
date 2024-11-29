@@ -4,27 +4,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/auth/widgets/space_screens/auth_screen.dart';
-// import 'package:questkeeper/auth/widgets/space_screens/pet_screen.dart';
 import 'package:questkeeper/auth/widgets/space_screens/username_screen.dart';
+import 'package:questkeeper/shared/extensions/color_extensions.dart';
+import 'package:questkeeper/shared/extensions/string_extensions.dart';
 
-class AuthSpaces extends ConsumerStatefulWidget {
+class AuthSpaces extends ConsumerWidget {
   const AuthSpaces({super.key});
 
   @override
-  ConsumerState<AuthSpaces> createState() => _AuthSpacesState();
-}
-
-class _AuthSpacesState extends ConsumerState<AuthSpaces> {
-  int currentPageValue = 0;
-  late final String username;
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
         child: PageView(
@@ -33,10 +21,13 @@ class _AuthSpacesState extends ConsumerState<AuthSpaces> {
           dragStartBehavior: DragStartBehavior.down,
           controller: ref.read(authPageControllerProvider),
           children: [
-            const AuthSpaceCard(currentSpaceScreen: AuthScreen()),
+            AuthSpaceCard(
+              currentSpaceScreen: AuthScreen(),
+              colors: Color.fromARGB(255, 126, 84, 223).toCardGradientColor(),
+            ),
             AuthSpaceCard(
               currentSpaceScreen: UsernameScreen(),
-              baseColor: Colors.cyan,
+              colors: ["34a0a4","168aad","1a759f","1e6091","184e77"].map((it) => it.toColor()).toList(),
             ),
           ],
         ),

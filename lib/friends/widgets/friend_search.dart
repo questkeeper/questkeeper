@@ -42,7 +42,7 @@ class FriendSearchDelegate extends SearchDelegate {
     _debounce?.cancel(); // Cancel any existing debounce
     final completer = Completer<List<UserSearchResult>>();
 
-    _debounce = Timer(const Duration(milliseconds: 300), () async {
+    _debounce = Timer(const Duration(milliseconds: 200), () async {
       try {
         final results = await _repository.searchUserProfile(query);
         completer.complete(results);
