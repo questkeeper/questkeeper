@@ -7,6 +7,13 @@ import 'package:questkeeper/friends/providers/friends_request_provider.dart';
 import 'package:questkeeper/friends/widgets/friend_list_tile.dart';
 import 'package:questkeeper/friends/widgets/friend_request_bottom_sheet.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
+import 'package:questkeeper/friends/widgets/sort_menu.dart';
+import 'package:questkeeper/profile/model/profile_model.dart';
+import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:questkeeper/shared/widgets/avatar_widget.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class FriendsList extends ConsumerStatefulWidget {
   const FriendsList({super.key});
@@ -16,6 +23,198 @@ class FriendsList extends ConsumerStatefulWidget {
 }
 
 class _FriendsListState extends ConsumerState<FriendsList> {
+  var _sortSettings = SortSettings();
+
+  Future<void> _refreshFriendsList() async {
+    // ignore: unused_result
+    await ref.refresh(friendsManagerProvider.future);
+    // ignore: unused_result
+    ref.refresh(friendsRequestManagerProvider);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final asyncValue = ref.watch(friendsManagerProvider);
+
+    if (asyncValue.isLoading || !asyncValue.hasValue) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (asyncValue.hasError) {
+      final error = asyncValue.error!;
+      final stack = asyncValue.stackTrace!;
+
+      Sentry.captureException(
+        error,
+        stackTrace: stack,
+      );
+
+      return const Center(
+        child: Text("Failed to fetch friends list"),
+      );
+    }
+
+    var unsorted = asyncValue.value!;
+    var sorted = _sortSettings.sorted(unsorted.toList(growable: false));
+
+    return SafeArea(
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(LucideIcons.search),
+          onPressed: () {
+            showSearch(
+              context: context,
+              delegate: FriendSearchDelegate(),
+            );
+          },
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: FutureBuilder(
+                future: ref.watch(profileManagerProvider.future),
+                builder: (context, snapshot) {
+                  return Skeletonizer(
+                    enabled: !snapshot.hasData,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            snapshot.hasData
+                                ? AvatarWidget(
+                                    seed: (snapshot.data as Profile).user_id)
+                                : const CircleAvatar(radius: 50),
+                            const SizedBox(width: 20),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      snapshot.hasData
+                                          ? (snapshot.data as Profile).username
+                                          : 'Username Loading',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall,
+                                    ),
+                                    if (snapshot.hasData &&
+                                        (snapshot.data as Profile).isPro ==
+                                            true)
+                                      const Text('PRO',
+                                          style: TextStyle(
+                                              color: Colors.greenAccent))
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  snapshot.hasData
+                                      ? '${(snapshot.data as Profile).points} points'
+                                      : '0 points',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text(
+                                  snapshot.hasData
+                                      ? 'Account since ${(snapshot.data as Profile).created_at.split("T")[0]}'
+                                      : 'Account since 2024-01-01',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: theme.colorScheme.onSurface
+                                            .withOpacity(0.6),
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _refreshFriendsList,
+                child: ListView.separated(
+                  itemCount: sorted.length,
+                  padding: const EdgeInsets.all(16),
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(height: 16);
+                  },
+                  itemBuilder: (context, index) {
+                    final friend = sorted[index];
+                    return FriendListTile(
+                        friend: friend,
+                        position: index + 1,
+                        onRemove: removeFriendHandler);
+                  },
+                ),
+              ),
+            ),
+            Consumer(
+              builder: (context, ref, child) {
+                return ref.watch(friendsRequestManagerProvider).when(
+                      data: (requests) {
+                        return requests.isNotEmpty &&
+                                (requests['sent']!.isNotEmpty ||
+                                    requests['received']!.isNotEmpty)
+                            ? Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    _showPendingRequestsBottomSheet(context);
+                                  },
+                                  icon: const Icon(LucideIcons.bell_plus),
+                                  label: const Text('Pending Requests'),
+                                ),
+                              )
+                            : const SizedBox();
+                      },
+                      loading: () => const CircularProgressIndicator(),
+                      error: (error, stack) {
+                        Sentry.captureException(
+                          error,
+                          stackTrace: stack,
+                        );
+
+                        return const Text('Failed to fetch pending requests');
+                      },
+                    );
+              },
+            ),
+            Container(
+              color: theme.colorScheme.surfaceContainerLow,
+              padding: EdgeInsets.all(20),
+              child: _SortWidget(
+                settings: _sortSettings,
+                onChange: (settings) {
+                  setState(() {
+                    _sortSettings = settings;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showPendingRequestsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       enableDrag: true,
@@ -25,169 +224,112 @@ class _FriendsListState extends ConsumerState<FriendsList> {
       useSafeArea: true,
       context: context,
       builder: (BuildContext context) {
-        return const FriendRequestBottomSheet();
+        return const FriendRequestBottomSheet(
+          key: Key('friend_request_bottom_sheet'),
+        );
       },
     );
   }
 
-  Widget _buildFriendsList(List<Friend> friendsList, bool isPodiumActive) {
-    return friendsList.isEmpty
-        ? Center(
-            child: Text(
-              isPodiumActive
-                  ? "No more friends to show!"
-                  : 'No friends yet. Add some!',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          )
-        : ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: friendsList.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 16),
-            itemBuilder: (context, index) {
-              final friend = friendsList[index];
-              return FriendListTile(friend: friend);
-            },
-          );
+  void removeFriendHandler(Friend friend) {
+    ref.read(friendsManagerProvider.notifier).removeFriend(friend.username);
+    Navigator.of(context).pop(); // Close the popup menu
+
+    SnackbarService.showSuccessSnackbar(context, 'Friend removed');
   }
+}
 
-  @override
-  Widget build(BuildContext context) {
-    final friendsListAsyncValue = ref.watch(friendsManagerProvider);
-    final pendingRequestsAsyncValue = ref.watch(friendsRequestManagerProvider);
+class SortSettings {
+  var type = _SortType.points;
+  var direction = _SortDirection.descending;
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 100,
-        title: Text(
-          'Friends',
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: friendsListAsyncValue.when(
-              data: (friendsList) {
-                return Column(
-                  children: [
-                    _podiumBuilder(
-                      friendsList.length > 3
-                          ? friendsList.sublist(0, 3)
-                          : friendsList,
-                    ),
-                    const SizedBox(height: 16),
-                    Expanded(
-                      child: _buildFriendsList(
-                        friendsList.length > 3 ? friendsList.sublist(3) : [],
-                        friendsList.isNotEmpty,
-                      ),
-                    ),
-                  ],
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) => const Center(
-                child: Text('Failed to fetch friends list.'),
-              ),
-            ),
-          ),
-          pendingRequestsAsyncValue.when(
-            data: (pendingRequests) =>
-                // Get total length of both sent and received requests
-                (pendingRequests['sent']!.length +
-                            pendingRequests['received']!.length) >
-                        0
-                    ? TextButton.icon(
-                        onPressed: () =>
-                            _showPendingRequestsBottomSheet(context),
-                        icon: const Icon(LucideIcons.user_plus),
-                        label: Text(
-                            "Pending Requests (${pendingRequests['sent']!.length + pendingRequests['received']!.length})"),
-                      )
-                    : const SizedBox.shrink(),
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Filter or add friends',
-                prefixIcon: Icon(LucideIcons.search),
-              ),
-              onSubmitted: (query) {
-                showSearch(
-                  context: context,
-                  delegate: FriendSearchDelegate(
-                    initialQuery: query,
-                  ),
-                  query: query,
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
+  List<Friend> sorted(List<Friend> list) {
+    list.sort((first, second) {
+      switch (type) {
+        case _SortType.alphabetical:
+          return first.username.compareTo(second.username);
 
-  Widget _podiumBuilder(List<Friend> friendsList) {
-    if (friendsList.length > 1) {
-      final temp = friendsList[0];
-      friendsList[0] = friendsList[1];
-      friendsList[1] = temp;
+        case _SortType.points:
+          return second.points.compareTo(first.points);
+      }
+    });
+
+    if (direction == _SortDirection.ascending) {
+      list = list.reversed.toList();
     }
 
-    return friendsList.isEmpty
-        ? const SizedBox()
-        : Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (var i = 0; i < friendsList.length; i++)
-                Column(
-                  children: [
-                    Container(
-                      // border
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: i == 1 ? Colors.amber : Colors.green,
-                          width: i == 1 ? 4 : 2,
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
-                      child: CircleAvatar(
-                        radius: i == 1 ? 75 : 50,
-                        child: Text(
-                          friendsList[i].username[0].toUpperCase(),
-                          style: TextStyle(
-                            fontSize: i == 1 ? 48 : 24,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      friendsList[i].username,
-                      style: TextStyle(
-                        fontSize: i == 1 ? 24 : 16,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${friendsList[i].points} points',
-                      style: TextStyle(
-                        fontSize: i == 1 ? 16 : 12,
-                      ),
-                    ),
-                  ],
-                ),
-            ],
-          );
+    return list;
   }
+}
+
+typedef OnChangeSettings = void Function(SortSettings settings);
+
+class _SortWidget extends StatefulWidget {
+  const _SortWidget({
+    required this.settings,
+    required this.onChange,
+  });
+
+  final SortSettings settings;
+  final OnChangeSettings onChange;
+
+  @override
+  State<StatefulWidget> createState() => _SortWidgetState();
+}
+
+class _SortWidgetState extends State<_SortWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Sorting type
+        SortMenu(
+          values: _SortType.values,
+          selected: widget.settings.type,
+          onSelection: (value) {
+            widget.settings.type = value as _SortType;
+            widget.onChange.call(widget.settings);
+          },
+        ),
+
+        const SizedBox(width: 10),
+
+        // Sorting direction
+        SortMenu(
+          values: _SortDirection.values,
+          selected: widget.settings.direction,
+          onSelection: (value) {
+            widget.settings.direction = value as _SortDirection;
+            widget.onChange.call(widget.settings);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+enum _SortType implements SortValue {
+  points("Points", LucideIcons.arrow_down_1_0),
+  alphabetical("Alphabetical", LucideIcons.arrow_down_a_z);
+
+  const _SortType(this.display, this.iconData);
+
+  @override
+  final String display;
+
+  @override
+  final IconData? iconData;
+}
+
+enum _SortDirection implements SortValue {
+  ascending("Ascending", LucideIcons.arrow_down_z_a),
+  descending("Descending", LucideIcons.arrow_down_a_z);
+
+  const _SortDirection(this.display, this.iconData);
+
+  @override
+  final String display;
+
+  @override
+  final IconData? iconData;
 }

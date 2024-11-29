@@ -1,5 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class AvatarWidget extends StatefulWidget {
@@ -7,39 +8,56 @@ class AvatarWidget extends StatefulWidget {
 
   final String seed;
   final double radius;
+
   @override
   AvatarWidgetState createState() => AvatarWidgetState();
 }
 
 class AvatarWidgetState extends State<AvatarWidget> {
-  ImageProvider? avatarImage;
+  String? svgString;
+  DefaultCacheManager cacheManager = DefaultCacheManager();
 
   @override
   void initState() {
     super.initState();
+    _loadAvatar();
   }
 
   Future<void> _loadAvatar() async {
-    CachedNetworkImageProvider response = CachedNetworkImageProvider(
-        'https://api.dicebear.com/9.x/rings/png?seed=${widget.seed}');
+    try {
+      final file = await cacheManager.getSingleFile(
+        'https://api.dicebear.com/9.x/rings/svg?seed=${widget.seed}',
+      );
 
-    setState(() => avatarImage = response);
+      if (!mounted) return;
+
+      final content = await file.readAsString();
+      setState(() => svgString = content);
+    } catch (e) {
+      debugPrint('Error loading avatar: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _loadAvatar(),
-      builder: (context, snapshot) {
-        return Skeletonizer(
-          enabled: snapshot.connectionState == ConnectionState.waiting,
-          child: CircleAvatar(
-            radius: widget.radius,
-            backgroundImage: avatarImage,
-            child: avatarImage == null ? CircularProgressIndicator() : null,
-          ),
-        );
-      },
+    return Skeletonizer(
+      enabled: svgString == null,
+      child: Container(
+        width: widget.radius * 2,
+        height: widget.radius * 2,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Theme.of(context).colorScheme.surfaceContainerLowest,
+        ),
+        child: ClipOval(
+          child: svgString == null
+              ? Center(child: CircularProgressIndicator())
+              : SvgPicture.string(
+                  svgString!,
+                  fit: BoxFit.cover,
+                ),
+        ),
+      ),
     );
   }
 }
