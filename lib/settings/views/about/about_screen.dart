@@ -104,18 +104,27 @@ class AboutScreen extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(LucideIcons.heart),
-              title: const Text("Special thanks to:"),
+              title: const Text("Special thanks to"),
               onTap: () => showDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: const Text('Special thanks to:'),
+                    title: const Text('Special thanks to'),
                     content: Column(
                       children: [
                         ListTile(
+                          title: const Text('Flero'),
+                          subtitle: const Text('Developer\nTap for website'),
+                          onTap: () => launchUrl(
+                            Uri.parse('https://flero.dev'),
+                          ),
+                          isThreeLine: true,
+                        ),
+                        Divider(),
+                        ListTile(
                           title: const Text('asifpx_'),
                           subtitle: const Text(
-                              'Environments and backgrounds\nTap for x.com'),
+                              'Environments and backgrounds\nTap for X'),
                           onTap: () => launchUrl(
                             Uri.parse('https://x.com/asifpx_'),
                           ),
@@ -124,12 +133,20 @@ class AboutScreen extends StatelessWidget {
                         ListTile(
                           title: const Text('Elthen'),
                           subtitle:
-                              const Text('Animal sprites\nTap for patreon'),
+                              const Text('Animal sprites\nTap for Patreon'),
                           onTap: () => launchUrl(
                             Uri.parse('https://www.patreon.com/elthen'),
                           ),
                           isThreeLine: true,
                         ),
+                        ListTile(
+                          title: const Text('vsioneithr'),
+                          subtitle: const Text('Trophy sprites\nTap for X'),
+                          onTap: () => launchUrl(
+                            Uri.parse('https://x.com/vsioneithr'),
+                          ),
+                          isThreeLine: true,
+                        )
                       ],
                     ),
                     actions: [
