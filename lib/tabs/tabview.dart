@@ -112,8 +112,8 @@ class _TabViewState extends ConsumerState<TabView> {
                     return;
                   }
                   BetterFeedback.of(context).showAndUploadToSentry(
-                    name: user?.id ?? 'Unknown',
-                    email: user?.email ?? 'unknown@questkeeper.app',
+                    name: user?.id,
+                    email: user?.email,
                   );
                 },
                 enableFeedback: true,
