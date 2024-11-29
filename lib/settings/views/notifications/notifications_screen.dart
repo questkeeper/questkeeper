@@ -10,23 +10,11 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
   final supabaseClient = Supabase.instance.client;
-  Set<dynamic> selected = {0};
-  String tableName = "notifications";
+  var selected = _NotificationType.previous;
 
   @override
   void initState() {
     super.initState();
-  }
-
-  void onUpdate(Set<dynamic> p0) {
-    setState(() {
-      selected = p0;
-      if (selected.contains(0)) {
-        tableName = "notifications";
-      } else if (selected.contains(1)) {
-        tableName = "notification_schedule";
-      }
-    });
   }
 
   @override
@@ -40,23 +28,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           child: Column(
             children: [
               SegmentedButton(
-                multiSelectionEnabled: false,
-                segments: [
-                  ButtonSegment(
-                    value: 0,
-                    label: Text("Previous"),
-                  ),
-                  ButtonSegment(
-                    value: 1,
-                    label: Text("Unread"),
-                  ),
-                ],
-                selected: selected,
-                onSelectionChanged: onUpdate,
+                segments: _NotificationType.values.map((it) {
+                  return ButtonSegment(
+                    value: it.name,
+                    label: Text(it.display),
+                  );
+                }).toList(),
+                selected: {selected.name},
+                onSelectionChanged: (selections) {
+                  setState(() {
+                    selected = _NotificationType.values.firstWhere((it) => it.name == selections.first);
+                  });
+                },
               ),
               Expanded(
                 child: FutureBuilder(
-                  future: supabaseClient.from(tableName).select(),
+                  future: supabaseClient.from(selected.table).select(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -74,10 +61,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           final notification = data.elementAt(index);
-                          return ListTile(
-                            title: Text(notification["message"]),
-                            subtitle: Text(notification["type"]),
-                          );
+
+                          switch (selected) {
+                            case _NotificationType.previous:
+                              return PreviousNotification(data: notification);
+
+                            case _NotificationType.upcoming:
+                              return UpcomingNotification(data: notification);
+                          }
                         },
                       );
                     }
@@ -90,6 +81,71 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+enum _NotificationType {
+  previous("Previous", "notifications"),
+  upcoming("Upcoming", "notification_schedule");
+
+  const _NotificationType(this.display, this.table);
+
+  final String display;
+
+  /// Supabase table name
+  final String table;
+}
+
+abstract class Notification extends StatelessWidget {
+  const Notification({
+    super.key,
+    required this.data,
+  });
+
+  final Map<String, dynamic> data;
+
+  @override
+  Widget build(BuildContext context);
+}
+
+class PreviousNotification extends Notification {
+  const PreviousNotification({
+    super.key,
+    required super.data,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(data["message"]),
+      subtitle: Text(data["type"]),
+    );
+  }
+}
+
+class UpcomingNotification extends Notification {
+  const UpcomingNotification({
+    super.key,
+    required super.data,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var title = data["title"] as String?;
+    var subtitle = data["message"] as String?;
+
+    if (title == null || title.isEmpty) {
+      title = "Missing title";
+    }
+
+    if (subtitle == null || subtitle.isEmpty) {
+      subtitle = "Missing subtitle";
+    }
+
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(subtitle),
     );
   }
 }
