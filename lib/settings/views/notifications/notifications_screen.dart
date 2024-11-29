@@ -158,6 +158,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               switch (selected) {
                                 case _NotificationType.previous:
                                   return PreviousNotification(
+                                      index: index,
                                       data: notification,
                                       onDismiss: () async {
                                         await dismissNotification(
@@ -165,7 +166,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                       });
                                 case _NotificationType.upcoming:
                                   return UpcomingNotification(
-                                      data: notification);
+                                      index: index, data: notification);
                               }
                             },
                           );
@@ -201,9 +202,11 @@ abstract class Notification extends StatelessWidget {
   const Notification({
     super.key,
     required this.data,
+    required this.index,
   });
 
   final Map<String, dynamic> data;
+  final int index;
 
   @override
   Widget build(BuildContext context);
@@ -212,6 +215,7 @@ abstract class Notification extends StatelessWidget {
 class PreviousNotification extends Notification {
   const PreviousNotification({
     super.key,
+    required super.index,
     required super.data,
     required this.onDismiss,
   });
@@ -249,6 +253,9 @@ class PreviousNotification extends Notification {
       ),
       child: ListTile(
         title: Text(data["message"]),
+        tileColor: index.isEven
+            ? Colors.transparent
+            : Theme.of(context).colorScheme.secondary.withOpacity(0.1),
         subtitle: Text(notificationTypeDisplay[data["type"]] ?? "Unknown"),
       ),
     );
@@ -258,6 +265,7 @@ class PreviousNotification extends Notification {
 class UpcomingNotification extends Notification {
   const UpcomingNotification({
     super.key,
+    required super.index,
     required super.data,
   });
 
@@ -274,6 +282,9 @@ class UpcomingNotification extends Notification {
     return ListTile(
       title: Text(title),
       subtitle: Text("Scheduled for $scheduledAtDateTime"),
+      tileColor: index.isEven
+          ? Colors.transparent
+          : Theme.of(context).colorScheme.secondary.withOpacity(0.1),
     );
   }
 }
