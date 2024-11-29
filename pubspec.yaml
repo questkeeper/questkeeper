@@ -31,7 +31,7 @@ dependencies:
   supabase_auth_ui: ^0.5.4
   home_widget: ^0.7.0
   shared_preferences: ^2.3.3
-  flutter_lucide: ^1.5.0
+  flutter_lucide: ^1.6.0
   riverpod_generator: ^2.6.3
   rename_app: ^1.6.1
   email_validator: ^2.1.17
@@ -40,17 +40,17 @@ dependencies:
   package_info_plus: ^8.1.1
   device_info_plus: ^11.1.1
   http: ^1.2.2
-  flame: ^1.21.0
-  flame_tiled: ^1.21.0
+  flame: ^1.22.0
+  flame_tiled: ^1.21.1
   cached_network_image: ^3.4.1
-  flame_riverpod: ^5.4.5
+  flame_riverpod: ^5.4.6
   flutter_cache_manager: ^3.4.1
   faker: ^2.2.0
   uuid: ^4.5.1
   dice_bear: ^0.1.7
   skeletonizer: ^1.4.2
   dynamic_color: ^1.7.0
-  flutter_svg: ^2.0.15
+  flutter_svg: ^2.0.16
   mixpanel_flutter: ^2.3.3
 dev_dependencies:
   flutter_test:
