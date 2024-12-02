@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/repositories/profile_repository.dart';
@@ -16,21 +17,41 @@ class ProfileManager extends _$ProfileManager {
 
   @override
   FutureOr<Profile> build() async {
+    // Try to get cached profile first
+    final prefs = await SharedPreferences.getInstance();
+    final cachedProfileJson = prefs.getString("user_profile");
+
+    if (cachedProfileJson != null) {
+      try {
+        return Profile.fromJson(cachedProfileJson);
+      } catch (e) {
+        return fetchProfile();
+      }
+    }
+
     return fetchProfile();
   }
 
   Future<Profile> fetchProfile({String username = "me"}) async {
     try {
       state = const AsyncValue.loading();
+      final ReturnModel response;
+
       if (username == "me") {
-        final profile = (await _repository.getMyProfile()).data;
-
-        return Profile.fromJson(profile);
+        response = await _repository.getMyProfile();
       } else {
-        final profile = (await _repository.getProfile(username)).data;
-
-        return Profile.fromJson(profile);
+        response = await _repository.getProfile(username);
       }
+
+      final profile = Profile.fromJson(response.data);
+
+      // Cache my profile
+      if (username == "me") {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString("user_profile", response.data);
+      }
+
+      return profile;
     } catch (e) {
       Sentry.captureException(
         e,

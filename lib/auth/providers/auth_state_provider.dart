@@ -54,13 +54,24 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   Future<void> _initializeAuth() async {
     final prefs = await SharedPreferences.getInstance();
     final wasAuthenticated = prefs.getBool(_authKey) ?? false;
+    final cachedProfileJson = prefs.getString("user_profile");
 
-    // Optimistically show the main UI if user was previously authenticated
-    if (wasAuthenticated) {
-      state = state.copyWith(
-        isLoading: false,
-        isAuthenticated: true,
-      );
+    // If we have a cached profile, use it for truly optimistic UI
+    if (wasAuthenticated && cachedProfileJson != null) {
+      try {
+        final cachedProfile = Profile.fromJson(cachedProfileJson);
+        state = state.copyWith(
+          isLoading: false,
+          isAuthenticated: true,
+          profile: cachedProfile,
+        );
+      } catch (e) {
+        // If profile parsing fails, still show as authenticated but without profile
+        state = state.copyWith(
+          isLoading: false,
+          isAuthenticated: true,
+        );
+      }
     } else {
       state = state.copyWith(
         isLoading: false,
@@ -79,14 +90,17 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_authKey, true);
-      // Set the user profile
       await prefs.setString("user_profile", userProfile.toJson());
 
-      state = state.copyWith(
-        isAuthenticated: true,
-        user: user,
-        profile: userProfile,
-      );
+      // Only update state if something changed to avoid unnecessary rebuilds
+      if (state.profile?.user_id != userProfile.user_id ||
+          state.user?.user?.id != user.user?.id) {
+        state = state.copyWith(
+          isAuthenticated: true,
+          user: user,
+          profile: userProfile,
+        );
+      }
 
       if (PlatformExtensions.isMobile) {
         MixpanelManager.instance.identify(user.user!.id);
@@ -97,14 +111,18 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         _sendDeviceDataToMixpanel();
       }
     } catch (error) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(_authKey, false);
+      // Don't immediately clear auth state on error - only do it if we're sure the session is invalid
+      if (error is AuthException || error.toString().contains('JWT')) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool(_authKey, false);
+        await prefs.remove("user_profile");
 
-      state = state.copyWith(
-        isAuthenticated: false,
-        user: null,
-        profile: null,
-      );
+        state = state.copyWith(
+          isAuthenticated: false,
+          user: null,
+          profile: null,
+        );
+      }
     }
   }
 
