@@ -1,5 +1,6 @@
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
+import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/shared/extensions/platform_extensions.dart';
@@ -22,7 +23,7 @@ class TabView extends ConsumerStatefulWidget {
 class _TabViewState extends ConsumerState<TabView> {
   int _selectedIndex = 1;
   static const List<Widget> pages = [
-    QuestsView(),
+    if (isDebug) QuestsView(),
     AllSpacesScreen(),
     FriendsList(), // Placeholder for arcade
     SettingsScreen(),
@@ -62,10 +63,11 @@ class _TabViewState extends ConsumerState<TabView> {
               bottomNavigationBar: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
                 items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: Icon(LucideIcons.trophy),
-                    label: 'Quests',
-                  ),
+                  if (isDebug)
+                    BottomNavigationBarItem(
+                      icon: Icon(LucideIcons.trophy),
+                      label: 'Quests',
+                    ),
                   BottomNavigationBarItem(
                     icon: Icon(LucideIcons.eclipse),
                     label: 'Spaces',
@@ -118,8 +120,10 @@ class _TabViewState extends ConsumerState<TabView> {
                   onDestinationSelected: _onItemTapped,
                   labelType: NavigationRailLabelType.all,
                   destinations: const <NavigationRailDestination>[
-                    NavigationRailDestination(
-                        icon: Icon(LucideIcons.trophy), label: Text('Quests')),
+                    if (isDebug)
+                      NavigationRailDestination(
+                          icon: Icon(LucideIcons.trophy),
+                          label: Text('Quests')),
                     NavigationRailDestination(
                         icon: Icon(LucideIcons.eclipse), label: Text('Spaces')),
                     NavigationRailDestination(
