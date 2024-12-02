@@ -58,17 +58,22 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
       );
 
       if (context.mounted) {
-        SnackbarService.showInfoSnackbar(context, "Check your email for a link to login!");
+        SnackbarService.showInfoSnackbar(
+            context, "Check your email for a link to login!");
       }
     } on AuthException catch (error) {
       if (widget.onError == null && context.mounted) {
-        SnackbarService.showErrorSnackbar(context, error.message,);
+        SnackbarService.showErrorSnackbar(
+          context,
+          error.message,
+        );
       } else {
         widget.onError?.call(error);
       }
     } catch (error) {
       if (widget.onError == null && context.mounted) {
-        SnackbarService.showErrorSnackbar(context, "An unexpected error occurred: $error");
+        SnackbarService.showErrorSnackbar(
+            context, "An unexpected error occurred: $error");
       } else {
         widget.onError?.call(error);
       }
@@ -93,7 +98,8 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
       }
     } catch (error) {
       if (widget.onError == null && context.mounted) {
-        SnackbarService.showErrorSnackbar(context, "An unexpected error occurred: $error");
+        SnackbarService.showErrorSnackbar(
+            context, "An unexpected error occurred: $error");
       }
     }
   }
@@ -129,7 +135,7 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
           ),
 
           // Padding
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
 
           // Password field - visible for @questkeeper.app emails
           _passwordVisible

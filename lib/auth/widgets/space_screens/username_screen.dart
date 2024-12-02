@@ -13,22 +13,33 @@ class UsernameScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Align(
-      alignment: Alignment.center,
+      alignment: Alignment.bottomLeft,
       child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 0),
         width: MediaQuery.of(context).size.width > 800
             ? MediaQuery.of(context).size.width * 0.75
             : null,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
               child: Text(
                 "Choose a username",
-                style: Theme.of(context).textTheme.titleLarge,
-                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.displaySmall,
+                textAlign: TextAlign.left,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+              child: Text(
+                "This will be your public username that will be displayed on leaderboards and to your friends.",
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                textAlign: TextAlign.left,
               ),
             ),
             Padding(
@@ -46,12 +57,6 @@ class UsernameScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              "This will be your public username that will be displayed on leaderboards and to your friends.",
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: FilledButton(
