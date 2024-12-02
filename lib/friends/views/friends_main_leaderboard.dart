@@ -71,80 +71,88 @@ class _FriendsListState extends ConsumerState<FriendsList> {
         ),
         body: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: FutureBuilder(
-                future: ref.watch(profileManagerProvider.future),
-                builder: (context, snapshot) {
-                  return Skeletonizer(
-                    enabled: !snapshot.hasData,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 4,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            snapshot.hasData
-                                ? AvatarWidget(
-                                    seed: (snapshot.data as Profile).user_id)
-                                : const CircleAvatar(radius: 50),
-                            const SizedBox(width: 20),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      snapshot.hasData
-                                          ? (snapshot.data as Profile).username
-                                          : 'Username Loading',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall,
-                                    ),
-                                    if (snapshot.hasData &&
-                                        (snapshot.data as Profile).isPro ==
-                                            true)
-                                      const Text('PRO',
-                                          style: TextStyle(
-                                              color: Colors.greenAccent))
-                                  ],
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  snapshot.hasData
-                                      ? '${(snapshot.data as Profile).points} points'
-                                      : '0 points',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                Text(
-                                  snapshot.hasData
-                                      ? 'Account since ${(snapshot.data as Profile).created_at.split("T")[0]}'
-                                      : 'Account since 2024-01-01',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                        color: theme.colorScheme.onSurface
-                                            .withOpacity(0.6),
+            Material(
+              elevation: 4,
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final asyncValue = ref.watch(profileManagerProvider);
+                    return Skeletonizer(
+                      enabled:
+                          asyncValue is AsyncLoading || !asyncValue.hasValue,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              asyncValue is AsyncData
+                                  ? AvatarWidget(
+                                      seed:
+                                          (asyncValue.value as Profile).user_id)
+                                  : const CircleAvatar(radius: 50),
+                              const SizedBox(width: 20),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        asyncValue is AsyncData
+                                            ? (asyncValue.value as Profile)
+                                                .username
+                                            : 'Username Loading',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall,
                                       ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                      if (asyncValue is AsyncData &&
+                                          (asyncValue.value as Profile).isPro ==
+                                              true)
+                                        const Text('PRO',
+                                            style: TextStyle(
+                                                color: Colors.greenAccent))
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    asyncValue is AsyncData
+                                        ? '${(asyncValue.value as Profile).points} points'
+                                        : '0 points',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                  Text(
+                                    asyncValue is AsyncData
+                                        ? 'Account since ${(asyncValue.value as Profile).created_at.split("T")[0]}'
+                                        : 'Account since 2024-01-01',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: theme.colorScheme.onSurface
+                                              .withOpacity(0.6),
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
             Expanded(
@@ -159,9 +167,10 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                   itemBuilder: (context, index) {
                     final friend = sorted[index];
                     return FriendListTile(
-                        friend: friend,
-                        position: index + 1,
-                        onRemove: removeFriendHandler);
+                      friend: friend,
+                      position: index + 1,
+                      onRemove: removeFriendHandler,
+                    );
                   },
                 ),
               ),
@@ -173,14 +182,23 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                         return requests.isNotEmpty &&
                                 (requests['sent']!.isNotEmpty ||
                                     requests['received']!.isNotEmpty)
-                            ? Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    _showPendingRequestsBottomSheet(context);
-                                  },
-                                  icon: const Icon(LucideIcons.bell_plus),
-                                  label: const Text('Pending Requests'),
+                            ? Material(
+                                elevation: 4,
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(8),
+                                  alignment: Alignment.center,
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(maxWidth: 600),
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        _showPendingRequestsBottomSheet(
+                                            context);
+                                      },
+                                      icon: const Icon(LucideIcons.bell_plus),
+                                      label: const Text('Pending Requests'),
+                                    ),
+                                  ),
                                 ),
                               )
                             : const SizedBox();
