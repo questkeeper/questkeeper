@@ -4,7 +4,6 @@ import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/shared/extensions/platform_extensions.dart';
 import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
-import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
@@ -59,20 +58,7 @@ class _TabViewState extends ConsumerState<TabView> {
           // Mobile layout
           return Stack(children: [
             Scaffold(
-              body: RefreshIndicator(
-                onRefresh: () {
-                  if (ref.read(spacesManagerProvider).isLoading ||
-                      ref.read(spacesManagerProvider).isRefreshing) {
-                    return Future
-                        .value(); // Do nothing if already loading or refreshing
-                  } else {
-                    return ref
-                        .read(spacesManagerProvider.notifier)
-                        .refreshSpaces();
-                  }
-                },
-                child: pages[_selectedIndex],
-              ),
+              body: pages[_selectedIndex],
               bottomNavigationBar: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
                 items: const <BottomNavigationBarItem>[
@@ -147,19 +133,7 @@ class _TabViewState extends ConsumerState<TabView> {
                 const VerticalDivider(thickness: 1, width: 1),
                 Expanded(
                   child: Scaffold(
-                    body: RefreshIndicator(
-                        onRefresh: () {
-                          if (ref.read(spacesManagerProvider).isLoading ||
-                              ref.read(spacesManagerProvider).isRefreshing) {
-                            return Future
-                                .value(); // Do nothing if already loading or refreshing
-                          } else {
-                            return ref
-                                .read(spacesManagerProvider.notifier)
-                                .refreshSpaces();
-                          }
-                        },
-                        child: pages[_selectedIndex]),
+                    body: pages[_selectedIndex],
                     floatingActionButton: FloatingActionButton(
                       key: const Key('add_task_button'),
                       heroTag: 'add_task_button',
