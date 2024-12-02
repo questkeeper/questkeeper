@@ -37,10 +37,21 @@ class _FriendsListState extends ConsumerState<FriendsList> {
     final theme = Theme.of(context);
     final asyncValue = ref.watch(friendsManagerProvider);
 
-    if (asyncValue.isLoading || !asyncValue.hasValue) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    // Create a skeleton list for loading state
+    final skeletonList = List.generate(
+      10,
+      (index) => FriendListTile(
+        friend: Friend(
+          userId: 'loading',
+          username: 'Loading User',
+          points: 1000,
+        ),
+        position: index + 1,
+        onRemove: (_) {},
+      ),
+    );
 
+    Widget mainContent;
     if (asyncValue.hasError) {
       final error = asyncValue.error!;
       final stack = asyncValue.stackTrace!;
@@ -50,13 +61,37 @@ class _FriendsListState extends ConsumerState<FriendsList> {
         stackTrace: stack,
       );
 
-      return const Center(
+      mainContent = const Center(
         child: Text("Failed to fetch friends list"),
       );
-    }
+    } else {
+      List<Friend> list = asyncValue.hasValue ? asyncValue.value! : [];
+      var sorted = asyncValue.hasValue
+          ? _sortSettings.sorted(list.toList(growable: false))
+          : [];
 
-    var unsorted = asyncValue.value!;
-    var sorted = _sortSettings.sorted(unsorted.toList(growable: false));
+      mainContent = RefreshIndicator(
+        onRefresh: _refreshFriendsList,
+        child: ListView.separated(
+          itemCount: asyncValue.hasValue ? sorted.length : skeletonList.length,
+          padding: const EdgeInsets.all(16),
+          separatorBuilder: (context, index) {
+            return const SizedBox(height: 16);
+          },
+          itemBuilder: (context, index) {
+            if (!asyncValue.hasValue) {
+              return skeletonList[index];
+            }
+            final friend = sorted[index];
+            return FriendListTile(
+              friend: friend,
+              position: index + 1,
+              onRemove: removeFriendHandler,
+            );
+          },
+        ),
+      );
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -156,23 +191,9 @@ class _FriendsListState extends ConsumerState<FriendsList> {
               ),
             ),
             Expanded(
-              child: RefreshIndicator(
-                onRefresh: _refreshFriendsList,
-                child: ListView.separated(
-                  itemCount: sorted.length,
-                  padding: const EdgeInsets.all(16),
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(height: 16);
-                  },
-                  itemBuilder: (context, index) {
-                    final friend = sorted[index];
-                    return FriendListTile(
-                      friend: friend,
-                      position: index + 1,
-                      onRemove: removeFriendHandler,
-                    );
-                  },
-                ),
+              child: Skeletonizer(
+                enabled: asyncValue.isLoading || !asyncValue.hasValue,
+                child: mainContent,
               ),
             ),
             Consumer(
