@@ -305,11 +305,13 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     await widget.ref
                         .read(tasksManagerProvider.notifier)
                         .toggleComplete(task);
+                    if (context.mounted) Navigator.of(context).pop();
                   },
                   deleteTask: (task) async {
                     await widget.ref
                         .read(tasksManagerProvider.notifier)
                         .deleteTask(task);
+                    if (context.mounted) Navigator.of(context).pop();
                   },
                   size: MediaQuery.of(context).size,
                 ),

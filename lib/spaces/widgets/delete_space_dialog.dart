@@ -20,7 +20,7 @@ class DeleteSpaceDialog extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         actions: [
-          FilledButton(
+          TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
