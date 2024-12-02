@@ -1,12 +1,15 @@
 import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/settings/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -131,6 +134,15 @@ class SettingsScreen extends ConsumerWidget {
                       icon: LucideIcons.log_out,
                       iconColor: Colors.redAccent,
                       onTap: () async {
+                        AuthNotifier().clearToken();
+                        await SharedPreferences.getInstance().then((prefs) {
+                          prefs.clear();
+                        });
+
+                        // Clear cache manager
+                        final CacheManager cacheManager = DefaultCacheManager();
+                        await cacheManager.emptyCache();
+
                         await Supabase.instance.client.auth.signOut().then(
                               (value) => {
                                 if (context.mounted)
