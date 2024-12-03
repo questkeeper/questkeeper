@@ -1,10 +1,10 @@
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
+import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/shared/extensions/platform_extensions.dart';
 import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
-import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
@@ -23,7 +23,7 @@ class TabView extends ConsumerStatefulWidget {
 class _TabViewState extends ConsumerState<TabView> {
   int _selectedIndex = 1;
   static const List<Widget> pages = [
-    QuestsView(),
+    if (isDebug) QuestsView(),
     AllSpacesScreen(),
     FriendsList(), // Placeholder for arcade
     SettingsScreen(),
@@ -59,27 +59,15 @@ class _TabViewState extends ConsumerState<TabView> {
           // Mobile layout
           return Stack(children: [
             Scaffold(
-              body: RefreshIndicator(
-                onRefresh: () {
-                  if (ref.read(spacesManagerProvider).isLoading ||
-                      ref.read(spacesManagerProvider).isRefreshing) {
-                    return Future
-                        .value(); // Do nothing if already loading or refreshing
-                  } else {
-                    return ref
-                        .read(spacesManagerProvider.notifier)
-                        .refreshSpaces();
-                  }
-                },
-                child: pages[_selectedIndex],
-              ),
+              body: pages[_selectedIndex],
               bottomNavigationBar: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
                 items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: Icon(LucideIcons.trophy),
-                    label: 'Quests',
-                  ),
+                  if (isDebug)
+                    BottomNavigationBarItem(
+                      icon: Icon(LucideIcons.trophy),
+                      label: 'Quests',
+                    ),
                   BottomNavigationBarItem(
                     icon: Icon(LucideIcons.eclipse),
                     label: 'Spaces',
@@ -132,8 +120,10 @@ class _TabViewState extends ConsumerState<TabView> {
                   onDestinationSelected: _onItemTapped,
                   labelType: NavigationRailLabelType.all,
                   destinations: const <NavigationRailDestination>[
-                    NavigationRailDestination(
-                        icon: Icon(LucideIcons.trophy), label: Text('Quests')),
+                    if (isDebug)
+                      NavigationRailDestination(
+                          icon: Icon(LucideIcons.trophy),
+                          label: Text('Quests')),
                     NavigationRailDestination(
                         icon: Icon(LucideIcons.eclipse), label: Text('Spaces')),
                     NavigationRailDestination(
@@ -147,19 +137,7 @@ class _TabViewState extends ConsumerState<TabView> {
                 const VerticalDivider(thickness: 1, width: 1),
                 Expanded(
                   child: Scaffold(
-                    body: RefreshIndicator(
-                        onRefresh: () {
-                          if (ref.read(spacesManagerProvider).isLoading ||
-                              ref.read(spacesManagerProvider).isRefreshing) {
-                            return Future
-                                .value(); // Do nothing if already loading or refreshing
-                          } else {
-                            return ref
-                                .read(spacesManagerProvider.notifier)
-                                .refreshSpaces();
-                          }
-                        },
-                        child: pages[_selectedIndex]),
+                    body: pages[_selectedIndex],
                     floatingActionButton: FloatingActionButton(
                       key: const Key('add_task_button'),
                       heroTag: 'add_task_button',

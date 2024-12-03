@@ -7,6 +7,7 @@ import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void showSpaceBottomSheet({
@@ -131,11 +132,17 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
             ),
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(16),
               ),
-              child: CachedNetworkImage(
-                imageUrl: storage.from("assets").getPublicUrl(
-                    "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/day.png"),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Skeletonizer(
+                  enabled: backgroundTypes == null,
+                  child: CachedNetworkImage(
+                    imageUrl: storage.from("assets").getPublicUrl(
+                        "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/day.png"),
+                  ),
+                ),
               ),
             ),
             Padding(

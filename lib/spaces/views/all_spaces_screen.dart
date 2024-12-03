@@ -24,11 +24,11 @@ class AllSpacesScreen extends ConsumerStatefulWidget {
 
 class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late PageController _pageController;
-  late final FamiliarsWidgetGame _game;
+  FamiliarsWidgetGame? _game;
   final SupabaseStorageClient storageClient = Supabase.instance.client.storage;
   ValueNotifier<int> currentPageValue = ValueNotifier(0);
   ValueNotifier<bool> showGameNotifier = ValueNotifier(true);
-  late final String initialBackgroundUrl;
+  late final String? initialBackgroundUrl;
   late final SharedPreferences prefs;
   late String backgroundColor;
 
@@ -51,25 +51,33 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
             prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
                 "#000000";
 
-        _game = FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl);
-
-        // Force a rebuild to ensure the game is properly initialized
-        if (mounted) setState(() {});
+        setState(() {
+          _game = initialBackgroundUrl != null
+              ? FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!)
+              : null;
+        });
+      } else {
+        setState(() {
+          initialBackgroundUrl = null;
+          _game = null; // Ensure it's clear
+        });
       }
     });
   }
 
   void _updatePage() {
-    if (mounted) {
+    if (mounted && _pageController.hasClients) {
       currentPageValue.value = _pageController.page?.round() ?? 0;
     }
   }
 
   @override
   void dispose() {
+    if (_pageController.hasClients) {
+      _pageController.removeListener(_updatePage);
+    }
     currentPageValue.dispose();
     showGameNotifier.dispose();
-    _pageController.removeListener(_updatePage);
     super.dispose();
   }
 
@@ -96,6 +104,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
         body: spacesAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) {
+            debugPrint('Error: $error');
             Sentry.captureException(
               error,
               stackTrace: stack,
@@ -107,13 +116,14 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
               children: [
                 Column(
                   children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 4),
-                      child: AnimatedGameContainer(
-                        game: _game,
-                        heightFactor: heightFactor,
+                    if (_game != null) // Only show when _game is ready
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 4),
+                        child: AnimatedGameContainer(
+                          game: _game!,
+                          heightFactor: heightFactor,
+                        ),
                       ),
-                    ),
                     Expanded(
                       child: PageView.builder(
                         controller: _pageController,
@@ -122,7 +132,11 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
 
                           final dateType = DateTime.now().getTimeOfDayType();
 
-                          _game.updateBackground(
+                          if (_game == null) {
+                            return;
+                          }
+
+                          _game?.updateBackground(
                               page,
                               page == spaces.length
                                   ? initialBackgroundUrl
@@ -131,7 +145,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
 
                           final isForward = page >
                               (ref.read(pageControllerProvider).page ?? 0);
-                          _game.animateEntry(
+                          _game?.animateEntry(
                             isForward ? Direction.left : Direction.right,
                           );
 

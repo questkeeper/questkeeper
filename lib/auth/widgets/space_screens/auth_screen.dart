@@ -1,4 +1,4 @@
-import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter/gestures.dart';
 import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
     show SupaMagicAuth; // Overriding the supa auth UI with own flow
-import 'package:supabase_auth_ui/supabase_auth_ui.dart'
-    show SupaSocialsAuth, SocialButtonVariant, OAuthProvider;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -73,18 +71,64 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             ? MediaQuery.of(context).size.width * 0.75
             : null,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
               child: Text(
                 "QuestKeeper",
-                style: Theme.of(context).textTheme.displayMedium,
+                style: Theme.of(context).textTheme.displaySmall,
+                textAlign: TextAlign.left,
               ),
             ),
-
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "By signing in, you agree to our ",
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                    TextSpan(
+                      text: "Terms of Service",
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(
+                              Uri.parse("https://questkeeper.app/privacy"));
+                        },
+                    ),
+                    TextSpan(
+                      text: " and ",
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                    TextSpan(
+                      text: "Privacy Policy",
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(
+                              Uri.parse("https://questkeeper.app/privacy"));
+                        },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
               child: SupaMagicAuth(
                 redirectUrl: kIsWeb
                     ? "${Uri.base.toString()}/signin"
@@ -93,33 +137,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 onError: onError,
               ),
             ),
-
-            SupaSocialsAuth(
-              socialProviders: const [
-                // OAuthProvider.apple,
-                // OAuthProvider.google,
-                OAuthProvider.discord
-              ],
-              socialButtonVariant: SocialButtonVariant.icon,
-              colored: true,
-              redirectUrl: kIsWeb ? null : 'questkeeper://signin',
-              onSuccess: onSuccess,
-              onError: onError,
-            ),
-
-            // Sign in with password option
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton.icon(
-                  icon: const Icon(LucideIcons.shield_alert),
-                  onPressed: () {
-                    launchUrl(Uri.parse("https://questkeeper.app/privacy"));
-                  },
-                  label: const Text("Privacy Policy"),
-                ),
-              ],
-            )
           ],
         ),
       ),

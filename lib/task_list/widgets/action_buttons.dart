@@ -76,9 +76,8 @@ class ActionButtons extends ConsumerWidget {
                         "Are you sure you want to delete ${updatedTask.title}?",
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      actionsAlignment: MainAxisAlignment.spaceBetween,
                       actions: [
-                        OutlinedButton(
+                        TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
