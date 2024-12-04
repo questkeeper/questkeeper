@@ -5,6 +5,7 @@ import 'package:questkeeper/categories/providers/category_collapse_state_provide
 import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
 import 'package:questkeeper/shared/extensions/color_extensions.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
+import 'package:questkeeper/shared/providers/ab_test_provider.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/task_list/task_item/widgets/task_card.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,12 @@ class SpaceCategoryTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isTagViewEnabled = ref.watch(tagViewProvider);
+
+    if (isTagViewEnabled) {
+      return const SizedBox.shrink();
+    }
+
     final categoryCollapseStateAsync = ref.watch(categoryCollapseStateProvider);
 
     return categoryCollapseStateAsync.when(

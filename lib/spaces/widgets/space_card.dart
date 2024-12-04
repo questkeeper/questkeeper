@@ -2,6 +2,7 @@ import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
+import 'package:questkeeper/shared/providers/ab_test_provider.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/providers/game_height_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
@@ -9,6 +10,7 @@ import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:questkeeper/spaces/widgets/delete_space_dialog.dart';
 import 'package:questkeeper/spaces/widgets/space_category_tile.dart';
 import 'package:questkeeper/task_list/providers/tasks_provider.dart';
+import 'package:questkeeper/task_list/task_item/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,6 +30,7 @@ class SpaceCard extends ConsumerStatefulWidget {
 class _SpaceCardState extends ConsumerState<SpaceCard> {
   final ScrollController _scrollController = ScrollController();
   bool _isMinimized = false;
+  String? _selectedCategoryId;
 
   @override
   void initState() {
@@ -72,6 +75,7 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
               return category.spaceId == space.id;
             }).toList()));
 
+    final isTagViewEnabled = ref.watch(tagViewProvider);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
       child: Container(
@@ -107,41 +111,115 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                 title: Text(space.title),
               ),
             ),
+            if (isTagViewEnabled && currentSpaceCategories != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    FilterChip(
+                      label: const Text('All'),
+                      selected: _selectedCategoryId == null,
+                      onSelected: (bool selected) {
+                        setState(() {
+                          _selectedCategoryId = null;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: currentSpaceCategories
+                              .map(
+                                (category) => Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: FilterChip(
+                                    color: WidgetStateProperty.resolveWith(
+                                        (_) => category.color != null
+                                            ? category.color!.toColor()
+                                            : Colors.transparent
+                                                .withOpacity(0.1)),
+                                    label: Text(category.title),
+                                    selected: _selectedCategoryId ==
+                                        category.id.toString(),
+                                    onSelected: (bool selected) {
+                                      setState(() {
+                                        _selectedCategoryId = selected
+                                            ? category.id.toString()
+                                            : _selectedCategoryId.toString();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 onNotification: (notification) {
                   return false;
                 },
-                child: ListView.builder(
-                  controller: _scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: currentSpaceCategories?.length != null
-                      ? currentSpaceCategories!.length + 1
-                      : 0,
-                  itemBuilder: (context, index) {
-                    final categoryTasksList = tasks?.where((task) {
-                      return task.categoryId ==
-                          (index < currentSpaceCategories!.length
-                              ? currentSpaceCategories[index].id
-                              : null);
-                    }).toList();
-                    if (index < currentSpaceCategories!.length) {
-                      final category = currentSpaceCategories[index];
-                      return SpaceCategoryTile(
-                        category: category,
-                        tasks: categoryTasksList,
-                      );
-                    } else {
-                      return SpaceCategoryTile(
-                        tasks: categoryTasksList,
-                        category: Categories(
-                          title: "Uncategorized",
-                          tasks: tasks,
-                        ),
-                      );
-                    }
-                  },
-                ),
+                child: isTagViewEnabled
+                    ? ListView.builder(
+                        controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: tasks?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          final task = tasks![index];
+                          if (_selectedCategoryId == null ||
+                              task.categoryId.toString() ==
+                                  _selectedCategoryId) {
+                            final category = currentSpaceCategories?.firstWhere(
+                                (cat) =>
+                                    cat.id.toString() ==
+                                    task.categoryId.toString(),
+                                orElse: () => Categories(
+                                    title: "Uncategorized", tasks: []));
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                              child: TaskCard(task: task, category: category),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      )
+                    : ListView.builder(
+                        controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: currentSpaceCategories?.length != null
+                            ? currentSpaceCategories!.length + 1
+                            : 0,
+                        itemBuilder: (context, index) {
+                          final categoryTasksList = tasks?.where((task) {
+                            return task.categoryId ==
+                                (index < currentSpaceCategories!.length
+                                    ? currentSpaceCategories[index].id
+                                    : null);
+                          }).toList();
+                          if (index < currentSpaceCategories!.length) {
+                            final category = currentSpaceCategories[index];
+                            return SpaceCategoryTile(
+                              category: category,
+                              tasks: categoryTasksList,
+                            );
+                          } else {
+                            return SpaceCategoryTile(
+                              tasks: categoryTasksList,
+                              category: Categories(
+                                title: "Uncategorized",
+                                tasks: tasks,
+                              ),
+                            );
+                          }
+                        },
+                      ),
               ),
             ),
           ],
