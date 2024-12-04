@@ -1,8 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
+import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/utils/cache_assets.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:questkeeper/spaces/providers/game_height_provider.dart';
+import 'package:questkeeper/spaces/providers/game_provider.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:flutter/material.dart';
@@ -200,11 +204,18 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
                   widget.nameController.clear();
 
                   if (!widget.isEditing) {
+                    widget.ref.read(gameHeightProvider.notifier).state = 1.0;
+                    final dateType = DateTime.now().getTimeOfDayType();
+                    final game = widget.ref.read(gameProvider);
+                    game?.updateBackground(
+                      0,
+                      storage.from("assets").getPublicUrl(
+                          "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/$dateType.png"),
+                    );
+                    game?.animateEntry(Direction.left);
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (pageController.hasClients) {
-                        pageController.animateToPage(currentPageIndex,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut);
+                        pageController.jumpToPage(0);
                       }
                     });
                   } else {
