@@ -131,7 +131,6 @@ class _CategoryBottomSheetContentState
                                   .read(categoriesManagerProvider.notifier)
                                   .deleteCategory(widget.existingCategory!);
                               SnackbarService.showSuccessSnackbar(
-                                context,
                                 'Category deleted successfully',
                               );
                             }
@@ -178,7 +177,6 @@ class _CategoryBottomSheetContentState
                         widget.nameController.clear();
                         if (context.mounted) {
                           SnackbarService.showSuccessSnackbar(
-                            context,
                             widget.isEditing
                                 ? 'Category updated successfully'
                                 : 'Category created successfully',

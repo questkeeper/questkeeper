@@ -33,14 +33,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .update({"read": true}).eq("id", id);
       mounted
           ? SnackbarService.showSuccessSnackbar(
-              context,
               "Notification dismissed",
             )
           : null;
     } catch (e) {
       mounted
           ? SnackbarService.showErrorSnackbar(
-              context,
               "Failed to dismiss notification",
             )
           : null;

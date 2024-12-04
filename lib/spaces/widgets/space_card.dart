@@ -185,7 +185,7 @@ class SpaceActionWidgets extends StatelessWidget {
                 deleteSpace: () {
                   ref.read(spacesManagerProvider.notifier).deleteSpace(space);
                   SnackbarService.showInfoSnackbar(
-                      context, "Space deleted successfully");
+                      "Space deleted successfully");
                 },
               ),
             );

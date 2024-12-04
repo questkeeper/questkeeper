@@ -64,7 +64,7 @@ class UsernameScreen extends ConsumerWidget {
                   if (controller.text.isEmpty ||
                       controller.text.length < 3 ||
                       controller.text.length > 20) {
-                    SnackbarService.showErrorSnackbar(context,
+                    SnackbarService.showErrorSnackbar(
                         "Username must be between 3 and 20 characters");
                     return;
                   }
@@ -85,13 +85,11 @@ class UsernameScreen extends ConsumerWidget {
                         (route) => false,
                       );
 
-                      SnackbarService.showSuccessSnackbar(
-                          context, response.message);
+                      SnackbarService.showSuccessSnackbar(response.message);
                     }
                   } else {
                     if (context.mounted) {
-                      SnackbarService.showErrorSnackbar(
-                          context, response.message);
+                      SnackbarService.showErrorSnackbar(response.message);
                     }
                   }
                 },

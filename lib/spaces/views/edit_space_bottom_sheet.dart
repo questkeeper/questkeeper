@@ -230,7 +230,6 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
 
                   if (context.mounted) {
                     SnackbarService.showSuccessSnackbar(
-                      context,
                       widget.isEditing
                           ? 'Space updated successfully'
                           : 'Space created successfully',

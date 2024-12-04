@@ -274,7 +274,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
     ref.read(friendsManagerProvider.notifier).removeFriend(friend.username);
     Navigator.of(context).pop(); // Close the popup menu
 
-    SnackbarService.showSuccessSnackbar(context, 'Friend removed');
+    SnackbarService.showSuccessSnackbar('Friend removed');
   }
 }
 

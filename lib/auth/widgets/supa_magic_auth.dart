@@ -69,12 +69,11 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
 
       if (context.mounted) {
         SnackbarService.showInfoSnackbar(
-            context, "Check your email for a link to login!");
+            "Check your email for a link to login!");
       }
     } on AuthException catch (error) {
       if (widget.onError == null && context.mounted) {
         SnackbarService.showErrorSnackbar(
-          context,
           error.message,
         );
       } else {
@@ -83,7 +82,7 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
     } catch (error) {
       if (widget.onError == null && context.mounted) {
         SnackbarService.showErrorSnackbar(
-            context, "An unexpected error occurred: $error");
+            "An unexpected error occurred: $error");
       } else {
         widget.onError?.call(error);
       }
@@ -98,14 +97,14 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
       );
     } on AuthException catch (error) {
       if (widget.onError == null && context.mounted) {
-        SnackbarService.showErrorSnackbar(context, error.message);
+        SnackbarService.showErrorSnackbar(error.message);
       } else {
         widget.onError?.call(error);
       }
     } catch (error) {
       if (widget.onError == null && context.mounted) {
         SnackbarService.showErrorSnackbar(
-            context, "An unexpected error occurred: $error");
+            "An unexpected error occurred: $error");
       }
     }
   }
