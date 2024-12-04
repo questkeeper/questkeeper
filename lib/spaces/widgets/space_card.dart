@@ -65,6 +65,7 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
     final space = widget.space;
     final tasks = ref.watch(tasksManagerProvider.select((value) =>
         value.value?.where((task) => task.spaceId == space.id).toList()));
+    final gameHeight = ref.watch(gameHeightProvider);
 
     final currentSpaceCategories = ref.watch(categoriesManagerProvider
         .select((value) => value.value?.where((category) {
@@ -87,7 +88,22 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               child: ListTile(
                 titleTextStyle: Theme.of(context).textTheme.headlineMedium,
-                trailing: SpaceActionWidgets(space: space, ref: ref),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      icon: gameHeight > 0.3
+                          ? const Icon(LucideIcons.minimize_2)
+                          : const Icon(LucideIcons.maximize_2),
+                      onPressed: () {
+                        ref.read(gameHeightProvider.notifier).state =
+                            gameHeight > 0.3 ? 0.3 : 1.0;
+                      },
+                    ),
+                    SpaceActionWidgets(space: space, ref: ref),
+                  ],
+                ),
                 title: Text(space.title),
               ),
             ),
@@ -149,6 +165,7 @@ class SpaceActionWidgets extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopupMenuButton<SpaceAction>(
       icon: const Icon(LucideIcons.menu),
+      iconColor: Theme.of(context).colorScheme.onSurface,
       iconSize: 32,
       onSelected: (action) {
         switch (action) {
