@@ -6,6 +6,8 @@ import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/settings/widgets/settings_card.dart';
+import 'package:questkeeper/settings/widgets/settings_switch_card.dart';
+import 'package:questkeeper/shared/providers/ab_test_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
@@ -103,6 +105,16 @@ class SettingsScreen extends ConsumerWidget {
                         description: 'Change the app theme',
                         icon: LucideIcons.palette,
                         onTap: notYetImplemented),
+                    const Divider(),
+                    SettingsSwitchCard(
+                      title: 'Tag View',
+                      description: 'Enable experimental tag view',
+                      icon: LucideIcons.tags,
+                      value: ref.watch(tagViewProvider),
+                      onChanged: (value) {
+                        ref.read(tagViewProvider.notifier).toggleTagView();
+                      },
+                    ),
                     const Divider(),
                     SettingsCard(
                       title: 'Feedback',
