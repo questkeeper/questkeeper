@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -33,20 +35,28 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _passwordVisible = false;
-  late final SupabaseClient supabase;
+  late final SupabaseClient supabase = Supabase.instance.client;
+  late final StreamSubscription<AuthState> _gotrueSubscription;
 
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    supabase = Supabase.instance.client;
+    _gotrueSubscription =
+        Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final session = data.session;
+      if (session != null && mounted) {
+        widget.onSuccess(session);
+      }
+    });
   }
 
   @override
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _gotrueSubscription.cancel();
     super.dispose();
   }
 
@@ -86,10 +96,6 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
         email: _email.text,
         password: _password.text,
       );
-
-      if (context.mounted) {
-        Navigator.of(context).pushNamed("/home");
-      }
     } on AuthException catch (error) {
       if (widget.onError == null && context.mounted) {
         SnackbarService.showErrorSnackbar(context, error.message);
