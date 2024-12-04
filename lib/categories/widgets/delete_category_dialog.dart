@@ -20,27 +20,23 @@ class DeleteCategoryDialog extends StatelessWidget {
         style: Theme.of(context).textTheme.bodyLarge,
       ),
       actions: [
-        Expanded(
-          child: TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("Cancel"),
-          ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text("Cancel"),
         ),
         const SizedBox(width: 8),
-        Expanded(
-          child: FilledButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(Colors.redAccent),
-              foregroundColor: WidgetStateProperty.all(Colors.white),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-              deleteCategory();
-            },
-            child: const Text("Delete"),
+        FilledButton(
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.all(Colors.redAccent),
+            foregroundColor: WidgetStateProperty.all(Colors.white),
           ),
+          onPressed: () {
+            Navigator.of(context).pop();
+            deleteCategory();
+          },
+          child: const Text("Delete"),
         ),
       ],
     );
