@@ -1,9 +1,11 @@
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
+import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/providers/game_height_provider.dart';
+import 'package:questkeeper/spaces/providers/game_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:questkeeper/spaces/widgets/delete_space_dialog.dart';
@@ -13,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SpaceCard extends ConsumerStatefulWidget {
   const SpaceCard(
@@ -163,6 +166,7 @@ class SpaceActionWidgets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final game = ref.read(gameProvider);
     return PopupMenuButton<SpaceAction>(
       icon: const Icon(LucideIcons.menu),
       iconColor: Theme.of(context).textTheme.bodyLarge?.color,
@@ -182,8 +186,33 @@ class SpaceActionWidgets extends StatelessWidget {
               context: context,
               builder: (context) => DeleteSpaceDialog(
                 space: space,
-                deleteSpace: () {
-                  ref.read(spacesManagerProvider.notifier).deleteSpace(space);
+                deleteSpace: () async {
+                  final spaces = await ref
+                      .watch(spacesManagerProvider.notifier)
+                      .fetchSpaces();
+                  void manageBackground() async {
+                    final dateType = DateTime.now().getTimeOfDayType();
+                    final storage = Supabase.instance.client.storage;
+                    if (spaces.length > 1) {
+                      game?.updateBackground(
+                        0,
+                        storage.from("assets").getPublicUrl(
+                            "backgrounds/${spaces[1].spaceType}/$dateType.png"),
+                      );
+                    } else {
+                      game?.updateBackground(
+                        0,
+                        storage
+                            .from("assets")
+                            .getPublicUrl("backgrounds/office/$dateType.png"),
+                      );
+                    }
+                  }
+
+                  await ref
+                      .read(spacesManagerProvider.notifier)
+                      .deleteSpace(space)
+                      .then((_) => manageBackground());
                   SnackbarService.showInfoSnackbar(
                       "Space deleted successfully");
                 },
