@@ -21,7 +21,7 @@ class TabView extends ConsumerStatefulWidget {
 }
 
 class _TabViewState extends ConsumerState<TabView> {
-  int _selectedIndex = 1;
+  int _selectedIndex = isDebug ? 1 : 0;
   static const List<Widget> pages = [
     if (isDebug) QuestsView(),
     AllSpacesScreen(),
