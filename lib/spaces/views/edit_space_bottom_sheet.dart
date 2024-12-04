@@ -207,15 +207,16 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
                     widget.ref.read(gameHeightProvider.notifier).state = 1.0;
                     final dateType = DateTime.now().getTimeOfDayType();
                     final game = widget.ref.read(gameProvider);
-                    game?.updateBackground(
-                      0,
-                      storage.from("assets").getPublicUrl(
-                          "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/$dateType.png"),
-                    );
+
                     game?.animateEntry(Direction.left);
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (pageController.hasClients) {
                         pageController.jumpToPage(0);
+                        game?.updateBackground(
+                          0,
+                          storage.from("assets").getPublicUrl(
+                              "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/$dateType.png"),
+                        );
                       }
                     });
                   } else {
