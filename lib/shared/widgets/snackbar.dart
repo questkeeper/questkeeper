@@ -1,36 +1,66 @@
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:toastification/toastification.dart';
 
 class SnackbarService {
-  static void showSuccessSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      _snackBarFormat(context, message, Colors.green),
+  static final Toastification _toast = Toastification();
+
+  static void showSuccessSnackbar(
+    BuildContext context,
+    String message, {
+    Function? callback,
+    Icon? callbackIcon,
+    String? callbackText,
+  }) {
+    _toast.show(
+      autoCloseDuration: const Duration(milliseconds: 3000),
+      context: context,
+      title: Text(message),
+      description: callbackText != null ? Text(callbackText) : null,
+      type: ToastificationType.success,
+      backgroundColor: Colors.green,
+      showProgressBar: true,
+      icon: Icon(
+          callback != null && callbackIcon != null
+              ? callbackIcon.icon
+              : LucideIcons.check,
+          color: Colors.white),
+      alignment: Alignment.bottomCenter,
+      style: ToastificationStyle.flatColored,
+      callbacks: ToastificationCallbacks(
+        onTap: (_) {
+          if (callback != null) {
+            callback();
+          }
+        },
+      ),
     );
   }
 
   static void showErrorSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      _snackBarFormat(context, message, Colors.red),
+    _toast.show(
+      autoCloseDuration: const Duration(milliseconds: 3000),
+      context: context,
+      title: Text(message),
+      type: ToastificationType.error,
+      backgroundColor: Colors.red,
+      showProgressBar: true,
+      icon: Icon(LucideIcons.x, color: Colors.white),
+      alignment: Alignment.bottomCenter,
     );
   }
 
   static void showInfoSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      _snackBarFormat(context, message, primaryColor),
-    );
-  }
-
-  static SnackBar _snackBarFormat(
-      BuildContext context, String message, Color color) {
-    return SnackBar(
-      content: Text(message),
-      backgroundColor: color,
-      behavior: SnackBarBehavior.floating,
-      duration: const Duration(seconds: 3),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+    _toast.show(
+      autoCloseDuration: const Duration(milliseconds: 3000),
+      context: context,
+      title: Text(message),
+      type: ToastificationType.info,
+      backgroundColor: primaryColor,
+      showProgressBar: true,
+      icon: Icon(LucideIcons.info, color: Colors.white),
+      alignment: Alignment.bottomCenter,
     );
   }
 }

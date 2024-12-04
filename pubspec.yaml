@@ -52,6 +52,7 @@ dependencies:
   dynamic_color: ^1.7.0
   flutter_svg: ^2.0.16
   mixpanel_flutter: ^2.3.3
+  toastification: ^2.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
