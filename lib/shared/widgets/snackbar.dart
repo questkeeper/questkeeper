@@ -6,16 +6,14 @@ import 'package:toastification/toastification.dart';
 class SnackbarService {
   static final Toastification _toast = Toastification();
 
-  static void showSuccessSnackbar(
-    BuildContext context,
+  static ToastificationItem showSuccessSnackbar(
     String message, {
     Function? callback,
     Icon? callbackIcon,
     String? callbackText,
   }) {
-    _toast.show(
+    return _toast.show(
       autoCloseDuration: const Duration(milliseconds: 3000),
-      context: context,
       title: Text(message),
       description: callbackText != null ? Text(callbackText) : null,
       type: ToastificationType.success,
@@ -38,10 +36,9 @@ class SnackbarService {
     );
   }
 
-  static void showErrorSnackbar(BuildContext context, String message) {
+  static void showErrorSnackbar(String message) {
     _toast.show(
       autoCloseDuration: const Duration(milliseconds: 3000),
-      context: context,
       title: Text(message),
       type: ToastificationType.error,
       backgroundColor: Colors.red,
@@ -51,10 +48,9 @@ class SnackbarService {
     );
   }
 
-  static void showInfoSnackbar(BuildContext context, String message) {
+  static void showInfoSnackbar(String message) {
     _toast.show(
       autoCloseDuration: const Duration(milliseconds: 3000),
-      context: context,
       title: Text(message),
       type: ToastificationType.info,
       backgroundColor: primaryColor,
@@ -62,5 +58,9 @@ class SnackbarService {
       icon: Icon(LucideIcons.info, color: Colors.white),
       alignment: Alignment.bottomCenter,
     );
+  }
+
+  static void dismissToast(ToastificationItem toastItem) {
+    _toast.dismiss(toastItem);
   }
 }

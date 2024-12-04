@@ -1,10 +1,14 @@
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/task_list/repositories/tasks_repository.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:toastification/toastification.dart';
 
 part 'tasks_provider.g.dart';
 
@@ -57,6 +61,26 @@ class TasksManager extends _$TasksManager {
     // Remove it from the list
     state = AsyncValue.data(
       (state.value ?? []).where((a) => a.id != task.id).toList(),
+    );
+    ToastificationItem? toastItem;
+    void undoCallback() {
+      // Undo the removal
+      state = AsyncValue.data([...state.value ?? [], task]);
+      _repository.toggleComplete(task);
+      if (toastItem != null) {
+        SnackbarService.dismissToast(toastItem);
+      }
+
+      SnackbarService.showSuccessSnackbar(
+        "Task updated",
+      );
+    }
+
+    toastItem = SnackbarService.showSuccessSnackbar(
+      "Task completed successfully",
+      callback: undoCallback,
+      callbackIcon: const Icon(LucideIcons.undo_2),
+      callbackText: "Tap to undo",
     );
   }
 
