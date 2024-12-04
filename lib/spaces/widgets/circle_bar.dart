@@ -18,7 +18,7 @@ class CircleBar extends StatelessWidget {
       width: isActive ? 12 : 8,
       decoration: BoxDecoration(
         color: isActive
-            ? Theme.of(context).colorScheme.primaryFixedDim
+            ? Theme.of(context).colorScheme.primaryContainer
             : Colors.white,
         borderRadius: BorderRadius.circular(12),
       ),

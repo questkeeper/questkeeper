@@ -93,9 +93,9 @@ class _CircleProgressBarState extends ConsumerState<CircleProgressBar> {
                         );
                       },
                       icon: Icon(
-                        LucideIcons.plus,
+                        LucideIcons.eclipse,
                         size: 24,
-                        color: Theme.of(context).colorScheme.primaryFixedDim,
+                        color: Theme.of(context).colorScheme.primaryContainer,
                       ),
                     ),
                   ],
