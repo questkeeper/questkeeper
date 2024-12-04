@@ -1,6 +1,7 @@
 import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
 import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
 import 'package:questkeeper/spaces/providers/game_height_provider.dart';
+import 'package:questkeeper/spaces/providers/game_provider.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
@@ -24,7 +25,6 @@ class AllSpacesScreen extends ConsumerStatefulWidget {
 
 class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late PageController _pageController;
-  FamiliarsWidgetGame? _game;
   final SupabaseStorageClient storageClient = Supabase.instance.client.storage;
   ValueNotifier<int> currentPageValue = ValueNotifier(0);
   ValueNotifier<bool> showGameNotifier = ValueNotifier(true);
@@ -51,16 +51,13 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
             prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
                 "#000000";
 
-        setState(() {
-          _game = initialBackgroundUrl != null
-              ? FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!)
-              : null;
-        });
+        if (initialBackgroundUrl != null) {
+          ref.read(gameProvider.notifier).state =
+              FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!);
+        }
       } else {
-        setState(() {
-          initialBackgroundUrl = null;
-          _game = null; // Ensure it's clear
-        });
+        initialBackgroundUrl = null;
+        ref.read(gameProvider.notifier).state = null;
       }
     });
   }
@@ -85,6 +82,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   Widget build(BuildContext context) {
     final spacesAsync = ref.watch(spacesManagerProvider);
     final heightFactor = ref.watch(gameHeightProvider);
+    final game = ref.watch(gameProvider);
 
     return SafeArea(
       child: Scaffold(
@@ -116,11 +114,11 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
               children: [
                 Column(
                   children: [
-                    if (_game != null) // Only show when _game is ready
+                    if (game != null) // Only show when game is ready
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 4),
                         child: AnimatedGameContainer(
-                          game: _game!,
+                          game: game,
                           heightFactor: heightFactor,
                         ),
                       ),
@@ -131,12 +129,13 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                           currentPageValue = ValueNotifier(page);
 
                           final dateType = DateTime.now().getTimeOfDayType();
+                          final currentGame = ref.read(gameProvider);
 
-                          if (_game == null) {
+                          if (currentGame == null) {
                             return;
                           }
 
-                          _game?.updateBackground(
+                          currentGame.updateBackground(
                               page,
                               page == spaces.length
                                   ? initialBackgroundUrl
@@ -145,7 +144,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
 
                           final isForward = page >
                               (ref.read(pageControllerProvider).page ?? 0);
-                          _game?.animateEntry(
+                          currentGame.animateEntry(
                             isForward ? Direction.left : Direction.right,
                           );
 

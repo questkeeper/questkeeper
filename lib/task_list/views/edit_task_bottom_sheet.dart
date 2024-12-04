@@ -185,7 +185,6 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
       if (taskId == null) {
         if (!mounted) return;
         SnackbarService.showErrorSnackbar(
-          context,
           "Error creating task",
         );
         return;
@@ -216,7 +215,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
       }
 
       if (!mounted) return;
-      SnackbarService.showSuccessSnackbar(context, "Task created successfully");
+      SnackbarService.showSuccessSnackbar("Task created successfully");
 
       MixpanelManager.instance.track("AddTaskScreen", properties: {
         "action": "Task created",
@@ -227,7 +226,6 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
     } else {
       if (!mounted) return;
       SnackbarService.showErrorSnackbar(
-        context,
         "Error creating task",
       );
     }

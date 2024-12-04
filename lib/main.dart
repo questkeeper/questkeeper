@@ -22,6 +22,7 @@ import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/theme_components.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:toastification/toastification.dart';
 import 'tabs/tabview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
@@ -76,7 +77,9 @@ Future<void> main() async {
     runApp(
       const ProviderScope(
         child: BetterFeedback(
-          child: MyApp(),
+          child: ToastificationWrapper(
+            child: MyApp(),
+          ),
         ),
       ),
     );
@@ -93,7 +96,9 @@ Future<void> main() async {
       appRunner: () => runApp(
         const ProviderScope(
           child: BetterFeedback(
-            child: MyApp(),
+            child: ToastificationWrapper(
+              child: MyApp(),
+            ),
           ),
         ),
       ),
@@ -172,8 +177,7 @@ class MyApp extends ConsumerWidget {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    SnackbarService.showSuccessSnackbar(
-                        context, snapshot.data!);
+                    SnackbarService.showSuccessSnackbar(snapshot.data!);
                   });
                 }
                 return child ?? const SizedBox();

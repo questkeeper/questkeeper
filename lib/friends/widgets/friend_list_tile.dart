@@ -53,7 +53,7 @@ class FriendListTile extends StatelessWidget {
                     leading: Icon(LucideIcons.user),
                     title: Text('View Profile'),
                     onTap: () => SnackbarService.showInfoSnackbar(
-                        context, 'View Profile not implemented yet'),
+                        'View Profile not implemented yet'),
                   ),
                 ),
                 PopupMenuItem(
@@ -68,16 +68,14 @@ class FriendListTile extends StatelessWidget {
                         if (context.mounted) {
                           if (response.success) {
                             SnackbarService.showSuccessSnackbar(
-                                context, response.message);
+                                response.message);
                           } else {
-                            SnackbarService.showErrorSnackbar(
-                                context, response.message);
+                            SnackbarService.showErrorSnackbar(response.message);
                           }
                         }
                       } catch (e) {
                         if (context.mounted) {
-                          SnackbarService.showErrorSnackbar(
-                              context, e.toString());
+                          SnackbarService.showErrorSnackbar(e.toString());
                         }
                       }
                     },

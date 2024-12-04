@@ -19,7 +19,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void notYetImplemented() {
-      SnackbarService.showErrorSnackbar(context, 'Not yet implemented');
+      SnackbarService.showErrorSnackbar('Not yet implemented');
     }
 
     final user = Supabase.instance.client.auth.currentUser;
