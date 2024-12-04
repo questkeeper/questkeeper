@@ -148,7 +148,7 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
             Padding(
               padding: const EdgeInsets.all(8),
               child: backgroundTypes == null
-                  ? const CircularProgressIndicator()
+                  ? const Center(child: CircularProgressIndicator())
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
