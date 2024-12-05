@@ -89,7 +89,9 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
         await Future.delayed(const Duration(milliseconds: 500));
         if (!mounted) return;
 
-        _startShowcase();
+        if (widget.isShowcasing) {
+          _startShowcase();
+        }
       }
     });
   }

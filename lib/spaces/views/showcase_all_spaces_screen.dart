@@ -45,7 +45,11 @@ class _ShowcaseAllSpacesScreenState extends State<ShowcaseAllSpacesScreen> {
   @override
   Widget build(BuildContext context) {
     return ShowCaseWidget(
-      onFinish: () => _saveState(),
+      enableShowcase: _isShowcasing,
+      onFinish: () => setState(() {
+        _isShowcasing = false;
+        _saveState();
+      }),
       builder: (context) => AllSpacesScreen(
         isShowcasing: _isShowcasing,
       ),
