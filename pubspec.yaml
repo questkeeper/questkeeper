@@ -54,6 +54,7 @@ dependencies:
   mixpanel_flutter: ^2.3.3
   toastification: ^2.3.0
   flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
