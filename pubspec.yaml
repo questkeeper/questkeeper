@@ -53,6 +53,7 @@ dependencies:
   flutter_svg: ^2.0.16
   mixpanel_flutter: ^2.3.3
   toastification: ^2.3.0
+  flutter_launcher_icons: ^0.14.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
