@@ -45,8 +45,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
 
   void _startShowcase() {
     if (!mounted) return;
-    setState(() {});
-
+    debugPrint('Starting showcase');
     ShowCaseWidget.of(context).startShowCase(
       [_addTaskKey, _firstCategoryKey, _firstSpaceKey],
     );
@@ -55,33 +54,45 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint(
+        'AllSpacesScreen initState, isShowcasing: ${widget.isShowcasing}');
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _pageController = ref.read(pageControllerProvider);
       _pageController.addListener(_updatePage);
 
-      final spaces = await ref.read(spacesManagerProvider.future);
-      if (spaces.isNotEmpty) {
-        final dateType = DateTime.now().getTimeOfDayType();
-        initialBackgroundUrl = storageClient
-            .from("assets")
-            .getPublicUrl("backgrounds/${spaces[0].spaceType}/$dateType.png");
+      try {
+        final spaces = await ref.read(spacesManagerProvider.future);
+        if (spaces.isNotEmpty) {
+          final dateType = DateTime.now().getTimeOfDayType();
+          initialBackgroundUrl = storageClient
+              .from("assets")
+              .getPublicUrl("backgrounds/${spaces[0].spaceType}/$dateType.png");
 
-        prefs = await SharedPreferences.getInstance();
-        backgroundColor =
-            prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
-                "#000000";
+          prefs = await SharedPreferences.getInstance();
+          backgroundColor =
+              prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
+                  "#000000";
 
-        if (initialBackgroundUrl != null) {
-          if (mounted) {
+          if (initialBackgroundUrl != null && mounted) {
             ref.read(gameProvider.notifier).state =
                 FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!);
           }
+        } else {
+          initialBackgroundUrl = null;
+          if (mounted) {
+            ref.read(gameProvider.notifier).state = null;
+          }
         }
-      } else {
-        initialBackgroundUrl = null;
-        if (mounted) {
-          ref.read(gameProvider.notifier).state = null;
+
+        if (widget.isShowcasing && mounted) {
+          debugPrint('Attempting to start showcase');
+          // Give time for the widgets to be properly laid out
+          await Future.delayed(const Duration(milliseconds: 1500));
+          if (!mounted) return;
+          _startShowcase();
         }
+<<<<<<< Updated upstream
       }
 
       if (!widget.isShowcasing && mounted) {
@@ -92,6 +103,11 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
         if (widget.isShowcasing) {
           _startShowcase();
         }
+=======
+      } catch (e, stackTrace) {
+        debugPrint('Error in initState: $e');
+        await Sentry.captureException(e, stackTrace: stackTrace);
+>>>>>>> Stashed changes
       }
     });
   }

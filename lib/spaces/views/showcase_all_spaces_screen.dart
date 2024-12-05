@@ -12,28 +12,20 @@ class ShowcaseAllSpacesScreen extends StatefulWidget {
 }
 
 class _ShowcaseAllSpacesScreenState extends State<ShowcaseAllSpacesScreen> {
-  bool _isShowcasing = false;
+  late final ValueNotifier<bool> _isShowcasing = ValueNotifier<bool>(true);
 
   Future<void> _saveState() async {
     debugPrint('Saving state');
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('showcase_shown', false);
-    final showcaseShown = prefs.getBool('showcase_shown') ?? false;
-    if (!showcaseShown) {
-      await prefs.setBool('showcase_shown', true);
-    }
-
-    _isShowcasing = false;
+    await prefs.setBool('showcase_shown', true);
+    _isShowcasing.value = false;
   }
 
   Future<void> _loadState() async {
     final prefs = await SharedPreferences.getInstance();
-    final showcaseShown = prefs.getBool('showcase_shown') ?? false;
-    if (!showcaseShown) {
-      _isShowcasing = true;
-    } else {
-      _isShowcasing = false;
-    }
+    await prefs.setBool('showcase_shown', false);  // Force showcase for testing
+    debugPrint('Loading showcase state');
+    _isShowcasing.value = true;
   }
 
   @override
@@ -44,6 +36,7 @@ class _ShowcaseAllSpacesScreenState extends State<ShowcaseAllSpacesScreen> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     return ShowCaseWidget(
       enableShowcase: _isShowcasing,
       onFinish: () => setState(() {
@@ -53,6 +46,26 @@ class _ShowcaseAllSpacesScreenState extends State<ShowcaseAllSpacesScreen> {
       builder: (context) => AllSpacesScreen(
         isShowcasing: _isShowcasing,
       ),
+=======
+    return ValueListenableBuilder<bool>(
+      valueListenable: _isShowcasing,
+      builder: (context, value, child) {
+        debugPrint('Showcase value: $value');
+        return ShowCaseWidget(
+          enableAutoScroll: true,
+          enableShowcase: true,  // Always enable for now
+          onComplete: (index, key) {
+            debugPrint('Showcase complete: $index');
+            if (index == 2) {  // Last item
+              _saveState();
+            }
+          },
+          builder: (context) => AllSpacesScreen(
+            isShowcasing: true,  // Always true for now
+          ),
+        );
+      },
+>>>>>>> Stashed changes
     );
   }
 }
