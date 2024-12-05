@@ -52,12 +52,16 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                 "#000000";
 
         if (initialBackgroundUrl != null) {
-          ref.read(gameProvider.notifier).state =
-              FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!);
+          if (mounted) {
+            ref.read(gameProvider.notifier).state =
+                FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!);
+          }
         }
       } else {
         initialBackgroundUrl = null;
-        ref.read(gameProvider.notifier).state = null;
+        if (mounted) {
+          ref.read(gameProvider.notifier).state = null;
+        }
       }
     });
   }
