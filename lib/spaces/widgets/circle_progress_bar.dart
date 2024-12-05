@@ -4,10 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/widgets/circle_bar.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class CircleProgressBar extends ConsumerStatefulWidget {
   final List<Spaces> spaces;
-  const CircleProgressBar({super.key, required this.spaces});
+  final GlobalKey? addSpaceKey;
+
+  const CircleProgressBar({
+    super.key,
+    required this.spaces,
+    this.addSpaceKey,
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -92,11 +99,26 @@ class _CircleProgressBarState extends ConsumerState<CircleProgressBar> {
                           curve: Curves.easeInOut,
                         );
                       },
-                      icon: Icon(
-                        LucideIcons.eclipse,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                      ),
+                      icon: widget.addSpaceKey == null
+                          ? Icon(
+                              LucideIcons.eclipse,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              size: 24,
+                            )
+                          : Showcase(
+                              key: widget.addSpaceKey!,
+                              description:
+                                  'Create a new space to organize your tasks',
+                              child: Icon(
+                                LucideIcons.eclipse,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                size: 24,
+                              ),
+                            ),
                     ),
                   ],
                 );
