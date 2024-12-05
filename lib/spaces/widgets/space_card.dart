@@ -15,14 +15,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SpaceCard extends ConsumerStatefulWidget {
-  const SpaceCard(
-      {super.key, required this.space, required this.backgroundColorHex});
+  const SpaceCard({
+    super.key,
+    required this.space,
+    required this.backgroundColorHex,
+    this.categoryKey,
+  });
 
   final Spaces space;
   final String backgroundColorHex;
+  final GlobalKey? categoryKey;
 
   @override
   ConsumerState<SpaceCard> createState() => _SpaceCardState();
@@ -104,7 +110,19 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                             gameHeight > 0.3 ? 0.3 : 1.0;
                       },
                     ),
-                    SpaceActionWidgets(space: space, ref: ref),
+                    widget.categoryKey == null
+                        ? SpaceActionWidgets(
+                            space: space,
+                            ref: ref,
+                          )
+                        : Showcase(
+                            key: widget.categoryKey!,
+                            description: 'Tap here to create a new category',
+                            child: SpaceActionWidgets(
+                              space: space,
+                              ref: ref,
+                            ),
+                          ),
                   ],
                 ),
                 title: Text(space.title),

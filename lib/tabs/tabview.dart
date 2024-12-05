@@ -5,7 +5,7 @@ import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/shared/extensions/platform_extensions.dart';
 import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
-import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
+import 'package:questkeeper/spaces/views/showcase_all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class _TabViewState extends ConsumerState<TabView> {
   int _selectedIndex = isDebug ? 1 : 0;
   static const List<Widget> pages = [
     if (isDebug) QuestsView(),
-    AllSpacesScreen(),
+    ShowcaseAllSpacesScreen(),
     FriendsList(), // Placeholder for arcade
     SettingsScreen(),
   ];

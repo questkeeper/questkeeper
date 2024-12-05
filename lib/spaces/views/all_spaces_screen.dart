@@ -15,9 +15,11 @@ import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class AllSpacesScreen extends ConsumerStatefulWidget {
-  const AllSpacesScreen({super.key});
+  const AllSpacesScreen({super.key, this.isShowcasing = false});
+  final bool isShowcasing;
 
   @override
   ConsumerState<AllSpacesScreen> createState() => _AllSpacesState();
@@ -31,6 +33,24 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late final String? initialBackgroundUrl;
   late final SharedPreferences prefs;
   late String backgroundColor;
+  final GlobalKey _addTaskKey = GlobalKey();
+  final GlobalKey _firstSpaceKey = GlobalKey();
+  final GlobalKey _firstCategoryKey = GlobalKey();
+
+  void _updatePage() {
+    if (mounted && _pageController.hasClients) {
+      currentPageValue.value = _pageController.page?.round() ?? 0;
+    }
+  }
+
+  void _startShowcase() {
+    if (!mounted) return;
+    setState(() {});
+
+    ShowCaseWidget.of(context).startShowCase(
+      [_addTaskKey, _firstCategoryKey, _firstSpaceKey],
+    );
+  }
 
   @override
   void initState() {
@@ -52,20 +72,26 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                 "#000000";
 
         if (initialBackgroundUrl != null) {
-          ref.read(gameProvider.notifier).state =
-              FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!);
+          if (mounted) {
+            ref.read(gameProvider.notifier).state =
+                FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!);
+          }
         }
       } else {
         initialBackgroundUrl = null;
-        ref.read(gameProvider.notifier).state = null;
+        if (mounted) {
+          ref.read(gameProvider.notifier).state = null;
+        }
+      }
+
+      if (!widget.isShowcasing && mounted) {
+        // Wait for the next frame to ensure widgets are built
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (!mounted) return;
+
+        _startShowcase();
       }
     });
-  }
-
-  void _updatePage() {
-    if (mounted && _pageController.hasClients) {
-      currentPageValue.value = _pageController.page?.round() ?? 0;
-    }
   }
 
   @override
@@ -87,17 +113,21 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
     return SafeArea(
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: FloatingActionButton(
-          key: const Key('add_task_button_mobile'),
-          heroTag: 'add_task_button_mobile',
-          onPressed: () => {
-            showTaskBottomSheet(
-              context: context,
-              ref: ref,
-              existingTask: null,
-            ),
-          },
-          child: const Icon(LucideIcons.plus),
+        floatingActionButton: Showcase(
+          key: _addTaskKey,
+          description: 'Tap here to create a new task',
+          child: FloatingActionButton(
+            key: const Key('add_task_button_mobile'),
+            heroTag: 'add_task_button_mobile',
+            onPressed: () => {
+              showTaskBottomSheet(
+                context: context,
+                ref: ref,
+                existingTask: null,
+              ),
+            },
+            child: const Icon(LucideIcons.plus),
+          ),
         ),
         body: spacesAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -180,14 +210,21 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                             );
                           }
                           return SpaceCard(
-                              space: spaces[index],
-                              backgroundColorHex: spaceBackgroundColor);
+                            space: spaces[index],
+                            backgroundColorHex: spaceBackgroundColor,
+                            categoryKey: widget.isShowcasing && index == 0
+                                ? _firstCategoryKey
+                                : null,
+                          );
                         },
                       ),
                     ),
                   ],
                 ),
-                CircleProgressBar(spaces: spaces)
+                CircleProgressBar(
+                  spaces: spaces,
+                  addSpaceKey: widget.isShowcasing ? _firstSpaceKey : null,
+                ),
               ],
             );
           },
