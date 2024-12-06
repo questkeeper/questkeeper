@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:questkeeper/shared/utils/http_service.dart';
@@ -14,7 +12,7 @@ class TasksRepository {
 
   Future<List<Tasks>> getTasks({bool isCompleted = false}) async {
     try {
-      final response = await _httpService.dio.get(
+      final response = await _httpService.get(
         '/core/tasks',
         queryParameters: {'isCompleted': isCompleted},
       );
@@ -35,7 +33,7 @@ class TasksRepository {
 
   Future<Tasks> getTask(int id) async {
     try {
-      final task = await _httpService.dio.get(
+      final task = await _httpService.get(
         '/core/tasks/$id',
       );
 
@@ -62,9 +60,9 @@ class TasksRepository {
         DateTime.parse(jsonTask["dueDate"]).toUtc().toIso8601String();
 
     try {
-      final newTask = await _httpService.dio.post(
+      final newTask = await _httpService.post(
         '/core/tasks',
-        data: json.encode(jsonTask),
+        data: jsonTask,
       );
 
       return ReturnModel(
@@ -82,7 +80,7 @@ class TasksRepository {
 
   Future<ReturnModel> toggleStar(Tasks task) async {
     try {
-      final response = await _httpService.dio.patch(
+      final response = await _httpService.patch(
         '/core/tasks/${task.id}/toggleStar',
       );
 
@@ -102,9 +100,8 @@ class TasksRepository {
 
   Future<ReturnModel> toggleComplete(Tasks task) async {
     try {
-      final response = await _httpService.dio.patch(
-        '/core/tasks/${task.id}/toggleComplete',
-      );
+      final response =
+          await _httpService.patch('/core/tasks/${task.id}/toggleComplete');
 
       if (response.statusCode == 200) {
         return const ReturnModel(
@@ -122,7 +119,7 @@ class TasksRepository {
 
   Future<ReturnModel> deleteTask(Tasks task) async {
     try {
-      final response = await _httpService.dio.delete(
+      final response = await _httpService.delete(
         '/core/tasks/${task.id}',
       );
 
@@ -149,9 +146,9 @@ class TasksRepository {
     jsonTask["dueDate"] =
         DateTime.parse(jsonTask["dueDate"]).toUtc().toIso8601String();
     try {
-      final response = await _httpService.dio.put(
+      final response = await _httpService.put(
         '/core/tasks/${task.id}',
-        data: json.encode(jsonTask),
+        data: jsonTask,
       );
 
       if (response.statusCode != 200) {
