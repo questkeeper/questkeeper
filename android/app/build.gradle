@@ -15,12 +15,18 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def flutterVersionCode = flutter.versionName.split("\\.").collect { it.toInteger() }.join("") as Integer
+def versionComponents = flutter.versionName.split("\\+")
+def versionName = versionComponents[0]
+def buildNumber = versionComponents.length > 1 ? versionComponents[1].toInteger() : 0
+
+def flutterVersionCode = versionName.split("\\.").collect { it.toInteger() }.join("") as Integer
+flutterVersionCode = flutterVersionCode * 10 + buildNumber
+
 if (flutterVersionCode == null) {
     flutterVersionCode = 1
 }
 
-def flutterVersionName = flutter.versionName
+def flutterVersionName = versionName
 if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
