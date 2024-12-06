@@ -54,7 +54,7 @@ class TasksRepository {
     jsonTask.remove("id");
     jsonTask.remove("createdAt");
     jsonTask.remove("updatedAt");
-    jsonTask["userId"] = Supabase.instance.client.auth.currentUser!.id;
+    jsonTask["userId"] = supabase.auth.currentUser!.id;
 
     jsonTask["dueDate"] =
         DateTime.parse(jsonTask["dueDate"]).toUtc().toIso8601String();
@@ -141,7 +141,7 @@ class TasksRepository {
     final jsonTask = task.toJson();
     jsonTask.remove("createdAt");
     jsonTask.remove("updatedAt");
-    jsonTask["userId"] = Supabase.instance.client.auth.currentUser!.id;
+    jsonTask["userId"] = supabase.auth.currentUser!.id;
 
     jsonTask["dueDate"] =
         DateTime.parse(jsonTask["dueDate"]).toUtc().toIso8601String();
