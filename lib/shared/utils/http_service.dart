@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -15,15 +16,21 @@ class HttpService {
   /// Initializes a [Dio] instance with base options and adds an interceptor to
   /// handle errors and add authentication headers to requests.
   HttpService()
-      : _dio = Dio(BaseOptions(
-          baseUrl: baseApiUri,
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        )) {
+      : _dio = Dio(
+          BaseOptions(
+            baseUrl: baseApiUri,
+            connectTimeout: const Duration(seconds: 10),
+            receiveTimeout: const Duration(seconds: 10),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+          ),
+        )..httpClientAdapter = Http2Adapter(
+            ConnectionManager(
+              idleTimeout: Duration(seconds: 10),
+            ),
+          ) {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
         options.headers['Authorization'] =
