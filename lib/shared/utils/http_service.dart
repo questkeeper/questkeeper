@@ -3,12 +3,17 @@ import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// A service class for making HTTP requests using the Dio library.
+/// It handles errors and adds authentication headers to requests.
 class HttpService {
   final Dio _dio;
   final _supabaseClient = Supabase.instance.client;
 
   Dio get dio => _dio;
 
+  /// Creates a new instance of the [HttpService] class.
+  /// Initializes a [Dio] instance with base options and adds an interceptor to
+  /// handle errors and add authentication headers to requests.
   HttpService()
       : _dio = Dio(BaseOptions(
           baseUrl: baseApiUri,
