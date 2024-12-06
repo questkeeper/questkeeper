@@ -58,6 +58,7 @@ dependencies:
   showcaseview: ^3.0.0
   dio: ^5.7.0
   dio_http2_adapter: ^2.5.3
+  sentry_dio: ^8.10.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
