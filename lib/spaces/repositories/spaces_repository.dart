@@ -2,25 +2,20 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
+import 'package:questkeeper/shared/utils/http_service.dart';
 
 class SpacesRepository {
   SpacesRepository();
 
   final supabase = Supabase.instance.client;
+  final HttpService _httpService = HttpService();
 
   Future<List<Spaces>> getSpaces() async {
-    final spaces = await supabase.from("spaces").select().order("created_at");
+    final response = await _httpService.get('/core/spaces');
 
-    final List<Spaces> spacesList =
-        spaces.map((e) => Spaces.fromMap(e)).toList();
-
+    final List<dynamic> data = response.data;
+    final List<Spaces> spacesList = data.map((e) => Spaces.fromMap(e)).toList();
     return spacesList;
-  }
-
-  Future<Spaces> getSpace(int id) async {
-    final space = await supabase.from("spaces").select().eq("id", id).single();
-
-    return Spaces.fromMap(space);
   }
 
   Future<ReturnModel> createSpace(Spaces space) async {
@@ -30,13 +25,11 @@ class SpacesRepository {
     jsonSpace.remove("categories");
 
     try {
-      final newSpace =
-          await supabase.from("spaces").insert(jsonSpace).select().single();
-
-      debugPrint("New space: $newSpace");
+      final newSpace = await _httpService.post('/core/spaces', data: jsonSpace);
+      final data = newSpace.data;
 
       return ReturnModel(
-          data: Spaces.fromMap(newSpace),
+          data: Spaces.fromMap(data),
           message: "Space created successfully",
           success: true);
     } catch (error) {
@@ -51,20 +44,17 @@ class SpacesRepository {
   Future<ReturnModel> updateSpace(Spaces space) async {
     final Map<String, dynamic> jsonSpace = space.toMap();
     jsonSpace.remove("created_at");
-    jsonSpace.remove("updated_at");
+    jsonSpace.remove("updatedAt");
 
     try {
-      final updatedSpace = await supabase
-          .from("spaces")
-          .update(jsonSpace)
-          .eq("id", space.id!)
-          .select()
-          .single();
+      final updatedSpace =
+          await _httpService.put('/core/spaces/${space.id}', data: jsonSpace);
+      final data = updatedSpace.data;
 
-      debugPrint("Updated space: $updatedSpace");
+      debugPrint("Updated space: $data");
 
       return ReturnModel(
-          data: Spaces.fromMap(updatedSpace),
+          data: Spaces.fromMap(data),
           message: "Space updated successfully",
           success: true);
     } catch (error) {
@@ -77,7 +67,7 @@ class SpacesRepository {
 
   Future<ReturnModel> deleteSpace(Spaces space) async {
     try {
-      await supabase.from("spaces").delete().eq("id", space.id!);
+      await _httpService.delete('/core/spaces/${space.id}');
 
       return const ReturnModel(
           message: "Space deleted successfully", success: true);
