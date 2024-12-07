@@ -27,13 +27,16 @@ class HttpService {
               'Accept': 'application/json',
             },
           ),
-        )
-          ..httpClientAdapter = Http2Adapter(
-            ConnectionManager(
-              idleTimeout: Duration(seconds: 10),
-            ),
-          )
-          ..addSentry() {
+        )..addSentry() {
+    // Only use HTTP/2 in production
+    if (!isDebug) {
+      _dio.httpClientAdapter = Http2Adapter(
+        ConnectionManager(
+          idleTimeout: const Duration(seconds: 10),
+        ),
+      );
+    }
+
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
         options.headers['Authorization'] =
