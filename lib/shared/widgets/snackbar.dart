@@ -12,6 +12,7 @@ class SnackbarService {
     Icon? callbackIcon,
     String? callbackText,
   }) {
+    debugPrint("Showing success snackbar: $message");
     return _toast.show(
       autoCloseDuration: const Duration(milliseconds: 3000),
       title: Text(message),
@@ -37,6 +38,7 @@ class SnackbarService {
   }
 
   static void showErrorSnackbar(String message) {
+    debugPrint("Showing error snackback: $message");
     _toast.show(
       autoCloseDuration: const Duration(milliseconds: 3000),
       title: Text(message),
@@ -49,6 +51,7 @@ class SnackbarService {
   }
 
   static void showInfoSnackbar(String message) {
+    debugPrint("Showing info snackbar: $message");
     _toast.show(
       autoCloseDuration: const Duration(milliseconds: 3000),
       title: Text(message),
@@ -61,6 +64,7 @@ class SnackbarService {
   }
 
   static void dismissToast(ToastificationItem toastItem) {
+    debugPrint("Dismissing toast");
     _toast.dismiss(toastItem);
   }
 }
