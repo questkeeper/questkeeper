@@ -22,6 +22,9 @@ class AnimatedGameContainer extends StatelessWidget {
           ? MediaQuery.sizeOf(context).width *
               (3 / 4) // Height based on aspect ratio
           : 60, // Height for minimized state
+      constraints: BoxConstraints(
+        maxHeight: 400,
+      ),
       child: Stack(
         children: [
           // Game Widget with opacity animation
