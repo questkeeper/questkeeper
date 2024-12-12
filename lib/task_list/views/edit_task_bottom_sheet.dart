@@ -2,6 +2,7 @@ import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/shared/extensions/platform_extensions.dart';
 import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
+import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -318,7 +319,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                child: FilledButton(
+                child: FilledLoadingButton(
                   onPressed: () async {
                     await _submitForm();
                   },
