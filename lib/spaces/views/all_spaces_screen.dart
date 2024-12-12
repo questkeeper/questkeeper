@@ -194,13 +194,21 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                                   "#000000";
 
                           if (index == spaces.length) {
-                            return const Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(LucideIcons.circle_plus, size: 48),
-                                  Text('Create a new space'),
-                                ],
+                            return Center(
+                              child: GestureDetector(
+                                onTap: () {
+                                  showSpaceBottomSheet(
+                                    context: context,
+                                    ref: ref,
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(LucideIcons.circle_plus, size: 48),
+                                    Text('Create a new space'),
+                                  ],
+                                ),
                               ),
                             );
                           }
