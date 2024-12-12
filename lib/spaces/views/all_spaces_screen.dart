@@ -143,6 +143,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                           child: AnimatedGameContainer(
                             game: game,
                             heightFactor: heightFactor,
+                            shouldTextShow: currentPageValue.value == 0,
                           ),
                         ),
                       ),
