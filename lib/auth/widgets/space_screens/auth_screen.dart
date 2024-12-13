@@ -53,6 +53,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   void onError(error) {
+    debugPrint(error.toString());
+
     if (mounted) {
       SnackbarService.showErrorSnackbar(
         error.toString(),

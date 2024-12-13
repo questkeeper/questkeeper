@@ -43,12 +43,12 @@ class ProfileManager extends _$ProfileManager {
         response = await _repository.getProfile(username);
       }
 
-      final profile = Profile.fromJson(response.data);
+      final profile = Profile.fromMap(response.data);
 
       // Cache my profile
       if (username == "me") {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("user_profile", response.data);
+        await prefs.setString("user_profile", response.data.toString());
       }
 
       return profile;

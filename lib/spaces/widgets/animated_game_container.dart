@@ -6,11 +6,13 @@ import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
 class AnimatedGameContainer extends StatelessWidget {
   final FamiliarsWidgetGame game;
   final double heightFactor;
+  final bool shouldTextShow;
 
   const AnimatedGameContainer({
     super.key,
     required this.game,
     required this.heightFactor,
+    this.shouldTextShow = true,
   });
 
   @override
@@ -22,6 +24,9 @@ class AnimatedGameContainer extends StatelessWidget {
           ? MediaQuery.sizeOf(context).width *
               (3 / 4) // Height based on aspect ratio
           : 60, // Height for minimized state
+      constraints: BoxConstraints(
+        maxHeight: 400,
+      ),
       child: Stack(
         children: [
           // Game Widget with opacity animation
@@ -45,17 +50,19 @@ class AnimatedGameContainer extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16.0),
               ),
               alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(LucideIcons.arrow_down, size: 16),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Pull down to expand',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ],
-              ),
+              child: shouldTextShow
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(LucideIcons.arrow_down, size: 16),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Pull down to expand',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ],
+                    )
+                  : null,
             ),
           ),
         ],

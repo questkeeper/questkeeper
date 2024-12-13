@@ -3,6 +3,7 @@ import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/widgets/delete_category_dialog.dart';
 import 'package:questkeeper/shared/extensions/color_extensions.dart';
+import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
@@ -104,6 +105,7 @@ class _CategoryBottomSheetContentState
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
+
             TextField(
               controller: widget.nameController,
               decoration: InputDecoration(
@@ -111,7 +113,9 @@ class _CategoryBottomSheetContentState
               ),
               autofocus: true,
             ),
+
             const SizedBox(height: 16),
+
             // Button to show the color picker dialog
             ColorPicker(
               onColorChanged: _updateColor,
@@ -122,7 +126,7 @@ class _CategoryBottomSheetContentState
               direction: Axis.horizontal,
               children: [
                 widget.isEditing
-                    ? IconButton.outlined(
+                    ? IconButton(
                         onPressed: () {
                           if (widget.isEditing) {
                             deleteCategory() {
@@ -151,27 +155,32 @@ class _CategoryBottomSheetContentState
                         ),
                       )
                     : const SizedBox(),
+
                 SizedBox(width: widget.isEditing ? 16 : 0),
+
                 Expanded(
-                  child: FilledButton(
+                  child: FilledLoadingButton(
+                    child: Text(widget.isEditing
+                        ? 'Update Category'
+                        : 'Create Category'),
                     onPressed: () async {
                       if (widget.nameController.text.isNotEmpty) {
                         if (widget.isEditing) {
                           await widget.ref
                               .read(categoriesManagerProvider.notifier)
                               .updateCategory(
-                                widget.existingCategory!.copyWith(
-                                    title: widget.nameController.text,
-                                    spaceId: widget.existingCategory?.spaceId,
-                                    color: selectedColor?.hex),
-                              );
+                            widget.existingCategory!.copyWith(
+                                title: widget.nameController.text,
+                                spaceId: widget.existingCategory?.spaceId,
+                                color: selectedColor?.hex),
+                          );
                         } else {
                           await widget.ref
                               .read(categoriesManagerProvider.notifier)
                               .createCategory(Categories(
-                                  title: widget.nameController.text,
-                                  spaceId: widget.existingSpace?.id,
-                                  color: selectedColor?.hex));
+                              title: widget.nameController.text,
+                              spaceId: widget.existingSpace?.id,
+                              color: selectedColor?.hex));
                         }
                         if (context.mounted) Navigator.pop(context);
                         widget.nameController.clear();
@@ -184,9 +193,6 @@ class _CategoryBottomSheetContentState
                         }
                       }
                     },
-                    child: Text(widget.isEditing
-                        ? 'Update Category'
-                        : 'Create Category'),
                   ),
                 ),
               ],

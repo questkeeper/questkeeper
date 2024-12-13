@@ -1,40 +1,36 @@
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:questkeeper/shared/utils/http_service.dart';
 
 class CategoriesRepository {
   CategoriesRepository();
-  SupabaseClient supabase = Supabase.instance.client;
+  final HttpService _httpService = HttpService();
 
   Future<List<Categories>> getCategories() async {
-    final categories =
-        await supabase.from('categories').select().eq('archived', false);
+    final response = await _httpService.get('/core/categories');
 
-    final categoriesList =
-        categories.map((e) => Categories.fromJson(e)).toList();
+    final List<dynamic> data = response.data;
+    final List<Categories> categoriesList =
+        data.map((e) => Categories.fromJson(e)).toList();
 
     return categoriesList;
   }
 
   Future<ReturnModel> updateCategory(Categories category) async {
     final jsonCategory = category.toJson();
-    final int id = jsonCategory["id"];
 
     jsonCategory.remove('createdAt');
     jsonCategory.remove('updatedAt');
     jsonCategory.remove('tasks');
 
     try {
-      final result = await supabase
-          .from('categories')
-          .update(jsonCategory)
-          .eq('id', id)
-          .select();
+      final result = await _httpService.put('/core/categories/${category.id}',
+          data: jsonCategory);
 
       return ReturnModel(
           message: "Category updated successfully",
           success: true,
-          data: result.first);
+          data: result);
     } catch (error) {
       return ReturnModel(
           message: "Error updating category",
@@ -53,12 +49,13 @@ class CategoriesRepository {
 
     try {
       final result =
-          await supabase.from('categories').insert(jsonCategory).select();
+          await _httpService.post('/core/categories', data: jsonCategory);
 
       return ReturnModel(
-          message: "Category created successfully",
-          success: true,
-          data: result.first);
+        message: "Category created successfully",
+        success: true,
+        data: result.data,
+      );
     } catch (error) {
       return ReturnModel(
           message: "Error creating category",
@@ -69,7 +66,7 @@ class CategoriesRepository {
 
   Future<ReturnModel> deleteCategory(Categories category) async {
     try {
-      await supabase.from('categories').delete().eq('id', category.id!);
+      await _httpService.delete('/core/categories/${category.id}');
 
       return const ReturnModel(
           message: "Category deleted successfully", success: true);

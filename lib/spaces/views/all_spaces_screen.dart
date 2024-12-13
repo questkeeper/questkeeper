@@ -39,22 +39,25 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
       _pageController = ref.read(pageControllerProvider);
       _pageController.addListener(_updatePage);
 
-      final spaces = await ref.read(spacesManagerProvider.future);
-      if (spaces.isNotEmpty) {
-        final dateType = DateTime.now().getTimeOfDayType();
-        initialBackgroundUrl = storageClient
-            .from("assets")
-            .getPublicUrl("backgrounds/${spaces[0].spaceType}/$dateType.png");
+      // Prevent timeout
+      if (Supabase.instance.client.auth.currentUser != null) {
+        final spaces = await ref.read(spacesManagerProvider.future);
+        if (spaces.isNotEmpty) {
+          final dateType = DateTime.now().getTimeOfDayType();
+          initialBackgroundUrl = storageClient
+              .from("assets")
+              .getPublicUrl("backgrounds/${spaces[0].spaceType}/$dateType.png");
 
-        prefs = await SharedPreferences.getInstance();
-        backgroundColor =
-            prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
-                "#000000";
+          prefs = await SharedPreferences.getInstance();
+          backgroundColor =
+              prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
+                  "#000000";
 
-        if (initialBackgroundUrl != null) {
-          if (mounted) {
-            ref.read(gameProvider.notifier).state =
-                FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!);
+          if (initialBackgroundUrl != null) {
+            if (mounted) {
+              ref.read(gameProvider.notifier).state =
+                  FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!);
+            }
           }
         }
       } else {
@@ -119,11 +122,29 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                 Column(
                   children: [
                     if (game != null) // Only show when game is ready
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 4),
-                        child: AnimatedGameContainer(
-                          game: game,
-                          heightFactor: heightFactor,
+                      GestureDetector(
+                        onHorizontalDragEnd: (dragDetails) {
+                          // Change page value
+                          debugPrint('onHorizontalDragEnd');
+                          if (dragDetails.primaryVelocity! > 0) {
+                            currentPageValue = ValueNotifier(
+                                currentPageValue.value.round() - 1);
+                          } else {
+                            currentPageValue = ValueNotifier(
+                                currentPageValue.value.round() + 1);
+                          }
+                          // TODO: REPLACE THIS SOON BC IT IS TEMPORARY... I THINK
+                          _pageController.animateToPage(currentPageValue.value,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 4),
+                          child: AnimatedGameContainer(
+                            game: game,
+                            heightFactor: heightFactor,
+                            shouldTextShow: currentPageValue.value == 0,
+                          ),
                         ),
                       ),
                     Expanded(
@@ -173,13 +194,21 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                                   "#000000";
 
                           if (index == spaces.length) {
-                            return const Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(LucideIcons.circle_plus, size: 48),
-                                  Text('Create a new space'),
-                                ],
+                            return Center(
+                              child: GestureDetector(
+                                onTap: () {
+                                  showSpaceBottomSheet(
+                                    context: context,
+                                    ref: ref,
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(LucideIcons.circle_plus, size: 48),
+                                    Text('Create a new space'),
+                                  ],
+                                ),
                               ),
                             );
                           }

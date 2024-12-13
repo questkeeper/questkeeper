@@ -135,13 +135,52 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                         tasks: categoryTasksList,
                       );
                     } else {
-                      return SpaceCategoryTile(
-                        tasks: categoryTasksList,
-                        category: Categories(
-                          title: "Uncategorized",
-                          tasks: tasks,
-                        ),
-                      );
+                      // Check if there are tasks without a category
+                      if (tasks?.any((task) => task.categoryId == null) ==
+                          true) {
+                        return SpaceCategoryTile(
+                          tasks: categoryTasksList,
+                          category: Categories(
+                            title: "Uncategorized",
+                            tasks: tasks,
+                          ),
+                        );
+                      }
+
+                      if (currentSpaceCategories.isEmpty == true) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 16),
+                            Center(
+                              child: FilledButton(
+                                onPressed: () => showCategoryBottomSheet(
+                                    context: context,
+                                    ref: ref,
+                                    existingSpace: space),
+                                child: Text('Create a category'),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              textAlign: TextAlign.center,
+                              'Or create a task and an "uncategorized" category will be created automatically',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color
+                                        ?.withOpacity(0.75),
+                                  ),
+                            ),
+                          ],
+                        );
+                      }
+
+                      return Container();
                     }
                   },
                 ),

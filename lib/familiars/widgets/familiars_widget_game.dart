@@ -27,6 +27,18 @@ Future<ui.Image> loadSpriteSheet(String url) async {
 enum Direction { left, right, none }
 
 class FamiliarsWidgetGame extends FlameGame {
+  var _dtSum = 0.0;
+  final fixedRate = 1 / 10; // 10 updates per second
+
+  @override
+  void updateTree(double dt) {
+    _dtSum += dt;
+    if (_dtSum > fixedRate) {
+      super.updateTree(fixedRate);
+      _dtSum -= fixedRate;
+    }
+  }
+
   FamiliarsWidgetGame({required this.backgroundPath});
   final String backgroundPath;
   late CharacterSpriteComponent redPanda;
