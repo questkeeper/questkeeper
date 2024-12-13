@@ -31,7 +31,9 @@ def keystoreProperties = new Properties()
 
 rootProject.file("key.properties")?.with { file ->
     if (file.exists()) {
-        keystoreProperties.load(file)
+        file.withReader("UTF-8") { reader ->
+            keystoreProperties.load(reader)
+        }
     }
 }
 
