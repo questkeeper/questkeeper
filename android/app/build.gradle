@@ -50,11 +50,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
-
-        def buildNumber = System.getenv("PROJECT_BUILD_NUMBER") ?: 1
-        versionCode = buildNumber + 755 // This is the baseline version done so gplay doesn't think it's a downgrade
-
-        versionName = flutter.versionName
+        versionName flutter.versionName
+        versionCode flutter.versionCode
     }
 
     signingConfigs {
