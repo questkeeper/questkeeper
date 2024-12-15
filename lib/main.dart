@@ -7,6 +7,7 @@ import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
+import 'package:questkeeper/settings/views/integrations/integrations_screen.dart';
 import 'package:questkeeper/settings/views/notifications/notifications_screen.dart';
 import 'package:questkeeper/shared/notifications/notification_handler.dart';
 import 'package:questkeeper/shared/notifications/notification_service.dart';
@@ -161,6 +162,7 @@ class MyApp extends ConsumerWidget {
 
             // Settings stuff
             '/settings/about': (context) => const AboutScreen(),
+            '/settings/integrations': (context) => IntegrationsScreen(),
 
             // Familiars stuff
             '/badges': (context) => const QuestsView(),
