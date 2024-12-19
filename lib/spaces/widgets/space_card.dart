@@ -162,19 +162,23 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              textAlign: TextAlign.center,
-                              'Or create a task and an "uncategorized" category will be created automatically',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.color
-                                        ?.withOpacity(0.75),
-                                  ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                'Or create a task and an "uncategorized" category will be created automatically',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color
+                                          ?.withOpacity(0.75),
+                                    ),
+                              ),
                             ),
                           ],
                         );
