@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http2_adapter/dio_http2_adapter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:sentry_dio/sentry_dio.dart';
@@ -38,9 +39,29 @@ class HttpService {
     }
 
     _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
-        options.headers['Authorization'] =
-            'Bearer ${_supabaseClient.auth.currentSession!.accessToken}';
+      onRequest: (options, handler) async {
+        String? token = _supabaseClient.auth.currentSession?.accessToken;
+        final tokenExpiry = _supabaseClient.auth.currentSession!.expiresAt;
+        final currentTimeInSeconds =
+            DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+        debugPrint(
+            "Expires at $tokenExpiry but current time is $currentTimeInSeconds.");
+
+        if (token == null ||
+            tokenExpiry == null ||
+            tokenExpiry > (currentTimeInSeconds - 10)) {
+          debugPrint("Reinitalizing session with new token");
+          final newSession = await _supabaseClient.auth.refreshSession();
+          debugPrint(newSession.session.toString());
+          token = newSession.session?.accessToken;
+        }
+
+        if (token == null) {
+          throw Exception("Authentication failed");
+        }
+
+        options.headers['Authorization'] = 'Bearer $token';
         return handler.next(options);
       },
       onResponse: (response, handler) {
@@ -54,6 +75,11 @@ class HttpService {
   }
 
   void _handleError(DioException e) {
+    debugPrint("REQUEST DATA ******");
+    debugPrint(e.requestOptions.headers.toString());
+    debugPrint(e.requestOptions.data?.toString());
+    debugPrint("RESPONSE DATA ******");
+    debugPrint(e.response?.data.toString());
     SnackbarService.showErrorSnackbar(
       e.message ?? 'An error occurred',
     );
