@@ -38,40 +38,39 @@ class HttpService {
       );
     }
 
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        String? token = _supabaseClient.auth.currentSession?.accessToken;
-        final tokenExpiry = _supabaseClient.auth.currentSession!.expiresAt;
-        final currentTimeInSeconds =
-            DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          String? token = _supabaseClient.auth.currentSession?.accessToken;
+          final tokenExpiry = _supabaseClient.auth.currentSession?.expiresAt;
+          final currentTimeInSeconds =
+              DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-        debugPrint(
-            "Expires at $tokenExpiry but current time is $currentTimeInSeconds.");
+          // Refresh token if null or expires in next 60 seconds
+          if (token == null ||
+              tokenExpiry == null ||
+              tokenExpiry < (currentTimeInSeconds + 60)) {
+            debugPrint("Reinitializing session with new token");
+            final newSession = await _supabaseClient.auth.refreshSession();
+            token = newSession.session?.accessToken;
+          }
 
-        if (token == null ||
-            tokenExpiry == null ||
-            tokenExpiry > (currentTimeInSeconds - 10)) {
-          debugPrint("Reinitalizing session with new token");
-          final newSession = await _supabaseClient.auth.refreshSession();
-          debugPrint(newSession.session.toString());
-          token = newSession.session?.accessToken;
-        }
+          if (token == null) {
+            throw Exception("Authentication failed");
+          }
 
-        if (token == null) {
-          throw Exception("Authentication failed");
-        }
-
-        options.headers['Authorization'] = 'Bearer $token';
-        return handler.next(options);
-      },
-      onResponse: (response, handler) {
-        return handler.next(response);
-      },
-      onError: (DioException e, handler) {
-        _handleError(e);
-        return handler.next(e);
-      },
-    ));
+          options.headers['Authorization'] = 'Bearer $token';
+          return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          return handler.next(response);
+        },
+        onError: (DioException e, handler) {
+          _handleError(e);
+          return handler.next(e);
+        },
+      ),
+    );
   }
 
   void _handleError(DioException e) {
