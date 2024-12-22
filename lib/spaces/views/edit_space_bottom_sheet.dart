@@ -226,7 +226,12 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                     return ChoiceChip(
                       label: Text(unit),
                       selected: isSelected,
-                      onSelected: (_) => setState(() => selectedUnit = unit),
+                      onSelected: (_) => setState(() {
+                        if (unit == "Hours" && selectedValue > 24) {
+                          selectedValue = 24;
+                        }
+                        selectedUnit = unit;
+                      }),
                     );
                   }).toList(),
                 ),
@@ -386,7 +391,7 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
               controller: tabController,
               onTap: (_) => setState(() {}),
               tabs: [
-                Tab(text: 'Basic Info'),
+                Tab(text: 'Space Type'),
                 Tab(text: 'Notifications'),
               ],
             ),
