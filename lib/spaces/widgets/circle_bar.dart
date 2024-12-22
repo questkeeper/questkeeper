@@ -13,13 +13,13 @@ class CircleBar extends StatelessWidget {
     return AnimatedContainer(
       padding: const EdgeInsets.all(8),
       duration: const Duration(milliseconds: 150),
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      height: isActive ? 12 : 8,
-      width: isActive ? 12 : 8,
+      margin: const EdgeInsets.symmetric(horizontal: 6),
+      height: isActive ? 16 : 12,
+      width: isActive ? 16 : 12,
       decoration: BoxDecoration(
         color: isActive
             ? Theme.of(context).colorScheme.primaryContainer
-            : Colors.white,
+            : Colors.grey[350],
         borderRadius: BorderRadius.circular(12),
       ),
     );
