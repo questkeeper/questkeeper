@@ -1,17 +1,20 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
+
 class Spaces {
   final int? id;
   final String title;
   final DateTime? updatedAt;
   final String spaceType;
-
+  final Map<String, List<int>> notificationTimes;
   Spaces({
     this.id,
     required this.title,
     this.updatedAt,
     required this.spaceType,
+    required this.notificationTimes,
   });
 
   Spaces copyWith({
@@ -19,12 +22,14 @@ class Spaces {
     String? title,
     DateTime? updatedAt,
     String? spaceType,
+    Map<String, List<int>>? notificationTimes,
   }) {
     return Spaces(
       id: id ?? this.id,
       title: title ?? this.title,
       updatedAt: updatedAt ?? this.updatedAt,
       spaceType: spaceType ?? this.spaceType,
+      notificationTimes: notificationTimes ?? this.notificationTimes,
     );
   }
 
@@ -34,6 +39,7 @@ class Spaces {
       'title': title,
       'updatedAt': updatedAt?.millisecondsSinceEpoch,
       'spaceType': spaceType,
+      'notificationTimes': notificationTimes,
     };
   }
 
@@ -45,6 +51,9 @@ class Spaces {
           ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'] as int)
           : null,
       spaceType: map['spaceType'] as String,
+      notificationTimes: Map<String, List<int>>.from(
+        (map['notificationTimes'] as Map<String, List<int>>),
+      ),
     );
   }
 
@@ -55,17 +64,19 @@ class Spaces {
 
   @override
   String toString() {
-    return 'Spaces(id: $id, title: $title, updatedAt: $updatedAt, spaceType: $spaceType)';
+    return 'Spaces(id: $id, title: $title, updatedAt: $updatedAt, spaceType: $spaceType, notificationTimes: $notificationTimes)';
   }
 
   @override
   bool operator ==(covariant Spaces other) {
     if (identical(this, other)) return true;
+    final mapEquals = const DeepCollectionEquality().equals;
 
     return other.id == id &&
         other.title == title &&
         other.updatedAt == updatedAt &&
-        other.spaceType == spaceType;
+        other.spaceType == spaceType &&
+        mapEquals(other.notificationTimes, notificationTimes);
   }
 
   @override
@@ -73,6 +84,7 @@ class Spaces {
     return id.hashCode ^
         title.hashCode ^
         updatedAt.hashCode ^
-        spaceType.hashCode;
+        spaceType.hashCode ^
+        notificationTimes.hashCode;
   }
 }
