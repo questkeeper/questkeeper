@@ -381,37 +381,6 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                     : _buildNotificationTimesSection(),
               ),
             ),
-            // GestureDetector(
-            //   onHorizontalDragUpdate: (details) {
-            //     // Sensitivity of the swipe
-            //     const sensitivity = 8;
-            //     if (details.delta.dx > sensitivity) {
-            //       // Right swipe
-            //       if (tabController.index > 0) {
-            //         tabController.animateTo(tabController.index - 1);
-            //       }
-            //     } else if (details.delta.dx < -sensitivity) {
-            //       // Left swipe
-            //       if (tabController.index < 1) {
-            //         tabController.animateTo(tabController.index + 1);
-            //       }
-            //     }
-            //   },
-            //   behavior: HitTestBehavior
-            //       .translucent, // Important for proper gesture detection
-            //   dragStartBehavior:
-            //       DragStartBehavior.down, // Improve responsiveness
-            //   child: AnimatedSwitcher(
-            //     duration: const Duration(milliseconds: 300),
-            //     child: KeyedSubtree(
-            //       key: ValueKey<int>(tabController.index),
-            //       child: tabController.index == 0
-            //           ? _selectSpaceType()
-            //           : _buildNotificationTimesSection(widget.existingSpace),
-            //     ),
-            //   ),
-            // ),
-
             const SizedBox(height: 16),
             TabBar(
               controller: tabController,
@@ -421,51 +390,13 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                 Tab(text: 'Notifications'),
               ],
             ),
-            // Row(
-            //   // Use a Row for custom tab indicators
-            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //   children: [
-            //     GestureDetector(
-            //       onTap: () => tabController.animateTo(0),
-            //       child: Container(
-            //         padding: const EdgeInsets.all(8),
-            //         decoration: BoxDecoration(
-            //           border: Border(
-            //             bottom: BorderSide(
-            //               width: 2,
-            //             ),
-            //           ),
-            //         ),
-            //         child: const Text('Basic Info'),
-            //       ),
-            //     ),
-            //     GestureDetector(
-            //       onTap: () => tabController.animateTo(1),
-            //       child: Container(
-            //         padding: const EdgeInsets.all(8),
-            //         decoration: BoxDecoration(
-            //           border: Border(
-            //             bottom: BorderSide(
-            //               color: tabController.index == 1
-            //                   ? Colors.blue
-            //                   : Colors.transparent,
-            //               width: 2,
-            //             ),
-            //           ),
-            //         ),
-            //         child: const Text('Notifications'),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-
             const SizedBox(height: 16),
             FilledLoadingButton(
               onPressed: () async {
                 if (widget.nameController.text.isNotEmpty &&
                     backgroundTypes != null &&
                     (notificationTimes['standard']?.isNotEmpty ?? false) &&
-                    (notificationTimes['priority']?.isNotEmpty ?? false)) {
+                    (notificationTimes['prioritized']?.isNotEmpty ?? false)) {
                   if (widget.isEditing) {
                     await widget.ref
                         .read(spacesManagerProvider.notifier)
