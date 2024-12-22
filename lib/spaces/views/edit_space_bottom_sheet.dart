@@ -3,6 +3,7 @@ import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
 import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/utils/cache_assets.dart';
+import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/providers/game_height_provider.dart';
@@ -49,6 +50,8 @@ class _SpaceBottomSheetContent extends StatefulWidget {
   final bool isEditing;
   final WidgetRef ref;
   final Spaces? existingSpace;
+  final List<int> notificationHours;
+  final bool isPrioritized;
 
   const _SpaceBottomSheetContent({
     required this.nameController,
@@ -56,6 +59,8 @@ class _SpaceBottomSheetContent extends StatefulWidget {
     required this.isEditing,
     required this.ref,
     this.existingSpace,
+    this.notificationHours = const [12, 24],
+    this.isPrioritized = false,
   });
 
   @override
@@ -63,19 +68,37 @@ class _SpaceBottomSheetContent extends StatefulWidget {
       _SpaceBottomSheetContentState();
 }
 
-class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
+class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
+    with TickerProviderStateMixin {
   final SupabaseStorageClient storage = Supabase.instance.client.storage;
   final String backgroundMetadataUrl = Supabase.instance.client.storage
       .from("assets")
       .getPublicUrl("backgrounds/metadata.json");
   late int selectedIdx;
   List<dynamic>? backgroundTypes;
+  Map<String, List<int>> notificationTimes = {
+    'standard': [12, 24],
+    'prioritized': [],
+  };
+  late final TabController tabController;
 
   @override
   void initState() {
     super.initState();
-    selectedIdx = 0; // Default value
+    selectedIdx = 0;
+    tabController = TabController(length: 2, vsync: this);
+
     _loadBackgroundTypes();
+    if (widget.existingSpace?.notificationTimes != null) {
+      notificationTimes =
+          Map<String, List<int>>.from(widget.existingSpace!.notificationTimes);
+    }
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadBackgroundTypes() async {
@@ -95,11 +118,221 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
     });
   }
 
+  Widget _buildNotificationTimesSection(Spaces? space) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Notification Times',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Standard Notifications',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        Text(
+          'Customize when notifications will be sent out for all tasks',
+          style: Theme.of(context)
+              .textTheme
+              .labelMedium!
+              .copyWith(color: Colors.grey[400]),
+        ),
+        const SizedBox(height: 6),
+        _buildNotificationChips(space, 'standard'),
+        const SizedBox(height: 16),
+        Text(
+          'Prioritized Notifications',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        Text(
+          'Additional notification times for high-priority tasks',
+          style: Theme.of(context)
+              .textTheme
+              .labelMedium!
+              .copyWith(color: Colors.grey[400]),
+        ),
+        const SizedBox(height: 6),
+        _buildNotificationChips(space, 'prioritized'),
+      ],
+    );
+  }
+
+  Map<String, List<dynamic>> buildNotificationTimes(
+      Spaces? space, String type) {
+    final times = space?.notificationTimes[type] ?? [];
+    return {
+      "times": times,
+      "timesString": times
+          .map((time) =>
+              '${time >= 24 ? time ~/ 24 : time} ${time >= 24 ? time == 24 ? "Day" : "Days" : time == 1 ? "Hour" : "Hours"}')
+          .toList()
+    };
+  }
+
+  Widget _buildNotificationChips(Spaces? space, String type) {
+    final times = buildNotificationTimes(space, type);
+    return Wrap(
+      spacing: 8,
+      children: [
+        for (final time in times["times"]!)
+          Chip(
+            label: Text(times["timesString"]![times["times"]!.indexOf(time)]),
+            onDeleted: () {
+              setState(() {
+                space?.notificationTimes[type]?.remove(time);
+              });
+            },
+          ),
+        if ((type == "prioritized" && times["times"]!.isEmpty) ||
+            (type == "standard" && times["times"]!.length < 3))
+          ActionChip(
+            label: Text('Add ${type.capitalize()} Time'),
+            onPressed: () async {
+              await _showAddTimeDialog(space, type);
+            },
+          ),
+      ],
+    );
+  }
+
+  Future<void> _showAddTimeDialog(Spaces? space, String type) async {
+    int selectedValue = 1;
+    String selectedUnit = 'Hours';
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Add ${type.capitalize()} Notification Time'),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            DropdownButton<int>(
+              value: selectedValue,
+              items: List.generate(24, (index) => index + 1)
+                  .map((value) => DropdownMenuItem(
+                        value: value,
+                        child: Text('$value'),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                if (value != null) selectedValue = value;
+              },
+            ),
+            DropdownButton<String>(
+              value: selectedUnit,
+              items: ['Hours', 'Days']
+                  .map((unit) => DropdownMenuItem(
+                        value: unit,
+                        child: Text(unit),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                if (value != null) selectedUnit = value;
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final hours =
+                  selectedUnit == 'Days' ? selectedValue * 24 : selectedValue;
+              setState(() {
+                space!.notificationTimes[type] ??= [];
+                if (!space.notificationTimes[type]!.contains(hours)) {
+                  space.notificationTimes[type]!.add(hours);
+                  space.notificationTimes[type]!.sort();
+                }
+              });
+              Navigator.pop(context);
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _selectSpaceType() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Select Space Type',
+          style: Theme.of(context).textTheme.headlineSmall,
+          textAlign: TextAlign.start,
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Skeletonizer(
+              enabled: backgroundTypes == null,
+              child: backgroundTypes == null
+                  ? Container(
+                      color: Colors.grey[300],
+                      height: 200, // Adjust height as needed
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: storage.from("assets").getPublicUrl(
+                          "backgrounds/${backgroundTypes![selectedIdx]["name"]}/day.png"),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.error),
+                      ),
+                    ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: backgroundTypes == null
+              ? const Center(child: CircularProgressIndicator())
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    for (var i = 0; i < backgroundTypes!.length; i++)
+                      ChoiceChip(
+                        key: ValueKey(i),
+                        selected: selectedIdx == i,
+                        color: WidgetStateProperty.all(
+                          backgroundTypes![i]["colorCodes"][0]
+                              .toString()
+                              .toColor(),
+                        ),
+                        onSelected: (isSelected) {
+                          setState(() {
+                            selectedIdx = i;
+                          });
+                        },
+                        checkmarkColor: Colors.black,
+                        label: Text(
+                          backgroundTypes![i]["friendlyName"],
+                          style: const TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final pageController = widget.ref.watch(pageControllerProvider);
     final currentPageIndex = pageController.page?.toInt() ?? 0;
-
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -124,81 +357,122 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
             TextField(
               controller: widget.nameController,
               decoration: InputDecoration(
-                labelText: widget.existingSpace?.title ?? 'Space Name',
+                labelText: 'Space Name',
               ),
               autofocus: true,
             ),
             const SizedBox(height: 16),
-            Text(
-              'Select Space Type',
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.start,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Skeletonizer(
-                  enabled: backgroundTypes == null,
-                  child: CachedNetworkImage(
-                    imageUrl: storage.from("assets").getPublicUrl(
-                        "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/day.png"),
-                  ),
-                ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 20),
+              child: KeyedSubtree(
+                key: ValueKey<int>(tabController.index),
+                child: tabController.index == 0
+                    ? _selectSpaceType()
+                    : _buildNotificationTimesSection(widget.existingSpace),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: backgroundTypes == null
-                  ? const Center(child: CircularProgressIndicator())
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        for (var i = 0; i < backgroundTypes!.length; i++)
-                          ChoiceChip(
-                            key: ValueKey(i),
-                            selected: selectedIdx == i,
-                            color: WidgetStateProperty.all(
-                              backgroundTypes![i]["colorCodes"][0]
-                                  .toString()
-                                  .toColor(),
-                            ),
-                            onSelected: (isSelected) {
-                              setState(() {
-                                selectedIdx = i;
-                              });
-                            },
-                            checkmarkColor: Colors.black,
-                            label: Text(
-                              backgroundTypes![i]["friendlyName"],
-                              style: TextStyle(
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+            // GestureDetector(
+            //   onHorizontalDragUpdate: (details) {
+            //     // Sensitivity of the swipe
+            //     const sensitivity = 8;
+            //     if (details.delta.dx > sensitivity) {
+            //       // Right swipe
+            //       if (tabController.index > 0) {
+            //         tabController.animateTo(tabController.index - 1);
+            //       }
+            //     } else if (details.delta.dx < -sensitivity) {
+            //       // Left swipe
+            //       if (tabController.index < 1) {
+            //         tabController.animateTo(tabController.index + 1);
+            //       }
+            //     }
+            //   },
+            //   behavior: HitTestBehavior
+            //       .translucent, // Important for proper gesture detection
+            //   dragStartBehavior:
+            //       DragStartBehavior.down, // Improve responsiveness
+            //   child: AnimatedSwitcher(
+            //     duration: const Duration(milliseconds: 300),
+            //     child: KeyedSubtree(
+            //       key: ValueKey<int>(tabController.index),
+            //       child: tabController.index == 0
+            //           ? _selectSpaceType()
+            //           : _buildNotificationTimesSection(widget.existingSpace),
+            //     ),
+            //   ),
+            // ),
+
+            const SizedBox(height: 16),
+            TabBar(
+              controller: tabController,
+              onTap: (_) => setState(() {}),
+              tabs: [
+                Tab(text: 'Basic Info'),
+                Tab(text: 'Notifications'),
+              ],
             ),
-            FilledButton(
+            // Row(
+            //   // Use a Row for custom tab indicators
+            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //   children: [
+            //     GestureDetector(
+            //       onTap: () => tabController.animateTo(0),
+            //       child: Container(
+            //         padding: const EdgeInsets.all(8),
+            //         decoration: BoxDecoration(
+            //           border: Border(
+            //             bottom: BorderSide(
+            //               width: 2,
+            //             ),
+            //           ),
+            //         ),
+            //         child: const Text('Basic Info'),
+            //       ),
+            //     ),
+            //     GestureDetector(
+            //       onTap: () => tabController.animateTo(1),
+            //       child: Container(
+            //         padding: const EdgeInsets.all(8),
+            //         decoration: BoxDecoration(
+            //           border: Border(
+            //             bottom: BorderSide(
+            //               color: tabController.index == 1
+            //                   ? Colors.blue
+            //                   : Colors.transparent,
+            //               width: 2,
+            //             ),
+            //           ),
+            //         ),
+            //         child: const Text('Notifications'),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+
+            const SizedBox(height: 16),
+            FilledLoadingButton(
               onPressed: () async {
                 if (widget.nameController.text.isNotEmpty &&
-                    backgroundTypes != null) {
+                    backgroundTypes != null &&
+                    (notificationTimes['standard']?.isNotEmpty ?? false)) {
                   if (widget.isEditing) {
                     await widget.ref
                         .read(spacesManagerProvider.notifier)
                         .updateSpace(
                           widget.existingSpace!.copyWith(
-                              title: widget.nameController.text,
-                              spaceType: backgroundTypes?[selectedIdx]["name"]),
+                            title: widget.nameController.text,
+                            spaceType: backgroundTypes?[selectedIdx]["name"],
+                            notificationTimes: notificationTimes,
+                          ),
                         );
                   } else {
                     await widget.ref
                         .read(spacesManagerProvider.notifier)
                         .createSpace(Spaces(
-                            title: widget.nameController.text,
-                            spaceType: backgroundTypes?[selectedIdx]["name"]));
+                          title: widget.nameController.text,
+                          spaceType: backgroundTypes?[selectedIdx]["name"],
+                          notificationTimes: notificationTimes,
+                        ));
                   }
                   if (context.mounted) Navigator.pop(context);
                   widget.nameController.clear();
@@ -236,6 +510,10 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent> {
                           : 'Space created successfully',
                     );
                   }
+                } else {
+                  SnackbarService.showErrorSnackbar(
+                    'Please fill in all required fields and add at least one standard notification time',
+                  );
                 }
               },
               child: Text(widget.isEditing ? 'Update Space' : 'Create Space'),
