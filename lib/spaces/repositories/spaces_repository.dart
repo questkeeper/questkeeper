@@ -14,8 +14,14 @@ class SpacesRepository {
     final response = await _httpService.get('/core/spaces');
 
     final List<dynamic> data = response.data;
-    final List<Spaces> spacesList = data.map((e) => Spaces.fromMap(e)).toList();
-    return spacesList;
+    return data.map((e) {
+      if (e["notificationTimes"] != null) {
+        Map<String, dynamic> rawTimes = e["notificationTimes"];
+        e["notificationTimes"] = rawTimes.map((key, value) =>
+            MapEntry(key, (value as List).map((item) => item as int).toList()));
+      }
+      return Spaces.fromMap(e);
+    }).toList();
   }
 
   Future<ReturnModel> createSpace(Spaces space) async {

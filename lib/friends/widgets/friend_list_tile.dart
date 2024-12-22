@@ -40,7 +40,6 @@ class FriendListTile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: TrophyAvatar(
-                radius: 20,
                 trophyType: top3[position.toString()]!,
               ),
             ),

@@ -4,7 +4,7 @@ description: "The gamified task tracker"
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 0.7.6+3
+version: 0.7.7+1
 
 environment:
   sdk: ">=3.3.3 <4.0.0"
@@ -22,23 +22,23 @@ dependencies:
   json_annotation: ^4.9.0
   intl: ^0.19.0
   google_fonts: ^6.2.1
-  firebase_core: ^3.8.0
-  firebase_messaging: ^15.1.5
+  firebase_core: ^3.9.0
+  firebase_messaging: ^15.1.6
   flex_color_picker: ^3.6.0
   url_launcher: ^6.3.1
-  supabase: ^2.6.0
-  supabase_flutter: ^2.8.1
+  supabase: ^2.6.1
+  supabase_flutter: ^2.8.2
   supabase_auth_ui: ^0.5.4
   home_widget: ^0.7.0
-  shared_preferences: ^2.3.3
-  flutter_lucide: ^1.6.0
+  shared_preferences: ^2.3.4
+  flutter_lucide: ^1.6.1
   riverpod_generator: ^2.6.3
   rename_app: ^1.6.1
   email_validator: ^2.1.17
-  sentry_flutter: ^8.10.1
+  sentry_flutter: ^8.11.2
   feedback_sentry: ^3.1.0
-  package_info_plus: ^8.1.1
-  device_info_plus: ^11.1.1
+  package_info_plus: ^8.1.2
+  device_info_plus: ^11.2.0
   http: ^1.2.2
   flame: ^1.22.0
   flame_tiled: ^1.21.1
@@ -53,12 +53,13 @@ dependencies:
   flutter_svg: ^2.0.16
   mixpanel_flutter: ^2.3.3
   toastification: ^2.3.0
-  flutter_launcher_icons: ^0.14.1
+  flutter_launcher_icons: ^0.14.2
   flutter_native_splash: ^2.4.3
   showcaseview: ^3.0.0
   dio: ^5.7.0
   dio_http2_adapter: ^2.5.3
-  sentry_dio: ^8.10.1
+  sentry_dio: ^8.11.2
+  numberpicker: ^2.1.2
 
 dev_dependencies:
   flutter_test:

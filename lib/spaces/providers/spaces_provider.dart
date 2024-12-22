@@ -19,24 +19,38 @@ class SpacesManager extends _$SpacesManager {
 
   Future<List<Spaces>> fetchSpaces() async {
     try {
-      var spaces = await _repository.getSpaces();
-      spaces.add(Spaces(title: "Unassigned", id: null, spaceType: "office"));
+      final spaces = await _repository.getSpaces();
+      const defaultNotificationTimes = {
+        "standard": [12, 24],
+        "prioritized": [48],
+      };
+      spaces.add(Spaces(
+        title: "Unassigned",
+        id: null,
+        spaceType: "office",
+        notificationTimes: defaultNotificationTimes,
+      ));
 
       if (isDebug) {
         spaces.add(Spaces(
           title: faker.animal.name(),
           spaceType: "office",
+          notificationTimes: defaultNotificationTimes,
         ));
 
         spaces.add(Spaces(
           title: faker.animal.name(),
           spaceType: "living_room",
+          notificationTimes: defaultNotificationTimes,
         ));
 
-        spaces.add(Spaces(
-          title: faker.animal.name(),
-          spaceType: "school",
-        ));
+        spaces.add(
+          Spaces(
+            title: faker.animal.name(),
+            spaceType: "school",
+            notificationTimes: defaultNotificationTimes,
+          ),
+        );
       }
 
       return spaces;
