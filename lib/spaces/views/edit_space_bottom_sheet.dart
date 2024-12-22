@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
 import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
@@ -195,63 +196,72 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
   Future<void> _showAddTimeDialog(String type) async {
     int selectedValue = 1;
     String selectedUnit = 'Hours';
+    final units = ['Hours', 'Days'];
 
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Add ${type.capitalize()} Notification Time'),
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            DropdownButton<int>(
-              value: selectedValue,
-              items: List.generate(24, (index) => index + 1)
-                  .map((value) => DropdownMenuItem(
-                        value: value,
-                        child: Text('$value'),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) selectedValue = value;
-              },
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text('Add ${type.capitalize()} Notification Time'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Select Duration',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                NumberPicker(
+                  value: selectedValue,
+                  minValue: 1,
+                  axis: Axis.horizontal,
+                  maxValue: selectedUnit == "Hours" ? 24 : 30,
+                  onChanged: (value) => setState(() => selectedValue = value),
+                ),
+                SizedBox(height: 16),
+                Wrap(
+                  spacing: 8,
+                  children: units.map((unit) {
+                    final isSelected = selectedUnit == unit;
+                    return ChoiceChip(
+                      label: Text(unit),
+                      selected: isSelected,
+                      onSelected: (_) => setState(() => selectedUnit = unit),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
-            DropdownButton<String>(
-              value: selectedUnit,
-              items: ['Hours', 'Days']
-                  .map((unit) => DropdownMenuItem(
-                        value: unit,
-                        child: Text(unit),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) selectedUnit = value;
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final hours =
-                  selectedUnit == 'Days' ? selectedValue * 24 : selectedValue;
-              setState(() {
-                notificationTimes[type] ??= [];
-                if (!notificationTimes[type]!.contains(hours)) {
-                  notificationTimes[type]!.add(hours);
-                  notificationTimes[type]!.sort();
-                }
-              });
-              Navigator.pop(context);
-            },
-            child: const Text('Add'),
-          ),
-        ],
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () =>
+                    _addNotificationTime(type, selectedValue, selectedUnit),
+                child: const Text('Add'),
+              ),
+            ],
+          );
+        },
       ),
     );
+  }
+
+  void _addNotificationTime(
+      String type, int selectedValue, String selectedUnit) {
+    final hours = selectedUnit == 'Days' ? selectedValue * 24 : selectedValue;
+
+    setState(() {
+      notificationTimes[type] ??= [];
+      if (!notificationTimes[type]!.contains(hours)) {
+        notificationTimes[type]!.add(hours);
+        notificationTimes[type]!.sort();
+      }
+    });
+
+    Navigator.pop(context);
   }
 
   Widget _selectSpaceType() {
@@ -454,7 +464,8 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
               onPressed: () async {
                 if (widget.nameController.text.isNotEmpty &&
                     backgroundTypes != null &&
-                    (notificationTimes['standard']?.isNotEmpty ?? false)) {
+                    (notificationTimes['standard']?.isNotEmpty ?? false) &&
+                    (notificationTimes['priority']?.isNotEmpty ?? false)) {
                   if (widget.isEditing) {
                     await widget.ref
                         .read(spacesManagerProvider.notifier)

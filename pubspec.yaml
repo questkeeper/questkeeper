@@ -59,6 +59,7 @@ dependencies:
   dio: ^5.7.0
   dio_http2_adapter: ^2.5.3
   sentry_dio: ^8.10.1
+  numberpicker: ^2.1.2
 
 dev_dependencies:
   flutter_test:
