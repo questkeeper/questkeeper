@@ -50,8 +50,6 @@ class _SpaceBottomSheetContent extends StatefulWidget {
   final bool isEditing;
   final WidgetRef ref;
   final Spaces? existingSpace;
-  final List<int> notificationHours;
-  final bool isPrioritized;
 
   const _SpaceBottomSheetContent({
     required this.nameController,
@@ -59,8 +57,6 @@ class _SpaceBottomSheetContent extends StatefulWidget {
     required this.isEditing,
     required this.ref,
     this.existingSpace,
-    this.notificationHours = const [12, 24],
-    this.isPrioritized = false,
   });
 
   @override
@@ -78,7 +74,7 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
   List<dynamic>? backgroundTypes;
   Map<String, List<int>> notificationTimes = {
     'standard': [12, 24],
-    'prioritized': [],
+    'prioritized': [48],
   };
   late final TabController tabController;
 
@@ -118,10 +114,10 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
     });
   }
 
-  Widget _buildNotificationTimesSection(Spaces? space) {
+  Widget _buildNotificationTimesSection() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
           'Notification Times',
@@ -140,7 +136,7 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
               .copyWith(color: Colors.grey[400]),
         ),
         const SizedBox(height: 6),
-        _buildNotificationChips(space, 'standard'),
+        _buildNotificationChips('standard'),
         const SizedBox(height: 16),
         Text(
           'Prioritized Notifications',
@@ -154,14 +150,13 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
               .copyWith(color: Colors.grey[400]),
         ),
         const SizedBox(height: 6),
-        _buildNotificationChips(space, 'prioritized'),
+        _buildNotificationChips('prioritized'),
       ],
     );
   }
 
-  Map<String, List<dynamic>> buildNotificationTimes(
-      Spaces? space, String type) {
-    final times = space?.notificationTimes[type] ?? [];
+  Map<String, List<dynamic>> buildNotificationTimes(String type) {
+    final times = notificationTimes[type] ?? notificationTimes[type] ?? [];
     return {
       "times": times,
       "timesString": times
@@ -171,8 +166,8 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
     };
   }
 
-  Widget _buildNotificationChips(Spaces? space, String type) {
-    final times = buildNotificationTimes(space, type);
+  Widget _buildNotificationChips(String type) {
+    final times = buildNotificationTimes(type);
     return Wrap(
       spacing: 8,
       children: [
@@ -181,7 +176,7 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
             label: Text(times["timesString"]![times["times"]!.indexOf(time)]),
             onDeleted: () {
               setState(() {
-                space?.notificationTimes[type]?.remove(time);
+                notificationTimes[type]?.remove(time);
               });
             },
           ),
@@ -190,14 +185,14 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
           ActionChip(
             label: Text('Add ${type.capitalize()} Time'),
             onPressed: () async {
-              await _showAddTimeDialog(space, type);
+              await _showAddTimeDialog(type);
             },
           ),
       ],
     );
   }
 
-  Future<void> _showAddTimeDialog(Spaces? space, String type) async {
+  Future<void> _showAddTimeDialog(String type) async {
     int selectedValue = 1;
     String selectedUnit = 'Hours';
 
@@ -244,10 +239,10 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
               final hours =
                   selectedUnit == 'Days' ? selectedValue * 24 : selectedValue;
               setState(() {
-                space!.notificationTimes[type] ??= [];
-                if (!space.notificationTimes[type]!.contains(hours)) {
-                  space.notificationTimes[type]!.add(hours);
-                  space.notificationTimes[type]!.sort();
+                notificationTimes[type] ??= [];
+                if (!notificationTimes[type]!.contains(hours)) {
+                  notificationTimes[type]!.add(hours);
+                  notificationTimes[type]!.sort();
                 }
               });
               Navigator.pop(context);
@@ -333,6 +328,11 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
   Widget build(BuildContext context) {
     final pageController = widget.ref.watch(pageControllerProvider);
     final currentPageIndex = pageController.page?.toInt() ?? 0;
+
+    if (widget.existingSpace != null) {
+      notificationTimes = widget.existingSpace!.notificationTimes;
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -368,7 +368,7 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                 key: ValueKey<int>(tabController.index),
                 child: tabController.index == 0
                     ? _selectSpaceType()
-                    : _buildNotificationTimesSection(widget.existingSpace),
+                    : _buildNotificationTimesSection(),
               ),
             ),
             // GestureDetector(
