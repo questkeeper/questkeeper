@@ -121,7 +121,7 @@ class SettingsScreen extends ConsumerWidget {
                         title: 'Privacy',
                         description: 'Manage privacy and data settings',
                         icon: LucideIcons.shield,
-                        onTap: () => notYetImplemented()),
+                        onTap: () => Navigator.pushNamed(context, '/privacy')),
                     SettingsCard(
                         title: 'About',
                         description: 'About the app',

@@ -9,6 +9,7 @@ import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
 import 'package:questkeeper/settings/views/notifications/notifications_screen.dart';
+import 'package:questkeeper/settings/views/privacy/privacy_screen.dart';
 import 'package:questkeeper/shared/notifications/notification_handler.dart';
 import 'package:questkeeper/shared/notifications/notification_service.dart';
 import 'package:questkeeper/shared/utils/cache_assets.dart';
@@ -20,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/theme_components.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'tabs/tabview.dart';
@@ -59,6 +61,12 @@ Future<void> main() async {
   } catch (e) {
     debugPrint("Platform implementation error: $e");
   }
+
+  final doNotTrack =
+      (await SharedPreferences.getInstance()).getBool("posthogDoNotTrack") ??
+          false;
+
+  doNotTrack ? Posthog().disable() : Posthog().enable();
 
   if (isDebug) {
     // Run app without sentry
@@ -158,6 +166,9 @@ class MyApp extends ConsumerWidget {
 
             // Notifications
             '/notifications': (context) => const NotificationsScreen(),
+
+            // Privacy
+            '/privacy': (context) => const PrivacyScreen(),
           },
           navigatorObservers: [
             PosthogObserver(),
