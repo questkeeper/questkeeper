@@ -3,8 +3,6 @@ import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
-import 'package:questkeeper/shared/extensions/platform_extensions.dart';
-import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
 import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
@@ -40,14 +38,6 @@ class _TabViewState extends ConsumerState<TabView> {
     setState(() {
       _selectedIndex = index;
     });
-
-    if (PlatformExtensions.isMobile) {
-      MixpanelManager.instance.track("TabView", properties: {
-        "tab": index,
-        "tabName": pages[index].runtimeType.toString(),
-        "action": "Tab change",
-      });
-    }
   }
 
   @override

@@ -1,12 +1,6 @@
-import 'dart:io';
-
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
-import 'package:questkeeper/shared/extensions/platform_extensions.dart';
-import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -101,15 +95,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
           profile: userProfile,
         );
       }
-
-      if (PlatformExtensions.isMobile) {
-        MixpanelManager.instance.identify(user.user!.id);
-        MixpanelManager.instance.setUserProperties({
-          "email": user.user!.email,
-        });
-        MixpanelManager.instance.track("User Authenticated");
-        _sendDeviceDataToMixpanel();
-      }
     } catch (error) {
       // Don't immediately clear auth state on error - only do it if we're sure the session is invalid
       if (error is AuthException || error.toString().contains('JWT')) {
@@ -126,37 +111,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  void _sendDeviceDataToMixpanel() async {
-    DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    final Map<String, dynamic> deviceInfo;
-
-    if (Platform.isIOS) {
-      IosDeviceInfo iosDeviceInfo = await deviceInfoPlugin.iosInfo;
-      deviceInfo = {
-        "deviceIdentifier": iosDeviceInfo.identifierForVendor,
-        "os": 'iOS ${iosDeviceInfo.systemName} ${iosDeviceInfo.systemVersion}',
-        "device": '${iosDeviceInfo.name} ${iosDeviceInfo.model}',
-        "appVersion": packageInfo.version,
-      };
-
-      MixpanelManager.instance.setUserProperties(deviceInfo);
-    } else {
-      AndroidDeviceInfo androidDeviceInfo = await deviceInfoPlugin.androidInfo;
-      deviceInfo = {
-        "deviceIdentifier": androidDeviceInfo.id,
-        "os":
-            'Android ${androidDeviceInfo.version.release} ${androidDeviceInfo.version.sdkInt}',
-        "device":
-            '${androidDeviceInfo.manufacturer} ${androidDeviceInfo.model}',
-        "appVersion": packageInfo.version,
-      };
-
-      MixpanelManager.instance.setUserProperties(deviceInfo);
-    }
-  }
-
-// TODO: Call this when I sign out fr fr
+// This isn't called anywhere, but the signout does remove all of shared prefs
+// Removing all shared prefs probs shouldn't be done but it is what it is.
   Future<void> signOut() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_authKey, false);
