@@ -2,6 +2,7 @@ import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
@@ -142,6 +143,8 @@ class SettingsScreen extends ConsumerWidget {
                         // Clear cache manager
                         final CacheManager cacheManager = DefaultCacheManager();
                         await cacheManager.emptyCache();
+
+                        Posthog().reset();
 
                         await Supabase.instance.client.auth.signOut().then(
                               (value) => {
