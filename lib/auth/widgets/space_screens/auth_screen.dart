@@ -102,8 +102,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          launchUrl(
-                              Uri.parse("https://questkeeper.app/privacy"));
+                          launchUrl(Uri.parse(
+                              "https://questkeeper.app/privacy-policy"));
                         },
                     ),
                     TextSpan(
@@ -120,8 +120,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          launchUrl(
-                              Uri.parse("https://questkeeper.app/privacy"));
+                          launchUrl(Uri.parse(
+                              "https://questkeeper.app/privacy-policy"));
                         },
                     ),
                   ],
