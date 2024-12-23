@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -74,7 +76,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
 
     // Verify authentication in the background
-    _verifyAuth();
+    await _verifyAuth(); // TODO: `await` keyword was JUST added, remove it if it starts causing problems...
   }
 
   Future<void> _verifyAuth() async {
@@ -85,6 +87,25 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_authKey, true);
       await prefs.setString("user_profile", userProfile.toJson());
+
+      try {
+        await Posthog().identify(userId: user.user!.id, userPropertiesSetOnce: {
+          "date_of_creation": user.user!.createdAt,
+        }, userProperties: {
+          "email": user.user!.email!,
+          "username": user.user!.userMetadata!["display_name"],
+        });
+      } catch (error) {
+        Sentry.captureException(
+          error,
+          hint: Hint.withMap(
+            {
+              "location": "auth_state_provider",
+              "message": "Posthog auth failed"
+            },
+          ),
+        );
+      }
 
       // Only update state if something changed to avoid unnecessary rebuilds
       if (state.profile?.user_id != userProfile.user_id ||
