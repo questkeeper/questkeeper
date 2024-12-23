@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/constants.dart';
@@ -13,8 +14,6 @@ import 'package:questkeeper/shared/notifications/notification_service.dart';
 import 'package:questkeeper/shared/utils/cache_assets.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
-import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
-import 'package:questkeeper/shared/utils/mixpanel/mixpanel_stub.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +43,6 @@ Future<void> main() async {
 
   HomeWidgetInterface? homeWidget;
   NotificationHandler.initialize();
-  MixpanelInterface? mixpanel;
 
   try {
     CacheAssetsManager().fetchAllMetadata();
@@ -60,16 +58,6 @@ Future<void> main() async {
     }
   } catch (e) {
     debugPrint("Platform implementation error: $e");
-  }
-
-  try {
-    if (Platform.isAndroid || Platform.isIOS || kIsWeb) {
-      mixpanel = MixpanelManager.instance;
-      mixpanel.init('bd3ae9764e0e2c1990a1559325ac6e8a');
-      mixpanel.track('App Opened');
-    }
-  } catch (e) {
-    debugPrint("Mixpanel error: $e");
   }
 
   if (isDebug) {
@@ -171,6 +159,9 @@ class MyApp extends ConsumerWidget {
             // Notifications
             '/notifications': (context) => const NotificationsScreen(),
           },
+          navigatorObservers: [
+            PosthogObserver(),
+          ],
           builder: (context, child) {
             return StreamBuilder<String>(
               stream: NotificationService().messageStream,

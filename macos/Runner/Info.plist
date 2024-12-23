@@ -29,6 +29,7 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 
+	<!-- Deeplinks  -->
 	<key>CFBundleURLTypes</key>
 	<array>
     	<dict>
@@ -43,5 +44,16 @@
         	</array>
     	</dict>
 	</array>
+
+	<!-- Posthog stuff -->
+	<key>com.posthog.posthog.API_KEY</key>
+    <string>phc_qnSKWJwL6oOoLYSEDEf6EVvDFyu336zFsUUq4loX3e6</string>
+    <key>com.posthog.posthog.POSTHOG_HOST</key>
+    <string>https://us.i.posthog.com</string>
+    <key>com.posthog.posthog.CAPTURE_APPLICATION_LIFECYCLE_EVENTS</key>
+    <true/>
+    <key>com.posthog.posthog.DEBUG</key>
+    <true/>
+
 </dict>
 </plist>
