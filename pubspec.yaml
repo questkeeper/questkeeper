@@ -60,6 +60,7 @@ dependencies:
   dio_http2_adapter: ^2.5.3
   sentry_dio: ^8.11.2
   numberpicker: ^2.1.2
+  posthog_flutter: ^4.9.0
 
 dev_dependencies:
   flutter_test:
