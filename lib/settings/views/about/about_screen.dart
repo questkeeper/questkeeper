@@ -87,7 +87,7 @@ class AboutScreen extends StatelessWidget {
               textColor: primaryColor,
               leading: const Icon(LucideIcons.shield_alert),
               onTap: () {
-                final uri = Uri.parse("https://questkeeper.app/privacy");
+                final uri = Uri.parse("https://questkeeper.app/privacy-policy");
 
                 launchUrl(uri);
               },

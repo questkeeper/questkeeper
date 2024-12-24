@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/constants.dart';
@@ -8,19 +9,19 @@ import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
 import 'package:questkeeper/settings/views/notifications/notifications_screen.dart';
+import 'package:questkeeper/settings/views/privacy/privacy_screen.dart';
 import 'package:questkeeper/shared/notifications/notification_handler.dart';
 import 'package:questkeeper/shared/notifications/notification_service.dart';
 import 'package:questkeeper/shared/utils/cache_assets.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
-import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
-import 'package:questkeeper/shared/utils/mixpanel/mixpanel_stub.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/theme_components.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'tabs/tabview.dart';
@@ -44,7 +45,6 @@ Future<void> main() async {
 
   HomeWidgetInterface? homeWidget;
   NotificationHandler.initialize();
-  MixpanelInterface? mixpanel;
 
   try {
     CacheAssetsManager().fetchAllMetadata();
@@ -62,15 +62,11 @@ Future<void> main() async {
     debugPrint("Platform implementation error: $e");
   }
 
-  try {
-    if (Platform.isAndroid || Platform.isIOS || kIsWeb) {
-      mixpanel = MixpanelManager.instance;
-      mixpanel.init('bd3ae9764e0e2c1990a1559325ac6e8a');
-      mixpanel.track('App Opened');
-    }
-  } catch (e) {
-    debugPrint("Mixpanel error: $e");
-  }
+  final doNotTrack =
+      (await SharedPreferences.getInstance()).getBool("posthogDoNotTrack") ??
+          false;
+
+  doNotTrack ? Posthog().disable() : Posthog().enable();
 
   if (isDebug) {
     // Run app without sentry
@@ -170,7 +166,13 @@ class MyApp extends ConsumerWidget {
 
             // Notifications
             '/notifications': (context) => const NotificationsScreen(),
+
+            // Privacy
+            '/privacy': (context) => const PrivacyScreen(),
           },
+          navigatorObservers: [
+            PosthogObserver(),
+          ],
           builder: (context, child) {
             return StreamBuilder<String>(
               stream: NotificationService().messageStream,

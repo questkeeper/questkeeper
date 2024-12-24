@@ -1,7 +1,5 @@
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
-import 'package:questkeeper/shared/extensions/platform_extensions.dart';
-import 'package:questkeeper/shared/utils/mixpanel/mixpanel_manager.dart';
 import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -58,12 +56,6 @@ void showTaskBottomSheet({
             spaceId: existingSpace?.id,
           ),
         );
-  }
-
-  if (PlatformExtensions.isMobile) {
-    MixpanelManager.instance.track("AddTaskScreen", properties: {
-      "action": "Open add task screen",
-    });
   }
 
   showModalBottomSheet(
@@ -217,11 +209,6 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
 
       if (!mounted) return;
       SnackbarService.showSuccessSnackbar("Task created successfully");
-
-      MixpanelManager.instance.track("AddTaskScreen", properties: {
-        "action": "Task created",
-        "id": taskId,
-      });
 
       Navigator.of(context).pop();
     } else {
