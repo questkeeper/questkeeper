@@ -28,9 +28,7 @@ class AllSpacesScreen extends ConsumerStatefulWidget {
 
 class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late PageController _pageController;
-  final SupabaseStorageClient storageClient = Supabase.instance.client.storage;
   ValueNotifier<int> currentPageValue = ValueNotifier(0);
-  ValueNotifier<bool> showGameNotifier = ValueNotifier(true);
   late final String? initialBackgroundPath;
   late final SharedPreferences prefs;
   late String backgroundColor;
@@ -40,6 +38,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ref.read(gameHeightProvider.notifier).state = 1.0;
+
       _pageController = ref.read(pageControllerProvider);
       _pageController.addListener(_updatePage);
 
@@ -84,7 +84,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
       _pageController.removeListener(_updatePage);
     }
     currentPageValue.dispose();
-    showGameNotifier.dispose();
     super.dispose();
   }
 
