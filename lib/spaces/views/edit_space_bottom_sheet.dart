@@ -345,122 +345,123 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
       notificationTimes = widget.existingSpace!.notificationTimes;
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-      ),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: 24,
-        right: 24,
-        top: 16,
-      ),
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              widget.isEditing ? 'Edit Space' : 'Create New Space',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: widget.nameController,
-              decoration: InputDecoration(
-                labelText: 'Space Name',
+    return SingleChildScrollView(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        ),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 24,
+          right: 24,
+          top: 16,
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                widget.isEditing ? 'Edit Space' : 'Create New Space',
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-              autofocus: true,
-            ),
-            const SizedBox(height: 16),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 20),
-              child: KeyedSubtree(
-                key: ValueKey<int>(tabController.index),
-                child: tabController.index == 0
-                    ? _selectSpaceType()
-                    : _buildNotificationTimesSection(),
+              const SizedBox(height: 16),
+              TextField(
+                controller: widget.nameController,
+                decoration: InputDecoration(
+                  labelText: 'Space Name',
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TabBar(
-              controller: tabController,
-              onTap: (_) => setState(() {}),
-              tabs: [
-                Tab(text: 'Space Type'),
-                Tab(text: 'Notifications'),
-              ],
-            ),
-            const SizedBox(height: 16),
-            FilledLoadingButton(
-              onPressed: () async {
-                if (widget.nameController.text.isNotEmpty &&
-                    backgroundTypes != null &&
-                    (notificationTimes['standard']?.isNotEmpty ?? false) &&
-                    (notificationTimes['prioritized']?.isNotEmpty ?? false)) {
-                  if (widget.isEditing) {
-                    await widget.ref
-                        .read(spacesManagerProvider.notifier)
-                        .updateSpace(
-                          widget.existingSpace!.copyWith(
+              const SizedBox(height: 16),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 20),
+                child: KeyedSubtree(
+                  key: ValueKey<int>(tabController.index),
+                  child: tabController.index == 0
+                      ? _selectSpaceType()
+                      : _buildNotificationTimesSection(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TabBar(
+                controller: tabController,
+                onTap: (_) => setState(() {}),
+                tabs: [
+                  Tab(text: 'Space Type'),
+                  Tab(text: 'Notifications'),
+                ],
+              ),
+              const SizedBox(height: 16),
+              FilledLoadingButton(
+                onPressed: () async {
+                  if (widget.nameController.text.isNotEmpty &&
+                      backgroundTypes != null &&
+                      (notificationTimes['standard']?.isNotEmpty ?? false) &&
+                      (notificationTimes['prioritized']?.isNotEmpty ?? false)) {
+                    if (widget.isEditing) {
+                      await widget.ref
+                          .read(spacesManagerProvider.notifier)
+                          .updateSpace(
+                            widget.existingSpace!.copyWith(
+                              title: widget.nameController.text,
+                              spaceType: backgroundTypes?[selectedIdx]["name"],
+                              notificationTimes: notificationTimes,
+                            ),
+                          );
+                    } else {
+                      await widget.ref
+                          .read(spacesManagerProvider.notifier)
+                          .createSpace(Spaces(
                             title: widget.nameController.text,
                             spaceType: backgroundTypes?[selectedIdx]["name"],
                             notificationTimes: notificationTimes,
-                          ),
-                        );
-                  } else {
-                    await widget.ref
-                        .read(spacesManagerProvider.notifier)
-                        .createSpace(Spaces(
-                          title: widget.nameController.text,
-                          spaceType: backgroundTypes?[selectedIdx]["name"],
-                          notificationTimes: notificationTimes,
-                        ));
-                  }
-                  if (context.mounted) Navigator.pop(context);
-                  widget.nameController.clear();
+                          ));
+                    }
+                    if (context.mounted) Navigator.pop(context);
+                    widget.nameController.clear();
 
-                  if (!widget.isEditing) {
-                    widget.ref.read(gameHeightProvider.notifier).state = 1.0;
-                    final dateType = DateTime.now().getTimeOfDayType();
-                    final game = widget.ref.read(gameProvider);
+                    if (!widget.isEditing) {
+                      widget.ref.read(gameHeightProvider.notifier).state = 1.0;
+                      final dateType = DateTime.now().getTimeOfDayType();
+                      final game = widget.ref.read(gameProvider);
 
-                    game?.animateEntry(Direction.left);
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (pageController.hasClients) {
-                        pageController.jumpToPage(0);
-                        game?.updateBackground(
-                          "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/$dateType.png",
-                        );
-                      }
-                    });
-                  } else {
-                    if (context.mounted) {
+                      game?.animateEntry(Direction.left);
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         if (pageController.hasClients) {
-                          pageController.jumpToPage(currentPageIndex);
+                          pageController.jumpToPage(0);
+                          game?.updateBackground(
+                            "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/$dateType.png",
+                          );
                         }
                       });
+                    } else {
+                      if (context.mounted) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (pageController.hasClients) {
+                            pageController.jumpToPage(currentPageIndex);
+                          }
+                        });
+                      }
                     }
-                  }
 
-                  if (context.mounted) {
-                    SnackbarService.showSuccessSnackbar(
-                      widget.isEditing
-                          ? 'Space updated successfully'
-                          : 'Space created successfully',
+                    if (context.mounted) {
+                      SnackbarService.showSuccessSnackbar(
+                        widget.isEditing
+                            ? 'Space updated successfully'
+                            : 'Space created successfully',
+                      );
+                    }
+                  } else {
+                    SnackbarService.showErrorSnackbar(
+                      'Please fill in all required fields and add at least one standard notification time',
                     );
                   }
-                } else {
-                  SnackbarService.showErrorSnackbar(
-                    'Please fill in all required fields and add at least one standard notification time',
-                  );
-                }
-              },
-              child: Text(widget.isEditing ? 'Update Space' : 'Create Space'),
-            ),
-          ],
+                },
+                child: Text(widget.isEditing ? 'Update Space' : 'Create Space'),
+              ),
+            ],
+          ),
         ),
       ),
     );
