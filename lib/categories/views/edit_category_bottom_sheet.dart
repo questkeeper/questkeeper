@@ -125,6 +125,29 @@ class _CategoryBottomSheetContentState
               ),
             ),
 
+            // Explore potential alternate method eventually:
+            /*
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final keyboardVisible =
+                    MediaQuery.of(context).viewInsets.bottom > 0;
+                return AnimatedCrossFade(
+                  duration: const Duration(milliseconds: 150),
+                  crossFadeState: keyboardVisible
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  firstChild:
+                      const SizedBox(height: 16), // When keyboard is visible
+                  secondChild: ColorPicker(
+                    // When keyboard is hidden
+                    onColorChanged: _updateColor,
+                    color: selectedColor ?? Colors.blue,
+                  ),
+                );
+              },
+            ),
+            */
+
             Flex(
               direction: Axis.horizontal,
               children: [
