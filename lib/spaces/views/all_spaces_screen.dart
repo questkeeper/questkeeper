@@ -170,7 +170,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                           child: AnimatedGameContainer(
                             game: game,
                             heightFactor: heightFactor,
-                            shouldTextShow: currentPageValue.value == 0,
+                            shouldTextShow:
+                                currentPageValue.value != spaces.length,
                           ),
                         ),
                       ),
@@ -178,7 +179,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                       child: PageView.builder(
                         controller: _pageController,
                         onPageChanged: (page) {
-                          currentPageValue = ValueNotifier(page);
+                          currentPageValue.value = page;
 
                           final dateType = DateTime.now().getTimeOfDayType();
                           final currentGame = ref.read(gameProvider);
