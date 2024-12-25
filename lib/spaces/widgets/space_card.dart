@@ -60,6 +60,19 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
           0.3; // Minimized height factor
       setState(() => _isMinimized = true);
     }
+
+    _resetScrollListener();
+  }
+
+  /// A hacky way to ensure onScroll isn't called again due to the bounce effect/
+  /// list height being too small
+  void _resetScrollListener() {
+    _scrollController.removeListener(_onScroll);
+
+    // 200ms delay to prevent multiple calls
+    Future.delayed(const Duration(milliseconds: 200), () {
+      _scrollController.addListener(_onScroll);
+    });
   }
 
   @override
