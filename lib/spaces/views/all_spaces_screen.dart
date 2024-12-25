@@ -153,8 +153,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                             // Animate both the game and PageView
                             _pageController.animateToPage(
                               newPage,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeOut,
+                              duration: const Duration(milliseconds: 400),
+                              curve: Curves.easeInOut,
                             );
 
                             // Animate game transition
