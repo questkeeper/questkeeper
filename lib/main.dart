@@ -14,6 +14,7 @@ import 'package:questkeeper/shared/notifications/notification_handler.dart';
 import 'package:questkeeper/shared/notifications/notification_service.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
+import 'package:questkeeper/shared/utils/set_background_metadata.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,8 @@ Future<void> main() async {
           false;
 
   doNotTrack ? Posthog().disable() : Posthog().enable();
+
+  setBackgroundMetadata();
 
   if (isDebug) {
     // Run app without sentry
