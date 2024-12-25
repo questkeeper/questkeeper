@@ -15,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SpaceCard extends ConsumerStatefulWidget {
   const SpaceCard(
@@ -235,19 +234,13 @@ class SpaceActionWidgets extends StatelessWidget {
                       .fetchSpaces();
                   void manageBackground() async {
                     final dateType = DateTime.now().getTimeOfDayType();
-                    final storage = Supabase.instance.client.storage;
                     if (spaces.length > 1) {
                       game?.updateBackground(
-                        0,
-                        storage.from("assets").getPublicUrl(
-                            "backgrounds/${spaces[1].spaceType}/$dateType.png"),
+                        "backgrounds/${spaces[1].spaceType}/$dateType.png",
                       );
                     } else {
                       game?.updateBackground(
-                        0,
-                        storage
-                            .from("assets")
-                            .getPublicUrl("backgrounds/office/$dateType.png"),
+                        "backgrounds/office/$dateType.png",
                       );
                     }
                   }

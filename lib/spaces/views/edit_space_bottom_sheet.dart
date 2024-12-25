@@ -1,9 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
 import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
-import 'package:questkeeper/shared/utils/cache_assets.dart';
 import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
@@ -14,7 +15,6 @@ import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 void showSpaceBottomSheet({
   required BuildContext context,
@@ -67,10 +67,8 @@ class _SpaceBottomSheetContent extends StatefulWidget {
 
 class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
     with TickerProviderStateMixin {
-  final SupabaseStorageClient storage = Supabase.instance.client.storage;
-  final String backgroundMetadataUrl = Supabase.instance.client.storage
-      .from("assets")
-      .getPublicUrl("backgrounds/metadata.json");
+  final String backgroundMetadataPath =
+      "assets/images/backgrounds/metadata.json";
   late int selectedIdx;
   List<dynamic>? backgroundTypes;
   Map<String, List<int>> notificationTimes = {
@@ -99,8 +97,10 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
   }
 
   Future<void> _loadBackgroundTypes() async {
-    final metadata =
-        await CacheAssetsManager().fetchMetadataFromUrl(backgroundMetadataUrl);
+    // Read from file
+    final metadata = await json.decode(
+      await rootBundle.loadString(backgroundMetadataPath),
+    );
     setState(() {
       backgroundTypes = metadata["backgroundTypes"];
       if (widget.existingSpace != null) {
@@ -290,15 +290,12 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
               child: backgroundTypes == null
                   ? Container(
                       color: Colors.grey[300],
-                      height: 200, // Adjust height as needed
+                      height: 300, // Adjust height as needed
                     )
-                  : CachedNetworkImage(
-                      imageUrl: storage.from("assets").getPublicUrl(
-                          "backgrounds/${backgroundTypes![selectedIdx]["name"]}/day.png"),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.error),
-                      ),
+                  : Image.asset(
+                      "assets/images/backgrounds/${backgroundTypes![selectedIdx]["name"]}/day.png",
+                      fit: BoxFit.cover,
+                      height: 300,
                     ),
             ),
           ),
@@ -434,9 +431,7 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                       if (pageController.hasClients) {
                         pageController.jumpToPage(0);
                         game?.updateBackground(
-                          0,
-                          storage.from("assets").getPublicUrl(
-                              "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/$dateType.png"),
+                          "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/$dateType.png",
                         );
                       }
                     });

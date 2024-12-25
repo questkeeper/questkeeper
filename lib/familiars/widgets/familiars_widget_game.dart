@@ -1,28 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
-import 'dart:ui' as ui;
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flame/game.dart';
 import 'package:flame/components.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'package:questkeeper/familiars/components/characters/character_sprite_component.dart';
 import 'package:questkeeper/familiars/components/characters/character_state.dart';
 import 'package:questkeeper/familiars/components/characters/sprite_sheet_loader.dart';
 import 'package:questkeeper/familiars/components/clock_component.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-Future<ui.Image> loadSpriteSheet(String url) async {
-  final imageProvider = CachedNetworkImageProvider(url);
-  final completer = Completer<ui.Image>();
-  imageProvider.resolve(const ImageConfiguration()).addListener(
-    ImageStreamListener((ImageInfo info, _) {
-      if (!completer.isCompleted) completer.complete(info.image);
-    }),
-  );
-  return completer.future;
-}
 
 enum Direction { left, right, none }
 
@@ -40,6 +27,7 @@ class FamiliarsWidgetGame extends FlameGame {
   }
 
   FamiliarsWidgetGame({required this.backgroundPath});
+
   final String backgroundPath;
   late CharacterSpriteComponent redPanda;
   late SpriteComponent mapComponent;
@@ -56,35 +44,26 @@ class FamiliarsWidgetGame extends FlameGame {
   double idleTime = 0;
   final double idleDuration = 5;
 
-  Future<void> updateBackground(int page, String? updatedBackgroundPath) async {
+  Future<void> updateBackground(String backgroundPath) async {
     if (!_isMapInitialized) return;
 
-    final backgroundPath = updatedBackgroundPath;
     try {
-      if (backgroundPath == null) {
-        mapComponent.sprite = Sprite(await loadSpriteSheet(supabaseClient
-            .storage
-            .from("assets")
-            .getPublicUrl("placeholder.png")));
-      } else {
-        final newImage = await loadSpriteSheet(backgroundPath);
-        mapComponent.sprite = Sprite(newImage);
-      }
+      final imagePath = backgroundPath.split("assets/").last;
+      mapComponent.sprite = Sprite(
+        await images.load(imagePath),
+      );
     } catch (e) {
       debugPrint('Failed to update background: $e');
     }
   }
 
   Future<void> loadCharacter({String characterId = "red_panda"}) async {
-    // Load JSON from Supabase/storage
-    final spriteSheetJsonData = utf8.decode(await supabaseClient.storage
-        .from('assets')
-        .download('characters/$characterId/sprite_sheet.json'));
+    final spriteSheetJsonData = await images.bundle.loadString(
+      "assets/images/characters/$characterId/sprite_sheet.json",
+    );
 
     // Load sprite sheet image
-    final spriteSheetUrl = supabaseClient.storage.from("assets").getPublicUrl(
-          'characters/$characterId/sprite_sheet.png',
-        );
+    final spriteSheetUrl = "characters/$characterId/sprite_sheet.png";
 
     // Parse and create character sprites
     final characterSprites = await SpriteSheetLoader.loadFromJson(
@@ -95,7 +74,7 @@ class FamiliarsWidgetGame extends FlameGame {
     // Create component and add to game
     final spriteComponent = CharacterSpriteComponent(
       sprites: characterSprites,
-      spriteSheet: await loadSpriteSheet(spriteSheetUrl),
+      spriteSheet: await images.load(spriteSheetUrl),
     );
 
     redPanda = spriteComponent;
@@ -113,7 +92,7 @@ class FamiliarsWidgetGame extends FlameGame {
     try {
       mapComponent = SpriteComponent(
         sprite: Sprite(
-          await loadSpriteSheet(backgroundPath),
+          await images.load(backgroundPath),
         ),
         size: size,
       );

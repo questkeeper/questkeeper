@@ -28,7 +28,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   final SupabaseStorageClient storageClient = Supabase.instance.client.storage;
   ValueNotifier<int> currentPageValue = ValueNotifier(0);
   ValueNotifier<bool> showGameNotifier = ValueNotifier(true);
-  late final String? initialBackgroundUrl;
+  late final String? initialBackgroundPath;
   late final SharedPreferences prefs;
   late String backgroundColor;
 
@@ -44,24 +44,23 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
         final spaces = await ref.read(spacesManagerProvider.future);
         if (spaces.isNotEmpty) {
           final dateType = DateTime.now().getTimeOfDayType();
-          initialBackgroundUrl = storageClient
-              .from("assets")
-              .getPublicUrl("backgrounds/${spaces[0].spaceType}/$dateType.png");
+          initialBackgroundPath =
+              "backgrounds/${spaces[0].spaceType}/$dateType.png";
 
           prefs = await SharedPreferences.getInstance();
           backgroundColor =
               prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
                   "#000000";
 
-          if (initialBackgroundUrl != null) {
+          if (initialBackgroundPath != null) {
             if (mounted) {
               ref.read(gameProvider.notifier).state =
-                  FamiliarsWidgetGame(backgroundPath: initialBackgroundUrl!);
+                  FamiliarsWidgetGame(backgroundPath: initialBackgroundPath!);
             }
           }
         }
       } else {
-        initialBackgroundUrl = null;
+        initialBackgroundPath = null;
         if (mounted) {
           ref.read(gameProvider.notifier).state = null;
         }
@@ -161,11 +160,10 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                           }
 
                           currentGame.updateBackground(
-                              page,
-                              page == spaces.length
-                                  ? initialBackgroundUrl
-                                  : storageClient.from("assets").getPublicUrl(
-                                      "backgrounds/${spaces[page].spaceType}/$dateType.png"));
+                            page == spaces.length
+                                ? initialBackgroundPath ?? "placeholder"
+                                : "backgrounds/${spaces[page].spaceType}/$dateType.png",
+                          );
 
                           final isForward = page >
                               (ref.read(pageControllerProvider).page ?? 0);
