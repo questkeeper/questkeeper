@@ -152,6 +152,26 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
         ),
         const SizedBox(height: 6),
         _buildNotificationChips('prioritized'),
+        const SizedBox(height: 6),
+        Text.rich(
+          textAlign: TextAlign.center,
+          TextSpan(
+            text: 'Note: ',
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  color: Colors.redAccent,
+                ),
+            children: [
+              TextSpan(
+                text:
+                    "editing the space will not affect existing tasks' notification times",
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .copyWith(color: Colors.grey[400]),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
