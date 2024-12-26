@@ -66,39 +66,50 @@ class _CircleProgressBarState extends ConsumerState<CircleProgressBar> {
             ValueListenableBuilder<double>(
               valueListenable: _pageNotifier!,
               builder: (context, page, _) {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    for (int i = 0; i < widget.spaces.length; i++)
-                      if (i == page.round()) ...[
-                        const CircleBar(isActive: true),
-                      ] else
-                        GestureDetector(
-                          onTap: () {
-                            _pageController?.animateToPage(
-                              i,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                          },
-                          child: const CircleBar(isActive: false),
+                return GestureDetector(
+                  onHorizontalDragUpdate: (details) {
+                    // Calculate the new page based on drag distance
+                    final dragDelta = details.primaryDelta ?? 0;
+                    final dragSensitivity = 40; // Adjust sensitivity as needed
+                    final newPage = (page + dragDelta / dragSensitivity)
+                        .clamp(0, widget.spaces.length - 1);
+                    _pageNotifier?.value = newPage.toDouble();
+                    _pageController?.jumpToPage(newPage.round());
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      for (int i = 0; i < widget.spaces.length; i++)
+                        if (i == page.round()) ...[
+                          const CircleBar(isActive: true),
+                        ] else
+                          GestureDetector(
+                            onTap: () {
+                              _pageController?.animateToPage(
+                                i,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            },
+                            child: const CircleBar(isActive: false),
+                          ),
+                      IconButton(
+                        onPressed: () {
+                          _pageController?.animateToPage(
+                            widget.spaces.length,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        icon: Icon(
+                          LucideIcons.eclipse,
+                          size: 24,
+                          color: Theme.of(context).colorScheme.primaryContainer,
                         ),
-                    IconButton(
-                      onPressed: () {
-                        _pageController?.animateToPage(
-                          widget.spaces.length,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      },
-                      icon: Icon(
-                        LucideIcons.eclipse,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.primaryContainer,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               },
             ),
