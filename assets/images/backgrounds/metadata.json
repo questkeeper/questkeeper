@@ -1,0 +1,21 @@
+{
+  "title": "Backgrounds",
+  "description": "A collection of backgrounds for questkeeper.",
+  "backgroundTypes": [
+    {
+      "name": "office",
+      "friendlyName": "Office",
+      "colorCodes": ["#80bac6", "#80aba0", "#6288c6"]
+    },
+    {
+      "name": "living_room",
+      "friendlyName": "Living Room",
+      "colorCodes": ["#d0b995", "#d0a773", "#978295"]
+    },
+    {
+      "name": "school",
+      "friendlyName": "School",
+      "colorCodes": ["#95d098", "#abd186", "#79a398"]
+    }
+  ]
+}

@@ -12,9 +12,9 @@ import 'package:questkeeper/settings/views/notifications/notifications_screen.da
 import 'package:questkeeper/settings/views/privacy/privacy_screen.dart';
 import 'package:questkeeper/shared/notifications/notification_handler.dart';
 import 'package:questkeeper/shared/notifications/notification_service.dart';
-import 'package:questkeeper/shared/utils/cache_assets.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
+import 'package:questkeeper/shared/utils/set_background_metadata.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,13 +47,6 @@ Future<void> main() async {
   NotificationHandler.initialize();
 
   try {
-    CacheAssetsManager().fetchAllMetadata();
-    debugPrint("Fetched metadata");
-  } catch (e) {
-    debugPrint("Error in cache assets: $e");
-  }
-
-  try {
     if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
       homeWidget = HomeWidgetMobile();
       homeWidget.initHomeWidget('group.questkeeper');
@@ -67,6 +60,8 @@ Future<void> main() async {
           false;
 
   doNotTrack ? Posthog().disable() : Posthog().enable();
+
+  setBackgroundMetadata();
 
   if (isDebug) {
     // Run app without sentry

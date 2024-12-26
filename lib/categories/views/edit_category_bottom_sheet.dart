@@ -1,13 +1,14 @@
+import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/widgets/delete_category_dialog.dart';
 import 'package:questkeeper/shared/extensions/color_extensions.dart';
 import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
-import 'package:flex_color_picker/flex_color_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 
 void showCategoryBottomSheet({
@@ -109,18 +110,43 @@ class _CategoryBottomSheetContentState
             TextField(
               controller: widget.nameController,
               decoration: InputDecoration(
-                labelText: widget.existingCategory?.title ?? 'Category Name',
+                labelText: 'Category Name',
               ),
-              autofocus: true,
             ),
 
             const SizedBox(height: 16),
 
             // Button to show the color picker dialog
-            ColorPicker(
-              onColorChanged: _updateColor,
-              color: selectedColor ?? Colors.blue,
+            FocusScope(
+              canRequestFocus: false,
+              child: ColorPicker(
+                onColorChanged: _updateColor,
+                color: selectedColor ?? Colors.blue,
+              ),
             ),
+
+            // Explore potential alternate method eventually:
+            /*
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final keyboardVisible =
+                    MediaQuery.of(context).viewInsets.bottom > 0;
+                return AnimatedCrossFade(
+                  duration: const Duration(milliseconds: 150),
+                  crossFadeState: keyboardVisible
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  firstChild:
+                      const SizedBox(height: 16), // When keyboard is visible
+                  secondChild: ColorPicker(
+                    // When keyboard is hidden
+                    onColorChanged: _updateColor,
+                    color: selectedColor ?? Colors.blue,
+                  ),
+                );
+              },
+            ),
+            */
 
             Flex(
               direction: Axis.horizontal,
@@ -155,9 +181,7 @@ class _CategoryBottomSheetContentState
                         ),
                       )
                     : const SizedBox(),
-
                 SizedBox(width: widget.isEditing ? 16 : 0),
-
                 Expanded(
                   child: FilledLoadingButton(
                     child: Text(widget.isEditing
@@ -169,18 +193,18 @@ class _CategoryBottomSheetContentState
                           await widget.ref
                               .read(categoriesManagerProvider.notifier)
                               .updateCategory(
-                            widget.existingCategory!.copyWith(
-                                title: widget.nameController.text,
-                                spaceId: widget.existingCategory?.spaceId,
-                                color: selectedColor?.hex),
-                          );
+                                widget.existingCategory!.copyWith(
+                                    title: widget.nameController.text,
+                                    spaceId: widget.existingCategory?.spaceId,
+                                    color: selectedColor?.hex),
+                              );
                         } else {
                           await widget.ref
                               .read(categoriesManagerProvider.notifier)
                               .createCategory(Categories(
-                              title: widget.nameController.text,
-                              spaceId: widget.existingSpace?.id,
-                              color: selectedColor?.hex));
+                                  title: widget.nameController.text,
+                                  spaceId: widget.existingSpace?.id,
+                                  color: selectedColor?.hex));
                         }
                         if (context.mounted) Navigator.pop(context);
                         widget.nameController.clear();

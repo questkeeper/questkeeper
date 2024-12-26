@@ -14,13 +14,13 @@ class CircleBar extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       duration: const Duration(milliseconds: 150),
       margin: const EdgeInsets.symmetric(horizontal: 6),
-      height: isActive ? 16 : 12,
-      width: isActive ? 16 : 12,
+      height: isActive ? 20 : 16,
+      width: isActive ? 20 : 16,
       decoration: BoxDecoration(
         color: isActive
             ? Theme.of(context).colorScheme.primaryContainer
             : Colors.grey[350],
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(isActive ? 8 : 12),
       ),
     );
   }

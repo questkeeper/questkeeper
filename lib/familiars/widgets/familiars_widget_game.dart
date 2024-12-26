@@ -1,31 +1,24 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:math';
-import 'dart:ui' as ui;
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flame/game.dart';
 import 'package:flame/components.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'package:questkeeper/familiars/components/characters/character_sprite_component.dart';
 import 'package:questkeeper/familiars/components/characters/character_state.dart';
 import 'package:questkeeper/familiars/components/characters/sprite_sheet_loader.dart';
 import 'package:questkeeper/familiars/components/clock_component.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-Future<ui.Image> loadSpriteSheet(String url) async {
-  final imageProvider = CachedNetworkImageProvider(url);
-  final completer = Completer<ui.Image>();
-  imageProvider.resolve(const ImageConfiguration()).addListener(
-    ImageStreamListener((ImageInfo info, _) {
-      if (!completer.isCompleted) completer.complete(info.image);
-    }),
-  );
-  return completer.future;
-}
 
 enum Direction { left, right, none }
 
+/// Game class for the FamiliarsWidget
+/// This class is responsible for managing the game state and rendering the game
+/// It uses FlameGame as the base class
+/// The game consists of a background map and a character sprite
+/// The character sprite can be animated and moved around the map
+/// Takes in [backgroundPath] as a parameter to set the background map on first load
+/// The game is designed to be used as a widget
 class FamiliarsWidgetGame extends FlameGame {
   var _dtSum = 0.0;
   final fixedRate = 1 / 10; // 10 updates per second
@@ -39,7 +32,9 @@ class FamiliarsWidgetGame extends FlameGame {
     }
   }
 
+  /// Constructor for the FamiliarsWidgetGame
   FamiliarsWidgetGame({required this.backgroundPath});
+
   final String backgroundPath;
   late CharacterSpriteComponent redPanda;
   late SpriteComponent mapComponent;
@@ -56,35 +51,26 @@ class FamiliarsWidgetGame extends FlameGame {
   double idleTime = 0;
   final double idleDuration = 5;
 
-  Future<void> updateBackground(int page, String? updatedBackgroundPath) async {
+  Future<void> updateBackground(String backgroundPath) async {
     if (!_isMapInitialized) return;
 
-    final backgroundPath = updatedBackgroundPath;
     try {
-      if (backgroundPath == null) {
-        mapComponent.sprite = Sprite(await loadSpriteSheet(supabaseClient
-            .storage
-            .from("assets")
-            .getPublicUrl("placeholder.png")));
-      } else {
-        final newImage = await loadSpriteSheet(backgroundPath);
-        mapComponent.sprite = Sprite(newImage);
-      }
+      final imagePath = backgroundPath.split("assets/").last;
+      mapComponent.sprite = Sprite(
+        await images.load(imagePath),
+      );
     } catch (e) {
       debugPrint('Failed to update background: $e');
     }
   }
 
   Future<void> loadCharacter({String characterId = "red_panda"}) async {
-    // Load JSON from Supabase/storage
-    final spriteSheetJsonData = utf8.decode(await supabaseClient.storage
-        .from('assets')
-        .download('characters/$characterId/sprite_sheet.json'));
+    final spriteSheetJsonData = await images.bundle.loadString(
+      "assets/images/characters/$characterId/sprite_sheet.json",
+    );
 
     // Load sprite sheet image
-    final spriteSheetUrl = supabaseClient.storage.from("assets").getPublicUrl(
-          'characters/$characterId/sprite_sheet.png',
-        );
+    final spriteSheetUrl = "characters/$characterId/sprite_sheet.png";
 
     // Parse and create character sprites
     final characterSprites = await SpriteSheetLoader.loadFromJson(
@@ -95,11 +81,11 @@ class FamiliarsWidgetGame extends FlameGame {
     // Create component and add to game
     final spriteComponent = CharacterSpriteComponent(
       sprites: characterSprites,
-      spriteSheet: await loadSpriteSheet(spriteSheetUrl),
+      spriteSheet: await images.load(spriteSheetUrl),
     );
 
     redPanda = spriteComponent;
-    add(redPanda);
+    await add(redPanda);
 
     // Load animations
     redPanda.animation!;
@@ -113,22 +99,13 @@ class FamiliarsWidgetGame extends FlameGame {
     try {
       mapComponent = SpriteComponent(
         sprite: Sprite(
-          await loadSpriteSheet(backgroundPath),
+          await images.load(backgroundPath),
         ),
         size: size,
       );
 
-      add(mapComponent);
+      await add(mapComponent);
       _isMapInitialized = true;
-
-      await loadCharacter();
-      _isCharacterInitialized = true;
-      final randomYOffset = size.y / 4;
-      final randomXOffset = size.x / 4;
-      final randomXPlusOrMinus =
-          (randomXOffset * 2) * (Random().nextBool() ? 1 : -1);
-      redPanda.position =
-          Vector2(randomXPlusOrMinus, (size.y - 48 - randomYOffset));
 
       clock = ClockComponent(
         position: Vector2(
@@ -138,9 +115,36 @@ class FamiliarsWidgetGame extends FlameGame {
         size: Vector2(128, 128), // Match your sprite size
       );
 
-      add(clock);
+      await add(clock);
     } catch (e) {
       debugPrint('Failed to load background: $e');
+    }
+
+    try {
+      await loadCharacter();
+      _isCharacterInitialized = true;
+
+      // Calculate position based on the game's viewport size
+      final characterPosition = Vector2(
+        (size.x / 2) + (redPanda.width / 2), // Center horizontally
+        size.y * 0.75, // Position at 75% of screen height (adjust as needed)
+      );
+
+      // Adjust for character's size/anchor point if necessary
+      characterPosition.sub(Vector2(
+        redPanda.size.x / 2, // Center the character sprite horizontally
+        redPanda.size.y / 2, // Center the character sprite vertically
+      ));
+
+      redPanda.position = characterPosition;
+
+      // Optionally, add boundary checking
+      redPanda.position.clamp(
+        Vector2.zero() + redPanda.size / 2,
+        size - redPanda.size / 2,
+      );
+    } catch (e) {
+      debugPrint('Failed to load character: $e');
     }
   }
 
