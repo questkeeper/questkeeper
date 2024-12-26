@@ -203,7 +203,7 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: Text('Add ${type.capitalize()} Notification Time'),
+            title: Text('Add Notification Time'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -211,14 +211,25 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                   'Select Duration',
                   style: Theme.of(context).textTheme.labelLarge,
                 ),
-                NumberPicker(
-                  value: selectedValue,
-                  minValue: 1,
-                  axis: Axis.horizontal,
-                  maxValue: selectedUnit == "Hours" ? 24 : 30,
-                  onChanged: (value) => setState(() => selectedValue = value),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: NumberPicker(
+                    value: selectedValue,
+                    minValue: 1,
+                    axis: Axis.horizontal,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey[500]!),
+                    ),
+                    itemWidth: 50,
+                    textStyle: const TextStyle(fontSize: 16),
+                    selectedTextStyle: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                    haptics: true,
+                    maxValue: selectedUnit == "Hours" ? 24 : 30,
+                    onChanged: (value) => setState(() => selectedValue = value),
+                  ),
                 ),
-                SizedBox(height: 16),
                 Wrap(
                   spacing: 8,
                   children: units.map((unit) {
