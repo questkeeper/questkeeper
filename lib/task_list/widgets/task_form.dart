@@ -91,6 +91,7 @@ class _TaskFormState extends State<TaskForm> {
             controller: widget.descriptionController,
             decoration: const InputDecoration(labelText: "Description"),
             maxLines: 3,
+            onTapOutside: (event) => FocusScope.of(context).unfocus(),
           ),
           const SizedBox(height: 20),
           TextFormField(
