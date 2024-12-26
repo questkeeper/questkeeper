@@ -45,12 +45,12 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Privacy settings"),
-        ),
-        body: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Privacy settings"),
+      ),
+      body: SafeArea(
+        child: Column(
           children: [
             SwitchListTile(
               value: posthogDoNotTrack,
