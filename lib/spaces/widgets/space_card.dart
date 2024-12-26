@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class SpaceCard extends ConsumerStatefulWidget {
   const SpaceCard(
@@ -127,79 +128,101 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                 onNotification: (notification) {
                   return false;
                 },
-                child: ListView.builder(
-                  controller: _scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: currentSpaceCategories?.length != null
-                      ? currentSpaceCategories!.length + 1
-                      : 0,
-                  itemBuilder: (context, index) {
-                    final categoryTasksList = tasks?.where((task) {
-                      return task.categoryId ==
-                          (index < currentSpaceCategories!.length
-                              ? currentSpaceCategories[index].id
-                              : null);
-                    }).toList();
-                    if (index < currentSpaceCategories!.length) {
-                      final category = currentSpaceCategories[index];
-                      return SpaceCategoryTile(
-                        category: category,
-                        tasks: categoryTasksList,
-                      );
-                    } else {
-                      // Check if there are tasks without a category
-                      if (tasks?.any((task) => task.categoryId == null) ==
-                          true) {
-                        return SpaceCategoryTile(
-                          tasks: categoryTasksList,
-                          category: Categories(
-                            title: "Uncategorized",
-                            tasks: tasks,
-                          ),
-                        );
-                      }
-
-                      if (currentSpaceCategories.isEmpty == true) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 16),
-                            Center(
-                              child: FilledButton(
-                                onPressed: () => showCategoryBottomSheet(
-                                    context: context,
-                                    ref: ref,
-                                    existingSpace: space),
-                                child: Text('Create a category'),
+                child: currentSpaceCategories == null
+                    ? Skeletonizer(
+                        enabled: true,
+                        child: ListView.builder(
+                          itemCount: 5,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: SizedBox(
+                                  height: 64,
+                                  width: double.infinity,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Text(
-                                textAlign: TextAlign.center,
-                                'Or create a task and an "uncategorized" category will be created automatically',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Theme.of(context)
+                            );
+                          },
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: currentSpaceCategories.length + 1,
+                        itemBuilder: (context, index) {
+                          final categoryTasksList = tasks?.where((task) {
+                            return task.categoryId ==
+                                (index < currentSpaceCategories.length
+                                    ? currentSpaceCategories[index].id
+                                    : null);
+                          }).toList();
+                          if (index < currentSpaceCategories.length) {
+                            final category = currentSpaceCategories[index];
+                            return SpaceCategoryTile(
+                              category: category,
+                              tasks: categoryTasksList,
+                            );
+                          } else {
+                            // Check if there are tasks without a category
+                            if (tasks?.any((task) => task.categoryId == null) ==
+                                true) {
+                              return SpaceCategoryTile(
+                                tasks: categoryTasksList,
+                                category: Categories(
+                                  title: "Uncategorized",
+                                  tasks: tasks,
+                                ),
+                              );
+                            }
+
+                            if (currentSpaceCategories.isEmpty == true) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const SizedBox(height: 16),
+                                  Center(
+                                    child: FilledButton(
+                                      onPressed: () => showCategoryBottomSheet(
+                                          context: context,
+                                          ref: ref,
+                                          existingSpace: space),
+                                      child: Text('Create a category'),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: Text(
+                                      textAlign: TextAlign.center,
+                                      'Or create a task and an "uncategorized" category will be created automatically',
+                                      style: Theme.of(context)
                                           .textTheme
                                           .bodyLarge
-                                          ?.color
-                                          ?.withOpacity(0.75),
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color
+                                                ?.withOpacity(0.75),
+                                          ),
                                     ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
+                                  ),
+                                ],
+                              );
+                            }
 
-                      return Container();
-                    }
-                  },
-                ),
+                            return Container();
+                          }
+                        },
+                      ),
               ),
             ),
           ],
