@@ -18,6 +18,8 @@ import 'package:questkeeper/shared/utils/set_background_metadata.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:questkeeper/shared/widgets/connectivity_wrapper.dart';
+import 'package:questkeeper/shared/widgets/network_error_screen.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/theme_components.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -164,21 +166,26 @@ class MyApp extends ConsumerWidget {
 
             // Privacy
             '/privacy': (context) => const PrivacyScreen(),
+
+            // Network error
+            '/network-error': (context) => const NetworkErrorScreen(),
           },
           navigatorObservers: [
             PosthogObserver(),
           ],
           builder: (context, child) {
-            return StreamBuilder<String>(
-              stream: NotificationService().messageStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    SnackbarService.showSuccessSnackbar(snapshot.data!);
-                  });
-                }
-                return child ?? const SizedBox();
-              },
+            return ConnectivityWrapper(
+              child: StreamBuilder<String>(
+                stream: NotificationService().messageStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      SnackbarService.showSuccessSnackbar(snapshot.data!);
+                    });
+                  }
+                  return child ?? const SizedBox();
+                },
+              ),
             );
           },
         );

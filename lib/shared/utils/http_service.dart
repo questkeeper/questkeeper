@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:sentry_dio/sentry_dio.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// A service class for making HTTP requests using the Dio library.
@@ -74,11 +77,30 @@ class HttpService {
   }
 
   void _handleError(DioException e) {
-    debugPrint("REQUEST DATA ******");
-    debugPrint(e.requestOptions.headers.toString());
-    debugPrint(e.requestOptions.data?.toString());
-    debugPrint("RESPONSE DATA ******");
-    debugPrint(e.response?.data.toString());
+    if (isDebug) {
+      debugPrint("REQUEST DATA ******");
+      debugPrint(e.requestOptions.headers.toString());
+      debugPrint(e.requestOptions.data?.toString());
+      debugPrint("RESPONSE DATA ******");
+      debugPrint(e.response?.data.toString());
+    }
+
+    if (e.requestOptions.path == '/social/profile/me' &&
+        e.response?.statusCode == 404) {
+      return; // Ignore the profile not being found so it work with the profile provider
+    }
+
+    Sentry.captureException(
+      e,
+      stackTrace: StackTrace.current,
+      hint: Hint.withAttachment(
+        SentryAttachment.fromByteData(
+          utf8.encode(e.response?.data.toString() ?? '').buffer.asByteData(),
+          'response.json',
+        ),
+      ),
+    );
+
     SnackbarService.showErrorSnackbar(
       e.message ?? 'An error occurred',
     );
