@@ -1,8 +1,7 @@
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:questkeeper/shared/widgets/red_panda_sleep.dart';
+import 'package:questkeeper/shared/widgets/single_sprite_animation.dart';
 
 class NetworkErrorScreen extends ConsumerWidget {
   const NetworkErrorScreen({super.key});
@@ -27,17 +26,7 @@ class NetworkErrorScreen extends ConsumerWidget {
                 color: colorScheme.primary,
               ),
               const SizedBox(height: 32),
-              SizedBox(
-                height: 64,
-                child: GameWidget(
-                  game: RedPandaGame(),
-                  backgroundBuilder: (BuildContext context) {
-                    return Container(
-                      color: colorScheme.surface,
-                    );
-                  },
-                ),
-              ),
+              SingleSpriteAnimationContainer(),
               // Error Message
               Text(
                 'No Internet Connection',
