@@ -1,10 +1,8 @@
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:questkeeper/shared/utils/http_service.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileRepository {
-  final Session session = Supabase.instance.client.auth.currentSession!;
   final HttpService _httpService = HttpService();
 
   Future<ReturnModel> getMyProfile() async {
