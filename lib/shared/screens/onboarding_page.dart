@@ -34,7 +34,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
               titleWidget: _titleWidget("Gamify Your Productivity"),
               body:
                   "Earn points and badges for completing tasks, and challenge friends to beat your scores.",
-              image: buildLottieAnimation('assets/lottie/badge.lottie'),
+              image: buildLottieAnimation('assets/lottie/badge.lottie',
+                  customDelegates: LottieDelegates(
+                    values: [
+                      ValueDelegate.color(
+                        [
+                          '**',
+                        ], // Target all layers or specify a specific layer if needed
+                        value: Color(0xffE7AD3A),
+                      ),
+                    ],
+                  ),
+                  size: 175),
             ),
             PageViewModel(
               titleWidget: _titleWidget("Customize your notifications"),
@@ -69,7 +80,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
-  Widget buildLottieAnimation(String assetPath, {double size = 200}) {
+  Widget buildLottieAnimation(String assetPath,
+      {double size = 200,
+      LottieDelegates customDelegates = const LottieDelegates()}) {
     return Center(
       child: DotLottieLoader.fromAsset(
         assetPath,
@@ -79,6 +92,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 width: size,
                 height: size,
                 fit: BoxFit.fill,
+                delegates: customDelegates,
                 onLoaded: (_) {}, imageProviderFactory: (asset) {
               return MemoryImage(dotlottie.images[asset.fileName]!);
             });
