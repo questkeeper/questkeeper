@@ -1,14 +1,35 @@
 import 'package:questkeeper/auth/providers/auth_state_provider.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
+import 'package:questkeeper/shared/screens/onboarding_page.dart';
 import 'package:questkeeper/tabs/tabview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthGate extends ConsumerWidget {
+class AuthGate extends ConsumerStatefulWidget {
   const AuthGate({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends ConsumerState<AuthGate> {
+  bool isOnboarded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      final prefs = await SharedPreferences.getInstance();
+
+      setState(() {
+        isOnboarded = prefs.getBool("onboarded") ?? false;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authStateProvider);
 
     if (authState.isLoading) {
@@ -17,6 +38,8 @@ class AuthGate extends ConsumerWidget {
 
     return authState.isAuthenticated ?? false
         ? const TabView()
-        : const AuthSpaces();
+        : !isOnboarded
+            ? const OnboardingPage()
+            : const AuthSpaces();
   }
 }
