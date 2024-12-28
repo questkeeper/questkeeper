@@ -6,7 +6,7 @@ part of 'tasks_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$tasksManagerHash() => r'02bd0434f60b6349bad2ace98838ef85a4714962';
+String _$tasksManagerHash() => r'98fc4cf9d5398a2850b812966e3864deb2f1f721';
 
 /// See also [TasksManager].
 @ProviderFor(TasksManager)
@@ -22,4 +22,4 @@ final tasksManagerProvider =
 
 typedef _$TasksManager = AutoDisposeAsyncNotifier<List<Tasks>>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -6,7 +6,7 @@ part of 'spaces_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$spacesManagerHash() => r'db5203a046915107605514990c884dffe7bd1377';
+String _$spacesManagerHash() => r'87c79ed1e3513291b12a681586a9462e288a2691';
 
 /// See also [SpacesManager].
 @ProviderFor(SpacesManager)
@@ -23,4 +23,4 @@ final spacesManagerProvider =
 
 typedef _$SpacesManager = AutoDisposeAsyncNotifier<List<Spaces>>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
