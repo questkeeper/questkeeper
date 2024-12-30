@@ -46,7 +46,6 @@ Future<void> main() async {
   );
 
   HomeWidgetInterface? homeWidget;
-  NotificationHandler.initialize();
 
   try {
     if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
@@ -116,6 +115,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = createTextTheme(context, "Roboto", "Nunito");
+    NotificationHandler.initialize(ref);
 
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {

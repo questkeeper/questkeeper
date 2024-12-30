@@ -1,15 +1,40 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/shared/notifications/notification_service.dart';
 import 'package:flutter/services.dart';
+import 'package:questkeeper/shared/notifications/points_notification_provider.dart';
 
 class NotificationHandler {
   static const platform = MethodChannel('app.questkeeper/data');
 
-  static Future<void> initialize() async {
+  static Future<void> initialize(WidgetRef ref) async {
     // Handle regular foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.data.isNotEmpty) {
-        NotificationService().showMessage(message.data['message'] ?? '');
+        final data = Map<String, dynamic>.from(message.data);
+        debugPrint(data.toString());
+        if (data.containsKey('message')) {
+          if (data.containsKey("messageType")) {
+            switch (data['messageType']) {
+              case "quest":
+                NotificationService().showMessage(data['message']);
+                break;
+              case "points_rewarded":
+                debugPrint("points_rewarded");
+                ref
+                    .read(pointsNotificationManagerProvider.notifier)
+                    .showBadgeTemporarily(
+                      int.tryParse(data['pointsValue']) ?? 0,
+                    );
+                break;
+              default:
+                NotificationService().showMessage(data['message']);
+            }
+          } else {
+            NotificationService().showMessage(data['message']);
+          }
+        }
       }
     });
 
