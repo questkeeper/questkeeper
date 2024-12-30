@@ -6,7 +6,7 @@ part of 'profile_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$profileManagerHash() => r'3240c5f0d6186531bf6c15f03b403c6fba5c5189';
+String _$profileManagerHash() => r'9795a8badce38a02582464b5b9d53e9261b0c73b';
 
 /// See also [ProfileManager].
 @ProviderFor(ProfileManager)
@@ -23,4 +23,4 @@ final profileManagerProvider =
 
 typedef _$ProfileManager = AutoDisposeAsyncNotifier<Profile>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

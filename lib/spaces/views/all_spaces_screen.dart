@@ -33,18 +33,22 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late final SharedPreferences prefs;
   late String backgroundColor;
   double dragStartX = 0.0;
+  bool _isGameInitialized = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+
       ref.read(gameHeightProvider.notifier).state = 1.0;
 
       _pageController = ref.read(pageControllerProvider);
       _pageController.addListener(_updatePage);
 
       // Prevent timeout
-      if (Supabase.instance.client.auth.currentUser != null) {
+      if (!_isGameInitialized &&
+          Supabase.instance.client.auth.currentUser != null) {
         final spaces = await ref.read(spacesManagerProvider.future);
         if (spaces.isNotEmpty) {
           final dateType = DateTime.now().getTimeOfDayType();
@@ -56,18 +60,15 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
               prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
                   "#000000";
 
-          if (initialBackgroundPath != null) {
-            if (mounted) {
-              ref.read(gameProvider.notifier).state =
-                  FamiliarsWidgetGame(backgroundPath: initialBackgroundPath!);
-            }
+          if (initialBackgroundPath != null && mounted) {
+            _isGameInitialized = true;
+            ref.read(gameProvider.notifier).state =
+                FamiliarsWidgetGame(backgroundPath: initialBackgroundPath!);
           }
         }
-      } else {
-        initialBackgroundPath = null;
-        if (mounted) {
-          ref.read(gameProvider.notifier).state = null;
-        }
+      } else if (!_isGameInitialized) {
+        _isGameInitialized = true;
+        ref.read(gameProvider.notifier).state = null;
       }
     });
   }
@@ -123,7 +124,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
               children: [
                 Column(
                   children: [
-                    if (game != null) // Only show when game is ready
+                    if (game != null &&
+                        _isGameInitialized) // Only show when game is ready
                       GestureDetector(
                         onHorizontalDragEnd: (details) {
                           // If end drag position is the same as start drag position, then it's a tap

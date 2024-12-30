@@ -56,9 +56,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     debugPrint(error.toString());
 
     if (mounted) {
-      SnackbarService.showErrorSnackbar(
-        error.toString(),
-      );
+      // User friendly error message
+      SnackbarService.showErrorSnackbar("An error occurred when signing in");
     }
   }
 
