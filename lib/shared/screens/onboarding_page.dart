@@ -108,6 +108,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Text(
       title,
       style: Theme.of(context).textTheme.headlineMedium,
+      textAlign: TextAlign.center,
     );
   }
 }
