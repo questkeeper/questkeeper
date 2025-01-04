@@ -424,72 +424,91 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                 ],
               ),
               const SizedBox(height: 16),
-              FilledLoadingButton(
-                onPressed: () async {
-                  if (widget.nameController.text.isNotEmpty &&
-                      backgroundTypes != null &&
-                      (notificationTimes['standard']?.isNotEmpty ?? false) &&
-                      (notificationTimes['prioritized']?.isNotEmpty ?? false)) {
-                    if (widget.isEditing) {
-                      await widget.ref
-                          .read(spacesManagerProvider.notifier)
-                          .updateSpace(
-                            widget.existingSpace!.copyWith(
-                              title: widget.nameController.text,
-                              spaceType: backgroundTypes?[selectedIdx]["name"],
-                              notificationTimes: notificationTimes,
-                            ),
-                          );
-                    } else {
-                      await widget.ref
-                          .read(spacesManagerProvider.notifier)
-                          .createSpace(Spaces(
-                            title: widget.nameController.text,
-                            spaceType: backgroundTypes?[selectedIdx]["name"],
-                            notificationTimes: notificationTimes,
-                          ));
-                    }
-                    if (context.mounted) Navigator.pop(context);
-                    widget.nameController.clear();
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: FilledLoadingButton(
+                      onPressed: () async {
+                        if (widget.nameController.text.isNotEmpty &&
+                            backgroundTypes != null &&
+                            (notificationTimes['standard']?.isNotEmpty ??
+                                false) &&
+                            (notificationTimes['prioritized']?.isNotEmpty ??
+                                false)) {
+                          if (widget.isEditing) {
+                            await widget.ref
+                                .read(spacesManagerProvider.notifier)
+                                .updateSpace(
+                                  widget.existingSpace!.copyWith(
+                                    title: widget.nameController.text,
+                                    spaceType: backgroundTypes?[selectedIdx]
+                                        ["name"],
+                                    notificationTimes: notificationTimes,
+                                  ),
+                                );
+                          } else {
+                            await widget.ref
+                                .read(spacesManagerProvider.notifier)
+                                .createSpace(Spaces(
+                                  title: widget.nameController.text,
+                                  spaceType: backgroundTypes?[selectedIdx]
+                                      ["name"],
+                                  notificationTimes: notificationTimes,
+                                ));
+                          }
+                          if (context.mounted) Navigator.pop(context);
+                          widget.nameController.clear();
 
-                    if (!widget.isEditing) {
-                      widget.ref.read(gameHeightProvider.notifier).state = 1.0;
-                      final dateType = DateTime.now().getTimeOfDayType();
-                      final game = widget.ref.read(gameProvider);
+                          if (!widget.isEditing) {
+                            widget.ref.read(gameHeightProvider.notifier).state =
+                                1.0;
+                            final dateType = DateTime.now().getTimeOfDayType();
+                            final game = widget.ref.read(gameProvider);
 
-                      game?.animateEntry(Direction.left);
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (pageController.hasClients) {
-                          pageController.jumpToPage(0);
-                          game?.updateBackground(
-                            "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/$dateType.png",
+                            game?.animateEntry(Direction.left);
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (pageController.hasClients) {
+                                pageController.jumpToPage(0);
+                                game?.updateBackground(
+                                  "backgrounds/${backgroundTypes?[selectedIdx]["name"]}/$dateType.png",
+                                );
+                              }
+                            });
+                          } else {
+                            if (context.mounted) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (pageController.hasClients) {
+                                  pageController.jumpToPage(currentPageIndex);
+                                }
+                              });
+                            }
+                          }
+
+                          if (context.mounted) {
+                            SnackbarService.showSuccessSnackbar(
+                              widget.isEditing
+                                  ? 'Space updated successfully'
+                                  : 'Space created successfully',
+                            );
+                          }
+                        } else {
+                          SnackbarService.showErrorSnackbar(
+                            'Please fill in all required fields and add at least one standard notification time',
                           );
                         }
-                      });
-                    } else {
-                      if (context.mounted) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (pageController.hasClients) {
-                            pageController.jumpToPage(currentPageIndex);
-                          }
-                        });
-                      }
-                    }
-
-                    if (context.mounted) {
-                      SnackbarService.showSuccessSnackbar(
-                        widget.isEditing
-                            ? 'Space updated successfully'
-                            : 'Space created successfully',
-                      );
-                    }
-                  } else {
-                    SnackbarService.showErrorSnackbar(
-                      'Please fill in all required fields and add at least one standard notification time',
-                    );
-                  }
-                },
-                child: Text(widget.isEditing ? 'Update Space' : 'Create Space'),
+                      },
+                      child: Text(
+                          widget.isEditing ? 'Update Space' : 'Create Space'),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
