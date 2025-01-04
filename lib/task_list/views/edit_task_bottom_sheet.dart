@@ -306,15 +306,34 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                child: FilledLoadingButton(
-                  onPressed: () async {
-                    await _submitForm();
-                  },
-                  child: Text(widget.isEditing ? 'Update Task' : 'Create Task'),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('Cancel'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    const SizedBox(width: 8), // Gap between buttons
+                    Expanded(
+                      child: FilledLoadingButton(
+                        onPressed: () async {
+                          await _submitForm();
+                        },
+                        child: Text(
+                            widget.isEditing ? 'Update Task' : 'Create Task'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
     );
