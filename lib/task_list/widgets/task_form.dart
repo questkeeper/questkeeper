@@ -25,6 +25,7 @@ class TaskForm extends StatefulWidget {
     required this.subtasks,
     required this.subtasksControllers,
     required this.currentSpaceId,
+    required this.existingSpace,
   });
 
   final GlobalKey<FormState> formKey;
@@ -41,6 +42,7 @@ class TaskForm extends StatefulWidget {
   final Map<String, TextEditingController> subtasksControllers;
   final int? currentSpaceId;
   final void Function(String?) onSpaceChanged;
+  final Spaces? existingSpace;
 
   @override
   State<TaskForm> createState() => _TaskFormState();
@@ -125,6 +127,7 @@ class _TaskFormState extends State<TaskForm> {
                         categoriesList: snapshot.data!,
                         onCategoryChanged: widget.onCategoryChanged,
                         defaultCategoryId: widget.categoryId,
+                        existingSpace: widget.existingSpace,
                       ),
                     );
                   } else {

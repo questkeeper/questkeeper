@@ -248,6 +248,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     spacesList: widget.spacesList,
                     subtasks: widget.subtasksList,
                     currentSpaceId: widget.existingSpace?.id,
+                    existingSpace: widget.existingSpace,
                     categoryId:
                         widget.existingTask?.categoryId?.toString() ?? '',
                     onSpaceChanged: (id) {
