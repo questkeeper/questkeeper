@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:sentry_dio/sentry_dio.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// A service class for making HTTP requests using the Dio library.
@@ -30,6 +27,7 @@ class HttpService {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
             },
+            validateStatus: (status) => status! < 500,
           ),
         )..addSentry() {
     // Only use HTTP/2 in production
@@ -62,6 +60,10 @@ class HttpService {
             throw Exception("Authentication failed");
           }
 
+          // Print the path of the request
+          debugPrint("REQUEST PATH ******");
+          debugPrint(options.path);
+
           options.headers['Authorization'] = 'Bearer $token';
           return handler.next(options);
         },
@@ -89,17 +91,6 @@ class HttpService {
         e.response?.statusCode == 404) {
       return; // Ignore the profile not being found so it work with the profile provider
     }
-
-    Sentry.captureException(
-      e,
-      stackTrace: StackTrace.current,
-      hint: Hint.withAttachment(
-        SentryAttachment.fromByteData(
-          utf8.encode(e.response?.data.toString() ?? '').buffer.asByteData(),
-          'response.json',
-        ),
-      ),
-    );
 
     SnackbarService.showErrorSnackbar(
       e.message ?? 'An error occurred',
