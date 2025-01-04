@@ -149,15 +149,11 @@ class FriendRepository {
         data: {'username': username},
       );
 
-      if (response.statusCode == 200) {
-        return ReturnModel(
-          message: response.data['message'],
-          success: true,
-          data: response.data,
-        );
-      } else {
-        throw Exception('Failed to nudge friend');
-      }
+      return ReturnModel(
+        message: response.data['message'],
+        success: response.statusCode == 200,
+        data: response.data,
+      );
     } catch (error) {
       Sentry.captureException(error);
       throw Exception('Failed to nudge friend');
