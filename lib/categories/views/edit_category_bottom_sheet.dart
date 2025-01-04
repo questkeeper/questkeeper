@@ -151,76 +151,96 @@ class _CategoryBottomSheetContentState
             Flex(
               direction: Axis.horizontal,
               children: [
-                widget.isEditing
-                    ? IconButton(
-                        onPressed: () {
-                          if (widget.isEditing) {
-                            deleteCategory() {
-                              Navigator.of(context).pop();
-                              widget.ref
-                                  .read(categoriesManagerProvider.notifier)
-                                  .deleteCategory(widget.existingCategory!);
-                              SnackbarService.showSuccessSnackbar(
-                                'Category deleted successfully',
-                              );
-                            }
-
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return DeleteCategoryDialog(
-                                      category: widget.existingCategory!,
-                                      deleteCategory: deleteCategory);
-                                });
-                          }
-                        },
-                        iconSize: 24,
-                        icon: const Icon(
-                          LucideIcons.trash,
-                          color: Colors.redAccent,
-                        ),
-                      )
-                    : const SizedBox(),
-                SizedBox(width: widget.isEditing ? 16 : 0),
-                Expanded(
-                  child: FilledLoadingButton(
-                    child: Text(widget.isEditing
-                        ? 'Update Category'
-                        : 'Create Category'),
-                    onPressed: () async {
-                      if (widget.nameController.text.isNotEmpty) {
-                        if (widget.isEditing) {
-                          await widget.ref
-                              .read(categoriesManagerProvider.notifier)
-                              .updateCategory(
-                                widget.existingCategory!.copyWith(
-                                    title: widget.nameController.text,
-                                    spaceId: widget.existingCategory?.spaceId,
-                                    color: selectedColor?.hex),
-                              );
-                        } else {
-                          await widget.ref
-                              .read(categoriesManagerProvider.notifier)
-                              .createCategory(Categories(
-                                  title: widget.nameController.text,
-                                  spaceId: widget.existingSpace?.id,
-                                  color: selectedColor?.hex));
-                        }
-                        if (context.mounted) Navigator.pop(context);
-                        widget.nameController.clear();
-                        if (context.mounted) {
-                          SnackbarService.showSuccessSnackbar(
-                            widget.isEditing
-                                ? 'Category updated successfully'
-                                : 'Category created successfully',
-                          );
-                        }
+                if (widget.isEditing)
+                  IconButton(
+                    onPressed: () {
+                      void deleteCategory() {
+                        Navigator.of(context).pop();
+                        widget.ref
+                            .read(categoriesManagerProvider.notifier)
+                            .deleteCategory(widget.existingCategory!);
+                        SnackbarService.showSuccessSnackbar(
+                          'Category deleted successfully',
+                        );
                       }
+
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return DeleteCategoryDialog(
+                            category: widget.existingCategory!,
+                            deleteCategory: deleteCategory,
+                          );
+                        },
+                      );
                     },
+                    iconSize: 24,
+                    icon: const Icon(
+                      LucideIcons.trash,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                SizedBox(width: widget.isEditing ? 8 : 0),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text('Cancel'),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                      const SizedBox(width: 8), // Gap between buttons
+                      Expanded(
+                        child: FilledLoadingButton(
+                          child: Text(widget.isEditing
+                              ? 'Update Category'
+                              : 'Create Category'),
+                          onPressed: () async {
+                            if (widget.nameController.text.isNotEmpty) {
+                              if (widget.isEditing) {
+                                await widget.ref
+                                    .read(categoriesManagerProvider.notifier)
+                                    .updateCategory(
+                                      widget.existingCategory!.copyWith(
+                                        title: widget.nameController.text,
+                                        spaceId:
+                                            widget.existingCategory?.spaceId,
+                                        color: selectedColor?.hex,
+                                      ),
+                                    );
+                              } else {
+                                await widget.ref
+                                    .read(categoriesManagerProvider.notifier)
+                                    .createCategory(Categories(
+                                      title: widget.nameController.text,
+                                      spaceId: widget.existingSpace?.id,
+                                      color: selectedColor?.hex,
+                                    ));
+                              }
+                              if (context.mounted) Navigator.pop(context);
+                              widget.nameController.clear();
+                              if (context.mounted) {
+                                SnackbarService.showSuccessSnackbar(
+                                  widget.isEditing
+                                      ? 'Category updated successfully'
+                                      : 'Category created successfully',
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
-            ),
+            )
           ],
         ),
       ),

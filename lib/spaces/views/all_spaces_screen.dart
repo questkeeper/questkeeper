@@ -60,7 +60,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
               prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
                   "#000000";
 
-          if (initialBackgroundPath != null && mounted) {
+          if (initialBackgroundPath != null && mounted && !_isGameInitialized) {
             _isGameInitialized = true;
             ref.read(gameProvider.notifier).state =
                 FamiliarsWidgetGame(backgroundPath: initialBackgroundPath!);

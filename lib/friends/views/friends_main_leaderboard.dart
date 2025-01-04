@@ -179,6 +179,16 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                                               .withOpacity(0.6),
                                         ),
                                   ),
+                                  Text(
+                                    "Nudge Limit: 3",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: theme.colorScheme.onSurface
+                                              .withOpacity(0.6),
+                                        ),
+                                  )
                                 ],
                               ),
                             ],

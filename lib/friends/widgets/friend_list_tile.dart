@@ -61,6 +61,10 @@ class FriendListTile extends StatelessWidget {
                     title: Text('Nudge'),
                     onTap: () async {
                       try {
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                        }
+
                         final response = await FriendRepository()
                             .nudgeFriend(friend.username);
 

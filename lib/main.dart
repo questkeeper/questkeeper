@@ -128,6 +128,7 @@ class MyApp extends ConsumerWidget {
           elevatedButtonTheme: ComponentsTheme.elevatedButtonTheme(),
           filledButtonTheme: ComponentsTheme.filledButtonTheme(),
           inputDecorationTheme: ComponentsTheme.inputDecorationTheme(),
+          outlinedButtonTheme: ComponentsTheme.outlinedButtonTheme(),
           appBarTheme: ComponentsTheme.appBarTheme(),
         );
 
@@ -139,6 +140,7 @@ class MyApp extends ConsumerWidget {
           elevatedButtonTheme: ComponentsTheme.elevatedButtonTheme(),
           filledButtonTheme: ComponentsTheme.filledButtonTheme(),
           inputDecorationTheme: ComponentsTheme.inputDecorationTheme(),
+          outlinedButtonTheme: ComponentsTheme.outlinedButtonTheme(),
           appBarTheme: ComponentsTheme.appBarTheme(),
         );
 

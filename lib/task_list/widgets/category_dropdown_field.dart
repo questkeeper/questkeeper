@@ -1,44 +1,83 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:flutter/material.dart';
+import 'package:questkeeper/categories/providers/categories_provider.dart';
+import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
+import 'package:questkeeper/spaces/models/spaces_model.dart';
 
-class CategoryDropdownField extends StatelessWidget {
+class CategoryDropdownField extends ConsumerStatefulWidget {
   const CategoryDropdownField({
     super.key,
     required this.categoriesList,
     required this.onCategoryChanged,
+    this.existingSpace,
     this.defaultCategoryId,
   });
 
   final List<Categories> categoriesList;
   final void Function(String?) onCategoryChanged;
   final String? defaultCategoryId;
+  final Spaces? existingSpace;
 
   @override
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _CategoryDropdownFieldState();
+}
+
+class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
+  @override
   Widget build(BuildContext context) {
-    final categoriesList = [
-          const Categories(
-            id: null,
-            title: "Select a category",
+    // Watch the provider to get the latest categories
+    final categoriesAsync = ref.watch(categoriesManagerProvider);
+
+    return categoriesAsync.when(
+      data: (categories) {
+        // Combine predefined categories with the dynamic list
+        final categoriesList = [
+              const Categories(
+                id: null,
+                title: "Unselected Category",
+              ),
+            ] +
+            categories
+                .where(
+                    (category) => category.spaceId == widget.existingSpace?.id)
+                .toList() +
+            [
+              const Categories(title: "Create New Category", id: -1),
+            ];
+
+        return DropdownButtonFormField<String>(
+          value:
+              widget.defaultCategoryId == null || widget.defaultCategoryId == ""
+                  ? categoriesList.first.id.toString()
+                  : widget.defaultCategoryId,
+          onChanged: (newValue) {
+            if (newValue == "-1") {
+              showCategoryBottomSheet(
+                context: context,
+                ref: ref,
+                existingSpace: widget.existingSpace,
+              );
+            }
+            widget.onCategoryChanged(newValue);
+          },
+          isExpanded: true,
+          items: categoriesList
+              .map(
+                (category) => DropdownMenuItem<String>(
+                  value: category.id.toString(),
+                  child: Text(category.title),
+                ),
+              )
+              .toList(),
+          decoration: const InputDecoration(
+            labelText: "Category",
           ),
-        ] +
-        this.categoriesList;
-    return DropdownButtonFormField<String>(
-      value: defaultCategoryId == null || defaultCategoryId == ""
-          ? categoriesList.first.id.toString()
-          : defaultCategoryId,
-      onChanged: onCategoryChanged,
-      isExpanded: true,
-      items: categoriesList
-          .map(
-            (subject) => DropdownMenuItem<String>(
-              value: subject.id.toString(),
-              child: Text(subject.title),
-            ),
-          )
-          .toList(),
-      decoration: const InputDecoration(
-        labelText: "Category",
-      ),
+        );
+      },
+      loading: () => const LinearProgressIndicator(), // Show a loading spinner
+      error: (error, stackTrace) => Text('Error: $error'), // Handle errors
     );
   }
 }
