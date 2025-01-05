@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/tabs/new_user_onboarding/onboarding_overlay.dart';
+import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -34,28 +36,48 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late String backgroundColor;
   double dragStartX = 0.0;
   bool _isGameInitialized = false;
+  bool _isOnboardingComplete = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _setup());
+  }
 
-      ref.read(gameHeightProvider.notifier).state = 1.0;
+  Future<void> _setup() async {
+    if (!mounted) return;
 
-      _pageController = ref.read(pageControllerProvider);
-      _pageController.addListener(_updatePage);
+    // Initial setup
+    ref.read(gameHeightProvider.notifier).state = 1.0;
+    _pageController = ref.read(pageControllerProvider);
+    _pageController.addListener(_updatePage);
 
-      // Prevent timeout
-      if (!_isGameInitialized &&
-          Supabase.instance.client.auth.currentUser != null) {
+    try {
+      prefs = await ref.read(sharedPreferencesProvider.future);
+      _isOnboardingComplete = prefs.getBool('onboarding_complete') ?? false;
+      await _initializeGame();
+    } catch (e) {
+      debugPrint('Error in setup: $e');
+      _setGameStateToNull();
+    }
+  }
+
+  void _setGameStateToNull() {
+    _isGameInitialized = true;
+    ref.read(gameProvider.notifier).state = null;
+  }
+
+  Future<void> _initializeGame() async {
+    if (!_isGameInitialized &&
+        Supabase.instance.client.auth.currentUser != null) {
+      try {
         final spaces = await ref.read(spacesManagerProvider.future);
+
         if (spaces.isNotEmpty) {
           final dateType = DateTime.now().getTimeOfDayType();
           initialBackgroundPath =
               "backgrounds/${spaces[0].spaceType}/$dateType.png";
 
-          prefs = await SharedPreferences.getInstance();
           backgroundColor =
               prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
                   "#000000";
@@ -66,11 +88,17 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                 FamiliarsWidgetGame(backgroundPath: initialBackgroundPath!);
           }
         }
-      } else if (!_isGameInitialized) {
+      } catch (e) {
+        debugPrint('Error initializing game: $e'); // Will be sent to sentry
+
         _isGameInitialized = true;
         ref.read(gameProvider.notifier).state = null;
+        return;
       }
-    });
+    } else if (!_isGameInitialized) {
+      _isGameInitialized = true;
+      ref.read(gameProvider.notifier).state = null;
+    }
   }
 
   void _updatePage() {
@@ -252,6 +280,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                     ),
                   ],
                 ),
+                if (!_isOnboardingComplete) const OnboardingOverlay(),
                 CircleProgressBar(spaces: spaces)
               ],
             );
