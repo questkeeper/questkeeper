@@ -114,6 +114,14 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     _prefs.setBool('onboarding_complete', false);
     _prefs.setStringList('onboarding_completed_steps', []);
   }
+
+  void markAllTasksAsDone() {
+    state = state.copyWith(
+      isOnboardingComplete: true,
+    );
+
+    _prefs.setBool('onboarding_complete', true);
+  }
 }
 
 final onboardingProvider =
