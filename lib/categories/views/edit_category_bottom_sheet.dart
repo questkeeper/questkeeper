@@ -10,6 +10,7 @@ import 'package:questkeeper/shared/extensions/color_extensions.dart';
 import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 
 void showCategoryBottomSheet({
   required BuildContext context,
@@ -125,29 +126,6 @@ class _CategoryBottomSheetContentState
               ),
             ),
 
-            // Explore potential alternate method eventually:
-            /*
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final keyboardVisible =
-                    MediaQuery.of(context).viewInsets.bottom > 0;
-                return AnimatedCrossFade(
-                  duration: const Duration(milliseconds: 150),
-                  crossFadeState: keyboardVisible
-                      ? CrossFadeState.showFirst
-                      : CrossFadeState.showSecond,
-                  firstChild:
-                      const SizedBox(height: 16), // When keyboard is visible
-                  secondChild: ColorPicker(
-                    // When keyboard is hidden
-                    onColorChanged: _updateColor,
-                    color: selectedColor ?? Colors.blue,
-                  ),
-                );
-              },
-            ),
-            */
-
             Flex(
               direction: Axis.horizontal,
               children: [
@@ -231,6 +209,19 @@ class _CategoryBottomSheetContentState
                                       ? 'Category updated successfully'
                                       : 'Category created successfully',
                                 );
+                              }
+
+                              // Pops the additional overlay for onboarding provider
+                              if (!widget.isEditing &&
+                                  widget.ref
+                                          .read(onboardingProvider)
+                                          .hasCreatedCategory ==
+                                      false) {
+                                widget.ref
+                                    .read(onboardingProvider.notifier)
+                                    .markCategoryCreated();
+
+                                if (context.mounted) Navigator.pop(context);
                               }
                             }
                           },
