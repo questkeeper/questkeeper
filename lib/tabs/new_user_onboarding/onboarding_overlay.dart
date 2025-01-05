@@ -63,106 +63,108 @@ class _OnboardingModal extends ConsumerWidget {
     return ref.watch(spacesManagerProvider).when(
           error: (error, stack) => Text('Error: $error'),
           loading: () => const Center(child: CircularProgressIndicator()),
-          data: (spaces) => Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Getting Started with QuestKeeper',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 16),
-                // Reuse your existing _OnboardingStep widgets here
-                _OnboardingStep(
-                  isCompleted: onboardingState.hasCreatedSpace,
-                  title: 'Create your first space',
-                  description:
-                      'A space is an area where you can organize your tasks',
-                  onTap: () async {
-                    Navigator.pop(context);
-                    ref.watch(spacesManagerProvider).whenData(
-                          (spaces) => {
-                            if (spaces.isNotEmpty)
-                              {
-                                ref.read(pageControllerProvider).jumpToPage(
-                                      spaces
-                                          .length, // Accounts for the "creation" page
-                                    ),
-                              }
-                          },
-                        );
-                  },
-                ),
-
-                _OnboardingStep(
-                  isCompleted: onboardingState.hasCreatedCategory,
-                  title: 'Create your first category',
-                  description: 'A category helps you group related tasks',
-                  onTap: () async {
-                    // Navigator.pop(context);
-                    // Get current space
-                    final currentSpace = getCurrentSpace(
-                        ref,
-                        ref.read(pageControllerProvider),
-                        AsyncValue.data(spaces));
-
-                    if (currentSpace == null) return;
-                    showCategoryBottomSheet(
-                        context: context,
-                        ref: ref,
-                        existingSpace: currentSpace);
-                  },
-                ),
-
-                _OnboardingStep(
-                  isCompleted: onboardingState.hasCreatedTask,
-                  title: 'Create your first task',
-                  description: 'A task is an action you need to complete',
-                  onTap: () async {
-                    Navigator.pop(context);
-                    ref.watch(spacesManagerProvider).whenData(
-                          (spaces) => {
-                            if (spaces.isNotEmpty)
-                              {
-                                ref.read(pageControllerProvider).jumpToPage(
-                                      spaces
-                                          .length, // Accounts for the "creation" page
-                                    ),
-                              }
-                          },
-                        );
-                  },
-                ),
-
-                _OnboardingStep(
-                  isCompleted: onboardingState.hasCompletedTask,
-                  title: 'Complete your first task',
-                  description: 'Complete your first task to get some points',
-                  onTap: () async {
-                    Navigator.pop(context);
-
-                    if (spaces.isNotEmpty) {
-                      ref.read(pageControllerProvider).jumpToPage(
-                            spaces.length, // Accounts for the "creation" page
+          data: (spaces) => SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Getting Started with QuestKeeper',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 16),
+                  // Reuse your existing _OnboardingStep widgets here
+                  _OnboardingStep(
+                    isCompleted: onboardingState.hasCreatedSpace,
+                    title: 'Create your first space',
+                    description:
+                        'A space is an area where you can organize your tasks',
+                    onTap: () async {
+                      Navigator.pop(context);
+                      ref.watch(spacesManagerProvider).whenData(
+                            (spaces) => {
+                              if (spaces.isNotEmpty)
+                                {
+                                  ref.read(pageControllerProvider).jumpToPage(
+                                        spaces
+                                            .length, // Accounts for the "creation" page
+                                      ),
+                                }
+                            },
                           );
-                    }
-                  },
-                ),
+                    },
+                  ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton.icon(
-                      icon: Icon(LucideIcons.arrow_right),
-                      onPressed: () {},
-                      label: const Text('Mark all as done'),
-                      iconAlignment: IconAlignment.end,
-                    ),
-                  ],
-                ),
-              ],
+                  _OnboardingStep(
+                    isCompleted: onboardingState.hasCreatedCategory,
+                    title: 'Create your first category',
+                    description: 'A category helps you group related tasks',
+                    onTap: () async {
+                      // Navigator.pop(context);
+                      // Get current space
+                      final currentSpace = getCurrentSpace(
+                          ref,
+                          ref.read(pageControllerProvider),
+                          AsyncValue.data(spaces));
+
+                      if (currentSpace == null) return;
+                      showCategoryBottomSheet(
+                          context: context,
+                          ref: ref,
+                          existingSpace: currentSpace);
+                    },
+                  ),
+
+                  _OnboardingStep(
+                    isCompleted: onboardingState.hasCreatedTask,
+                    title: 'Create your first task',
+                    description: 'A task is an action you need to complete',
+                    onTap: () async {
+                      Navigator.pop(context);
+                      ref.watch(spacesManagerProvider).whenData(
+                            (spaces) => {
+                              if (spaces.isNotEmpty)
+                                {
+                                  ref.read(pageControllerProvider).jumpToPage(
+                                        spaces
+                                            .length, // Accounts for the "creation" page
+                                      ),
+                                }
+                            },
+                          );
+                    },
+                  ),
+
+                  _OnboardingStep(
+                    isCompleted: onboardingState.hasCompletedTask,
+                    title: 'Complete your first task',
+                    description: 'Complete your first task to get some points',
+                    onTap: () async {
+                      Navigator.pop(context);
+
+                      if (spaces.isNotEmpty) {
+                        ref.read(pageControllerProvider).jumpToPage(
+                              spaces.length, // Accounts for the "creation" page
+                            );
+                      }
+                    },
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton.icon(
+                        icon: Icon(LucideIcons.arrow_right),
+                        onPressed: () {},
+                        label: const Text('Mark all as done'),
+                        iconAlignment: IconAlignment.end,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
