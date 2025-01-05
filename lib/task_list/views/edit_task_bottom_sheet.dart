@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
+import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/task_list/providers/tasks_provider.dart';
 import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
@@ -199,6 +200,13 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
       SnackbarService.showSuccessSnackbar("Task created successfully");
 
       Navigator.of(context).pop();
+
+      if (!widget.isEditing &&
+          widget.ref.read(onboardingProvider).hasCreatedTask == false) {
+        widget.ref.read(onboardingProvider.notifier).markTaskCreated();
+
+        if (context.mounted) Navigator.pop(context);
+      }
     } else {
       if (!mounted) return;
       SnackbarService.showErrorSnackbar(

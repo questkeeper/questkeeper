@@ -83,17 +83,11 @@ class _OnboardingModal extends ConsumerWidget {
                         'A space is an area where you can organize your tasks',
                     onTap: () async {
                       Navigator.pop(context);
-                      ref.watch(spacesManagerProvider).whenData(
-                            (spaces) => {
-                              if (spaces.isNotEmpty)
-                                {
-                                  ref.read(pageControllerProvider).jumpToPage(
-                                        spaces
-                                            .length, // Accounts for the "creation" page
-                                      ),
-                                }
-                            },
-                          );
+                      if (spaces.isNotEmpty) {
+                        ref.read(pageControllerProvider).jumpToPage(
+                              spaces.length, // Accounts for the "creation" page
+                            );
+                      }
                     },
                   ),
 
@@ -122,33 +116,17 @@ class _OnboardingModal extends ConsumerWidget {
                     title: 'Create your first task',
                     description: 'A task is an action you need to complete',
                     onTap: () async {
-                      Navigator.pop(context);
-                      ref.watch(spacesManagerProvider).whenData(
-                            (spaces) => {
-                              if (spaces.isNotEmpty)
-                                {
-                                  ref.read(pageControllerProvider).jumpToPage(
-                                        spaces
-                                            .length, // Accounts for the "creation" page
-                                      ),
-                                }
-                            },
-                          );
+                      showTaskBottomSheet(context: context, ref: ref);
                     },
                   ),
 
                   _OnboardingStep(
                     isCompleted: onboardingState.hasCompletedTask,
                     title: 'Complete your first task',
-                    description: 'Complete your first task to get some points',
+                    description:
+                        'Complete your first task by swiping left on a task',
                     onTap: () async {
                       Navigator.pop(context);
-
-                      if (spaces.isNotEmpty) {
-                        ref.read(pageControllerProvider).jumpToPage(
-                              spaces.length, // Accounts for the "creation" page
-                            );
-                      }
                     },
                   ),
 
@@ -157,7 +135,12 @@ class _OnboardingModal extends ConsumerWidget {
                     children: [
                       TextButton.icon(
                         icon: Icon(LucideIcons.arrow_right),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                          ref
+                              .read(onboardingProvider.notifier)
+                              .markAllTasksAsDone();
+                        },
                         label: const Text('Mark all as done'),
                         iconAlignment: IconAlignment.end,
                       ),
