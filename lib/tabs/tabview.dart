@@ -1,4 +1,3 @@
-import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
@@ -10,7 +9,6 @@ import 'package:questkeeper/settings/views/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TabView extends ConsumerStatefulWidget {
   const TabView({super.key});
@@ -106,28 +104,6 @@ class _TabViewState extends ConsumerState<TabView> {
                     Theme.of(context).colorScheme.surfaceContainerLow,
                 currentIndex: _selectedIndex,
                 onTap: _onItemTapped,
-              ),
-            ),
-            Positioned(
-              top: 60, // Adjust this value to position the button vertically
-              right:
-                  16, // Adjust this value to position the button horizontally
-              child: FloatingActionButton(
-                key: const Key('feedback_button'),
-                heroTag: 'feedback_button',
-                onPressed: () async {
-                  var user = Supabase.instance.client.auth.currentUser;
-                  if (!context.mounted) {
-                    return;
-                  }
-                  BetterFeedback.of(context).showAndUploadToSentry(
-                    name: user?.id,
-                    email: user?.email,
-                  );
-                },
-                enableFeedback: true,
-                mini: true,
-                child: const Icon(LucideIcons.bug),
               ),
             ),
             if (pointsBadge["showBadge"] == true && pointsBadge["points"] > 0)
