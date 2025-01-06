@@ -7,6 +7,7 @@ class OnboardingState {
   final bool hasCreatedTask;
   final bool hasCompletedTask;
   final bool isOnboardingComplete;
+  final bool playIsCompletingAnimation;
   int completedSteps = 0;
 
   OnboardingState({
@@ -15,6 +16,7 @@ class OnboardingState {
     this.hasCreatedTask = false,
     this.hasCompletedTask = false,
     this.isOnboardingComplete = false,
+    this.playIsCompletingAnimation = false,
     this.completedSteps = 0,
   });
 
@@ -24,6 +26,7 @@ class OnboardingState {
     bool? hasCreatedTask,
     bool? hasCompletedTask,
     bool? isOnboardingComplete,
+    bool? playIsCompletingAnimation,
     int? completedSteps,
   }) {
     return OnboardingState(
@@ -32,6 +35,8 @@ class OnboardingState {
       hasCreatedTask: hasCreatedTask ?? this.hasCreatedTask,
       hasCompletedTask: hasCompletedTask ?? this.hasCompletedTask,
       isOnboardingComplete: isOnboardingComplete ?? this.isOnboardingComplete,
+      playIsCompletingAnimation:
+          playIsCompletingAnimation ?? this.playIsCompletingAnimation,
       completedSteps: completedSteps ?? this.completedSteps,
     );
   }
@@ -54,6 +59,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
           completedSteps?.contains('hasCreatedCategory') ?? false,
       hasCreatedTask: completedSteps?.contains('hasCreatedTask') ?? false,
       hasCompletedTask: completedSteps?.contains('hasCompletedTask') ?? false,
+      playIsCompletingAnimation: false,
     );
   }
 
@@ -97,15 +103,24 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     state = state.copyWith(completedSteps: steps.length + 1);
 
     if (state.completedSteps == 4) {
-      state = state.copyWith(isOnboardingComplete: true);
+      state = state.copyWith(playIsCompletingAnimation: true);
 
-      if (state.hasCreatedSpace &&
-          state.hasCreatedCategory &&
-          state.hasCreatedTask &&
-          state.hasCompletedTask) {
-        state = state.copyWith(isOnboardingComplete: true);
-        _prefs.setBool('onboarding_complete', true);
-      }
+      // Set a timer to play the animation
+      Future.delayed(const Duration(seconds: 5), () {
+        state = state.copyWith(
+          isOnboardingComplete: true,
+          playIsCompletingAnimation: false,
+        );
+      });
+      return;
+    }
+
+    if (state.hasCreatedSpace &&
+        state.hasCreatedCategory &&
+        state.hasCreatedTask &&
+        state.hasCompletedTask) {
+      state = state.copyWith(isOnboardingComplete: true);
+      _prefs.setBool('onboarding_complete', true);
     }
   }
 

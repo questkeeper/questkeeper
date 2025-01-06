@@ -36,7 +36,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late String backgroundColor;
   double dragStartX = 0.0;
   bool _isGameInitialized = false;
-  bool _isOnboardingComplete = false;
 
   @override
   void initState() {
@@ -54,7 +53,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
 
     try {
       prefs = await ref.read(sharedPreferencesProvider.future);
-      _isOnboardingComplete = prefs.getBool('onboarding_complete') ?? false;
       await _initializeGame();
     } catch (e) {
       debugPrint('Error in setup: $e');
@@ -280,7 +278,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                     ),
                   ],
                 ),
-                if (!_isOnboardingComplete) const OnboardingOverlay(),
+                const OnboardingOverlay(),
                 CircleProgressBar(spaces: spaces)
               ],
             );

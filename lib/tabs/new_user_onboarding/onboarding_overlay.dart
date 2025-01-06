@@ -6,6 +6,7 @@ import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
+import 'package:rive/rive.dart';
 
 class OnboardingOverlay extends ConsumerWidget {
   const OnboardingOverlay({super.key});
@@ -29,14 +30,29 @@ class OnboardingOverlay extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(LucideIcons.circle_help),
+                onboardingState.playIsCompletingAnimation
+                    ? SizedBox.shrink()
+                    : const Icon(LucideIcons.circle_help),
                 const SizedBox(width: 8),
-                const Text('Getting Started'),
-                const SizedBox(width: 8),
-                CircularProgressIndicator(
-                  value: onboardingState.completedSteps / 4,
-                  strokeWidth: 2,
+                Text(
+                  onboardingState.playIsCompletingAnimation
+                      ? 'Nice job!'
+                      : 'Getting Started',
                 ),
+                const SizedBox(width: 8),
+                onboardingState.playIsCompletingAnimation
+                    ? SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: RiveAnimation.asset(
+                          'assets/rive/check.riv',
+                          fit: BoxFit.fill,
+                        ),
+                      )
+                    : CircularProgressIndicator(
+                        value: onboardingState.completedSteps / 4,
+                        strokeWidth: 2,
+                      ),
               ],
             ),
           ),
@@ -70,6 +86,11 @@ class _OnboardingModal extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  FilledButton(
+                      onPressed: () {
+                        ref.read(onboardingProvider.notifier).resetOnboarding();
+                      },
+                      child: const Text('Reset onboarding')),
                   Text(
                     'Getting Started with QuestKeeper',
                     style: Theme.of(context).textTheme.headlineSmall,
@@ -96,7 +117,6 @@ class _OnboardingModal extends ConsumerWidget {
                     title: 'Create your first category',
                     description: 'A category helps you group related tasks',
                     onTap: () async {
-                      // Navigator.pop(context);
                       // Get current space
                       final currentSpace = getCurrentSpace(
                           ref,
