@@ -111,16 +111,15 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
           isOnboardingComplete: true,
           playIsCompletingAnimation: false,
         );
+
+        if (state.hasCreatedSpace &&
+            state.hasCreatedCategory &&
+            state.hasCreatedTask &&
+            state.hasCompletedTask) {
+          _prefs.setBool('onboarding_complete', true);
+        }
       });
       return;
-    }
-
-    if (state.hasCreatedSpace &&
-        state.hasCreatedCategory &&
-        state.hasCreatedTask &&
-        state.hasCompletedTask) {
-      state = state.copyWith(isOnboardingComplete: true);
-      _prefs.setBool('onboarding_complete', true);
     }
   }
 
