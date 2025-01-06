@@ -14,6 +14,7 @@ import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 void showSpaceBottomSheet({
@@ -489,6 +490,13 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                                 }
                               });
                             }
+                          }
+
+                          if (!widget.isEditing) {
+                            debugPrint("Marking space created");
+                            widget.ref
+                                .read(onboardingProvider.notifier)
+                                .markSpaceCreated();
                           }
 
                           if (context.mounted) {

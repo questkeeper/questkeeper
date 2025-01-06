@@ -8,13 +8,11 @@ import 'package:questkeeper/spaces/models/spaces_model.dart';
 class CategoryDropdownField extends ConsumerStatefulWidget {
   const CategoryDropdownField({
     super.key,
-    required this.categoriesList,
     required this.onCategoryChanged,
     this.existingSpace,
     this.defaultCategoryId,
   });
 
-  final List<Categories> categoriesList;
   final void Function(String?) onCategoryChanged;
   final String? defaultCategoryId;
   final Spaces? existingSpace;

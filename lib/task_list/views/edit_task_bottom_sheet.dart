@@ -1,5 +1,3 @@
-import 'package:questkeeper/categories/models/categories_model.dart';
-import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
+import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/task_list/providers/tasks_provider.dart';
 import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
@@ -22,13 +21,6 @@ void showTaskBottomSheet({
   final PageController pageController = ref.read(pageControllerProvider);
   final spacesList = ref.read(spacesManagerProvider).asData;
   final existingSpace = getCurrentSpace(ref, pageController, spacesList);
-
-  final categoriesList =
-      ref.read(categoriesManagerProvider.notifier).fetchCategories().then(
-            (value) => value
-                .where((element) => element.spaceId == existingSpace?.id)
-                .toList(),
-          );
 
   final subtasksList = existingTask != null
       ? ref
@@ -84,7 +76,6 @@ void showTaskBottomSheet({
           ref: ref,
           existingTask: existingTask,
           existingSpace: existingSpace,
-          categoriesList: categoriesList,
           spacesList: spacesList,
           subtasksList: subtasksList,
           createTask: createTask,
@@ -102,7 +93,6 @@ class _TaskBottomSheetContent extends StatefulWidget {
   final WidgetRef ref;
   final Tasks? existingTask;
   final Spaces? existingSpace;
-  final Future<List<Categories>> categoriesList;
   final AsyncValue<List<Spaces>>? spacesList;
   final Future<List<Subtask>> subtasksList;
   final Future<int?> Function(Tasks task) createTask;
@@ -115,7 +105,6 @@ class _TaskBottomSheetContent extends StatefulWidget {
     required this.ref,
     this.existingTask,
     this.existingSpace,
-    required this.categoriesList,
     required this.spacesList,
     required this.subtasksList,
     required this.createTask,
@@ -211,6 +200,13 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
       SnackbarService.showSuccessSnackbar("Task created successfully");
 
       Navigator.of(context).pop();
+
+      if (!widget.isEditing &&
+          widget.ref.read(onboardingProvider).hasCreatedTask == false) {
+        widget.ref.read(onboardingProvider.notifier).markTaskCreated();
+
+        if (context.mounted) Navigator.pop(context);
+      }
     } else {
       if (!mounted) return;
       SnackbarService.showErrorSnackbar(
@@ -244,7 +240,6 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     titleController: widget.nameController,
                     descriptionController: widget.descriptionController,
                     dueDate: dueDate,
-                    categoriesList: widget.categoriesList,
                     spacesList: widget.spacesList,
                     subtasks: widget.subtasksList,
                     currentSpaceId: widget.existingSpace?.id,

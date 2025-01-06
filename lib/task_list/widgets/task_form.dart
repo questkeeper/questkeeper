@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/shared/utils/format_date.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/task_list/subtasks/models/subtasks_model/subtasks_model.dart';
@@ -19,7 +18,6 @@ class TaskForm extends StatefulWidget {
     required this.categoryId,
     required this.onCategoryChanged,
     required this.onFormSubmitted,
-    required this.categoriesList,
     required this.onSpaceChanged,
     required this.spacesList,
     required this.subtasks,
@@ -36,7 +34,6 @@ class TaskForm extends StatefulWidget {
   final String categoryId;
   final void Function(String?) onCategoryChanged;
   final Future<void> Function() onFormSubmitted;
-  final Future<List<Categories>> categoriesList;
   final AsyncValue<List<Spaces>>? spacesList;
   final Future<List<Subtask>> subtasks;
   final Map<String, TextEditingController> subtasksControllers;
@@ -113,28 +110,14 @@ class _TaskFormState extends State<TaskForm> {
           const SizedBox(height: 20),
           Row(
             children: [
-              FutureBuilder<List<Categories>>(
-                future: widget.categoriesList,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Expanded(child: LinearProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return const Expanded(
-                        child: Text('Error loading categories'));
-                  } else if (snapshot.hasData) {
-                    return Expanded(
-                      child: CategoryDropdownField(
-                        categoriesList: snapshot.data!,
-                        onCategoryChanged: widget.onCategoryChanged,
-                        defaultCategoryId: widget.categoryId,
-                        existingSpace: widget.existingSpace,
-                      ),
-                    );
-                  } else {
-                    return const Expanded(child: Text('No categories found'));
-                  }
-                },
+              Expanded(
+                child: CategoryDropdownField(
+                  onCategoryChanged: widget.onCategoryChanged,
+                  defaultCategoryId: widget.categoryId,
+                  existingSpace: widget.existingSpace,
+                ),
               ),
+
               // TODO: Eventually switch to using spaces list
               // const SizedBox(width: 20),
               // widget.spacesList!.asData == null

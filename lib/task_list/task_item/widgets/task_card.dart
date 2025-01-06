@@ -1,6 +1,7 @@
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/shared/utils/hex_color.dart';
+import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/task_list/providers/tasks_provider.dart';
 import 'package:questkeeper/shared/utils/format_date.dart';
@@ -29,6 +30,11 @@ class TaskCard extends ConsumerWidget {
           return false;
         } else {
           await ref.read(tasksManagerProvider.notifier).toggleComplete(task);
+
+          if (ref.read(onboardingProvider).hasCompletedTask == false) {
+            ref.read(onboardingProvider.notifier).markTaskCompleted();
+          }
+
           return true;
         }
       },
@@ -39,8 +45,8 @@ class TaskCard extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(task.starred ? Icons.star : Icons.star_outline,
-                color: Colors.black, size: 32.0),
+            Icon(task.starred ? LucideIcons.star : LucideIcons.star_off,
+                color: Colors.black),
             const Text(
               "Star",
               style: TextStyle(color: Colors.black, fontSize: 16.0),
@@ -55,8 +61,10 @@ class TaskCard extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(task.completed ? Icons.cancel_presentation : Icons.check,
-                color: Colors.black, size: 32.0),
+            Icon(
+              task.completed ? LucideIcons.circle_x : LucideIcons.check,
+              color: Colors.black,
+            ),
             Text(
               task.completed ? "Incomplete" : "Complete",
               style: const TextStyle(color: Colors.black, fontSize: 16.0),

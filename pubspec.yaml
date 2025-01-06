@@ -4,7 +4,7 @@ description: "The gamified task tracker"
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 0.8.1+1
+version: 0.8.2+1
 
 environment:
   sdk: ">=3.3.3 <4.0.0"
@@ -26,11 +26,11 @@ dependencies:
   firebase_messaging: ^15.1.6
   flex_color_picker: ^3.6.0
   url_launcher: ^6.3.1
-  supabase: ^2.6.1
-  supabase_flutter: ^2.8.2
+  supabase: ^2.6.2
+  supabase_flutter: ^2.8.3
   supabase_auth_ui: ^0.5.4
   home_widget: ^0.7.0
-  shared_preferences: ^2.3.4
+  shared_preferences: ^2.3.5
   flutter_lucide: ^1.6.1
   riverpod_generator: ^2.6.3
   rename_app: ^1.6.1
@@ -40,9 +40,9 @@ dependencies:
   package_info_plus: ^8.1.2
   device_info_plus: ^11.2.0
   http: ^1.2.2
-  flame: ^1.22.0
-  flame_tiled: ^1.21.1
-  flame_riverpod: ^5.4.6
+  flame: ^1.23.0
+  flame_tiled: ^1.21.2
+  flame_riverpod: ^5.4.7
   flutter_cache_manager: ^3.4.1
   faker: ^2.2.0
   uuid: ^4.5.1
@@ -52,7 +52,7 @@ dependencies:
   flutter_svg: ^2.0.16
   toastification: ^2.3.0
   flutter_launcher_icons: ^0.14.2
-  flutter_native_splash: ^2.4.3
+  flutter_native_splash: ^2.4.4
   showcaseview: ^3.0.0
   dio: ^5.7.0
   dio_http2_adapter: ^2.5.3
@@ -63,6 +63,7 @@ dependencies:
   introduction_screen: ^3.1.14
   lottie: ^3.2.0
   dotlottie_loader: ^0.0.4
+  rive: ^0.13.20
 
 dev_dependencies:
   flutter_test:
@@ -93,3 +94,4 @@ flutter:
     - assets/tiles/
     - assets/trophy/
     - assets/lottie/
+    - assets/rive/
