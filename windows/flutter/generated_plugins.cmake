@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   dynamic_color
   firebase_core
+  rive_common
   sentry_flutter
   url_launcher_windows
 )
