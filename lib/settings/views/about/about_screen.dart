@@ -83,11 +83,22 @@ class AboutScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              title: const Text("View privacy policy"),
+              title: const Text("View Privacy Policy"),
               textColor: primaryColor,
-              leading: const Icon(LucideIcons.shield_alert),
+              leading: const Icon(LucideIcons.badge_help),
               onTap: () {
                 final uri = Uri.parse("https://questkeeper.app/privacy-policy");
+
+                launchUrl(uri);
+              },
+            ),
+            ListTile(
+              title: const Text("View Terms of Service"),
+              textColor: primaryColor,
+              leading: const Icon(LucideIcons.file_check),
+              onTap: () {
+                final uri =
+                    Uri.parse("https://questkeeper.app/terms-of-service");
 
                 launchUrl(uri);
               },
