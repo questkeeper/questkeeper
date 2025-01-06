@@ -86,17 +86,11 @@ class _OnboardingModal extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  FilledButton(
-                      onPressed: () {
-                        ref.read(onboardingProvider.notifier).resetOnboarding();
-                      },
-                      child: const Text('Reset onboarding')),
                   Text(
                     'Getting Started with QuestKeeper',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 16),
-                  // Reuse your existing _OnboardingStep widgets here
                   _OnboardingStep(
                     isCompleted: onboardingState.hasCreatedSpace,
                     title: 'Create your first space',
@@ -111,7 +105,6 @@ class _OnboardingModal extends ConsumerWidget {
                       }
                     },
                   ),
-
                   _OnboardingStep(
                     isCompleted: onboardingState.hasCreatedCategory,
                     title: 'Create your first category',
@@ -130,7 +123,6 @@ class _OnboardingModal extends ConsumerWidget {
                           existingSpace: currentSpace);
                     },
                   ),
-
                   _OnboardingStep(
                     isCompleted: onboardingState.hasCreatedTask,
                     title: 'Create your first task',
@@ -139,7 +131,6 @@ class _OnboardingModal extends ConsumerWidget {
                       showTaskBottomSheet(context: context, ref: ref);
                     },
                   ),
-
                   _OnboardingStep(
                     isCompleted: onboardingState.hasCompletedTask,
                     title: 'Complete your first task',
@@ -149,7 +140,6 @@ class _OnboardingModal extends ConsumerWidget {
                       Navigator.pop(context);
                     },
                   ),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
