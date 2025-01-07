@@ -139,8 +139,7 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                               child: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
+                                  color: Colors.transparent.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: SizedBox(
