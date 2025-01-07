@@ -63,4 +63,7 @@ class SharedPreferencesManager {
 
   /// Removes the key from SharedPreferences
   Future<bool?> remove(String key) async => await _prefs?.remove(key);
+
+  /// Check if the key exists in SharedPreferences
+  bool containsKey(String key) => _prefs?.containsKey(key) ?? false;
 }
