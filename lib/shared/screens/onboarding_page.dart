@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -13,6 +13,9 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
+  static final SharedPreferencesManager prefs =
+      SharedPreferencesManager.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +59,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ],
           onDone: () async {
             // Navigate to the main app
-            final prefs = await SharedPreferences.getInstance();
             await prefs.setBool("onboarded", true);
 
             if (!context.mounted) return;

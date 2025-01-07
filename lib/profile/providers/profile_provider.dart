@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/repositories/profile_repository.dart';
@@ -12,13 +12,14 @@ part 'profile_provider.g.dart';
 @riverpod
 class ProfileManager extends _$ProfileManager {
   final ProfileRepository _repository;
+  static final SharedPreferencesManager prefs =
+      SharedPreferencesManager.instance;
 
   ProfileManager() : _repository = ProfileRepository();
 
   @override
   FutureOr<Profile> build() async {
     // Try to get cached profile first
-    final prefs = await SharedPreferences.getInstance();
     final cachedProfileJson = prefs.getString("user_profile");
 
     if (cachedProfileJson != null) {
@@ -47,7 +48,6 @@ class ProfileManager extends _$ProfileManager {
 
       // Cache my profile
       if (username == "me") {
-        final prefs = await SharedPreferences.getInstance();
         await prefs.setString("user_profile", response.data.toString());
       }
 

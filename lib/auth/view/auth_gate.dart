@@ -1,10 +1,10 @@
 import 'package:questkeeper/auth/providers/auth_state_provider.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/shared/screens/onboarding_page.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:questkeeper/tabs/tabview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthGate extends ConsumerStatefulWidget {
   const AuthGate({super.key});
@@ -20,7 +20,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      final prefs = await SharedPreferences.getInstance();
+      SharedPreferencesManager prefs = SharedPreferencesManager.instance;
 
       setState(() {
         isOnboarded = prefs.getBool("onboarded") ?? false;

@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 
 class OnboardingState {
   final bool hasCreatedSpace;
@@ -43,9 +43,10 @@ class OnboardingState {
 }
 
 class OnboardingNotifier extends StateNotifier<OnboardingState> {
-  final SharedPreferences _prefs;
+  static final SharedPreferencesManager _prefs =
+      SharedPreferencesManager.instance;
 
-  OnboardingNotifier(this._prefs) : super(OnboardingState()) {
+  OnboardingNotifier() : super(OnboardingState()) {
     refresh();
   }
 
@@ -140,16 +141,5 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
 final onboardingProvider =
     StateNotifierProvider<OnboardingNotifier, OnboardingState>((ref) {
-  final prefsAsync = ref.watch(sharedPreferencesProvider);
-
-  return prefsAsync.when(
-    data: (prefs) => OnboardingNotifier(prefs),
-    loading: () => throw UnimplementedError(), // Or handle loading state
-    error: (error, stack) => throw error, // Or handle error state
-  );
-});
-
-final sharedPreferencesProvider =
-    FutureProvider<SharedPreferences>((ref) async {
-  return await SharedPreferences.getInstance();
+  return OnboardingNotifier();
 });

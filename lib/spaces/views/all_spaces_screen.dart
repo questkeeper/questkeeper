@@ -3,10 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/onboarding_overlay.dart';
-import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
@@ -32,7 +31,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late PageController _pageController;
   ValueNotifier<int> currentPageValue = ValueNotifier(0);
   late final String? initialBackgroundPath;
-  late final SharedPreferences prefs;
+  static final SharedPreferencesManager prefs =
+      SharedPreferencesManager.instance;
   late String backgroundColor;
   double dragStartX = 0.0;
   bool _isGameInitialized = false;
@@ -52,7 +52,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
     _pageController.addListener(_updatePage);
 
     try {
-      prefs = await ref.read(sharedPreferencesProvider.future);
       await _initializeGame();
     } catch (e) {
       debugPrint('Error in setup: $e');
