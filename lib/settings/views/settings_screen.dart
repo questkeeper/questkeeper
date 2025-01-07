@@ -9,7 +9,7 @@ import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/settings/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
-import 'package:questkeeper/shared/widgets/snackbar.dart';
+// import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -19,9 +19,9 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void notYetImplemented() {
-      SnackbarService.showErrorSnackbar('Not yet implemented');
-    }
+    // void notYetImplemented() {
+    //   SnackbarService.showErrorSnackbar('Not yet implemented');
+    // }
 
     final user = Supabase.instance.client.auth.currentUser;
 
@@ -103,7 +103,7 @@ class SettingsScreen extends ConsumerWidget {
                         title: 'Theme',
                         description: 'Change the app theme',
                         icon: LucideIcons.palette,
-                        onTap: notYetImplemented),
+                        onTap: () => Navigator.pushNamed(context, '/theme')),
                     const Divider(),
                     SettingsCard(
                       title: 'Feedback',
