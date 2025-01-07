@@ -60,4 +60,7 @@ class SharedPreferencesManager {
   /// Gets a boolean value from SharedPreferences
   /// Returns null if the key doesn't exist
   bool? getBool(String key) => _prefs?.getBool(key);
+
+  /// Removes the key from SharedPreferences
+  Future<bool?> remove(String key) async => await _prefs?.remove(key);
 }
