@@ -215,6 +215,10 @@ class _CategoryBottomSheetContentState
                               if (!widget.isEditing &&
                                   widget.ref
                                           .read(onboardingProvider)
+                                          .isOnboardingComplete ==
+                                      false &&
+                                  widget.ref
+                                          .read(onboardingProvider)
                                           .hasCreatedCategory ==
                                       false) {
                                 widget.ref

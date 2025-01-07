@@ -492,7 +492,15 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                             }
                           }
 
-                          if (!widget.isEditing) {
+                          if (!widget.isEditing &&
+                              widget.ref
+                                      .read(onboardingProvider)
+                                      .isOnboardingComplete ==
+                                  false &&
+                              widget.ref
+                                      .read(onboardingProvider)
+                                      .hasCreatedSpace ==
+                                  false) {
                             debugPrint("Marking space created");
                             widget.ref
                                 .read(onboardingProvider.notifier)

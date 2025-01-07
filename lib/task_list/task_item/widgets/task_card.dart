@@ -31,7 +31,8 @@ class TaskCard extends ConsumerWidget {
         } else {
           await ref.read(tasksManagerProvider.notifier).toggleComplete(task);
 
-          if (ref.read(onboardingProvider).hasCompletedTask == false) {
+          if (ref.read(onboardingProvider).hasCompletedTask == false &&
+              ref.read(onboardingProvider).isOnboardingComplete == false) {
             ref.read(onboardingProvider.notifier).markTaskCompleted();
           }
 
