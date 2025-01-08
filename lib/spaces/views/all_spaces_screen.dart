@@ -5,6 +5,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/onboarding_overlay.dart';
+import 'package:questkeeper/voice_command_fab.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -278,7 +279,11 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                   ],
                 ),
                 const OnboardingOverlay(),
-                CircleProgressBar(spaces: spaces)
+                CircleProgressBar(spaces: spaces),
+                Positioned(
+                  bottom: 80,
+                  child: VoiceCommandFAB(),
+                ),
               ],
             );
           },
