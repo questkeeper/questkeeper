@@ -87,7 +87,7 @@ class _CategoryBottomSheetContentState
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: selectedColor?.withOpacity(0.6).blendWith(Colors.black) ??
+        color: selectedColor?.withValues(alpha: 0.6).blendWith(Colors.black) ??
             Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
       ),

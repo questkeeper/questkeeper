@@ -186,7 +186,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                                         .bodyMedium
                                         ?.copyWith(
                                           color: theme.colorScheme.onSurface
-                                              .withOpacity(0.6),
+                                              .withValues(alpha: 0.6),
                                         ),
                                   ),
                                   Text(
@@ -196,7 +196,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                                         .bodyMedium
                                         ?.copyWith(
                                           color: theme.colorScheme.onSurface
-                                              .withOpacity(0.6),
+                                              .withValues(alpha: 0.6),
                                         ),
                                   )
                                 ],
