@@ -51,9 +51,11 @@ class Spaces {
           ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'] as int)
           : null,
       spaceType: map['spaceType'] as String,
-      notificationTimes: Map<String, List<int>>.from(
-        (map['notificationTimes'] as Map<String, List<int>>),
-      ),
+      notificationTimes: map['notificationTimes'] != null
+          ? (map['notificationTimes'] as Map<String, dynamic>).map(
+              (key, value) => MapEntry(key, List<int>.from(value as List)),
+            )
+          : {},
     );
   }
 
