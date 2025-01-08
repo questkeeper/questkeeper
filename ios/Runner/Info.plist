@@ -75,5 +75,11 @@
 	<true/>
 	<key>com.posthog.posthog.DEBUG</key>
 	<true/>
+
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We need speech recognition access to convert speech to text.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need microphone access to capture audio for speech recognition.</string>
+
 </dict>
 </plist>
