@@ -65,9 +65,18 @@ class _FriendsListState extends ConsumerState<FriendsList> {
         child: Text("Failed to fetch friends list"),
       );
     } else {
-      List<Friend> list = asyncValue.hasValue ? asyncValue.value! : [];
+      final currentUserProfile = ref.watch(profileManagerProvider).value;
+      List<Friend> friendsList = asyncValue.hasValue ? asyncValue.value! : [];
+      friendsList.add(
+        // Add current user profile
+        Friend(
+          userId: 'current_user',
+          username: currentUserProfile?.username ?? 'Current User',
+          points: currentUserProfile?.points ?? 0,
+        ),
+      );
       var sorted = asyncValue.hasValue
-          ? _sortSettings.sorted(list.toList(growable: false))
+          ? _sortSettings.sorted(friendsList.toList(growable: false))
           : [];
 
       mainContent = RefreshIndicator(
