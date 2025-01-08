@@ -77,7 +77,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
 
     // Verify authentication in the background
-    await _verifyAuth(); // TODO: `await` keyword was JUST added, remove it if it starts causing problems...
+    await _verifyAuth();
   }
 
   Future<void> _verifyAuth() async {

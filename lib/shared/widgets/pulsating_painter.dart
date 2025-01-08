@@ -11,7 +11,7 @@ class PulsatingPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(0.6)
+      ..color = color.withValues(alpha: 0.6)
       ..style = PaintingStyle.fill
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, 10);
 
