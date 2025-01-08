@@ -66,15 +66,16 @@ class _FriendsListState extends ConsumerState<FriendsList> {
       );
     } else {
       final currentUserProfile = ref.watch(profileManagerProvider).value;
-      List<Friend> friendsList = asyncValue.hasValue ? asyncValue.value! : [];
-      friendsList.add(
-        // Add current user profile
-        Friend(
-          userId: 'current_user',
-          username: currentUserProfile?.username ?? 'Current User',
-          points: currentUserProfile?.points ?? 0,
-        ),
-      );
+      List<Friend> friendsList = asyncValue.hasValue
+          ? [
+              ...asyncValue.value!,
+              Friend(
+                userId: 'current_user',
+                username: currentUserProfile?.username ?? 'You',
+                points: currentUserProfile?.points ?? 0,
+              )
+            ]
+          : [];
       var sorted = asyncValue.hasValue
           ? _sortSettings.sorted(friendsList.toList(growable: false))
           : [];
