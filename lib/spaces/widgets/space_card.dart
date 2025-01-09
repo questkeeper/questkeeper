@@ -60,6 +60,11 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
       ref.read(gameHeightProvider.notifier).state =
           0.3; // Minimized height factor
       setState(() => _isMinimized = true);
+    } else if (!_isMinimized &&
+        _scrollController.offset <= 0 &&
+        _scrollController.offset >= -10) {
+      ref.read(gameHeightProvider.notifier).state = 1.0;
+      _resetScrollListener();
     }
 
     _resetScrollListener();
