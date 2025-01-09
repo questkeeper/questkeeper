@@ -162,23 +162,19 @@ class _CategoryBottomSheetContentState
                 Expanded(
                   child: Row(
                     children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text('Cancel'),
-                          onPressed: () => Navigator.pop(context),
-                        ),
+                      OutlinedButton(
+                        child: const Text('Cancel'),
+                        onPressed: () => Navigator.pop(context),
                       ),
                       const SizedBox(width: 8), // Gap between buttons
                       Expanded(
                         child: FilledLoadingButton(
-                          child: Text(widget.isEditing
-                              ? 'Update Category'
-                              : 'Create Category'),
+                          child: Text(
+                            widget.isEditing
+                                ? 'Update Category'
+                                : 'Create Category',
+                            textAlign: TextAlign.center,
+                          ),
                           onPressed: () async {
                             if (widget.nameController.text.isNotEmpty) {
                               if (widget.isEditing) {
