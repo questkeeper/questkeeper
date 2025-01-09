@@ -21,7 +21,7 @@ class ExperimentsScreen extends ConsumerWidget {
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  '⚠️ Warning: These experimental features may cause app instability. Use with caution.',
+                  '⚠️ Warning: These experimental features may cause app instability. Use with caution. These may not even be implemented yet, and may make no change to your QuestKeeper experience.',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
