@@ -1,5 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:questkeeper/constants.dart';
+import 'package:questkeeper/shared/utils/undo_manager_mixin.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/repositories/spaces_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,7 +8,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'spaces_provider.g.dart';
 
 @riverpod
-class SpacesManager extends _$SpacesManager {
+class SpacesManager extends _$SpacesManager
+    with UndoManagerMixin<List<Spaces>> {
   final SpacesRepository _repository;
 
   SpacesManager() : _repository = SpacesRepository();
@@ -81,13 +83,22 @@ class SpacesManager extends _$SpacesManager {
   }
 
   Future<void> deleteSpace(Spaces space) async {
-    state = const AsyncValue.loading();
-    try {
-      await _repository.deleteSpace(space);
-      await refreshSpaces();
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
+    performActionWithUndo(
+      UndoAction(
+        previousState: state.value!,
+        newState:
+            state.value!.where((element) => element.id != space.id).toList(),
+        repositoryAction: () async {
+          await _repository.deleteSpace(space);
+          await refreshSpaces();
+        },
+        successMessage: "Space deleted",
+        timing: ActionTiming.afterUndoPeriod,
+        postUndoAction: () async {
+          await refreshSpaces();
+        },
+      ),
+    );
   }
 
   Future<void> refreshSpaces() async {

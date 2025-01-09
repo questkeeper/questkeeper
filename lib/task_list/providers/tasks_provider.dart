@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:questkeeper/shared/utils/undo_manager_mixin.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/task_list/repositories/tasks_repository.dart';
@@ -13,7 +14,7 @@ import 'package:toastification/toastification.dart';
 part 'tasks_provider.g.dart';
 
 @riverpod
-class TasksManager extends _$TasksManager {
+class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
   final TasksRepository _repository;
 
   TasksManager() : _repository = TasksRepository();
@@ -113,10 +114,12 @@ class TasksManager extends _$TasksManager {
 
   Future<void> deleteTask(Tasks task) async {
     try {
-      await _repository.deleteTask(task);
-      state = AsyncValue.data(
-        (state.value ?? []).where((a) => a.id != task.id).toList(),
-      );
+      performActionWithUndo(UndoAction(
+        previousState: state.value ?? [],
+        newState: (state.value ?? []).where((a) => a.id != task.id).toList(),
+        repositoryAction: () => _repository.deleteTask(task),
+        successMessage: "Task deleted successfully",
+      ));
     } catch (error) {
       // Handle error
     }
