@@ -50,60 +50,28 @@ class _TabViewState extends ConsumerState<TabView> {
           return Stack(children: [
             Scaffold(
               body: pages[_selectedIndex],
-              bottomNavigationBar: BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                items: const <BottomNavigationBarItem>[
+              bottomNavigationBar: NavigationBar(
+                selectedIndex: _selectedIndex,
+                onDestinationSelected: _onItemTapped,
+                destinations: const <NavigationDestination>[
                   if (isDebug)
-                    BottomNavigationBarItem(
+                    NavigationDestination(
                       icon: Icon(LucideIcons.trophy),
                       label: 'Quests',
                     ),
-                  BottomNavigationBarItem(
+                  NavigationDestination(
                     icon: Icon(LucideIcons.eclipse),
                     label: 'Spaces',
                   ),
-                  BottomNavigationBarItem(
+                  NavigationDestination(
                     icon: Icon(LucideIcons.handshake),
                     label: 'Friends',
-                    // The bottom is only for future reference
-                    // icon: Builder(
-                    //   builder: (context) => AnimatedSwitcher(
-                    //     duration: const Duration(milliseconds: 300),
-                    //     transitionBuilder:
-                    //         (Widget child, Animation<double> animation) {
-                    //       return ScaleTransition(
-                    //         scale: animation,
-                    //         child: FadeTransition(
-                    //           opacity: animation,
-                    //           child: child,
-                    //         ),
-                    //       );
-                    //     },
-                    //     child: pointsBadge["showBadge"] == true &&
-                    //             pointsBadge["points"] > 0
-                    //         ? Text(
-                    //             '+${pointsBadge["points"]}',
-                    //             key: ValueKey(pointsBadge["points"]),
-                    //             style: const TextStyle(
-                    //               color: Colors.green,
-                    //             ),
-                    //           )
-                    //         : const Icon(LucideIcons.handshake,
-                    //             key: ValueKey('handshake')),
-                    //   ),
-                    // ),
-                    // label:
-                    //     pointsBadge["showBadge"] == true ? "Points" : "Friends",
                   ),
-                  BottomNavigationBarItem(
+                  NavigationDestination(
                     icon: Icon(LucideIcons.user_cog),
                     label: 'Settings',
                   ),
                 ],
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerLow,
-                currentIndex: _selectedIndex,
-                onTap: _onItemTapped,
               ),
             ),
             if (pointsBadge["showBadge"] == true && pointsBadge["points"] > 0)
