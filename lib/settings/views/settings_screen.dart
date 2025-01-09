@@ -169,6 +169,12 @@ class SettingsScreen extends ConsumerWidget {
                           )
                         : const SizedBox(),
                     SettingsCard(
+                        title: 'Experiments',
+                        description: 'Enable features that may be unstable',
+                        icon: LucideIcons.flask_conical,
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/experiments')),
+                    SettingsCard(
                       title: 'Sign out',
                       description: 'Sign out and remove local data',
                       icon: LucideIcons.log_out,

@@ -8,6 +8,7 @@ import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
+import 'package:questkeeper/settings/views/experiments/experiments_screen.dart';
 import 'package:questkeeper/settings/views/notifications/notifications_screen.dart';
 import 'package:questkeeper/settings/views/privacy/privacy_screen.dart';
 import 'package:questkeeper/settings/views/theme/theme_screen.dart';
@@ -191,6 +192,9 @@ class MyApp extends ConsumerWidget {
 
                 // Theme settings
                 '/theme': (context) => const ThemeScreen(),
+
+                // Experiments settings
+                '/experiments': (context) => const ExperimentsScreen(),
               },
               navigatorObservers: [
                 PosthogObserver(),
