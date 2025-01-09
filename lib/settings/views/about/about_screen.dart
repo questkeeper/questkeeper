@@ -203,7 +203,7 @@ class AboutScreen extends StatelessWidget {
                   },
                 ),
                 const ListTile(
-                  title: Text('© 2024 Ishan Misra'),
+                  title: Text('© 2025 QuestKeeper'),
                   subtitle: Text('All rights reserved'),
                 ),
               ],
