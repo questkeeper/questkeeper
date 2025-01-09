@@ -117,7 +117,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
         body: Column(
           children: [
             Material(
-              elevation: 4,
+              elevation: 0,
               child: Padding(
                 padding: EdgeInsets.all(8),
                 child: Consumer(

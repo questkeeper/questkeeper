@@ -53,6 +53,8 @@ class _TabViewState extends ConsumerState<TabView> {
               bottomNavigationBar: NavigationBar(
                 selectedIndex: _selectedIndex,
                 onDestinationSelected: _onItemTapped,
+                backgroundColor:
+                    Theme.of(context).colorScheme.surfaceContainerLow,
                 destinations: const <NavigationDestination>[
                   if (isDebug)
                     NavigationDestination(
