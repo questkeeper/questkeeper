@@ -53,6 +53,7 @@ class UsernameScreen extends ConsumerWidget {
                 ),
                 inputFormatters: [
                   LowerCaseTextFormatter(),
+                  AlphaNumericTextFormatter(),
                 ],
               ),
             ),
