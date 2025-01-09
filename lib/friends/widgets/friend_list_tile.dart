@@ -47,70 +47,77 @@ class FriendListTile extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (top3.containsKey(position.toString()))
+              TrophyAvatar(
+                trophyType: top3[position.toString()]!,
+              ),
+            if (position > 3)
               Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: TrophyAvatar(
-                  trophyType: top3[position.toString()]!,
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Text(
+                  position.toString(),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
-            if (friend.userId != "current_user")
-              PopupMenuButton(
-                icon: Icon(LucideIcons.ellipsis_vertical),
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      child: ListTile(
-                        leading: Icon(LucideIcons.user),
-                        title: Text('View Profile'),
-                        onTap: () => SnackbarService.showInfoSnackbar(
-                            'View Profile not implemented yet'),
-                      ),
-                    ),
-                    PopupMenuItem(
-                      child: ListTile(
-                        leading: Icon(LucideIcons.redo),
-                        title: Text('Nudge'),
-                        onTap: () async {
-                          try {
-                            if (context.mounted) {
-                              Navigator.of(context).pop();
-                            }
-
-                            final response = await FriendRepository()
-                                .nudgeFriend(friend.username);
-
-                            if (context.mounted) {
-                              if (response.success) {
-                                SnackbarService.showSuccessSnackbar(
-                                    response.message);
-                              } else {
-                                SnackbarService.showErrorSnackbar(
-                                    response.message);
-                              }
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              SnackbarService.showErrorSnackbar(e.toString());
-                            }
-                          }
-                        },
-                      ),
-                    ),
-                    PopupMenuItem(
-                      child: ListTile(
-                        leading: Icon(
-                          LucideIcons.user_minus,
-                          color: Colors.redAccent,
+            friend.userId != "current_user"
+                ? PopupMenuButton(
+                    icon: Icon(LucideIcons.ellipsis_vertical),
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          child: ListTile(
+                            leading: Icon(LucideIcons.user),
+                            title: Text('View Profile'),
+                            onTap: () => SnackbarService.showInfoSnackbar(
+                                'View Profile not implemented yet'),
+                          ),
                         ),
-                        title: Text('Remove Friend'),
-                        onTap: () {
-                          onRemove(friend);
-                        },
-                      ),
-                    ),
-                  ];
-                },
-              ),
+                        PopupMenuItem(
+                          child: ListTile(
+                            leading: Icon(LucideIcons.redo),
+                            title: Text('Nudge'),
+                            onTap: () async {
+                              try {
+                                if (context.mounted) {
+                                  Navigator.of(context).pop();
+                                }
+
+                                final response = await FriendRepository()
+                                    .nudgeFriend(friend.username);
+
+                                if (context.mounted) {
+                                  if (response.success) {
+                                    SnackbarService.showSuccessSnackbar(
+                                        response.message);
+                                  } else {
+                                    SnackbarService.showErrorSnackbar(
+                                        response.message);
+                                  }
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  SnackbarService.showErrorSnackbar(
+                                      e.toString());
+                                }
+                              }
+                            },
+                          ),
+                        ),
+                        PopupMenuItem(
+                          child: ListTile(
+                            leading: Icon(
+                              LucideIcons.user_minus,
+                              color: Colors.redAccent,
+                            ),
+                            title: Text('Remove Friend'),
+                            onTap: () {
+                              onRemove(friend);
+                            },
+                          ),
+                        ),
+                      ];
+                    },
+                  )
+                : const SizedBox(width: 48),
           ],
         ),
         title: Text(
