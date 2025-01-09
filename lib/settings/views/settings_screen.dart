@@ -8,8 +8,8 @@ import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/settings/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
+import 'package:questkeeper/settings/widgets/update_username_dialog.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
-// import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -19,10 +19,6 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // void notYetImplemented() {
-    //   SnackbarService.showErrorSnackbar('Not yet implemented');
-    // }
-
     final user = Supabase.instance.client.auth.currentUser;
 
     return SafeArea(
@@ -93,6 +89,13 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     const SizedBox(height: 10),
                     const Divider(),
+                    SettingsCard(
+                        title: 'Username',
+                        description: 'Change your username',
+                        icon: LucideIcons.user,
+                        onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => UpdateUsernameDialog())),
                     SettingsCard(
                         title: 'Notifications',
                         description: 'Manage your notifications',

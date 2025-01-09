@@ -66,9 +66,12 @@ class ProfileManager extends _$ProfileManager {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.updateUsername(username);
+      prefs.remove("user_profile");
       if (!result.success) return result;
 
-      await fetchProfile();
+      final updatedProfile = await fetchProfile();
+
+      state = AsyncValue.data(updatedProfile);
 
       return const ReturnModel(
           message: "Username updated successfully", success: true);
