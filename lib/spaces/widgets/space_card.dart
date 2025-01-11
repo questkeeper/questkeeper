@@ -60,6 +60,11 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
       ref.read(gameHeightProvider.notifier).state =
           0.3; // Minimized height factor
       setState(() => _isMinimized = true);
+    } else if (!_isMinimized &&
+        _scrollController.offset <= 0 &&
+        _scrollController.offset >= -10) {
+      ref.read(gameHeightProvider.notifier).state = 1.0;
+      _resetScrollListener();
     }
 
     _resetScrollListener();
@@ -140,7 +145,7 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color:
-                                      Theme.of(context).scaffoldBackgroundColor,
+                                      Colors.transparent.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: SizedBox(
@@ -211,7 +216,7 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                                                 .textTheme
                                                 .bodyLarge
                                                 ?.color
-                                                ?.withOpacity(0.75),
+                                                ?.withValues(alpha: 0.75),
                                           ),
                                     ),
                                   ),

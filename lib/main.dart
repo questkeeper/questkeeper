@@ -8,13 +8,17 @@ import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
+import 'package:questkeeper/settings/views/experiments/experiments_screen.dart';
 import 'package:questkeeper/settings/views/notifications/notifications_screen.dart';
 import 'package:questkeeper/settings/views/privacy/privacy_screen.dart';
+import 'package:questkeeper/settings/views/theme/theme_screen.dart';
 import 'package:questkeeper/shared/notifications/notification_handler.dart';
 import 'package:questkeeper/shared/notifications/notification_service.dart';
+import 'package:questkeeper/shared/providers/theme_notifier.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:questkeeper/shared/utils/set_background_metadata.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +27,6 @@ import 'package:questkeeper/shared/widgets/network_error_screen.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/theme_components.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'tabs/tabview.dart';
@@ -56,13 +59,12 @@ Future<void> main() async {
     debugPrint("Platform implementation error: $e");
   }
 
+  await SharedPreferencesManager.instance.init();
+
   final doNotTrack =
-      (await SharedPreferences.getInstance()).getBool("posthogDoNotTrack") ??
-          false;
+      SharedPreferencesManager.instance.getBool("posthogDoNotTrack") ?? false;
 
   doNotTrack ? Posthog().disable() : Posthog().enable();
-
-  setBackgroundMetadata();
 
   if (isDebug) {
     // Run app without sentry
@@ -100,6 +102,9 @@ Future<void> main() async {
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
+  static final SharedPreferencesManager prefs =
+      SharedPreferencesManager.instance;
+  static final ThemeNotifier themeNotifier = ThemeNotifier();
 
   ColorScheme _colorScheme(Color? primary, Brightness brightness) {
     final Color seed = primary ?? Colors.purple;
@@ -117,77 +122,98 @@ class MyApp extends ConsumerWidget {
     TextTheme textTheme = createTextTheme(context, "Roboto", "Nunito");
     NotificationHandler.initialize(ref);
 
-    return DynamicColorBuilder(
-      builder: (lightColorScheme, darkColorScheme) {
-        final ThemeData lightTheme = ThemeData(
-          colorScheme:
-              _colorScheme(lightColorScheme?.primary, Brightness.light),
-          textTheme: textTheme,
-          useMaterial3: true,
-        ).copyWith(
-          elevatedButtonTheme: ComponentsTheme.elevatedButtonTheme(),
-          filledButtonTheme: ComponentsTheme.filledButtonTheme(),
-          inputDecorationTheme: ComponentsTheme.inputDecorationTheme(),
-          outlinedButtonTheme: ComponentsTheme.outlinedButtonTheme(),
-          appBarTheme: ComponentsTheme.appBarTheme(),
-        );
+    if (!prefs.containsKey("darkMode")) {
+      themeNotifier.setThemeToDark(
+          (PlatformDispatcher.instance.platformBrightness == Brightness.dark));
+    } else {
+      themeNotifier.setThemeToDark(prefs.getBool("darkMode") ?? false);
+    }
 
-        final ThemeData darkTheme = ThemeData(
-          colorScheme: _colorScheme(darkColorScheme?.primary, Brightness.dark),
-          textTheme: textTheme,
-          useMaterial3: true,
-        ).copyWith(
-          elevatedButtonTheme: ComponentsTheme.elevatedButtonTheme(),
-          filledButtonTheme: ComponentsTheme.filledButtonTheme(),
-          inputDecorationTheme: ComponentsTheme.inputDecorationTheme(),
-          outlinedButtonTheme: ComponentsTheme.outlinedButtonTheme(),
-          appBarTheme: ComponentsTheme.appBarTheme(),
-        );
+    setBackgroundMetadata();
 
-        return MaterialApp(
-          title: 'QuestKeeper',
-          themeMode: ThemeMode.system,
-          home: const AuthGate(),
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          routes: {
-            '/signin': (context) => const AuthSpaces(),
-            '/home': (context) => const TabView(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier.themeModeNotifier,
+      builder: (context, themeMode, child) {
+        return DynamicColorBuilder(
+          builder: (lightColorScheme, darkColorScheme) {
+            final ThemeData lightTheme = ThemeData(
+              colorScheme:
+                  _colorScheme(lightColorScheme?.primary, Brightness.light),
+              useMaterial3: true,
+            ).copyWith(
+              elevatedButtonTheme: ComponentsTheme.elevatedButtonTheme(),
+              filledButtonTheme: ComponentsTheme.filledButtonTheme(),
+              inputDecorationTheme: ComponentsTheme.inputDecorationTheme(),
+              outlinedButtonTheme: ComponentsTheme.outlinedButtonTheme(),
+              appBarTheme: ComponentsTheme.appBarTheme(),
+              textTheme: textTheme,
+            );
 
-            // Settings stuff
-            '/settings/about': (context) => const AboutScreen(),
+            final ThemeData darkTheme = ThemeData(
+              colorScheme:
+                  _colorScheme(darkColorScheme?.primary, Brightness.dark),
+              useMaterial3: true,
+            ).copyWith(
+              elevatedButtonTheme: ComponentsTheme.elevatedButtonTheme(),
+              filledButtonTheme: ComponentsTheme.filledButtonTheme(),
+              inputDecorationTheme: ComponentsTheme.inputDecorationTheme(),
+              outlinedButtonTheme: ComponentsTheme.outlinedButtonTheme(),
+              appBarTheme: ComponentsTheme.appBarTheme(),
+              textTheme: textTheme,
+            );
 
-            // Familiars stuff
-            '/badges': (context) => const QuestsView(),
+            return MaterialApp(
+              title: 'QuestKeeper',
+              themeMode: themeMode,
+              home: const AuthGate(),
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              routes: {
+                '/signin': (context) => const AuthSpaces(),
+                '/home': (context) => const TabView(),
 
-            // Friends
-            "/friends": (context) => const FriendsList(),
+                // Settings stuff
+                '/settings/about': (context) => const AboutScreen(),
 
-            // Notifications
-            '/notifications': (context) => const NotificationsScreen(),
+                // Familiars stuff
+                '/badges': (context) => const QuestsView(),
 
-            // Privacy
-            '/privacy': (context) => const PrivacyScreen(),
+                // Friends
+                "/friends": (context) => const FriendsList(),
 
-            // Network error
-            '/network-error': (context) => const NetworkErrorScreen(),
-          },
-          navigatorObservers: [
-            PosthogObserver(),
-          ],
-          builder: (context, child) {
-            return ConnectivityWrapper(
-              child: StreamBuilder<String>(
-                stream: NotificationService().messageStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      SnackbarService.showSuccessSnackbar(snapshot.data!);
-                    });
-                  }
-                  return child ?? const SizedBox();
-                },
-              ),
+                // Notifications
+                '/notifications': (context) => const NotificationsScreen(),
+
+                // Privacy
+                '/privacy': (context) => const PrivacyScreen(),
+
+                // Network error
+                '/network-error': (context) => const NetworkErrorScreen(),
+
+                // Theme settings
+                '/theme': (context) => const ThemeScreen(),
+
+                // Experiments settings
+                '/experiments': (context) => const ExperimentsScreen(),
+              },
+              navigatorObservers: [
+                PosthogObserver(),
+              ],
+              builder: (context, child) {
+                return ConnectivityWrapper(
+                  child: StreamBuilder<String>(
+                    stream: NotificationService().messageStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          SnackbarService.showSuccessSnackbar(snapshot.data!);
+                        });
+                      }
+                      return child ?? const SizedBox();
+                    },
+                  ),
+                );
+              },
             );
           },
         );

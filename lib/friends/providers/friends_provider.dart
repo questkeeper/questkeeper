@@ -30,9 +30,9 @@ class FriendsManager extends _$FriendsManager {
 
         for (var i = 0; i < 20; i++) {
           friends.add(Friend(
-              userId: uuid.v4(),
-              username: faker.internet.userName(),
-              points: random.nextInt(100000),
+            userId: uuid.v4(),
+            username: faker.internet.userName(),
+            points: random.nextInt(250),
           ));
         }
       }

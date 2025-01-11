@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 
 class CategoryCollapseState extends StateNotifier<AsyncValue<Map<int, bool>>> {
+  static final SharedPreferencesManager prefs =
+      SharedPreferencesManager.instance;
+
   CategoryCollapseState() : super(const AsyncValue.loading()) {
     loadState();
   }
@@ -9,7 +12,6 @@ class CategoryCollapseState extends StateNotifier<AsyncValue<Map<int, bool>>> {
   Future<void> loadState() async {
     state = const AsyncValue.loading();
     try {
-      final prefs = await SharedPreferences.getInstance();
       final savedState = prefs.getStringList('categoryCollapseStateIds');
       if (savedState != null) {
         final collapsedState = savedState.map((e) => int.parse(e)).toList();
@@ -36,7 +38,6 @@ class CategoryCollapseState extends StateNotifier<AsyncValue<Map<int, bool>>> {
 
   Future<void> _saveState() async {
     state.whenData((currentState) async {
-      final prefs = await SharedPreferences.getInstance();
       final collapsedState = currentState.entries
           .where((element) => element.value == true)
           .map((e) => e.key)

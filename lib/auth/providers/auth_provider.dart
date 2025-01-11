@@ -1,6 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthNotifier {
@@ -9,7 +9,7 @@ class AuthNotifier {
   bool _firebaseMessagingInitialized = false;
 
   Future<void> _saveToken(String token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferencesManager prefs = SharedPreferencesManager.instance;
     String? currentDeviceId = prefs.getString("deviceId");
     String? currentToken = prefs.getString("token");
     final deviceInfo = await (DeviceInfoPlugin()).deviceInfo;
@@ -49,7 +49,7 @@ class AuthNotifier {
 
   // THIS IS ONLy FOR DEBUG PURPOSES
   Future<void> clearToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferencesManager prefs = SharedPreferencesManager.instance;
     String? currentDeviceId = prefs.getString("deviceId");
 
     if (currentDeviceId != null) {
@@ -58,8 +58,8 @@ class AuthNotifier {
 
     await FirebaseMessaging.instance.deleteToken();
 
-    prefs.remove("deviceId");
-    prefs.remove("token");
+    await prefs.remove("deviceId");
+    await prefs.remove("token");
   }
 
   // Set up FCM

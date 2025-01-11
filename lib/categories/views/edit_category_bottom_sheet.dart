@@ -87,7 +87,7 @@ class _CategoryBottomSheetContentState
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: selectedColor?.withOpacity(0.6).blendWith(Colors.black) ??
+        color: selectedColor?.withValues(alpha: 0.6).blendWith(Colors.black) ??
             Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
       ),
@@ -162,23 +162,19 @@ class _CategoryBottomSheetContentState
                 Expanded(
                   child: Row(
                     children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text('Cancel'),
-                          onPressed: () => Navigator.pop(context),
-                        ),
+                      OutlinedButton(
+                        child: const Text('Cancel'),
+                        onPressed: () => Navigator.pop(context),
                       ),
                       const SizedBox(width: 8), // Gap between buttons
                       Expanded(
                         child: FilledLoadingButton(
-                          child: Text(widget.isEditing
-                              ? 'Update Category'
-                              : 'Create Category'),
+                          child: Text(
+                            widget.isEditing
+                                ? 'Update Category'
+                                : 'Create Category',
+                            textAlign: TextAlign.center,
+                          ),
                           onPressed: () async {
                             if (widget.nameController.text.isNotEmpty) {
                               if (widget.isEditing) {
@@ -213,6 +209,10 @@ class _CategoryBottomSheetContentState
 
                               // Pops the additional overlay for onboarding provider
                               if (!widget.isEditing &&
+                                  widget.ref
+                                          .read(onboardingProvider)
+                                          .isOnboardingComplete ==
+                                      false &&
                                   widget.ref
                                           .read(onboardingProvider)
                                           .hasCreatedCategory ==

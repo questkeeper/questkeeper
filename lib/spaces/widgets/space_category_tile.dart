@@ -39,9 +39,9 @@ class SpaceCategoryTile extends ConsumerWidget {
             backgroundColor: category.color != null
                 ? category.color!
                     .toColor()
-                    .withOpacity(0.6)
+                    .withValues(alpha: 0.6)
                     .blendWith(Colors.black)
-                : Colors.transparent.withOpacity(0.1),
+                : Colors.transparent.withValues(alpha: 0.1),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -76,7 +76,7 @@ class SpaceCategoryTile extends ConsumerWidget {
             ),
             collapsedBackgroundColor: category.color
                     ?.toColor()
-                    .withOpacity(0.6)
+                    .withValues(alpha: 0.6)
                     .blendWith(Colors.black) ??
                 Colors.transparent,
             collapsedShape: RoundedRectangleBorder(

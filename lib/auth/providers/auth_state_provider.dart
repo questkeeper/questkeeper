@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final authStateProvider =
@@ -41,6 +41,8 @@ class AuthState {
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
   final Ref ref;
+  static final SharedPreferencesManager prefs =
+      SharedPreferencesManager.instance;
   static const _authKey = 'was_authenticated';
 
   AuthStateNotifier(this.ref) : super(AuthState()) {
@@ -48,7 +50,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> _initializeAuth() async {
-    final prefs = await SharedPreferences.getInstance();
     final wasAuthenticated = prefs.getBool(_authKey) ?? false;
     final cachedProfileJson = prefs.getString("user_profile");
 
@@ -76,7 +77,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
 
     // Verify authentication in the background
-    await _verifyAuth(); // TODO: `await` keyword was JUST added, remove it if it starts causing problems...
+    await _verifyAuth();
   }
 
   Future<void> _verifyAuth() async {
@@ -84,7 +85,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       final user = await Supabase.instance.client.auth.getUser();
       final userProfile = await ref.read(profileManagerProvider.future);
 
-      final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_authKey, true);
       await prefs.setString("user_profile", userProfile.toJson());
 
@@ -119,7 +119,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     } catch (error) {
       // Don't immediately clear auth state on error - only do it if we're sure the session is invalid
       if (error is AuthException || error.toString().contains('JWT')) {
-        final prefs = await SharedPreferences.getInstance();
         await prefs.setBool(_authKey, false);
         await prefs.remove("user_profile");
 
@@ -135,7 +134,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 // This isn't called anywhere, but the signout does remove all of shared prefs
 // Removing all shared prefs probs shouldn't be done but it is what it is.
   Future<void> signOut() async {
-    final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_authKey, false);
 
     state = state.copyWith(

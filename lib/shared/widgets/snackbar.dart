@@ -1,4 +1,3 @@
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
@@ -20,11 +19,8 @@ class SnackbarService {
       type: ToastificationType.success,
       backgroundColor: Colors.green,
       showProgressBar: true,
-      icon: Icon(
-          callback != null && callbackIcon != null
-              ? callbackIcon.icon
-              : LucideIcons.check,
-          color: Colors.white),
+      icon: callbackIcon,
+      showIcon: callbackIcon != null,
       alignment: Alignment.bottomCenter,
       style: ToastificationStyle.flatColored,
       callbacks: ToastificationCallbacks(
@@ -45,7 +41,8 @@ class SnackbarService {
       type: ToastificationType.error,
       backgroundColor: Colors.red,
       showProgressBar: true,
-      icon: Icon(LucideIcons.x, color: Colors.white),
+      icon: null,
+      showIcon: false,
       alignment: Alignment.bottomCenter,
     );
   }
@@ -58,7 +55,7 @@ class SnackbarService {
       type: ToastificationType.info,
       backgroundColor: primaryColor,
       showProgressBar: true,
-      icon: Icon(LucideIcons.info, color: Colors.white),
+      showIcon: false,
       alignment: Alignment.bottomCenter,
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PrivacyScreen extends StatefulWidget {
@@ -13,18 +13,19 @@ class PrivacyScreen extends StatefulWidget {
 
 class _PrivacyScreenState extends State<PrivacyScreen> {
   final posthog = Posthog();
-  late final SharedPreferences sharedPreferences;
+  static final SharedPreferencesManager prefs =
+      SharedPreferencesManager.instance;
   bool posthogDoNotTrack = false;
 
   void onToggle(bool newValue) async {
     if (newValue == true) {
       posthogDoNotTrack = true;
       posthog.disable();
-      await sharedPreferences.setBool("posthogDoNotTrack", true);
+      await prefs.setBool("posthogDoNotTrack", true);
     } else {
       posthogDoNotTrack = false;
       posthog.enable();
-      await sharedPreferences.setBool("posthogDoNotTrack", false);
+      await prefs.setBool("posthogDoNotTrack", false);
     }
 
     setState(() {});
@@ -36,10 +37,8 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) async {
-        sharedPreferences = await SharedPreferences.getInstance();
         setState(() {
-          posthogDoNotTrack =
-              sharedPreferences.getBool("posthogDoNotTrack") ?? false;
+          posthogDoNotTrack = prefs.getBool("posthogDoNotTrack") ?? false;
         });
       },
     );

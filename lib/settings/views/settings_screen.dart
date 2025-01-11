@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -8,22 +10,27 @@ import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/settings/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
+import 'package:questkeeper/settings/widgets/update_username_dialog.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void notYetImplemented() {
-      SnackbarService.showErrorSnackbar('Not yet implemented');
-    }
-
     final user = Supabase.instance.client.auth.currentUser;
+    final platform = Platform.isIOS
+        ? 'iOS'
+        : (
+            Platform.isMacOS
+                ? 'macOS'
+                : (Platform.isAndroid ? 'Android' : 'Unknown'),
+          );
 
     return SafeArea(
       child: Scaffold(
@@ -94,6 +101,13 @@ class SettingsScreen extends ConsumerWidget {
                     const SizedBox(height: 10),
                     const Divider(),
                     SettingsCard(
+                        title: 'Username',
+                        description: 'Update your username',
+                        icon: LucideIcons.user,
+                        onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => UpdateUsernameDialog())),
+                    SettingsCard(
                         title: 'Notifications',
                         description: 'Manage your notifications',
                         icon: LucideIcons.bell_ring,
@@ -103,7 +117,7 @@ class SettingsScreen extends ConsumerWidget {
                         title: 'Theme',
                         description: 'Change the app theme',
                         icon: LucideIcons.palette,
-                        onTap: notYetImplemented),
+                        onTap: () => Navigator.pushNamed(context, '/theme')),
                     const Divider(),
                     SettingsCard(
                       title: 'Feedback',
@@ -129,6 +143,37 @@ class SettingsScreen extends ConsumerWidget {
                         icon: LucideIcons.info,
                         onTap: () =>
                             Navigator.pushNamed(context, '/settings/about')),
+                    platform != "unkown"
+                        ? SettingsCard(
+                            title: 'Review the app',
+                            description:
+                                'Review us on the ${platform == 'iOS' || platform == 'macOS' ? 'App Store' : 'Play Store'}',
+                            icon: LucideIcons.star,
+                            onTap: () async {
+                              try {
+                                final url = platform == 'iOS' ||
+                                        platform == 'macOS'
+                                    ? 'https://apps.apple.com/us/app/questkeeper/id6651824308'
+                                    : 'https://play.google.com/store/apps/details?id=app.questkeeper';
+                                if (await canLaunchUrl(Uri.parse(url))) {
+                                  await launchUrl(Uri.parse(url));
+                                } else {
+                                  throw 'Could not launch $url';
+                                }
+                              } catch (e) {
+                                SnackbarService.showErrorSnackbar(
+                                  'Could not open the store page',
+                                );
+                              }
+                            },
+                          )
+                        : const SizedBox(),
+                    SettingsCard(
+                        title: 'Experiments',
+                        description: 'Enable features that may be unstable',
+                        icon: LucideIcons.flask_conical,
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/experiments')),
                     SettingsCard(
                       title: 'Sign out',
                       description: 'Sign out and remove local data',

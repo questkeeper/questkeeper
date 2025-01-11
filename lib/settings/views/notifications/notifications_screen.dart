@@ -253,7 +253,7 @@ class PreviousNotification extends Notification {
         title: Text(data["message"]),
         tileColor: index.isEven
             ? Colors.transparent
-            : Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+            : Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
         subtitle: Text(notificationTypeDisplay[data["type"]] ?? "Unknown"),
       ),
     );
@@ -282,7 +282,7 @@ class UpcomingNotification extends Notification {
       subtitle: Text("Scheduled for $scheduledAtDateTime"),
       tileColor: index.isEven
           ? Colors.transparent
-          : Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+          : Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
     );
   }
 }

@@ -10,25 +10,27 @@ Future<void> showDateTimePicker(BuildContext context, DateTime dueDate,
   ).then((selectedDate) async {
     // After selecting the date, display the time picker.
     if (selectedDate != null) {
-      await showTimePicker(
-        context: context,
-        initialTime: dueDate == selectedDate
-            ? TimeOfDay.fromDateTime(dueDate)
-            : const TimeOfDay(hour: 23, minute: 59),
-      ).then((selectedTime) {
-        // Handle the selected date and time here.
-        if (selectedTime != null) {
-          DateTime selectedDateTime = DateTime(
-            selectedDate.year,
-            selectedDate.month,
-            selectedDate.day,
-            selectedTime.hour,
-            selectedTime.minute,
-          );
+      context.mounted == true
+          ? await showTimePicker(
+              context: context,
+              initialTime: dueDate == selectedDate
+                  ? TimeOfDay.fromDateTime(dueDate)
+                  : const TimeOfDay(hour: 23, minute: 59),
+            ).then((selectedTime) {
+              // Handle the selected date and time here.
+              if (selectedTime != null) {
+                DateTime selectedDateTime = DateTime(
+                  selectedDate.year,
+                  selectedDate.month,
+                  selectedDate.day,
+                  selectedTime.hour,
+                  selectedTime.minute,
+                );
 
-          onDateTimeSelected(selectedDateTime);
-        }
-      });
+                onDateTimeSelected(selectedDateTime);
+              }
+            })
+          : null;
     }
   });
 }

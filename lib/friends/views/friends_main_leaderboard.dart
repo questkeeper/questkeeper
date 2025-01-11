@@ -65,9 +65,19 @@ class _FriendsListState extends ConsumerState<FriendsList> {
         child: Text("Failed to fetch friends list"),
       );
     } else {
-      List<Friend> list = asyncValue.hasValue ? asyncValue.value! : [];
+      final currentUserProfile = ref.watch(profileManagerProvider).value;
+      List<Friend> friendsList = asyncValue.hasValue
+          ? [
+              ...asyncValue.value!,
+              Friend(
+                userId: 'current_user',
+                username: currentUserProfile?.username ?? 'You',
+                points: currentUserProfile?.points ?? 0,
+              )
+            ]
+          : [];
       var sorted = asyncValue.hasValue
-          ? _sortSettings.sorted(list.toList(growable: false))
+          ? _sortSettings.sorted(friendsList.toList(growable: false))
           : [];
 
       mainContent = RefreshIndicator(
@@ -107,7 +117,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
         body: Column(
           children: [
             Material(
-              elevation: 4,
+              elevation: 0,
               child: Padding(
                 padding: EdgeInsets.all(8),
                 child: Consumer(
@@ -176,7 +186,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                                         .bodyMedium
                                         ?.copyWith(
                                           color: theme.colorScheme.onSurface
-                                              .withOpacity(0.6),
+                                              .withValues(alpha: 0.6),
                                         ),
                                   ),
                                   Text(
@@ -186,7 +196,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                                         .bodyMedium
                                         ?.copyWith(
                                           color: theme.colorScheme.onSurface
-                                              .withOpacity(0.6),
+                                              .withValues(alpha: 0.6),
                                         ),
                                   )
                                 ],

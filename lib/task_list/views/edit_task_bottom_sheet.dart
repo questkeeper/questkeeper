@@ -197,12 +197,17 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
       }
 
       if (!mounted) return;
-      SnackbarService.showSuccessSnackbar("Task created successfully");
+      SnackbarService.showSuccessSnackbar(
+        widget.isEditing
+            ? "Task updated successfully"
+            : "Task created successfully",
+      );
 
       Navigator.of(context).pop();
 
       if (!widget.isEditing &&
-          widget.ref.read(onboardingProvider).hasCreatedTask == false) {
+          widget.ref.read(onboardingProvider).hasCreatedTask == false &&
+          widget.ref.read(onboardingProvider).isOnboardingComplete == false) {
         widget.ref.read(onboardingProvider.notifier).markTaskCreated();
 
         if (context.mounted) Navigator.pop(context);

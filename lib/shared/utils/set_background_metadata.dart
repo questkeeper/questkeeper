@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 
 import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
 
 /// Sets the background metadata for the space BGs in Shared Preferences on launch
 void setBackgroundMetadata() async {
-  final prefs = await SharedPreferences.getInstance();
+  final prefs = SharedPreferencesManager.instance;
   final metadataPath = "assets/images/backgrounds/metadata.json";
 
   if (prefs.getBool("backgroundsIsSet") ?? false) return;

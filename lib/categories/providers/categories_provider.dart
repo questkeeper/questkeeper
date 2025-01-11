@@ -1,11 +1,13 @@
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/repositories/categories_repository.dart';
+import 'package:questkeeper/shared/utils/undo_manager_mixin.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'categories_provider.g.dart';
 
 @riverpod
-class CategoriesManager extends _$CategoriesManager {
+class CategoriesManager extends _$CategoriesManager
+    with UndoManagerMixin<List<Categories>> {
   final CategoriesRepository _repository;
 
   CategoriesManager() : _repository = CategoriesRepository();
@@ -59,13 +61,17 @@ class CategoriesManager extends _$CategoriesManager {
   }
 
   Future<void> deleteCategory(Categories category) async {
-    try {
-      await _repository.deleteCategory(category);
-      state = AsyncValue.data(
-        (state.value ?? []).where((c) => c.id != category.id).toList(),
-      );
-    } catch (error) {
-      state = AsyncValue.error(error, StackTrace.current);
-    }
+    performActionWithUndo(
+      UndoAction(
+        previousState: state.value!,
+        newState:
+            state.value!.where((element) => element.id != category.id).toList(),
+        repositoryAction: () async {
+          await _repository.deleteCategory(category);
+        },
+        successMessage: "Category deleted",
+        timing: ActionTiming.afterUndoPeriod,
+      ),
+    );
   }
 }
