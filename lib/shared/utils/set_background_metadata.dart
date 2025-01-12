@@ -23,6 +23,11 @@ void setBackgroundMetadata() async {
         "background_${bg["name"]}_${timeOfDay.toString().split('.').last}",
         bg["colorCodes"][i],
       );
+
+      await prefs.setString(
+        "background_${bg["name"]}_top_${timeOfDay.toString().split('.').last}",
+        bg["topHalfColorCodes"][i],
+      );
     }
   });
 

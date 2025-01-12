@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/onboarding_overlay.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -18,7 +19,6 @@ import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:questkeeper/spaces/widgets/animated_game_container.dart';
 import 'package:questkeeper/spaces/widgets/circle_progress_bar.dart';
 import 'package:questkeeper/spaces/widgets/space_card.dart';
-import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
 
 class AllSpacesScreen extends ConsumerStatefulWidget {
   const AllSpacesScreen({super.key});
@@ -33,7 +33,9 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   late final String? initialBackgroundPath;
   static final SharedPreferencesManager prefs =
       SharedPreferencesManager.instance;
-  late String backgroundColor;
+  // Color should be listened to and updated in the game widget
+  late ValueNotifier<String> backgroundColor = ValueNotifier("");
+  late ValueNotifier<String> appBarBackgroundColor = ValueNotifier("");
   double dragStartX = 0.0;
   bool _isGameInitialized = false;
 
@@ -46,10 +48,15 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   Future<void> _setup() async {
     if (!mounted) return;
 
-    // Initial setup
-    ref.read(gameHeightProvider.notifier).state = 1.0;
-    _pageController = ref.read(pageControllerProvider);
-    _pageController.addListener(_updatePage);
+    try {
+      // Initial setup
+      ref.read(gameHeightProvider.notifier).state = 1.0;
+      _pageController = ref.read(pageControllerProvider);
+      _pageController.addListener(_updatePage);
+    } catch (e) {
+      // Retry in 100ms
+      Future.delayed(const Duration(milliseconds: 100), () => _setup());
+    }
 
     try {
       await _initializeGame();
@@ -75,9 +82,13 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
           initialBackgroundPath =
               "backgrounds/${spaces[0].spaceType}/$dateType.png";
 
-          backgroundColor =
+          backgroundColor.value =
               prefs.getString("background_${spaces[0].spaceType}_$dateType") ??
                   "#000000";
+
+          appBarBackgroundColor.value = prefs.getString(
+                  "background_${spaces[0].spaceType}_top_$dateType") ??
+              "#000000";
 
           if (initialBackgroundPath != null && mounted && !_isGameInitialized) {
             _isGameInitialized = true;
@@ -119,170 +130,189 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
     final heightFactor = ref.watch(gameHeightProvider);
     final game = ref.watch(gameProvider);
 
-    return SafeArea(
-      child: Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: FloatingActionButton(
-          key: const Key('add_task_button_mobile'),
-          heroTag: 'add_task_button_mobile',
-          onPressed: () => {
-            showTaskBottomSheet(
-              context: context,
-              ref: ref,
-              existingTask: null,
-            ),
-          },
-          child: const Icon(LucideIcons.plus),
-        ),
-        body: spacesAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) {
-            debugPrint('Error: $error');
-            Sentry.captureException(
-              error,
-              stackTrace: stack,
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: ValueListenableBuilder(
+          valueListenable: appBarBackgroundColor,
+          builder: (context, appBackgroundColor, child) {
+            return AppBar(
+              toolbarHeight: 0,
+              // Listen to height factor, if it's 0.3 use transparent color
+              backgroundColor: heightFactor <= 0.3
+                  ? backgroundColor.value.toColor()
+                  : appBarBackgroundColor.value.toColor(),
             );
-            return Center(child: Text('Error: $error'));
           },
-          data: (spaces) {
-            return Stack(
-              children: [
-                Column(
-                  children: [
-                    if (game != null &&
-                        _isGameInitialized) // Only show when game is ready
-                      GestureDetector(
-                        onHorizontalDragEnd: (details) {
-                          // If end drag position is the same as start drag position, then it's a tap
-                          if (details.globalPosition.dx == dragStartX) {
-                            return;
-                          }
-                          final velocity = details.primaryVelocity ?? 0;
-                          final screenWidth = MediaQuery.of(context).size.width;
-                          final dragDistance =
-                              details.primaryVelocity?.abs() ?? 0;
+        ),
+      ),
+      body: spacesAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) {
+          debugPrint('Error: $error');
+          Sentry.captureException(
+            error,
+            stackTrace: stack,
+          );
+          return Center(child: Text('Error: $error'));
+        },
+        data: (spaces) {
+          return Stack(
+            children: [
+              Column(
+                children: [
+                  if (game != null &&
+                      _isGameInitialized) // Only show when game is ready
+                    GestureDetector(
+                      onHorizontalDragEnd: (details) {
+                        // If end drag position is the same as start drag position, then it's a tap
+                        if (details.globalPosition.dx == dragStartX) {
+                          return;
+                        }
+                        final velocity = details.primaryVelocity ?? 0;
+                        final screenWidth = MediaQuery.of(context).size.width;
+                        final dragDistance =
+                            details.primaryVelocity?.abs() ?? 0;
 
-                          // Define threshold for page change
-                          final velocityThreshold = 300.0;
-                          final distanceThreshold =
-                              screenWidth * 0.2; // 20% of screen width
+                        // Define threshold for page change
+                        final velocityThreshold = 300.0;
+                        final distanceThreshold =
+                            screenWidth * 0.2; // 20% of screen width
 
-                          if (velocity.abs() > velocityThreshold ||
-                              dragDistance > distanceThreshold) {
-                            final newPage = velocity > 0
-                                ? max(0, currentPageValue.value - 1)
-                                : min(
-                                    spaces.length, currentPageValue.value + 1);
+                        if (velocity.abs() > velocityThreshold ||
+                            dragDistance > distanceThreshold) {
+                          final newPage = velocity > 0
+                              ? max(0, currentPageValue.value - 1)
+                              : min(spaces.length, currentPageValue.value + 1);
 
-                            currentPageValue.value = newPage;
+                          currentPageValue.value = newPage;
 
-                            // Animate both the game and PageView
-                            _pageController.animateToPage(
-                              newPage,
-                              duration: const Duration(milliseconds: 400),
-                              curve: Curves.easeInOut,
-                            );
-
-                            // Animate game transition
-                            game.animateEntry(
-                              velocity > 0 ? Direction.right : Direction.left,
-                            );
-                          } else {
-                            // Reset to current page if threshold not met
-                            return;
-                          }
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          child: AnimatedGameContainer(
-                            game: game,
-                            heightFactor: heightFactor,
-                            shouldTextShow:
-                                currentPageValue.value != spaces.length,
-                          ),
-                        ),
-                      ),
-                    Expanded(
-                      child: PageView.builder(
-                        controller: _pageController,
-                        onPageChanged: (page) {
-                          currentPageValue.value = page;
-
-                          final dateType = DateTime.now().getTimeOfDayType();
-                          final currentGame = ref.read(gameProvider);
-
-                          if (currentGame == null) {
-                            return;
-                          }
-
-                          currentGame.updateBackground(
-                            page == spaces.length
-                                ? initialBackgroundPath ?? "placeholder"
-                                : "backgrounds/${spaces[page].spaceType}/$dateType.png",
+                          // Animate both the game and PageView
+                          _pageController.animateToPage(
+                            newPage,
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeInOut,
                           );
 
-                          final isForward = page >
-                              (ref.read(pageControllerProvider).page ?? 0);
-                          currentGame.animateEntry(
-                            isForward ? Direction.left : Direction.right,
+                          // Animate game transition
+                          game.animateEntry(
+                            velocity > 0 ? Direction.right : Direction.left,
                           );
-
-                          if (currentPageValue.value == spaces.length) {
-                            showSpaceBottomSheet(
-                              context: context,
-                              ref: ref,
-                            );
-                            ref.read(gameHeightProvider.notifier).state = 0.3;
-                          }
-
-                          if (!isForward && page == spaces.length - 1) {
-                            ref.read(gameHeightProvider.notifier).state =
-                                // Check if the game container is under 200px, if it is then keep the state at 0.3
-                                // Otherwise set it to 1.0
-                                heightFactor < 0.2 ? 0.3 : 1.0;
-                          }
-                        },
-                        itemCount: spaces.length + 1,
-                        itemBuilder: (context, index) {
-                          String spaceBackgroundColor = index == spaces.length
-                              ? "#000000"
-                              : prefs.getString(
-                                      "background_${spaces[index].spaceType}_${DateTime.now().getTimeOfDayType()}") ??
-                                  "#000000";
-
-                          if (index == spaces.length) {
-                            return Center(
-                              child: GestureDetector(
-                                onTap: () {
-                                  showSpaceBottomSheet(
-                                    context: context,
-                                    ref: ref,
-                                  );
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(LucideIcons.circle_plus, size: 48),
-                                    Text('Create a new space'),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
-                          return SpaceCard(
-                              space: spaces[index],
-                              backgroundColorHex: spaceBackgroundColor);
-                        },
+                        } else {
+                          // Reset to current page if threshold not met
+                          return;
+                        }
+                      },
+                      child: AnimatedGameContainer(
+                        game: game,
+                        heightFactor: heightFactor,
+                        shouldTextShow: currentPageValue.value != spaces.length,
                       ),
                     ),
-                  ],
-                ),
-                const OnboardingOverlay(),
-                CircleProgressBar(spaces: spaces)
-              ],
-            );
-          },
-        ),
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _pageController,
+                      onPageChanged: (page) {
+                        currentPageValue.value = page;
+
+                        final dateType = DateTime.now().getTimeOfDayType();
+                        final currentGame = ref.read(gameProvider);
+
+                        if (currentGame == null) {
+                          return;
+                        }
+
+                        currentGame.updateBackground(
+                          page == spaces.length
+                              ? initialBackgroundPath ?? "placeholder"
+                              : "backgrounds/${spaces[page].spaceType}/$dateType.png",
+                        );
+
+                        final isForward =
+                            page > (ref.read(pageControllerProvider).page ?? 0);
+                        currentGame.animateEntry(
+                          isForward ? Direction.left : Direction.right,
+                        );
+
+                        if (currentPageValue.value == spaces.length) {
+                          showSpaceBottomSheet(
+                            context: context,
+                            ref: ref,
+                          );
+                          ref.read(gameHeightProvider.notifier).state = 0.3;
+                          appBarBackgroundColor.value = prefs.getString(
+                                  "background_${spaces[0].spaceType}_$dateType") ??
+                              "#000000";
+                        }
+
+                        if (!isForward && page == spaces.length - 1) {
+                          ref.read(gameHeightProvider.notifier).state =
+                              // Check if the game container is under 200px, if it is then keep the state at 0.3
+                              // Otherwise set it to 1.0
+                              heightFactor < 0.2 ? 0.3 : 1.0;
+                        }
+
+                        backgroundColor.value = page == spaces.length
+                            ? prefs.getString(
+                                    "background_${spaces[0].spaceType}_$dateType") ??
+                                "#000000"
+                            : prefs.getString(
+                                    "background_${spaces[page].spaceType}_$dateType") ??
+                                "#000000";
+
+                        appBarBackgroundColor.value = page == spaces.length
+                            ? prefs.getString(
+                                    "background_${spaces[0].spaceType}_top_$dateType") ??
+                                "#000000"
+                            : prefs.getString(
+                                    "background_${spaces[page].spaceType}_top_$dateType") ??
+                                "#000000";
+                      },
+                      itemCount: spaces.length + 1,
+                      itemBuilder: (context, index) {
+                        String spaceBackgroundColor = index == spaces.length
+                            ? "#000000"
+                            : prefs.getString(
+                                    "background_${spaces[index].spaceType}_${DateTime.now().getTimeOfDayType()}") ??
+                                "#000000";
+
+                        if (index == spaces.length) {
+                          return Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                showSpaceBottomSheet(
+                                  context: context,
+                                  ref: ref,
+                                );
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(LucideIcons.circle_plus, size: 48),
+                                  Text('Create a new space'),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                        return SpaceCard(
+                            space: spaces[index],
+                            backgroundColorHex: spaceBackgroundColor);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const OnboardingOverlay(),
+              Positioned(
+                bottom: kBottomNavigationBarHeight,
+                right: 0,
+                left: 0,
+                child: CircleProgressBar(spaces: spaces),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
