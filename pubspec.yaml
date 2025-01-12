@@ -65,6 +65,7 @@ dependencies:
   dotlottie_loader: ^0.0.4
   rive: ^0.13.20
   collection: ^1.19.0
+  dropdown_button2: ^2.3.9
 
 dev_dependencies:
   flutter_test:
