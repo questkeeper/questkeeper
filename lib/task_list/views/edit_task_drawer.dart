@@ -1,7 +1,8 @@
-import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
-import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
@@ -13,7 +14,7 @@ import 'package:questkeeper/task_list/subtasks/providers/subtasks_providers.dart
 import 'package:questkeeper/task_list/widgets/action_buttons.dart';
 import 'package:questkeeper/task_list/widgets/task_form.dart';
 
-void showTaskBottomSheet({
+void showTaskDrawer({
   required BuildContext context,
   required WidgetRef ref,
   Tasks? existingTask,
@@ -50,39 +51,82 @@ void showTaskBottomSheet({
         );
   }
 
-  showModalBottomSheet(
-    context: context,
-    enableDrag: true,
-    isDismissible: true,
-    showDragHandle: true,
-    isScrollControlled: true,
-    useSafeArea: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(12.0),
-        topRight: Radius.circular(12.0),
-      ),
+  // Open the drawer using Navigator
+  Navigator.of(context).push(
+    PageRouteBuilder(
+      opaque: false,
+      barrierColor: Colors.black54,
+      barrierDismissible: true,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.fastEaseInToSlowEaseOut,
+            )),
+            child: child);
+      },
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1.0, 0.0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: Curves.fastEaseInToSlowEaseOut,
+          )),
+          child: Dismissible(
+            key: Key(existingTask?.id.toString() ?? 'new-task'),
+            onDismissed: (direction) {
+              Navigator.of(context).pop();
+            },
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.13,
+                right: MediaQuery.of(context).size.width * 0.02,
+              ),
+              child: SafeArea(
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 10,
+                          offset: const Offset(-2, 0),
+                        ),
+                      ],
+                    ),
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: _TaskBottomSheetContent(
+                        nameController: nameController,
+                        descriptionController: descriptionController,
+                        isEditing: isEditing,
+                        ref: ref,
+                        existingTask: existingTask,
+                        existingSpace: existingSpace,
+                        spacesList: spacesList,
+                        subtasksList: subtasksList,
+                        createTask: createTask,
+                        updateTask: updateTask,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     ),
-    builder: (BuildContext context) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-        ),
-        child: _TaskBottomSheetContent(
-          nameController: nameController,
-          descriptionController: descriptionController,
-          isEditing: isEditing,
-          ref: ref,
-          existingTask: existingTask,
-          existingSpace: existingSpace,
-          spacesList: spacesList,
-          subtasksList: subtasksList,
-          createTask: createTask,
-          updateTask: updateTask,
-        ),
-      );
-    },
   );
 }
 
