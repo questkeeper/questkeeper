@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
         final categoriesList = [
               const Categories(
                 id: null,
-                title: "Unselected Category",
+                title: "No Category",
               ),
             ] +
             categories
@@ -45,7 +46,16 @@ class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
               const Categories(title: "Create New Category", id: -1),
             ];
 
-        return DropdownButtonFormField<String>(
+        return DropdownButtonFormField2(
+          dropdownStyleData: DropdownStyleData(
+            maxHeight: 400,
+            width: 250,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              color: Theme.of(context).colorScheme.surfaceContainerHigh,
+            ),
+            offset: const Offset(-20, 0),
+          ),
           value:
               widget.defaultCategoryId == null || widget.defaultCategoryId == ""
                   ? categoriesList.first.id.toString()
@@ -63,15 +73,12 @@ class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
           isExpanded: true,
           items: categoriesList
               .map(
-                (category) => DropdownMenuItem<String>(
+                (category) => DropdownMenuItem(
                   value: category.id.toString(),
                   child: Text(category.title),
                 ),
               )
               .toList(),
-          decoration: const InputDecoration(
-            labelText: "Category",
-          ),
         );
       },
       loading: () => const LinearProgressIndicator(), // Show a loading spinner
