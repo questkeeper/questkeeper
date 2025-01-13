@@ -32,185 +32,176 @@ class SettingsScreen extends ConsumerWidget {
                 : (Platform.isAndroid ? 'Android' : 'Unknown'),
           );
 
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                FutureBuilder(
-                  future: ref.watch(profileManagerProvider.future),
-                  builder: (context, snapshot) {
-                    return Skeletonizer(
-                      enabled: !snapshot.hasData,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            FutureBuilder(
+              future: ref.watch(profileManagerProvider.future),
+              builder: (context, snapshot) {
+                return Skeletonizer(
+                  enabled: !snapshot.hasData,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      snapshot.hasData
+                          ? AvatarWidget(
+                              seed: (snapshot.data as Profile).user_id)
+                          : const CircleAvatar(radius: 50),
+                      const SizedBox(width: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          snapshot.hasData
-                              ? AvatarWidget(
-                                  seed: (snapshot.data as Profile).user_id)
-                              : const CircleAvatar(radius: 50),
-                          const SizedBox(width: 20),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    snapshot.hasData
-                                        ? (snapshot.data as Profile).username
-                                        : 'Username Loading',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall,
-                                  ),
-                                  if (snapshot.hasData &&
-                                      (snapshot.data as Profile).isPro == true)
-                                    const Text('PRO',
-                                        style: TextStyle(
-                                            color: Colors.greenAccent))
-                                ],
-                              ),
-                              const SizedBox(height: 5),
                               Text(
                                 snapshot.hasData
-                                    ? '${(snapshot.data as Profile).points} points'
-                                    : '0 points',
-                                style: Theme.of(context).textTheme.bodyLarge,
+                                    ? (snapshot.data as Profile).username
+                                    : 'Username Loading',
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall,
                               ),
-                              Text(
-                                snapshot.hasData
-                                    ? 'Account since ${(snapshot.data as Profile).created_at.split("T")[0]}'
-                                    : 'Account since 2024-01-01',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
+                              if (snapshot.hasData &&
+                                  (snapshot.data as Profile).isPro == true)
+                                const Text('PRO',
+                                    style: TextStyle(color: Colors.greenAccent))
                             ],
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            snapshot.hasData
+                                ? '${(snapshot.data as Profile).points} points'
+                                : '0 points',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          Text(
+                            snapshot.hasData
+                                ? 'Account since ${(snapshot.data as Profile).created_at.split("T")[0]}'
+                                : 'Account since 2024-01-01',
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
                       ),
-                    );
+                    ],
+                  ),
+                );
+              },
+            ),
+            Column(
+              children: [
+                const SizedBox(height: 10),
+                const Divider(),
+                SettingsCard(
+                    title: 'Username',
+                    description: 'Update your username',
+                    icon: LucideIcons.user,
+                    onTap: () => showDialog(
+                        context: context,
+                        builder: (context) => UpdateUsernameDialog())),
+                SettingsCard(
+                    title: 'Notifications',
+                    description: 'Manage your notifications',
+                    icon: LucideIcons.bell_ring,
+                    onTap: () =>
+                        Navigator.pushNamed(context, '/notifications')),
+                SettingsCard(
+                    title: 'Theme',
+                    description: 'Change the app theme',
+                    icon: LucideIcons.palette,
+                    onTap: () => Navigator.pushNamed(context, '/theme')),
+                const Divider(),
+                SettingsCard(
+                  title: 'Feedback',
+                  description: 'Send us your feedback',
+                  icon: LucideIcons.bug,
+                  onTap: () async {
+                    if (!context.mounted) {
+                      return;
+                    }
+                    BetterFeedback.of(context).showAndUploadToSentry(
+                        name: user?.id ?? 'Unknown',
+                        email: user?.email ?? 'Unknown@questkeeper.app');
                   },
                 ),
-                Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    const Divider(),
-                    SettingsCard(
-                        title: 'Username',
-                        description: 'Update your username',
-                        icon: LucideIcons.user,
-                        onTap: () => showDialog(
-                            context: context,
-                            builder: (context) => UpdateUsernameDialog())),
-                    SettingsCard(
-                        title: 'Notifications',
-                        description: 'Manage your notifications',
-                        icon: LucideIcons.bell_ring,
-                        onTap: () =>
-                            Navigator.pushNamed(context, '/notifications')),
-                    SettingsCard(
-                        title: 'Theme',
-                        description: 'Change the app theme',
-                        icon: LucideIcons.palette,
-                        onTap: () => Navigator.pushNamed(context, '/theme')),
-                    const Divider(),
-                    SettingsCard(
-                      title: 'Feedback',
-                      description: 'Send us your feedback',
-                      icon: LucideIcons.bug,
-                      onTap: () async {
-                        if (!context.mounted) {
-                          return;
-                        }
-                        BetterFeedback.of(context).showAndUploadToSentry(
-                            name: user?.id ?? 'Unknown',
-                            email: user?.email ?? 'Unknown@questkeeper.app');
-                      },
-                    ),
-                    SettingsCard(
-                        title: 'Privacy',
-                        description: 'Manage privacy and data settings',
-                        icon: LucideIcons.shield,
-                        onTap: () => Navigator.pushNamed(context, '/privacy')),
-                    SettingsCard(
-                        title: 'About',
-                        description: 'About the app',
-                        icon: LucideIcons.info,
-                        onTap: () =>
-                            Navigator.pushNamed(context, '/settings/about')),
-                    platform != "unkown"
-                        ? SettingsCard(
-                            title: 'Review the app',
-                            description:
-                                'Review us on the ${platform == 'iOS' || platform == 'macOS' ? 'App Store' : 'Play Store'}',
-                            icon: LucideIcons.star,
-                            onTap: () async {
-                              try {
-                                final url = platform == 'iOS' ||
-                                        platform == 'macOS'
-                                    ? 'https://apps.apple.com/us/app/questkeeper/id6651824308'
-                                    : 'https://play.google.com/store/apps/details?id=app.questkeeper';
-                                if (await canLaunchUrl(Uri.parse(url))) {
-                                  await launchUrl(Uri.parse(url));
-                                } else {
-                                  throw 'Could not launch $url';
-                                }
-                              } catch (e) {
-                                SnackbarService.showErrorSnackbar(
-                                  'Could not open the store page',
-                                );
-                              }
-                            },
-                          )
-                        : const SizedBox(),
-                    SettingsCard(
-                        title: 'Experiments',
-                        description: 'Enable features that may be unstable',
-                        icon: LucideIcons.flask_conical,
-                        onTap: () =>
-                            Navigator.pushNamed(context, '/experiments')),
-                    SettingsCard(
-                      title: 'Sign out',
-                      description: 'Sign out and remove local data',
-                      icon: LucideIcons.log_out,
-                      iconColor: Colors.redAccent,
-                      onTap: () async {
-                        AuthNotifier().clearToken();
-                        await SharedPreferences.getInstance().then((prefs) {
-                          prefs.clear();
-                        });
-
-                        // Clear cache manager
-                        final CacheManager cacheManager = DefaultCacheManager();
-                        await cacheManager.emptyCache();
-
-                        Posthog().reset();
-
-                        await Supabase.instance.client.auth.signOut().then(
-                              (value) => {
-                                if (context.mounted)
-                                  Navigator.pushReplacementNamed(
-                                      context, "/signin"),
-                              },
+                SettingsCard(
+                    title: 'Privacy',
+                    description: 'Manage privacy and data settings',
+                    icon: LucideIcons.shield,
+                    onTap: () => Navigator.pushNamed(context, '/privacy')),
+                SettingsCard(
+                    title: 'About',
+                    description: 'About the app',
+                    icon: LucideIcons.info,
+                    onTap: () =>
+                        Navigator.pushNamed(context, '/settings/about')),
+                platform != "unkown"
+                    ? SettingsCard(
+                        title: 'Review the app',
+                        description:
+                            'Review us on the ${platform == 'iOS' || platform == 'macOS' ? 'App Store' : 'Play Store'}',
+                        icon: LucideIcons.star,
+                        onTap: () async {
+                          try {
+                            final url = platform == 'iOS' || platform == 'macOS'
+                                ? 'https://apps.apple.com/us/app/questkeeper/id6651824308'
+                                : 'https://play.google.com/store/apps/details?id=app.questkeeper';
+                            if (await canLaunchUrl(Uri.parse(url))) {
+                              await launchUrl(Uri.parse(url));
+                            } else {
+                              throw 'Could not launch $url';
+                            }
+                          } catch (e) {
+                            SnackbarService.showErrorSnackbar(
+                              'Could not open the store page',
                             );
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: const Text(
-                          textAlign: TextAlign.center,
-                          'To delete your account, please message us at contact@questkeeper.app'),
-                    ),
-                  ],
+                          }
+                        },
+                      )
+                    : const SizedBox(),
+                SettingsCard(
+                    title: 'Experiments',
+                    description: 'Enable features that may be unstable',
+                    icon: LucideIcons.flask_conical,
+                    onTap: () => Navigator.pushNamed(context, '/experiments')),
+                SettingsCard(
+                  title: 'Sign out',
+                  description: 'Sign out and remove local data',
+                  icon: LucideIcons.log_out,
+                  iconColor: Colors.redAccent,
+                  onTap: () async {
+                    AuthNotifier().clearToken();
+                    await SharedPreferences.getInstance().then((prefs) {
+                      prefs.clear();
+                    });
+
+                    // Clear cache manager
+                    final CacheManager cacheManager = DefaultCacheManager();
+                    await cacheManager.emptyCache();
+
+                    Posthog().reset();
+
+                    await Supabase.instance.client.auth.signOut().then(
+                          (value) => {
+                            if (context.mounted)
+                              Navigator.pushReplacementNamed(
+                                  context, "/signin"),
+                          },
+                        );
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: const Text(
+                      textAlign: TextAlign.center,
+                      'To delete your account, please message us at contact@questkeeper.app'),
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
