@@ -1,13 +1,14 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
-import 'package:questkeeper/shared/notifications/points_notification_provider.dart';
-import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/shared/notifications/points_notification_provider.dart';
+import 'package:questkeeper/shared/widgets/show_drawer.dart';
+import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:questkeeper/tabs/modern_bottom_bar.dart';
 import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
 
@@ -70,11 +71,12 @@ class _TabViewState extends ConsumerState<TabView> {
                     currentIndex: _selectedIndex,
                     onTap: _onItemTapped,
                     leadingAction: NavActionButton(
-                      onPressed: () => showCupertinoModalPopup(
-                          context: context,
-                          builder: (_) {
-                            return const SettingsScreen();
-                          }),
+                      onPressed: () => showDrawer(
+                        context: context,
+                        child: SettingsScreen(),
+                        key: 'settings_drawer',
+                        widthOffsetLeftLean: false,
+                      ),
                       icon: LucideIcons.settings,
                       tooltip: 'Settings',
                     ),
@@ -132,11 +134,11 @@ class _TabViewState extends ConsumerState<TabView> {
                       key: const Key('add_task_button'),
                       heroTag: 'add_task_button',
                       onPressed: () => {
-                        // showTaskBottomSheet(
-                        //   context: context,
-                        //   ref: ref,
-                        //   existingTask: null,
-                        // ),
+                        showTaskDrawer(
+                          context: context,
+                          ref: ref,
+                          existingTask: null,
+                        ),
                       },
                       child: const Icon(LucideIcons.plus),
                     ),
