@@ -5,6 +5,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
+import 'package:questkeeper/spaces/widgets/circle_tab_indicator.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/onboarding_overlay.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,7 +18,6 @@ import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:questkeeper/spaces/widgets/animated_game_container.dart';
-import 'package:questkeeper/spaces/widgets/circle_progress_bar.dart';
 import 'package:questkeeper/spaces/widgets/space_card.dart';
 
 class AllSpacesScreen extends ConsumerStatefulWidget {
@@ -27,8 +27,10 @@ class AllSpacesScreen extends ConsumerStatefulWidget {
   ConsumerState<AllSpacesScreen> createState() => _AllSpacesState();
 }
 
-class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
-  late PageController _pageController;
+class _AllSpacesState extends ConsumerState<AllSpacesScreen>
+    with SingleTickerProviderStateMixin {
+  late final PageController _pageController;
+  late TabController _tabController;
   ValueNotifier<int> currentPageValue = ValueNotifier(0);
   late final String? initialBackgroundPath;
   static final SharedPreferencesManager prefs =
@@ -90,6 +92,9 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                   "background_${spaces[0].spaceType}_top_$dateType") ??
               "#000000";
 
+          _tabController =
+              TabController(length: spaces.length + 1, vsync: this);
+
           if (initialBackgroundPath != null && mounted && !_isGameInitialized) {
             _isGameInitialized = true;
             ref.read(gameProvider.notifier).state =
@@ -112,6 +117,7 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
   void _updatePage() {
     if (mounted && _pageController.hasClients) {
       currentPageValue.value = _pageController.page?.round() ?? 0;
+      _tabController.animateTo(currentPageValue.value);
     }
   }
 
@@ -120,6 +126,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
     if (_pageController.hasClients) {
       _pageController.removeListener(_updatePage);
     }
+
+    _tabController.dispose();
     currentPageValue.dispose();
     super.dispose();
   }
@@ -130,34 +138,70 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
     final heightFactor = ref.watch(gameHeightProvider);
     final game = ref.watch(gameProvider);
 
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
-        child: ValueListenableBuilder(
-          valueListenable: appBarBackgroundColor,
-          builder: (context, appBackgroundColor, child) {
-            return AppBar(
-              toolbarHeight: 0,
-              // Listen to height factor, if it's 0.3 use transparent color
-              backgroundColor: heightFactor <= 0.3
-                  ? backgroundColor.value.toColor()
-                  : appBarBackgroundColor.value.toColor(),
-            );
-          },
-        ),
-      ),
-      body: spacesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) {
-          debugPrint('Error: $error');
-          Sentry.captureException(
-            error,
-            stackTrace: stack,
-          );
-          return Center(child: Text('Error: $error'));
-        },
-        data: (spaces) {
-          return Stack(
+    return spacesAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) {
+        debugPrint('Error: $error');
+        Sentry.captureException(
+          error,
+          stackTrace: stack,
+        );
+        return Center(child: Text('Error: $error'));
+      },
+      data: (spaces) {
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight / 2),
+            child: ValueListenableBuilder(
+              valueListenable: appBarBackgroundColor,
+              builder: (context, appBackgroundColor, child) {
+                return Stack(
+                  children: [
+                    AppBar(
+                      toolbarHeight: 0,
+                      backgroundColor: currentPageValue.value == spaces.length
+                          ? Colors.transparent
+                          : (heightFactor <= 0.3
+                              ? backgroundColor.value.toColor()
+                              : appBarBackgroundColor.value.toColor()),
+                      elevation: 0,
+                    ),
+                    SafeArea(
+                      child: TabBar(
+                        controller: _tabController,
+                        unselectedLabelStyle:
+                            Theme.of(context).primaryTextTheme.labelMedium,
+                        labelStyle:
+                            Theme.of(context).primaryTextTheme.titleMedium,
+                        unselectedLabelColor: Colors.white,
+                        labelColor: Colors.white,
+                        dividerHeight: 0,
+                        indicator: CircleTabIndicator(
+                          color: Colors.white,
+                          radius: 2,
+                        ),
+                        indicatorColor: Colors.white,
+                        isScrollable: true,
+                        tabs: [
+                          for (var space in spaces)
+                            Tab(
+                              text: space.title.capitalize(),
+                            ),
+                          Tab(
+                            text: 'Create',
+                          ),
+                        ],
+                        onTap: (index) {
+                          _pageController.jumpToPage(index);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          body: Stack(
             children: [
               Column(
                 children: [
@@ -240,9 +284,15 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                             ref: ref,
                           );
                           ref.read(gameHeightProvider.notifier).state = 0.3;
-                          appBarBackgroundColor.value = prefs.getString(
-                                  "background_${spaces[0].spaceType}_$dateType") ??
-                              "#000000";
+                          appBarBackgroundColor.value = "#000000";
+                        } else {
+                          appBarBackgroundColor.value = page == spaces.length
+                              ? prefs.getString(
+                                      "background_${spaces[0].spaceType}_top_$dateType") ??
+                                  "#000000"
+                              : prefs.getString(
+                                      "background_${spaces[page].spaceType}_top_$dateType") ??
+                                  "#000000";
                         }
 
                         if (!isForward && page == spaces.length - 1) {
@@ -258,14 +308,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                                 "#000000"
                             : prefs.getString(
                                     "background_${spaces[page].spaceType}_$dateType") ??
-                                "#000000";
-
-                        appBarBackgroundColor.value = page == spaces.length
-                            ? prefs.getString(
-                                    "background_${spaces[0].spaceType}_top_$dateType") ??
-                                "#000000"
-                            : prefs.getString(
-                                    "background_${spaces[page].spaceType}_top_$dateType") ??
                                 "#000000";
                       },
                       itemCount: spaces.length + 1,
@@ -303,17 +345,16 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen> {
                   ),
                 ],
               ),
-              const OnboardingOverlay(),
-              Positioned(
-                bottom: kBottomNavigationBarHeight,
+              const Positioned(
+                bottom: kBottomNavigationBarHeight + 16,
                 right: 0,
                 left: 0,
-                child: CircleProgressBar(spaces: spaces),
+                child: OnboardingOverlay(),
               ),
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
