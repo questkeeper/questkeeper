@@ -6,7 +6,6 @@ import 'package:questkeeper/friends/providers/friends_provider.dart';
 import 'package:questkeeper/friends/providers/friends_request_provider.dart';
 import 'package:questkeeper/friends/widgets/friend_list_tile.dart';
 import 'package:questkeeper/friends/widgets/friend_request_bottom_sheet.dart';
-import 'package:questkeeper/friends/widgets/friend_search.dart';
 import 'package:questkeeper/friends/widgets/sort_menu.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
@@ -105,15 +104,6 @@ class _FriendsListState extends ConsumerState<FriendsList> {
 
     return SafeArea(
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(LucideIcons.search),
-          onPressed: () {
-            showSearch(
-              context: context,
-              delegate: FriendSearchDelegate(),
-            );
-          },
-        ),
         body: Column(
           children: [
             Material(

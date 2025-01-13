@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
+import 'package:questkeeper/friends/widgets/friend_search.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
 import 'package:questkeeper/shared/notifications/points_notification_provider.dart';
 import 'package:questkeeper/shared/widgets/show_drawer.dart';
@@ -171,7 +172,13 @@ class _TabViewState extends ConsumerState<TabView> {
         );
       case 1: // Friends tab
         return NavActionButton(
-          onPressed: () {},
+          onPressed: () {
+            showDrawer(
+              context: context,
+              key: "add_friend_drawer",
+              child: FriendSearchView(),
+            );
+          },
           icon: LucideIcons.user_search,
           tooltip: 'Add Friend',
           isColoredPrimary: true,
