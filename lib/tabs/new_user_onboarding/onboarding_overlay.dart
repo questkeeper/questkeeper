@@ -5,7 +5,7 @@ import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
-import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
+import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
 import 'package:rive/rive.dart';
 
 class OnboardingOverlay extends ConsumerWidget {

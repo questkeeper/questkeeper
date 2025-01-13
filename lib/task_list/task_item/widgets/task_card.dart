@@ -7,7 +7,7 @@ import 'package:questkeeper/task_list/providers/tasks_provider.dart';
 import 'package:questkeeper/shared/utils/format_date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
+import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
 import 'package:questkeeper/task_list/task_item/widgets/task_notification_dot.dart';
 
 class TaskCard extends ConsumerWidget {
