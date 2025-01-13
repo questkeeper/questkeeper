@@ -1,5 +1,3 @@
-import 'package:faker/faker.dart';
-import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/shared/utils/undo_manager_mixin.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/repositories/spaces_repository.dart';
@@ -32,28 +30,6 @@ class SpacesManager extends _$SpacesManager
         spaceType: "office",
         notificationTimes: defaultNotificationTimes,
       ));
-
-      if (isDebug) {
-        spaces.add(Spaces(
-          title: faker.animal.name(),
-          spaceType: "office",
-          notificationTimes: defaultNotificationTimes,
-        ));
-
-        spaces.add(Spaces(
-          title: faker.animal.name(),
-          spaceType: "living_room",
-          notificationTimes: defaultNotificationTimes,
-        ));
-
-        spaces.add(
-          Spaces(
-            title: faker.animal.name(),
-            spaceType: "school",
-            notificationTimes: defaultNotificationTimes,
-          ),
-        );
-      }
 
       return spaces;
     } catch (e) {
