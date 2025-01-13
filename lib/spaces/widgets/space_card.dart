@@ -216,7 +216,8 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                             );
                           }
 
-                          return Container();
+                          return const SizedBox(
+                              height: kBottomNavigationBarHeight + 16);
                         }
                       },
                     ),
