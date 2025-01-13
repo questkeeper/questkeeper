@@ -128,7 +128,7 @@ class _OnboardingModal extends ConsumerWidget {
                     title: 'Create your first task',
                     description: 'A task is an action you need to complete',
                     onTap: () async {
-                      showTaskBottomSheet(context: context, ref: ref);
+                      showTaskDrawer(context: context, ref: ref);
                     },
                   ),
                   _OnboardingStep(

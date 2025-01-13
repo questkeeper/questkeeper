@@ -83,7 +83,7 @@ class TaskCard extends ConsumerWidget {
         onTap: () {
           // FIXME: this will probably break stuff.
           if (MediaQuery.of(context).size.width < 800) {
-            showTaskBottomSheet(context: context, ref: ref, existingTask: task);
+            showTaskDrawer(context: context, ref: ref, existingTask: task);
           }
         },
         child: SizedBox(
