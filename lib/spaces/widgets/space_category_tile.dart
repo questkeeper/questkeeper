@@ -57,9 +57,12 @@ class SpaceCategoryTile extends ConsumerWidget {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  category.title,
-                  style: Theme.of(context).textTheme.titleMedium,
+                Expanded(
+                  child: Text(
+                    category.title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 category.id != null
                     ? IconButton(
