@@ -54,13 +54,30 @@ class _TabViewState extends ConsumerState<TabView> {
             body: Stack(
               children: [
                 // Main content scaffold that contains the pages
+                // Scaffold(
+                //   body: IndexedStack(
+                //     // Using IndexedStack for better state preservation
+                //     index: _selectedIndex,
+                //     children: pages,
+                //   ),
+                //   // Remove bottom navigation bar from here
+                // ),
+
                 Scaffold(
-                  body: IndexedStack(
-                    // Using IndexedStack for better state preservation
-                    index: _selectedIndex,
-                    children: pages,
+                  body: Stack(
+                    children: List.generate(pages.length, (index) {
+                      return AnimatedOpacity(
+                        // FadeThrough transition
+                        duration: const Duration(milliseconds: 300),
+                        opacity: _selectedIndex == index ? 1.0 : 0,
+                        curve: Curves.easeInToLinear,
+                        child: IgnorePointer(
+                          ignoring: _selectedIndex != index,
+                          child: pages[index],
+                        ),
+                      );
+                    }),
                   ),
-                  // Remove bottom navigation bar from here
                 ),
 
                 // Floating bottom bar
