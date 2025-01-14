@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:questkeeper/spaces/widgets/circle_tab_indicator.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/onboarding_overlay.dart';
+import 'package:questkeeper/task_list/providers/tasks_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -337,9 +339,21 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen>
                             ),
                           );
                         }
-                        return SpaceCard(
-                            space: spaces[index],
-                            backgroundColorHex: spaceBackgroundColor);
+                        return RefreshIndicator.adaptive(
+                          onRefresh: () async {
+                            // ignore: unused_result
+                            ref.refresh(spacesManagerProvider);
+                            // ignore: unused_result
+                            ref.refresh(tasksManagerProvider);
+                            // ignore: unused_result
+                            ref.refresh(categoriesManagerProvider);
+
+                            _initializeGame();
+                          },
+                          child: SpaceCard(
+                              space: spaces[index],
+                              backgroundColorHex: spaceBackgroundColor),
+                        );
                       },
                     ),
                   ),
