@@ -84,7 +84,7 @@ class SkeletonizedFriendsList extends StatelessWidget {
                   itemBuilder: (context, index) {
                     if (index == sorted.length) {
                       return const SizedBox(
-                        height: kBottomNavigationBarHeight + 16,
+                        height: kBottomNavigationBarHeight + 32,
                       );
                     }
 
