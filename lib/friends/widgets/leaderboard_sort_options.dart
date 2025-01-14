@@ -45,30 +45,35 @@ class SortWidget extends StatefulWidget {
 class SortWidgetState extends State<SortWidget> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Sorting type
-        SortMenu(
-          values: _SortType.values,
-          selected: widget.settings.type,
-          onSelection: (value) {
-            widget.settings.type = value as _SortType;
-            widget.onChange.call(widget.settings);
-          },
-        ),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        children: [
+          // Sorting type
+          SortMenu(
+            values: _SortType.values,
+            selected: widget.settings.type,
+            onSelection: (value) {
+              widget.settings.type = value as _SortType;
+              widget.onChange.call(widget.settings);
+            },
+          ),
 
-        const SizedBox(width: 10),
+          const SizedBox(width: 10),
 
-        // Sorting direction
-        SortMenu(
-          values: _SortDirection.values,
-          selected: widget.settings.direction,
-          onSelection: (value) {
-            widget.settings.direction = value as _SortDirection;
-            widget.onChange.call(widget.settings);
-          },
-        ),
-      ],
+          // Sorting direction
+          SortMenu(
+            values: _SortDirection.values,
+            selected: widget.settings.direction,
+            onSelection: (value) {
+              widget.settings.direction = value as _SortDirection;
+              widget.onChange.call(widget.settings);
+            },
+          ),
+
+          const SizedBox(width: 10),
+        ],
+      ),
     );
   }
 }
