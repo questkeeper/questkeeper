@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
@@ -119,7 +120,11 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    TextTheme textTheme = createTextTheme(context, "Roboto", "Nunito");
+    TextTheme textTheme = createTextTheme(
+      context,
+      displayFont: GoogleFonts.outfit,
+      bodyFont: GoogleFonts.inter,
+    );
     NotificationHandler.initialize(ref);
 
     if (!prefs.containsKey("darkMode")) {
@@ -136,38 +141,20 @@ class MyApp extends ConsumerWidget {
       builder: (context, themeMode, child) {
         return DynamicColorBuilder(
           builder: (lightColorScheme, darkColorScheme) {
-            final ThemeData lightTheme = ThemeData(
-              colorScheme:
-                  _colorScheme(lightColorScheme?.primary, Brightness.light),
-              useMaterial3: true,
-            ).copyWith(
-              elevatedButtonTheme: ComponentsTheme.elevatedButtonTheme(),
-              filledButtonTheme: ComponentsTheme.filledButtonTheme(),
-              inputDecorationTheme: ComponentsTheme.inputDecorationTheme(),
-              outlinedButtonTheme: ComponentsTheme.outlinedButtonTheme(),
-              appBarTheme: ComponentsTheme.appBarTheme(),
-              textTheme: textTheme,
-            );
-
-            final ThemeData darkTheme = ThemeData(
-              colorScheme:
-                  _colorScheme(darkColorScheme?.primary, Brightness.dark),
-              useMaterial3: true,
-            ).copyWith(
-              elevatedButtonTheme: ComponentsTheme.elevatedButtonTheme(),
-              filledButtonTheme: ComponentsTheme.filledButtonTheme(),
-              inputDecorationTheme: ComponentsTheme.inputDecorationTheme(),
-              outlinedButtonTheme: ComponentsTheme.outlinedButtonTheme(),
-              appBarTheme: ComponentsTheme.appBarTheme(),
-              textTheme: textTheme,
-            );
-
             return MaterialApp(
               title: 'QuestKeeper',
               themeMode: themeMode,
               home: const AuthGate(),
-              theme: lightTheme,
-              darkTheme: darkTheme,
+              theme: ModernTheme.modernThemeData(
+                _colorScheme(darkColorScheme?.primary, Brightness.light),
+              ).copyWith(
+                textTheme: textTheme,
+              ),
+              darkTheme: ModernTheme.modernThemeData(
+                _colorScheme(darkColorScheme?.primary, Brightness.dark),
+              ).copyWith(
+                textTheme: textTheme,
+              ),
               routes: {
                 '/signin': (context) => const AuthSpaces(),
                 '/home': (context) => const TabView(),
