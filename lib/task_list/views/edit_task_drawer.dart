@@ -294,16 +294,14 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Text('Cancel'),
-                        onPressed: () => Navigator.pop(context),
                       ),
+                      child: const Text('Cancel'),
+                      onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8), // Gap between buttons
                     Expanded(
@@ -312,7 +310,9 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                           await _submitForm();
                         },
                         child: Text(
-                            widget.isEditing ? 'Update Task' : 'Create Task'),
+                          widget.isEditing ? 'Update Task' : 'Create Task',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],
