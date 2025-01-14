@@ -105,7 +105,7 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    color: Theme.of(context).colorScheme.onSurface,
                     icon: gameHeight > 0.3
                         ? const Icon(LucideIcons.minimize_2)
                         : const Icon(LucideIcons.maximize_2),
@@ -244,7 +244,7 @@ class SpaceActionWidgets extends StatelessWidget {
     final game = ref.read(gameProvider);
     return PopupMenuButton<SpaceAction>(
       icon: const Icon(LucideIcons.menu),
-      iconColor: Theme.of(context).textTheme.bodyLarge?.color,
+      iconColor: Theme.of(context).colorScheme.onSurface,
       iconSize: 32,
       onSelected: (action) {
         switch (action) {
