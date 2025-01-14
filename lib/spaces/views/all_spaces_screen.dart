@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/widgets/circle_tab_indicator.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/onboarding_overlay.dart';
 import 'package:questkeeper/task_list/providers/tasks_provider.dart';
@@ -349,6 +350,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen>
                             ref.refresh(categoriesManagerProvider);
 
                             _initializeGame();
+
+                            SnackbarService.showInfoSnackbar('Refreshed');
                           },
                           child: SpaceCard(
                               space: spaces[index],
