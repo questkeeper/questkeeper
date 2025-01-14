@@ -373,6 +373,9 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
   Widget build(BuildContext context) {
     final pageController = widget.ref.watch(pageControllerProvider);
     final currentPageIndex = pageController.page?.toInt() ?? 0;
+    final indicatorColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : Colors.grey[900]!;
 
     if (widget.existingSpace != null) {
       notificationTimes = widget.existingSpace!.notificationTimes;
@@ -421,14 +424,14 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                 controller: tabController,
                 onTap: (_) => setState(() {}),
                 indicator: CircleTabIndicator(
-                  color: Colors.white,
+                  color: indicatorColor,
                   radius: 2,
                 ),
                 unselectedLabelStyle:
                     Theme.of(context).primaryTextTheme.labelMedium,
                 labelStyle: Theme.of(context).primaryTextTheme.titleMedium,
-                unselectedLabelColor: Colors.white,
-                labelColor: Colors.white,
+                unselectedLabelColor: indicatorColor,
+                labelColor: indicatorColor,
                 dividerHeight: 0,
                 tabs: [
                   Tab(text: 'Space Type'),

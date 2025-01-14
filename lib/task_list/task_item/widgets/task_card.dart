@@ -166,7 +166,10 @@ class _TaskCardState extends ConsumerState<TaskCard> {
                           task.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleLarge,
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: Colors.grey[300],
+                                  ),
                         ),
                       ),
                       const SizedBox(width: 8.0),
@@ -198,13 +201,14 @@ class _TaskCardState extends ConsumerState<TaskCard> {
                   if (task.description != null && task.description!.isNotEmpty)
                     Container(
                       margin: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        task.description ?? "",
-                        softWrap: true,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
+                      child: Text(task.description ?? "",
+                          softWrap: true,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.grey[400],
+                                  )),
                     )
                 ],
               ),

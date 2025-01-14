@@ -141,6 +141,10 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen>
     final heightFactor = ref.watch(gameHeightProvider);
     final game = ref.watch(gameProvider);
 
+    final indicatorColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : Colors.grey[900]!;
+
     return spacesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) {
@@ -176,11 +180,11 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen>
                             Theme.of(context).primaryTextTheme.labelMedium,
                         labelStyle:
                             Theme.of(context).primaryTextTheme.titleMedium,
-                        unselectedLabelColor: Colors.white,
-                        labelColor: Colors.white,
+                        unselectedLabelColor: indicatorColor,
+                        labelColor: indicatorColor,
                         dividerHeight: 0,
                         indicator: CircleTabIndicator(
-                          color: Colors.white,
+                          color: indicatorColor,
                           radius: 2,
                         ),
                         indicatorColor: Colors.white,

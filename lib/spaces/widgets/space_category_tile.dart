@@ -60,7 +60,9 @@ class SpaceCategoryTile extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     category.title,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                        ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
