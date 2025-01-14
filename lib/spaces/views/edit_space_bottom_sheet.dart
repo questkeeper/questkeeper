@@ -14,6 +14,7 @@ import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/spaces/widgets/circle_tab_indicator.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -419,6 +420,16 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
               TabBar(
                 controller: tabController,
                 onTap: (_) => setState(() {}),
+                indicator: CircleTabIndicator(
+                  color: Colors.white,
+                  radius: 2,
+                ),
+                unselectedLabelStyle:
+                    Theme.of(context).primaryTextTheme.labelMedium,
+                labelStyle: Theme.of(context).primaryTextTheme.titleMedium,
+                unselectedLabelColor: Colors.white,
+                labelColor: Colors.white,
+                dividerHeight: 0,
                 tabs: [
                   Tab(text: 'Space Type'),
                   Tab(text: 'Notifications'),
