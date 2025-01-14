@@ -1,22 +1,24 @@
 import 'dart:io';
 
 import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
-import 'package:questkeeper/auth/providers/auth_provider.dart';
-import 'package:questkeeper/profile/model/profile_model.dart';
-import 'package:questkeeper/profile/providers/profile_provider.dart';
-import 'package:questkeeper/settings/widgets/settings_card.dart';
-import 'package:flutter/material.dart';
-import 'package:questkeeper/settings/widgets/update_username_dialog.dart';
-import 'package:questkeeper/shared/widgets/avatar_widget.dart';
-import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:questkeeper/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:questkeeper/auth/providers/auth_provider.dart';
+import 'package:questkeeper/profile/model/profile_model.dart';
+import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:questkeeper/settings/widgets/settings_card.dart';
+import 'package:questkeeper/settings/widgets/update_username_dialog.dart';
+import 'package:questkeeper/shared/widgets/avatar_widget.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -50,41 +52,46 @@ class SettingsScreen extends ConsumerWidget {
                               seed: (snapshot.data as Profile).user_id)
                           : const CircleAvatar(radius: 50),
                       const SizedBox(width: 20),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                snapshot.hasData
-                                    ? (snapshot.data as Profile).username
-                                    : 'Username Loading',
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall,
-                              ),
-                              if (snapshot.hasData &&
-                                  (snapshot.data as Profile).isPro == true)
-                                const Text('PRO',
-                                    style: TextStyle(color: Colors.greenAccent))
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            snapshot.hasData
-                                ? '${(snapshot.data as Profile).points} points'
-                                : '0 points',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          Text(
-                            snapshot.hasData
-                                ? 'Account since ${(snapshot.data as Profile).created_at.split("T")[0]}'
-                                : 'Account since 2024-01-01',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  snapshot.hasData
+                                      ? (snapshot.data as Profile).username
+                                      : 'Username Loading',
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                if (snapshot.hasData &&
+                                    (snapshot.data as Profile).isPro == true)
+                                  const Text('PRO',
+                                      style:
+                                          TextStyle(color: Colors.greenAccent))
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              snapshot.hasData
+                                  ? '${(snapshot.data as Profile).points} points'
+                                  : '0 points',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            Text(
+                              snapshot.hasData
+                                  ? 'Account since ${(snapshot.data as Profile).created_at.split("T")[0]}'
+                                  : 'Account since 2024-01-01',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -108,11 +115,13 @@ class SettingsScreen extends ConsumerWidget {
                     icon: LucideIcons.bell_ring,
                     onTap: () =>
                         Navigator.pushNamed(context, '/notifications')),
-                SettingsCard(
-                    title: 'Theme',
-                    description: 'Change the app theme',
-                    icon: LucideIcons.palette,
-                    onTap: () => Navigator.pushNamed(context, '/theme')),
+                isDebug
+                    ? SettingsCard(
+                        title: 'Theme',
+                        description: 'Change the app theme',
+                        icon: LucideIcons.palette,
+                        onTap: () => Navigator.pushNamed(context, '/theme'))
+                    : const SizedBox(),
                 const Divider(),
                 SettingsCard(
                   title: 'Feedback',

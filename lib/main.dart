@@ -145,7 +145,7 @@ class MyApp extends ConsumerWidget {
               context,
               displayFont: GoogleFonts.outfit,
               bodyFont: GoogleFonts.inter,
-              brightness: Brightness.light,
+              brightness: Brightness.dark,
             ),
           ),
           routes: {
