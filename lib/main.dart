@@ -1,13 +1,22 @@
 import 'dart:io';
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:toastification/toastification.dart';
+
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/constants.dart';
-import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
+import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
 import 'package:questkeeper/settings/views/experiments/experiments_screen.dart';
 import 'package:questkeeper/settings/views/notifications/notifications_screen.dart';
@@ -15,27 +24,18 @@ import 'package:questkeeper/settings/views/privacy/privacy_screen.dart';
 import 'package:questkeeper/settings/views/theme/theme_screen.dart';
 import 'package:questkeeper/shared/notifications/notification_handler.dart';
 import 'package:questkeeper/shared/notifications/notification_service.dart';
-import 'package:questkeeper/shared/providers/theme_notifier.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:questkeeper/shared/utils/set_background_metadata.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:questkeeper/shared/utils/text_theme.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/widgets/connectivity_wrapper.dart';
 import 'package:questkeeper/shared/widgets/network_error_screen.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/theme_components.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:toastification/toastification.dart';
-import 'tabs/tabview.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:feedback_sentry/feedback_sentry.dart';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'tabs/tabview.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -105,10 +105,9 @@ class MyApp extends ConsumerWidget {
   const MyApp({super.key});
   static final SharedPreferencesManager prefs =
       SharedPreferencesManager.instance;
-  static final ThemeNotifier themeNotifier = ThemeNotifier();
 
   ColorScheme _colorScheme(Color? primary, Brightness brightness) {
-    final Color seed = primary ?? Colors.purple;
+    final Color seed = primaryColor;
 
     final ColorScheme scheme = ColorScheme.fromSeed(
       seedColor: seed,
@@ -120,87 +119,79 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    TextTheme textTheme = createTextTheme(
-      context,
-      displayFont: GoogleFonts.outfit,
-      bodyFont: GoogleFonts.inter,
-    );
     NotificationHandler.initialize(ref);
-
-    if (!prefs.containsKey("darkMode")) {
-      themeNotifier.setThemeToDark(
-          (PlatformDispatcher.instance.platformBrightness == Brightness.dark));
-    } else {
-      themeNotifier.setThemeToDark(prefs.getBool("darkMode") ?? false);
-    }
-
     setBackgroundMetadata();
 
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier.themeModeNotifier,
-      builder: (context, themeMode, child) {
-        return DynamicColorBuilder(
-          builder: (lightColorScheme, darkColorScheme) {
-            return MaterialApp(
-              title: 'QuestKeeper',
-              themeMode: themeMode,
-              home: const AuthGate(),
-              theme: ModernTheme.modernThemeData(
-                _colorScheme(darkColorScheme?.primary, Brightness.light),
-              ).copyWith(
-                textTheme: textTheme,
+    return DynamicColorBuilder(
+      builder: (lightColorScheme, darkColorScheme) {
+        return MaterialApp(
+          title: 'QuestKeeper',
+          themeMode: ThemeMode.system,
+          home: const AuthGate(),
+          theme: ModernTheme.modernThemeData(
+            _colorScheme(darkColorScheme?.primary, Brightness.light),
+          ).copyWith(
+            textTheme: createTextTheme(
+              context,
+              displayFont: GoogleFonts.outfit,
+              bodyFont: GoogleFonts.inter,
+              brightness: Brightness.light,
+            ),
+          ),
+          darkTheme: ModernTheme.modernThemeData(
+            _colorScheme(darkColorScheme?.primary, Brightness.dark),
+          ).copyWith(
+            textTheme: createTextTheme(
+              context,
+              displayFont: GoogleFonts.outfit,
+              bodyFont: GoogleFonts.inter,
+              brightness: Brightness.light,
+            ),
+          ),
+          routes: {
+            '/signin': (context) => const AuthSpaces(),
+            '/home': (context) => const TabView(),
+
+            // Settings stuff
+            '/settings/about': (context) => const AboutScreen(),
+
+            // Familiars stuff
+            '/badges': (context) => const QuestsView(),
+
+            // Friends
+            "/friends": (context) => const FriendsList(),
+
+            // Notifications
+            '/notifications': (context) => const NotificationsScreen(),
+
+            // Privacy
+            '/privacy': (context) => const PrivacyScreen(),
+
+            // Network error
+            '/network-error': (context) => const NetworkErrorScreen(),
+
+            // Theme settings
+            '/theme': (context) => const ThemeScreen(),
+
+            // Experiments settings
+            '/experiments': (context) => const ExperimentsScreen(),
+          },
+          navigatorObservers: [
+            PosthogObserver(),
+          ],
+          builder: (context, child) {
+            return ConnectivityWrapper(
+              child: StreamBuilder<String>(
+                stream: NotificationService().messageStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      SnackbarService.showSuccessSnackbar(snapshot.data!);
+                    });
+                  }
+                  return child ?? const SizedBox();
+                },
               ),
-              darkTheme: ModernTheme.modernThemeData(
-                _colorScheme(darkColorScheme?.primary, Brightness.dark),
-              ).copyWith(
-                textTheme: textTheme,
-              ),
-              routes: {
-                '/signin': (context) => const AuthSpaces(),
-                '/home': (context) => const TabView(),
-
-                // Settings stuff
-                '/settings/about': (context) => const AboutScreen(),
-
-                // Familiars stuff
-                '/badges': (context) => const QuestsView(),
-
-                // Friends
-                "/friends": (context) => const FriendsList(),
-
-                // Notifications
-                '/notifications': (context) => const NotificationsScreen(),
-
-                // Privacy
-                '/privacy': (context) => const PrivacyScreen(),
-
-                // Network error
-                '/network-error': (context) => const NetworkErrorScreen(),
-
-                // Theme settings
-                '/theme': (context) => const ThemeScreen(),
-
-                // Experiments settings
-                '/experiments': (context) => const ExperimentsScreen(),
-              },
-              navigatorObservers: [
-                PosthogObserver(),
-              ],
-              builder: (context, child) {
-                return ConnectivityWrapper(
-                  child: StreamBuilder<String>(
-                    stream: NotificationService().messageStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          SnackbarService.showSuccessSnackbar(snapshot.data!);
-                        });
-                      }
-                      return child ?? const SizedBox();
-                    },
-                  ),
-                );
-              },
             );
           },
         );
