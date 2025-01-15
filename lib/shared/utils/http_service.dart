@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:questkeeper/constants.dart';
+// import 'package:questkeeper/shared/utils/dio_cache_interceptor.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:sentry_dio/sentry_dio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -38,6 +39,9 @@ class HttpService {
         ),
       );
     }
+
+    // TODO: Add cache interceptor soon
+    // _dio.interceptors.add(DioCacheInterceptor());
 
     _dio.interceptors.add(
       InterceptorsWrapper(
