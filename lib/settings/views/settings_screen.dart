@@ -65,8 +65,7 @@ class SettingsScreen extends ConsumerWidget {
                                   snapshot.hasData
                                       ? (snapshot.data as Profile).username
                                       : 'Username Loading',
-                                  style:
-                                      Theme.of(context).textTheme.headlineSmall,
+                                  style: Theme.of(context).textTheme.titleLarge,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 if (snapshot.hasData &&

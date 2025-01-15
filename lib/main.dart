@@ -28,11 +28,11 @@ import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:questkeeper/shared/utils/set_background_metadata.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
-import 'package:questkeeper/shared/utils/text_theme.dart';
+import 'package:questkeeper/shared/theme/text_theme.dart';
 import 'package:questkeeper/shared/widgets/connectivity_wrapper.dart';
 import 'package:questkeeper/shared/widgets/network_error_screen.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
-import 'package:questkeeper/theme_components.dart';
+import 'package:questkeeper/shared/theme/theme_components.dart';
 
 import 'firebase_options.dart';
 import 'tabs/tabview.dart';
