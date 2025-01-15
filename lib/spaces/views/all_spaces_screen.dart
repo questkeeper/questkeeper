@@ -367,9 +367,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen>
                 ],
               ),
               const Positioned(
-                bottom: kBottomNavigationBarHeight + 16,
-                right: 0,
-                left: 0,
+                bottom: kBottomNavigationBarHeight + 48,
+                right: 16,
                 child: OnboardingOverlay(),
               ),
             ],

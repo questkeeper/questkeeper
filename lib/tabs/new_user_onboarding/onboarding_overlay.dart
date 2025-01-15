@@ -19,10 +19,7 @@ class OnboardingOverlay extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return Positioned(
-      bottom: 80, // Position above FAB
-      right: 16,
-      child: Card(
+    return  Card(
         child: InkWell(
           onTap: () => _showOnboardingModal(context, ref),
           child: Padding(
@@ -57,7 +54,7 @@ class OnboardingOverlay extends ConsumerWidget {
             ),
           ),
         ),
-      ),
+
     );
   }
 
