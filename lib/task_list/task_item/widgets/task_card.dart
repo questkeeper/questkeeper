@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
 import 'package:questkeeper/task_list/task_item/widgets/task_notification_dot.dart';
-import 'package:rive/rive.dart';
+// import 'package:rive/rive.dart';
 
 class TaskCard extends ConsumerStatefulWidget {
   const TaskCard({
@@ -26,36 +26,36 @@ class TaskCard extends ConsumerStatefulWidget {
 }
 
 class _TaskCardState extends ConsumerState<TaskCard> {
-  void _showCompletionAnimation(
-      BuildContext context, Offset position, Size size) {
-    OverlayEntry overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        left: position.dx,
-        top: position.dy,
-        width: size.width,
-        height: size.height,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.green,
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            child: const RiveAnimation.asset(
-              'assets/rive/check.riv',
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-      ),
-    );
+  // void _showCompletionAnimation(
+  //     BuildContext context, Offset position, Size size) {
+  //   OverlayEntry overlayEntry = OverlayEntry(
+  //     builder: (context) => Positioned(
+  //       left: position.dx,
+  //       top: position.dy,
+  //       width: size.width,
+  //       height: size.height,
+  //       child: Material(
+  //         color: Colors.transparent,
+  //         child: Container(
+  //           decoration: BoxDecoration(
+  //             color: Colors.green,
+  //             borderRadius: BorderRadius.circular(16.0),
+  //           ),
+  //           child: const RiveAnimation.asset(
+  //             'assets/rive/check.riv',
+  //             fit: BoxFit.contain,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
 
-    Overlay.of(context).insert(overlayEntry);
+  //   Overlay.of(context).insert(overlayEntry);
 
-    Future.delayed(const Duration(milliseconds: 1200), () {
-      overlayEntry.remove();
-    });
-  }
+  //   Future.delayed(const Duration(milliseconds: 1200), () {
+  //     overlayEntry.remove();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -68,11 +68,11 @@ class _TaskCardState extends ConsumerState<TaskCard> {
           await ref.read(tasksManagerProvider.notifier).toggleStar(widget.task);
           return false;
         } else {
-          final RenderBox renderBox = context.findRenderObject() as RenderBox;
-          final position = renderBox.localToGlobal(Offset.zero);
-          final size = renderBox.size;
+          // final RenderBox renderBox = context.findRenderObject() as RenderBox;
+          // final position = renderBox.localToGlobal(Offset.zero);
+          // final size = renderBox.size;
 
-          _showCompletionAnimation(context, position, size);
+          // _showCompletionAnimation(context, position, size);
 
           await ref
               .read(tasksManagerProvider.notifier)
