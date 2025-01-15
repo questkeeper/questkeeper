@@ -37,52 +37,52 @@ class UserProfileView extends StatelessWidget {
                             seed: (asyncValue.value as Profile).user_id)
                         : const CircleAvatar(radius: 50),
                     const SizedBox(width: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              asyncValue is AsyncData
-                                  ? (asyncValue.value as Profile).username
-                                  : 'Username Loading',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            if (asyncValue is AsyncData &&
-                                (asyncValue.value as Profile).isPro == true)
-                              const Text('PRO',
-                                  style: TextStyle(color: Colors.greenAccent))
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          asyncValue is AsyncData
-                              ? '${(asyncValue.value as Profile).points} points'
-                              : '0 points',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        Text(
-                          asyncValue is AsyncData
-                              ? 'Account since ${(asyncValue.value as Profile).created_at.split("T")[0]}'
-                              : 'Account since 2024-01-01',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onSurface
-                                        .withValues(alpha: 0.6),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  asyncValue is AsyncData
+                                      ? (asyncValue.value as Profile).username
+                                      : 'Username Loading',
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (asyncValue is AsyncData &&
+                                  (asyncValue.value as Profile).isPro == true)
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 8),
+                                  child: Text(
+                                    'PRO',
+                                    style: TextStyle(color: Colors.greenAccent),
                                   ),
-                        ),
-                        Text(
-                          "Nudge Limit: 3",
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onSurface
-                                        .withValues(alpha: 0.6),
-                                  ),
-                        )
-                      ],
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            asyncValue is AsyncData
+                                ? '${(asyncValue.value as Profile).points} points'
+                                : '0 points',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          Text(
+                            "Nudge Limit: 3",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: theme.colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
+                                ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
