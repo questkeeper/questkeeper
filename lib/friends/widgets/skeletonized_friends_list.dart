@@ -13,13 +13,11 @@ class SkeletonizedFriendsList extends StatelessWidget {
     super.key,
     required this.asyncValue,
     required this.sortSettings,
-    required this.refreshFriendsList,
     required this.removeFriendHandler,
   });
 
   final AsyncValue<List<Friend>> asyncValue;
   final SortSettings sortSettings;
-  final Future<void> Function() refreshFriendsList;
   final void Function(Friend) removeFriendHandler;
 
   final skeletonList = List.generate(
@@ -75,27 +73,24 @@ class SkeletonizedFriendsList extends StatelessWidget {
               final sorted =
                   sortSettings.sorted(friendsList.toList(growable: false));
 
-              return RefreshIndicator(
-                onRefresh: refreshFriendsList,
-                child: ListView.separated(
-                  itemCount: sorted.length + 1,
-                  padding: const EdgeInsets.all(16),
-                  separatorBuilder: (_, __) => const SizedBox(height: 16),
-                  itemBuilder: (context, index) {
-                    if (index == sorted.length) {
-                      return const SizedBox(
-                        height: kBottomNavigationBarHeight + 32,
-                      );
-                    }
-
-                    final friend = sorted[index];
-                    return FriendListTile(
-                      friend: friend,
-                      position: index + 1,
-                      onRemove: removeFriendHandler,
+              return ListView.separated(
+                itemCount: sorted.length + 1,
+                padding: const EdgeInsets.all(16),
+                separatorBuilder: (_, __) => const SizedBox(height: 16),
+                itemBuilder: (context, index) {
+                  if (index == sorted.length) {
+                    return const SizedBox(
+                      height: kBottomNavigationBarHeight + 32,
                     );
-                  },
-                ),
+                  }
+
+                  final friend = sorted[index];
+                  return FriendListTile(
+                    friend: friend,
+                    position: index + 1,
+                    onRemove: removeFriendHandler,
+                  );
+                },
               );
             },
           );

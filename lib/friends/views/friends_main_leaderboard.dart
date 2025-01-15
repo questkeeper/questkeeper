@@ -8,6 +8,7 @@ import 'package:questkeeper/friends/widgets/friend_request_bottom_sheet.dart';
 import 'package:questkeeper/friends/widgets/leaderboard_sort_options.dart';
 import 'package:questkeeper/friends/widgets/skeletonized_friends_list.dart';
 import 'package:questkeeper/friends/widgets/user_profile_view.dart';
+import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -26,6 +27,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
     await ref.refresh(friendsManagerProvider.future);
     // ignore: unused_result
     ref.refresh(friendsRequestManagerProvider);
+    await ref.refresh(profileManagerProvider.notifier).fetchProfile();
   }
 
   @override
@@ -42,50 +44,52 @@ class _FriendsListState extends ConsumerState<FriendsList> {
           color: theme.scaffoldBackgroundColor,
         ),
       ),
-      body: Column(
-        children: [
-          Material(
-            elevation: 1,
-            child: UserProfileView(theme: theme),
-          ),
+      body: RefreshIndicator.adaptive(
+        onRefresh: _refreshFriendsList,
+        child: Column(
+          children: [
+            Material(
+              elevation: 1,
+              child: UserProfileView(theme: theme),
+            ),
 
-          Material(
-            elevation: 2,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: IntrinsicWidth(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: SortWidget(
-                          settings: _sortSettings,
-                          onChange: (settings) {
-                            setState(() {
-                              _sortSettings = settings;
-                            });
-                          },
+            Material(
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: IntrinsicWidth(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SortWidget(
+                            settings: _sortSettings,
+                            onChange: (settings) {
+                              setState(() {
+                                _sortSettings = settings;
+                              });
+                            },
+                          ),
                         ),
-                      ),
-                      _friendRequestButton(),
-                    ],
+                        _friendRequestButton(),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
 
-          // Friends list
-          Expanded(
-            child: SkeletonizedFriendsList(
-              asyncValue: asyncValue,
-              sortSettings: _sortSettings,
-              refreshFriendsList: _refreshFriendsList,
-              removeFriendHandler: _removeFriendHandler,
+            // Friends list
+            Expanded(
+              child: SkeletonizedFriendsList(
+                asyncValue: asyncValue,
+                sortSettings: _sortSettings,
+                removeFriendHandler: _removeFriendHandler,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
