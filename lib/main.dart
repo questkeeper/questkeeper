@@ -11,6 +11,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'package:questkeeper/auth/view/auth_gate.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
@@ -38,7 +39,9 @@ import 'firebase_options.dart';
 import 'tabs/tabview.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
