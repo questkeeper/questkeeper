@@ -337,32 +337,38 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
           padding: const EdgeInsets.all(8),
           child: backgroundTypes == null
               ? const Center(child: CircularProgressIndicator())
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    for (var i = 0; i < backgroundTypes!.length; i++)
-                      ChoiceChip(
-                        key: ValueKey(i),
-                        selected: selectedIdx == i,
-                        color: WidgetStateProperty.all(
-                          backgroundTypes![i]["colorCodes"][0]
-                              .toString()
-                              .toColor(),
-                        ),
-                        onSelected: (isSelected) {
-                          setState(() {
-                            selectedIdx = i;
-                          });
-                        },
-                        checkmarkColor: Colors.black,
-                        label: Text(
-                          backgroundTypes![i]["friendlyName"],
-                          style: const TextStyle(
-                            color: Colors.black,
+              : SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      for (var i = 0; i < backgroundTypes!.length; i++)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: ChoiceChip(
+                            key: ValueKey(i),
+                            selected: selectedIdx == i,
+                            color: WidgetStateProperty.all(
+                              backgroundTypes![i]["colorCodes"][0]
+                                  .toString()
+                                  .toColor(),
+                            ),
+                            onSelected: (isSelected) {
+                              setState(() {
+                                selectedIdx = i;
+                              });
+                            },
+                            checkmarkColor: Colors.black,
+                            label: Text(
+                              backgroundTypes![i]["friendlyName"],
+                              style: const TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
         ),
       ],
