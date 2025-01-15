@@ -28,7 +28,6 @@ rootProject.file("key.properties")?.with { file ->
 android {
     namespace "app.questkeeper"
     compileSdk flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
