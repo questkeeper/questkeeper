@@ -20,6 +20,8 @@ void showDrawer({
   bool isDismissible = true,
 }) {
   final deviceWidth = MediaQuery.of(context).size.width;
+  bool isPopping = false;
+
   Navigator.of(context).push(
     PageRouteBuilder(
       opaque: false,
@@ -63,8 +65,13 @@ void showDrawer({
             )),
             child: Dismissible(
               key: Key(key),
-              onDismissed: (direction) {
-                Navigator.of(context).pop();
+              confirmDismiss: (_) async {
+                if (!isPopping && context.mounted) {
+                  isPopping = false;
+                  await Navigator.of(context).maybePop(true);
+                  isPopping = false;
+                }
+                return true;
               },
               child: Padding(
                 padding: EdgeInsets.only(
@@ -80,7 +87,7 @@ void showDrawer({
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 10,
                             offset: const Offset(-2, 0),
                           ),
