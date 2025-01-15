@@ -61,6 +61,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
                   scrollDirection: Axis.horizontal,
                   child: IntrinsicWidth(
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Expanded(
                           child: SortWidget(

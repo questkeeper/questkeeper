@@ -48,6 +48,7 @@ class SortWidgetState extends State<SortWidget> {
     return FittedBox(
       fit: BoxFit.scaleDown,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           // Sorting type
           SortMenu(
