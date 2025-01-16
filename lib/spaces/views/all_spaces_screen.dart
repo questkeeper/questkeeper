@@ -31,7 +31,7 @@ class AllSpacesScreen extends ConsumerStatefulWidget {
 }
 
 class _AllSpacesState extends ConsumerState<AllSpacesScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final PageController _pageController;
   late TabController _tabController;
   ValueNotifier<int> currentPageValue = ValueNotifier(0);
@@ -124,6 +124,21 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen>
     }
   }
 
+  void _updateTabController(int length) {
+    // Dispose old controller if it exists
+    final int oldIndex = _tabController.index;
+    final int oldLength = _tabController.length;
+    _tabController.dispose();
+    // Create new controller with updated length
+    _tabController = TabController(
+      length: length,
+      vsync: this,
+      // Preserve the current tab if possible
+      initialIndex:
+          oldLength == length ? (oldIndex < length ? oldIndex : length - 1) : 0,
+    );
+  }
+
   @override
   void dispose() {
     if (_pageController.hasClients) {
@@ -156,6 +171,8 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen>
         return Center(child: Text('Error: $error'));
       },
       data: (spaces) {
+        _updateTabController(spaces.length + 1); // +1 for the "Create" tab
+
         return Scaffold(
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight / 2),
