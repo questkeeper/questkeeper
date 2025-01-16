@@ -7,6 +7,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/constants.dart';
+import 'package:questkeeper/settings/views/debug/debug_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -175,6 +176,22 @@ class SettingsScreen extends ConsumerWidget {
                     description: 'Enable features that may be unstable',
                     icon: LucideIcons.flask_conical,
                     onTap: () => Navigator.pushNamed(context, '/experiments')),
+                if (isDebug ||
+                    (Supabase.instance.client.auth.currentUser?.email
+                            ?.endsWith("@questkeeper.app") ??
+                        false))
+                  SettingsCard(
+                    title: "Super Secret Debug Menu",
+                    description: "Only for debug purposes lol",
+                    icon: LucideIcons.bug_off,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SuperSecretDebugSettings(),
+                      ),
+                    ),
+                    iconColor: Colors.amber,
+                  ),
                 SettingsCard(
                   title: 'Sign out',
                   description: 'Sign out and remove local data',
