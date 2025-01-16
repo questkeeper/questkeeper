@@ -5,41 +5,28 @@ import 'package:questkeeper/friends/models/user_search_model.dart';
 import 'package:questkeeper/friends/repositories/friend_repository.dart';
 import 'package:questkeeper/friends/widgets/user_search_result_tile.dart';
 
-class FriendSearchDelegate extends SearchDelegate {
+class FriendSearchView extends StatefulWidget {
+  const FriendSearchView({super.key});
+
+  @override
+  State<FriendSearchView> createState() => _FriendSearchViewState();
+}
+
+class _FriendSearchViewState extends State<FriendSearchView> {
   final FriendRepository _repository = FriendRepository();
   Timer? _debounce;
-
-  FriendSearchDelegate({
-    String? initialQuery,
-  }) {
-    query = initialQuery ?? "";
-  }
+  String query = '';
+  final _searchController = TextEditingController();
 
   @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: const Icon(LucideIcons.x),
-        onPressed: () {
-          query = '';
-          _debounce?.cancel(); // Cancel ongoing debounce
-        },
-      ),
-    ];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const Icon(LucideIcons.arrow_left),
-      onPressed: () {
-        close(context, null);
-      },
-    );
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<List<UserSearchResult>> _debouncedSearch(String query) async {
-    _debounce?.cancel(); // Cancel any existing debounce
+    _debounce?.cancel();
     final completer = Completer<List<UserSearchResult>>();
 
     _debounce = Timer(const Duration(milliseconds: 300), () async {
@@ -55,62 +42,57 @@ class FriendSearchDelegate extends SearchDelegate {
   }
 
   @override
-  Widget buildResults(BuildContext context) {
-    return FutureBuilder<List<UserSearchResult>>(
-      future: _debouncedSearch(query),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No results found'));
-        } else {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final friend = snapshot.data![index];
-              return UserSearchResultTile(user: friend, query: query);
-            },
-          );
-        }
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    if (query.isNotEmpty) {
-      return buildResults(context); // Automatically show results
-    }
-    return const Center(
-      child: Text('Search suggestions'),
-    );
-  }
-
-  @override
-  String get searchFieldLabel => 'Filter or add friends';
-
-  @override
-  ThemeData appBarTheme(BuildContext context) {
-    final theme = Theme.of(context);
-    return theme.copyWith(
-      appBarTheme: theme.appBarTheme.copyWith(
-        toolbarHeight: 90,
-        backgroundColor: theme.scaffoldBackgroundColor,
-        elevation: 0,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(16),
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Filter or add friends',
+              prefixIcon: const Icon(LucideIcons.search),
+              suffixIcon: query.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(LucideIcons.x),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => query = '');
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onChanged: (value) => setState(() => query = value),
           ),
         ),
-      ),
-    );
-  }
+        Expanded(
+          child: query.isEmpty
+              ? const Center(child: Text('Search for friends'))
+              : FutureBuilder<List<UserSearchResult>>(
+                  future: _debouncedSearch(query),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No results found'));
+                    }
 
-  @override
-  void dispose() {
-    _debounce?.cancel(); // Clean up debounce timer
-    super.dispose();
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        final friend = snapshot.data![index];
+                        return UserSearchResultTile(user: friend, query: query);
+                      },
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
   }
 }

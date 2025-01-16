@@ -1,7 +1,9 @@
-import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
-import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
+import 'package:questkeeper/shared/widgets/show_drawer.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
@@ -13,7 +15,7 @@ import 'package:questkeeper/task_list/subtasks/providers/subtasks_providers.dart
 import 'package:questkeeper/task_list/widgets/action_buttons.dart';
 import 'package:questkeeper/task_list/widgets/task_form.dart';
 
-void showTaskBottomSheet({
+void showTaskDrawer({
   required BuildContext context,
   required WidgetRef ref,
   Tasks? existingTask,
@@ -50,39 +52,22 @@ void showTaskBottomSheet({
         );
   }
 
-  showModalBottomSheet(
+  // Open the drawer using Navigator
+  showDrawer(
     context: context,
-    enableDrag: true,
-    isDismissible: true,
-    showDragHandle: true,
-    isScrollControlled: true,
-    useSafeArea: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(12.0),
-        topRight: Radius.circular(12.0),
-      ),
+    key: existingTask?.id.toString() ?? 'new-task',
+    child: _TaskBottomSheetContent(
+      nameController: nameController,
+      descriptionController: descriptionController,
+      isEditing: isEditing,
+      ref: ref,
+      existingTask: existingTask,
+      existingSpace: existingSpace,
+      spacesList: spacesList,
+      subtasksList: subtasksList,
+      createTask: createTask,
+      updateTask: updateTask,
     ),
-    builder: (BuildContext context) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-        ),
-        child: _TaskBottomSheetContent(
-          nameController: nameController,
-          descriptionController: descriptionController,
-          isEditing: isEditing,
-          ref: ref,
-          existingTask: existingTask,
-          existingSpace: existingSpace,
-          spacesList: spacesList,
-          subtasksList: subtasksList,
-          createTask: createTask,
-          updateTask: updateTask,
-        ),
-      );
-    },
   );
 }
 
@@ -210,7 +195,9 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
           widget.ref.read(onboardingProvider).isOnboardingComplete == false) {
         widget.ref.read(onboardingProvider.notifier).markTaskCreated();
 
-        if (context.mounted) Navigator.pop(context);
+        if (context.mounted && Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
       }
     } else {
       if (!mounted) return;
@@ -298,7 +285,10 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     await widget.ref
                         .read(tasksManagerProvider.notifier)
                         .deleteTask(task);
-                    if (context.mounted) Navigator.of(context).pop();
+
+                    if (context.mounted && Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
                   },
                   size: MediaQuery.of(context).size,
                 ),
@@ -309,16 +299,14 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Text('Cancel'),
-                        onPressed: () => Navigator.pop(context),
                       ),
+                      child: const Text('Cancel'),
+                      onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8), // Gap between buttons
                     Expanded(
@@ -327,7 +315,9 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                           await _submitForm();
                         },
                         child: Text(
-                            widget.isEditing ? 'Update Task' : 'Create Task'),
+                          widget.isEditing ? 'Update Task' : 'Create Task',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],

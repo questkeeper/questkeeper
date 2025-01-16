@@ -93,145 +93,140 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
               return category.spaceId == space.id;
             }).toList()));
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(12),
-            bottomRight: Radius.circular(12),
-          ),
-          color: widget.backgroundColorHex.toColor(),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-              child: ListTile(
-                titleTextStyle: Theme.of(context).textTheme.headlineMedium,
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                      icon: gameHeight > 0.3
-                          ? const Icon(LucideIcons.minimize_2)
-                          : const Icon(LucideIcons.maximize_2),
-                      onPressed: () {
-                        ref.read(gameHeightProvider.notifier).state =
-                            gameHeight > 0.3 ? 0.3 : 1.0;
-                      },
-                    ),
-                    SpaceActionWidgets(space: space, ref: ref),
-                  ],
-                ),
-                title: Text(space.title),
+    return Container(
+      color: widget.backgroundColorHex.toColor(),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            child: ListTile(
+              titleTextStyle: Theme.of(context).textTheme.headlineMedium,
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    icon: gameHeight > 0.3
+                        ? const Icon(LucideIcons.minimize_2)
+                        : const Icon(LucideIcons.maximize_2),
+                    onPressed: () {
+                      ref.read(gameHeightProvider.notifier).state =
+                          gameHeight > 0.3 ? 0.3 : 1.0;
+                    },
+                  ),
+                  SpaceActionWidgets(space: space, ref: ref),
+                ],
               ),
+              title: Text(space.title),
             ),
-            Expanded(
-              child: NotificationListener<ScrollNotification>(
-                onNotification: (notification) {
-                  return false;
-                },
-                child: currentSpaceCategories == null
-                    ? Skeletonizer(
-                        enabled: true,
-                        child: ListView.builder(
-                          itemCount: 5,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color:
-                                      Colors.transparent.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: SizedBox(
-                                  height: 64,
-                                  width: double.infinity,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      )
-                    : ListView.builder(
-                        controller: _scrollController,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: currentSpaceCategories.length + 1,
+          ),
+          Expanded(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                return false;
+              },
+              child: currentSpaceCategories == null
+                  ? Skeletonizer(
+                      enabled: true,
+                      child: ListView.builder(
+                        itemCount: 5,
                         itemBuilder: (context, index) {
-                          final categoryTasksList = tasks?.where((task) {
-                            return task.categoryId ==
-                                (index < currentSpaceCategories.length
-                                    ? currentSpaceCategories[index].id
-                                    : null);
-                          }).toList();
-                          if (index < currentSpaceCategories.length) {
-                            final category = currentSpaceCategories[index];
-                            return SpaceCategoryTile(
-                              category: category,
-                              tasks: categoryTasksList,
-                            );
-                          } else {
-                            // Check if there are tasks without a category
-                            if (tasks?.any((task) => task.categoryId == null) ==
-                                true) {
-                              return SpaceCategoryTile(
-                                tasks: categoryTasksList,
-                                category: Categories(
-                                  title: "Uncategorized",
-                                  tasks: tasks,
-                                ),
-                              );
-                            }
-
-                            if (currentSpaceCategories.isEmpty == true) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const SizedBox(height: 16),
-                                  Center(
-                                    child: FilledButton(
-                                      onPressed: () => showCategoryBottomSheet(
-                                          context: context,
-                                          ref: ref,
-                                          existingSpace: space),
-                                      child: Text('Create a category'),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: Text(
-                                      textAlign: TextAlign.center,
-                                      'Or create a task and an "uncategorized" category will be created automatically',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.copyWith(
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.color
-                                                ?.withValues(alpha: 0.75),
-                                          ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }
-
-                            return Container();
-                          }
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color:
+                                    Colors.transparent.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: SizedBox(
+                                height: 64,
+                                width: double.infinity,
+                              ),
+                            ),
+                          );
                         },
                       ),
-              ),
+                    )
+                  : ListView.builder(
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: currentSpaceCategories.length + 1,
+                      itemBuilder: (context, index) {
+                        final categoryTasksList = tasks?.where((task) {
+                          return task.categoryId ==
+                              (index < currentSpaceCategories.length
+                                  ? currentSpaceCategories[index].id
+                                  : null);
+                        }).toList();
+                        if (index < currentSpaceCategories.length) {
+                          final category = currentSpaceCategories[index];
+                          return SpaceCategoryTile(
+                            category: category,
+                            tasks: categoryTasksList,
+                          );
+                        } else {
+                          // Check if there are tasks without a category
+                          if (tasks?.any((task) => task.categoryId == null) ==
+                              true) {
+                            return SpaceCategoryTile(
+                              tasks: categoryTasksList,
+                              category: Categories(
+                                title: "Uncategorized",
+                                tasks: tasks,
+                              ),
+                            );
+                          }
+
+                          if (currentSpaceCategories.isEmpty == true) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(height: 16),
+                                Center(
+                                  child: FilledButton(
+                                    onPressed: () => showCategoryBottomSheet(
+                                        context: context,
+                                        ref: ref,
+                                        existingSpace: space),
+                                    child: Text('Create a category'),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: Text(
+                                    textAlign: TextAlign.center,
+                                    'Or create a task and an "uncategorized" category will be created automatically',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color
+                                              ?.withValues(alpha: 0.75),
+                                        ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: kBottomNavigationBarHeight + 48,
+                                ),
+                              ],
+                            );
+                          }
+
+                          return const SizedBox(
+                              height: kBottomNavigationBarHeight + 48);
+                        }
+                      },
+                    ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -252,7 +247,7 @@ class SpaceActionWidgets extends StatelessWidget {
     final game = ref.read(gameProvider);
     return PopupMenuButton<SpaceAction>(
       icon: const Icon(LucideIcons.menu),
-      iconColor: Theme.of(context).textTheme.bodyLarge?.color,
+      iconColor: Theme.of(context).colorScheme.onSurface,
       iconSize: 32,
       onSelected: (action) {
         switch (action) {

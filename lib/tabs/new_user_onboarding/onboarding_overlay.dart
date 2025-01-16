@@ -5,7 +5,7 @@ import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
-import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
+import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
 import 'package:rive/rive.dart';
 
 class OnboardingOverlay extends ConsumerWidget {
@@ -19,42 +19,38 @@ class OnboardingOverlay extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return Positioned(
-      bottom: 80, // Position above FAB
-      right: 16,
-      child: Card(
-        child: InkWell(
-          onTap: () => _showOnboardingModal(context, ref),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+    return Card(
+      child: InkWell(
+        onTap: () => _showOnboardingModal(context, ref),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              onboardingState.playIsCompletingAnimation
+                  ? SizedBox.shrink()
+                  : const Icon(LucideIcons.circle_help),
+              const SizedBox(width: 8),
+              Text(
                 onboardingState.playIsCompletingAnimation
-                    ? SizedBox.shrink()
-                    : const Icon(LucideIcons.circle_help),
-                const SizedBox(width: 8),
-                Text(
-                  onboardingState.playIsCompletingAnimation
-                      ? 'Nice job!'
-                      : 'Getting Started',
-                ),
-                const SizedBox(width: 8),
-                onboardingState.playIsCompletingAnimation
-                    ? SizedBox(
-                        width: 36,
-                        height: 36,
-                        child: RiveAnimation.asset(
-                          'assets/rive/check.riv',
-                          fit: BoxFit.fill,
-                        ),
-                      )
-                    : CircularProgressIndicator(
-                        value: onboardingState.completedSteps / 4,
-                        strokeWidth: 2,
+                    ? 'Nice job!'
+                    : 'Getting Started',
+              ),
+              const SizedBox(width: 8),
+              onboardingState.playIsCompletingAnimation
+                  ? SizedBox(
+                      width: 36,
+                      height: 36,
+                      child: RiveAnimation.asset(
+                        'assets/rive/check.riv',
+                        fit: BoxFit.fill,
                       ),
-              ],
-            ),
+                    )
+                  : CircularProgressIndicator(
+                      value: onboardingState.completedSteps / 4,
+                      strokeWidth: 2,
+                    ),
+            ],
           ),
         ),
       ),
@@ -118,9 +114,11 @@ class _OnboardingModal extends ConsumerWidget {
 
                       if (currentSpace == null) return;
                       showCategoryBottomSheet(
-                          context: context,
-                          ref: ref,
-                          existingSpace: currentSpace);
+                        context: context,
+                        ref: ref,
+                        existingSpace: currentSpace,
+                        openedFrom: "onboarding_overlay",
+                      );
                     },
                   ),
                   _OnboardingStep(
@@ -128,7 +126,7 @@ class _OnboardingModal extends ConsumerWidget {
                     title: 'Create your first task',
                     description: 'A task is an action you need to complete',
                     onTap: () async {
-                      showTaskBottomSheet(context: context, ref: ref);
+                      showTaskDrawer(context: context, ref: ref);
                     },
                   ),
                   _OnboardingStep(

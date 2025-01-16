@@ -7,10 +7,11 @@ import 'package:questkeeper/task_list/providers/tasks_provider.dart';
 import 'package:questkeeper/shared/utils/format_date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:questkeeper/task_list/views/edit_task_bottom_sheet.dart';
+import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
 import 'package:questkeeper/task_list/task_item/widgets/task_notification_dot.dart';
+// import 'package:rive/rive.dart';
 
-class TaskCard extends ConsumerWidget {
+class TaskCard extends ConsumerStatefulWidget {
   const TaskCard({
     super.key,
     required this.task,
@@ -21,15 +22,61 @@ class TaskCard extends ConsumerWidget {
   final Categories? category;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TaskCard> createState() => _TaskCardState();
+}
+
+class _TaskCardState extends ConsumerState<TaskCard> {
+  // void _showCompletionAnimation(
+  //     BuildContext context, Offset position, Size size) {
+  //   OverlayEntry overlayEntry = OverlayEntry(
+  //     builder: (context) => Positioned(
+  //       left: position.dx,
+  //       top: position.dy,
+  //       width: size.width,
+  //       height: size.height,
+  //       child: Material(
+  //         color: Colors.transparent,
+  //         child: Container(
+  //           decoration: BoxDecoration(
+  //             color: Colors.green,
+  //             borderRadius: BorderRadius.circular(16.0),
+  //           ),
+  //           child: const RiveAnimation.asset(
+  //             'assets/rive/check.riv',
+  //             fit: BoxFit.contain,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+
+  //   Overlay.of(context).insert(overlayEntry);
+
+  //   Future.delayed(const Duration(milliseconds: 1200), () {
+  //     overlayEntry.remove();
+  //   });
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    final Tasks task = widget.task;
+    final Categories? category = widget.category;
     return Dismissible(
       key: ValueKey(task.id),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          await ref.read(tasksManagerProvider.notifier).toggleStar(task);
+          await ref.read(tasksManagerProvider.notifier).toggleStar(widget.task);
           return false;
         } else {
-          await ref.read(tasksManagerProvider.notifier).toggleComplete(task);
+          // final RenderBox renderBox = context.findRenderObject() as RenderBox;
+          // final position = renderBox.localToGlobal(Offset.zero);
+          // final size = renderBox.size;
+
+          // _showCompletionAnimation(context, position, size);
+
+          await ref
+              .read(tasksManagerProvider.notifier)
+              .toggleComplete(widget.task);
 
           if (ref.read(onboardingProvider).hasCompletedTask == false &&
               ref.read(onboardingProvider).isOnboardingComplete == false) {
@@ -83,14 +130,14 @@ class TaskCard extends ConsumerWidget {
         onTap: () {
           // FIXME: this will probably break stuff.
           if (MediaQuery.of(context).size.width < 800) {
-            showTaskBottomSheet(context: context, ref: ref, existingTask: task);
+            showTaskDrawer(context: context, ref: ref, existingTask: task);
           }
         },
         child: SizedBox(
           width: double.infinity,
           child: Card(
-            color: category != null && category!.color != null
-                ? HexColor(category!.color!)
+            color: category != null && category.color != null
+                ? HexColor(category.color!)
                 : Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0),
@@ -119,7 +166,10 @@ class TaskCard extends ConsumerWidget {
                           task.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleLarge,
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: Colors.grey[300],
+                                  ),
                         ),
                       ),
                       const SizedBox(width: 8.0),
@@ -151,13 +201,14 @@ class TaskCard extends ConsumerWidget {
                   if (task.description != null && task.description!.isNotEmpty)
                     Container(
                       margin: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        task.description ?? "",
-                        softWrap: true,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
+                      child: Text(task.description ?? "",
+                          softWrap: true,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.grey[400],
+                                  )),
                     )
                 ],
               ),

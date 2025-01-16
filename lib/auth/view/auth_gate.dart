@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:questkeeper/auth/providers/auth_state_provider.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
 import 'package:questkeeper/shared/screens/onboarding_page.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:questkeeper/tabs/tabview.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthGate extends ConsumerStatefulWidget {
   const AuthGate({super.key});
@@ -14,7 +16,7 @@ class AuthGate extends ConsumerStatefulWidget {
 }
 
 class _AuthGateState extends ConsumerState<AuthGate> {
-  bool isOnboarded = false;
+  bool isOnboarded = true;
 
   @override
   void initState() {
@@ -25,6 +27,8 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       setState(() {
         isOnboarded = prefs.getBool("onboarded") ?? false;
       });
+
+      FlutterNativeSplash.remove();
     });
   }
 

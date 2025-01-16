@@ -30,12 +30,8 @@ class UserSearchResultTile extends ConsumerWidget {
       if (Navigator.of(context).canPop()) {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
-        showSearch(
-          context: context,
-          delegate: FriendSearchDelegate(
-            initialQuery: query,
-          ),
-          query: query,
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const FriendSearchView()),
         );
       }
     }

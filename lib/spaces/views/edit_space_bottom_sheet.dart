@@ -14,6 +14,7 @@ import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/spaces/widgets/circle_tab_indicator.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -336,32 +337,38 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
           padding: const EdgeInsets.all(8),
           child: backgroundTypes == null
               ? const Center(child: CircularProgressIndicator())
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    for (var i = 0; i < backgroundTypes!.length; i++)
-                      ChoiceChip(
-                        key: ValueKey(i),
-                        selected: selectedIdx == i,
-                        color: WidgetStateProperty.all(
-                          backgroundTypes![i]["colorCodes"][0]
-                              .toString()
-                              .toColor(),
-                        ),
-                        onSelected: (isSelected) {
-                          setState(() {
-                            selectedIdx = i;
-                          });
-                        },
-                        checkmarkColor: Colors.black,
-                        label: Text(
-                          backgroundTypes![i]["friendlyName"],
-                          style: const TextStyle(
-                            color: Colors.black,
+              : SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      for (var i = 0; i < backgroundTypes!.length; i++)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: ChoiceChip(
+                            key: ValueKey(i),
+                            selected: selectedIdx == i,
+                            color: WidgetStateProperty.all(
+                              backgroundTypes![i]["colorCodes"][0]
+                                  .toString()
+                                  .toColor(),
+                            ),
+                            onSelected: (isSelected) {
+                              setState(() {
+                                selectedIdx = i;
+                              });
+                            },
+                            checkmarkColor: Colors.black,
+                            label: Text(
+                              backgroundTypes![i]["friendlyName"],
+                              style: const TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
         ),
       ],
@@ -372,6 +379,9 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
   Widget build(BuildContext context) {
     final pageController = widget.ref.watch(pageControllerProvider);
     final currentPageIndex = pageController.page?.toInt() ?? 0;
+    final indicatorColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : Colors.grey[900]!;
 
     if (widget.existingSpace != null) {
       notificationTimes = widget.existingSpace!.notificationTimes;
@@ -419,6 +429,16 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
               TabBar(
                 controller: tabController,
                 onTap: (_) => setState(() {}),
+                indicator: CircleTabIndicator(
+                  color: indicatorColor,
+                  radius: 2,
+                ),
+                unselectedLabelStyle:
+                    Theme.of(context).primaryTextTheme.labelMedium,
+                labelStyle: Theme.of(context).primaryTextTheme.titleMedium,
+                unselectedLabelColor: indicatorColor,
+                labelColor: indicatorColor,
+                dividerHeight: 0,
                 tabs: [
                   Tab(text: 'Space Type'),
                   Tab(text: 'Notifications'),

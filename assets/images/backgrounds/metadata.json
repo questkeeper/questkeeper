@@ -5,17 +5,20 @@
     {
       "name": "office",
       "friendlyName": "Office",
-      "colorCodes": ["#80bac6", "#80aba0", "#6288c6"]
+      "colorCodes": ["#80bac6", "#80aba0", "#6288c6"],
+      "topHalfColorCodes": ["#A6CDCF", "#A6BCA7", "#7E96CF"]
     },
     {
       "name": "living_room",
       "friendlyName": "Living Room",
-      "colorCodes": ["#d0b995", "#d0a773", "#978295"]
+      "colorCodes": ["#d0b995", "#d0a773", "#978295"],
+      "topHalfColorCodes": ["#F0E0B7", "#F0CA8D", "#AD9DB7"]
     },
     {
       "name": "school",
       "friendlyName": "School",
-      "colorCodes": ["#95d098", "#abd186", "#79a398"]
+      "colorCodes": ["#95d098", "#abd186", "#79a398"],
+      "topHalfColorCodes": ["#D8F0B7", "#E0F0AB", "#ADBCB7"]
     }
   ]
 }
