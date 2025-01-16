@@ -15,9 +15,9 @@ class ActionButtons extends ConsumerWidget {
   });
 
   final Tasks currentTask;
-  final void Function(Tasks assignment) deleteTask;
-  final void Function(Tasks assignment) toggleStarTask;
-  final void Function(Tasks assignment) toggleCompleteTask;
+  final Future<void> Function(Tasks assignment) deleteTask;
+  final Future<void> Function(Tasks assignment) toggleStarTask;
+  final Future<void> Function(Tasks assignment) toggleCompleteTask;
   final Size size;
 
   @override
@@ -83,10 +83,12 @@ class ActionButtons extends ConsumerWidget {
                             },
                             child: const Text("Cancel")),
                         FilledButton(
-                            onPressed: () {
-                              deleteTask(updatedTask);
+                            onPressed: () async {
+                              await deleteTask(updatedTask);
 
-                              isModal ? Navigator.of(context).pop() : null;
+                              context.mounted
+                                  ? Navigator.of(context).pop()
+                                  : null;
                             },
                             style: ButtonStyle(
                               backgroundColor:

@@ -19,42 +19,41 @@ class OnboardingOverlay extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return  Card(
-        child: InkWell(
-          onTap: () => _showOnboardingModal(context, ref),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+    return Card(
+      child: InkWell(
+        onTap: () => _showOnboardingModal(context, ref),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              onboardingState.playIsCompletingAnimation
+                  ? SizedBox.shrink()
+                  : const Icon(LucideIcons.circle_help),
+              const SizedBox(width: 8),
+              Text(
                 onboardingState.playIsCompletingAnimation
-                    ? SizedBox.shrink()
-                    : const Icon(LucideIcons.circle_help),
-                const SizedBox(width: 8),
-                Text(
-                  onboardingState.playIsCompletingAnimation
-                      ? 'Nice job!'
-                      : 'Getting Started',
-                ),
-                const SizedBox(width: 8),
-                onboardingState.playIsCompletingAnimation
-                    ? SizedBox(
-                        width: 36,
-                        height: 36,
-                        child: RiveAnimation.asset(
-                          'assets/rive/check.riv',
-                          fit: BoxFit.fill,
-                        ),
-                      )
-                    : CircularProgressIndicator(
-                        value: onboardingState.completedSteps / 4,
-                        strokeWidth: 2,
+                    ? 'Nice job!'
+                    : 'Getting Started',
+              ),
+              const SizedBox(width: 8),
+              onboardingState.playIsCompletingAnimation
+                  ? SizedBox(
+                      width: 36,
+                      height: 36,
+                      child: RiveAnimation.asset(
+                        'assets/rive/check.riv',
+                        fit: BoxFit.fill,
                       ),
-              ],
-            ),
+                    )
+                  : CircularProgressIndicator(
+                      value: onboardingState.completedSteps / 4,
+                      strokeWidth: 2,
+                    ),
+            ],
           ),
         ),
-
+      ),
     );
   }
 
@@ -115,9 +114,11 @@ class _OnboardingModal extends ConsumerWidget {
 
                       if (currentSpace == null) return;
                       showCategoryBottomSheet(
-                          context: context,
-                          ref: ref,
-                          existingSpace: currentSpace);
+                        context: context,
+                        ref: ref,
+                        existingSpace: currentSpace,
+                        openedFrom: "onboarding_overlay",
+                      );
                     },
                   ),
                   _OnboardingStep(

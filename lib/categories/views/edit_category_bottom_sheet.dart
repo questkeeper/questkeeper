@@ -15,6 +15,7 @@ import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provid
 void showCategoryBottomSheet({
   required BuildContext context,
   required WidgetRef ref,
+  String? openedFrom,
   Categories? existingCategory,
   Spaces? existingSpace,
 }) {
@@ -40,6 +41,7 @@ void showCategoryBottomSheet({
         ref: ref,
         existingCategory: existingCategory,
         existingSpace: existingSpace,
+        openedFrom: openedFrom,
       );
     },
   );
@@ -52,6 +54,7 @@ class _CategoryBottomSheetContent extends StatefulWidget {
   final WidgetRef ref;
   final Categories? existingCategory;
   final Spaces? existingSpace;
+  final String? openedFrom;
 
   const _CategoryBottomSheetContent({
     required this.nameController,
@@ -60,6 +63,7 @@ class _CategoryBottomSheetContent extends StatefulWidget {
     required this.ref,
     this.existingCategory,
     this.existingSpace,
+    this.openedFrom,
   });
 
   @override
@@ -223,7 +227,10 @@ class _CategoryBottomSheetContentState
                                       .read(onboardingProvider.notifier)
                                       .markCategoryCreated();
 
-                                  if (context.mounted) Navigator.pop(context);
+                                  if (widget.openedFrom != null &&
+                                      context.mounted) {
+                                    Navigator.pop(context);
+                                  }
                                 }
                               }
                             },

@@ -195,7 +195,9 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
           widget.ref.read(onboardingProvider).isOnboardingComplete == false) {
         widget.ref.read(onboardingProvider.notifier).markTaskCreated();
 
-        if (context.mounted) Navigator.pop(context);
+        if (context.mounted && Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
       }
     } else {
       if (!mounted) return;
@@ -283,7 +285,10 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     await widget.ref
                         .read(tasksManagerProvider.notifier)
                         .deleteTask(task);
-                    if (context.mounted) Navigator.of(context).pop();
+
+                    if (context.mounted && Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
                   },
                   size: MediaQuery.of(context).size,
                 ),
