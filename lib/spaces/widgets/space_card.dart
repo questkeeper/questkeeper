@@ -212,12 +212,15 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                                         ),
                                   ),
                                 ),
+                                const SizedBox(
+                                  height: kBottomNavigationBarHeight + 48,
+                                ),
                               ],
                             );
                           }
 
                           return const SizedBox(
-                              height: kBottomNavigationBarHeight + 16);
+                              height: kBottomNavigationBarHeight + 48);
                         }
                       },
                     ),
