@@ -145,7 +145,6 @@ class _AllSpacesState extends ConsumerState<AllSpacesScreen>
       _pageController.removeListener(_updatePage);
     }
 
-    _tabController.dispose();
     currentPageValue.dispose();
     super.dispose();
   }
