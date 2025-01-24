@@ -6,6 +6,7 @@ import 'package:questkeeper/shared/utils/http_service.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
+import 'package:questkeeper/profile/providers/profile_provider.dart';
 
 class AccountManagementScreen extends ConsumerWidget {
   const AccountManagementScreen({super.key});
@@ -120,9 +121,18 @@ class AccountManagementScreen extends ConsumerWidget {
             final httpService = HttpService();
             await httpService.post('/core/auth/reactivate');
 
+            // Force refresh profile and auth state
             if (context.mounted) {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/home', (route) => false);
+              final ref = ProviderScope.containerOf(context);
+              // Invalidate profile to force refresh
+              ref.invalidate(profileManagerProvider);
+              // Wait for profile to be refetched
+              await ref.read(profileManagerProvider.notifier).fetchProfile();
+
+              context.mounted
+                  ? Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/home', (route) => false)
+                  : null;
               SnackbarService.showSuccessSnackbar(
                   'Account reactivated successfully');
             }

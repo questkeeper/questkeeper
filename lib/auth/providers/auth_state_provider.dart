@@ -65,18 +65,21 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
           isLoading: false,
           isAuthenticated: true,
           profile: cachedProfile,
+          isDeactivated: !cachedProfile.isActive,
         );
       } catch (e) {
         // If profile parsing fails, still show as authenticated but without profile
         state = state.copyWith(
           isLoading: false,
           isAuthenticated: true,
+          isDeactivated: false,
         );
       }
     } else {
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: false,
+        isDeactivated: false,
       );
     }
 
@@ -112,13 +115,12 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       }
 
       // Check if account is deactivated
-      if (!userProfile.isActive) {
+      if (userProfile.isActive == false) {
         state = state.copyWith(
-          isAuthenticated: true,
-          user: user,
-          profile: userProfile,
-          isDeactivated: !userProfile.isActive,
-        );
+            isAuthenticated: true,
+            user: user,
+            profile: userProfile,
+            isDeactivated: true);
         return;
       }
 
@@ -158,6 +160,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       isAuthenticated: false,
       user: null,
       profile: null,
+      isDeactivated: false,
     );
   }
 }

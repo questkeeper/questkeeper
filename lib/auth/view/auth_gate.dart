@@ -43,7 +43,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
 
     // If authenticated but deactivated, show account management screen
     if ((authState.isAuthenticated ?? false) &&
-        (authState.isDeactivated == false)) {
+        (authState.isDeactivated == true)) {
       return Navigator(
         onGenerateRoute: (settings) => MaterialPageRoute(
           builder: (context) => const AccountManagementScreen(),
