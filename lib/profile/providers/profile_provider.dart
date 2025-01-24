@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 
 import 'package:questkeeper/profile/model/profile_model.dart';
@@ -75,18 +76,26 @@ class ProfileManager extends _$ProfileManager {
   }
 
   Future<ReturnModel> updateUsername(String username) async {
+    return updateProfile({"username": username});
+  }
+
+  Future<ReturnModel> updateProfileVisibility(bool isPublic) async {
+    return updateProfile({"isPublic": isPublic});
+  }
+
+  Future<ReturnModel> updateProfile(Map<String, dynamic> data) async {
     state = const AsyncValue.loading();
     try {
-      final result = await _repository.updateUsername(username);
+      final result = await _repository.updateProfile(data);
       prefs.remove("user_profile");
       if (!result.success) return result;
 
       final updatedProfile = await fetchProfile();
-
+      debugPrint(updatedProfile.toJson());
       state = AsyncValue.data(updatedProfile);
 
       return const ReturnModel(
-          message: "Username updated successfully", success: true);
+          message: "Profile updated successfully", success: true);
     } catch (e) {
       Sentry.captureException(
         e,

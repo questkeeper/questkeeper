@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:questkeeper/settings/views/profile/profile_settings_screen.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
@@ -156,30 +157,23 @@ class MyApp extends ConsumerWidget {
             '/signin': (context) => const AuthSpaces(),
             '/home': (context) => const TabView(),
 
-            // Settings stuff
-            '/settings/about': (context) => const AboutScreen(),
-            '/settings/account': (context) => const AccountManagementScreen(),
-
             // Familiars stuff
             '/badges': (context) => const QuestsView(),
 
             // Friends
             "/friends": (context) => const FriendsList(),
 
-            // Notifications
-            '/notifications': (context) => const NotificationsScreen(),
-
-            // Privacy
-            '/privacy': (context) => const PrivacyScreen(),
+            // Settings stuff
+            '/settings/about': (context) => const AboutScreen(),
+            '/settings/profile': (context) => const ProfileSettingsScreen(),
+            '/settings/account': (context) => const AccountManagementScreen(),
+            '/settings/notifications': (context) => const NotificationsScreen(),
+            '/settings/privacy': (context) => const PrivacyScreen(),
+            '/settings/theme': (context) => const ThemeScreen(),
+            '/settings/experiments': (context) => const ExperimentsScreen(),
 
             // Network error
             '/network-error': (context) => const NetworkErrorScreen(),
-
-            // Theme settings
-            '/theme': (context) => const ThemeScreen(),
-
-            // Experiments settings
-            '/experiments': (context) => const ExperimentsScreen(),
           },
           navigatorObservers: [
             PosthogObserver(),
