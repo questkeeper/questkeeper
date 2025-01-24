@@ -193,36 +193,18 @@ class SettingsScreen extends ConsumerWidget {
                     iconColor: Colors.amber,
                   ),
                 SettingsCard(
+                  title: 'Account Management',
+                  description: 'Manage your account settings and data',
+                  icon: LucideIcons.user_cog,
+                  onTap: () =>
+                      Navigator.pushNamed(context, '/settings/account'),
+                ),
+                SettingsCard(
                   title: 'Sign out',
                   description: 'Sign out and remove local data',
                   icon: LucideIcons.log_out,
                   iconColor: Colors.redAccent,
-                  onTap: () async {
-                    AuthNotifier().clearToken();
-                    await SharedPreferences.getInstance().then((prefs) {
-                      prefs.clear();
-                    });
-
-                    // Clear cache manager
-                    final CacheManager cacheManager = DefaultCacheManager();
-                    await cacheManager.emptyCache();
-
-                    Posthog().reset();
-
-                    await Supabase.instance.client.auth.signOut().then(
-                          (value) => {
-                            if (context.mounted)
-                              Navigator.pushReplacementNamed(
-                                  context, "/signin"),
-                          },
-                        );
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: const Text(
-                      textAlign: TextAlign.center,
-                      'To delete your account, please message us at contact@questkeeper.app'),
+                  onTap: () => signOut(context),
                 ),
               ],
             ),
@@ -231,4 +213,24 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+void signOut(BuildContext context) async {
+  AuthNotifier().clearToken();
+  await SharedPreferences.getInstance().then((prefs) {
+    prefs.clear();
+  });
+
+  // Clear cache manager
+  final CacheManager cacheManager = DefaultCacheManager();
+  await cacheManager.emptyCache();
+
+  Posthog().reset();
+
+  await Supabase.instance.client.auth.signOut().then(
+        (value) => {
+          if (context.mounted)
+            Navigator.pushReplacementNamed(context, "/signin"),
+        },
+      );
 }
