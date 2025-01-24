@@ -19,6 +19,7 @@ import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
+import 'package:questkeeper/settings/views/account/account_management_screen.dart';
 import 'package:questkeeper/settings/views/experiments/experiments_screen.dart';
 import 'package:questkeeper/settings/views/notifications/notifications_screen.dart';
 import 'package:questkeeper/settings/views/privacy/privacy_screen.dart';
@@ -157,6 +158,7 @@ class MyApp extends ConsumerWidget {
 
             // Settings stuff
             '/settings/about': (context) => const AboutScreen(),
+            '/settings/account': (context) => const AccountManagementScreen(),
 
             // Familiars stuff
             '/badges': (context) => const QuestsView(),

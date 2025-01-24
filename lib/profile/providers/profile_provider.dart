@@ -6,12 +6,14 @@ import 'package:questkeeper/profile/repositories/profile_repository.dart';
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'profile_provider.g.dart';
 
 @riverpod
 class ProfileManager extends _$ProfileManager {
   final ProfileRepository _repository;
+  final SupabaseClient supabaseClient = Supabase.instance.client;
   static final SharedPreferencesManager prefs =
       SharedPreferencesManager.instance;
 
@@ -44,10 +46,20 @@ class ProfileManager extends _$ProfileManager {
         response = await _repository.getProfile(username);
       }
 
-      final profile = Profile.fromMap(response.data);
+      var profile = Profile.fromMap(response.data);
 
       // Cache my profile
       if (username == "me") {
+        final isActive = await supabaseClient
+            .from("public_user_profiles")
+            .select("isActive")
+            .eq("user_id", supabaseClient.auth.currentUser!.id)
+            .maybeSingle();
+
+        profile = profile.copyWith(
+          isActive: isActive == null ? true : isActive["isActive"],
+        );
+
         await prefs.setString("user_profile", response.data.toString());
       }
 
