@@ -114,9 +114,6 @@ class HttpService {
 
   Future<Response> post(String path,
       {Map<String, dynamic> data = const {}}) async {
-    if (data.isEmpty) {
-      throw Exception('No data provided');
-    }
     return _dio.post(path, data: data);
   }
 
