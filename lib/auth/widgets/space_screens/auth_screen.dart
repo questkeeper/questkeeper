@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:questkeeper/settings/views/account/account_management_screen.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,14 +31,26 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   void onSuccess(Session response) async {
     try {
-      await ref.read(profileManagerProvider.future);
+      final profile = await ref.read(profileManagerProvider.future);
 
-      if (mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/home',
-          (route) => false,
-        );
-        return;
+      if (profile.isActive == true) {
+        if (mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/home',
+            (route) => false,
+          );
+          return;
+        }
+      } else {
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const AccountManagementScreen(),
+              settings: const RouteSettings(arguments: true),
+            ),
+          );
+          return;
+        }
       }
 
       throw Exception("Context not mounted");

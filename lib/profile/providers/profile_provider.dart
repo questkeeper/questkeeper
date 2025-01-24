@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 
 import 'package:questkeeper/profile/model/profile_model.dart';
@@ -6,12 +7,14 @@ import 'package:questkeeper/profile/repositories/profile_repository.dart';
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'profile_provider.g.dart';
 
 @riverpod
 class ProfileManager extends _$ProfileManager {
   final ProfileRepository _repository;
+  final SupabaseClient supabaseClient = Supabase.instance.client;
   static final SharedPreferencesManager prefs =
       SharedPreferencesManager.instance;
 
@@ -44,10 +47,20 @@ class ProfileManager extends _$ProfileManager {
         response = await _repository.getProfile(username);
       }
 
-      final profile = Profile.fromMap(response.data);
+      var profile = Profile.fromMap(response.data);
 
       // Cache my profile
       if (username == "me") {
+        final isActive = await supabaseClient
+            .from("public_user_profiles")
+            .select("isActive")
+            .eq("user_id", supabaseClient.auth.currentUser!.id)
+            .maybeSingle();
+
+        profile = profile.copyWith(
+          isActive: isActive == null ? true : isActive["isActive"],
+        );
+
         await prefs.setString("user_profile", response.data.toString());
       }
 
@@ -63,18 +76,26 @@ class ProfileManager extends _$ProfileManager {
   }
 
   Future<ReturnModel> updateUsername(String username) async {
+    return updateProfile({"username": username});
+  }
+
+  Future<ReturnModel> updateProfileVisibility(bool isPublic) async {
+    return updateProfile({"isPublic": isPublic});
+  }
+
+  Future<ReturnModel> updateProfile(Map<String, dynamic> data) async {
     state = const AsyncValue.loading();
     try {
-      final result = await _repository.updateUsername(username);
+      final result = await _repository.updateProfile(data);
       prefs.remove("user_profile");
       if (!result.success) return result;
 
       final updatedProfile = await fetchProfile();
-
+      debugPrint(updatedProfile.toJson());
       state = AsyncValue.data(updatedProfile);
 
       return const ReturnModel(
-          message: "Username updated successfully", success: true);
+          message: "Profile updated successfully", success: true);
     } catch (e) {
       Sentry.captureException(
         e,

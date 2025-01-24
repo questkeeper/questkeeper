@@ -16,12 +16,14 @@ class AuthState {
   final bool? isAuthenticated;
   final UserResponse? user;
   final Profile? profile;
+  final bool? isDeactivated;
 
   AuthState({
     this.isLoading = true,
     this.isAuthenticated,
     this.user,
     this.profile,
+    this.isDeactivated,
   });
 
   AuthState copyWith({
@@ -29,12 +31,14 @@ class AuthState {
     bool? isAuthenticated,
     UserResponse? user,
     Profile? profile,
+    bool? isDeactivated,
   }) {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       user: user ?? this.user,
       profile: profile ?? this.profile,
+      isDeactivated: isDeactivated ?? this.isDeactivated,
     );
   }
 }
@@ -61,18 +65,21 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
           isLoading: false,
           isAuthenticated: true,
           profile: cachedProfile,
+          isDeactivated: !cachedProfile.isActive,
         );
       } catch (e) {
         // If profile parsing fails, still show as authenticated but without profile
         state = state.copyWith(
           isLoading: false,
           isAuthenticated: true,
+          isDeactivated: false,
         );
       }
     } else {
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: false,
+        isDeactivated: false,
       );
     }
 
@@ -107,13 +114,25 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         );
       }
 
+      // Check if account is deactivated
+      if (userProfile.isActive == false) {
+        state = state.copyWith(
+            isAuthenticated: true,
+            user: user,
+            profile: userProfile,
+            isDeactivated: true);
+        return;
+      }
+
       // Only update state if something changed to avoid unnecessary rebuilds
       if (state.profile?.user_id != userProfile.user_id ||
-          state.user?.user?.id != user.user?.id) {
+          state.user?.user?.id != user.user?.id ||
+          state.isDeactivated != false) {
         state = state.copyWith(
           isAuthenticated: true,
           user: user,
           profile: userProfile,
+          isDeactivated: false,
         );
       }
     } catch (error) {
@@ -126,6 +145,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
           isAuthenticated: false,
           user: null,
           profile: null,
+          isDeactivated: false,
         );
       }
     }
@@ -140,6 +160,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       isAuthenticated: false,
       user: null,
       profile: null,
+      isDeactivated: false,
     );
   }
 }

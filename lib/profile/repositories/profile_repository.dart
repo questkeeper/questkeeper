@@ -33,23 +33,26 @@ class ProfileRepository {
   }
 
   Future<ReturnModel> updateUsername(String username) async {
+    return updateProfile({"username": username});
+  }
+
+  Future<ReturnModel> updateProfile(Map<String, dynamic> data) async {
     try {
-      final response = await _httpService.post('/social/profile/me', data: {
-        "username": username,
-      });
+      final response =
+          await _httpService.post('/social/profile/me', data: data);
 
       if (response.statusCode == 200) {
         return const ReturnModel(
-          message: "Username updated successfully",
+          message: "Profile updated successfully",
           success: true,
         );
       } else {
         return ReturnModel(
-          message: response.statusCode == 409
+          message: response.statusCode == 409 && data.containsKey("username")
               ? "Username already taken"
-              : "Error updating username",
+              : "Error updating profile",
           success: false,
-          error: response.statusCode == 409
+          error: response.statusCode == 409 && data.containsKey("username")
               ? "Username already taken"
               : response.data,
         );
@@ -57,7 +60,7 @@ class ProfileRepository {
     } catch (error) {
       Sentry.captureException(error);
       return ReturnModel(
-        message: "Error updating username",
+        message: "Error updating profile",
         success: false,
         error: error.toString(),
       );

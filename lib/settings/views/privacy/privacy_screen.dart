@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:questkeeper/settings/widgets/settings_switch_tile.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -117,13 +118,12 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
               ),
               const SizedBox(height: 16),
 
-              SwitchListTile(
-                value: posthogDoNotTrack,
-                onChanged: onToggle,
-                title: const Text("Opt out of analytics"),
-                subtitle: const Text(
-                  "Disables non-essential analytics. Only applies to this device.",
-                ),
+              SettingsSwitchTile(
+                isEnabled: posthogDoNotTrack,
+                onTap: onToggle,
+                title: "Opt out of analytics",
+                description:
+                    "Disables non-essential analytics. Only applies to this device.",
               ),
               const SizedBox(height: 24),
 

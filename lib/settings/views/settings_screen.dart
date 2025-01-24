@@ -17,7 +17,6 @@ import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/settings/widgets/settings_card.dart';
-import 'package:questkeeper/settings/widgets/update_username_dialog.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 
@@ -103,24 +102,24 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 10),
                 const Divider(),
                 SettingsCard(
-                    title: 'Username',
-                    description: 'Update your username',
+                    title: 'Profile',
+                    description: 'Manage your profile settings',
                     icon: LucideIcons.user,
-                    onTap: () => showDialog(
-                        context: context,
-                        builder: (context) => UpdateUsernameDialog())),
+                    onTap: () =>
+                        Navigator.pushNamed(context, '/settings/profile')),
                 SettingsCard(
                     title: 'Notifications',
                     description: 'Manage your notifications',
                     icon: LucideIcons.bell_ring,
-                    onTap: () =>
-                        Navigator.pushNamed(context, '/notifications')),
+                    onTap: () => Navigator.pushNamed(
+                        context, '/settings/notifications')),
                 isDebug
                     ? SettingsCard(
                         title: 'Theme',
                         description: 'Change the app theme',
                         icon: LucideIcons.palette,
-                        onTap: () => Navigator.pushNamed(context, '/theme'))
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/settings/theme'))
                     : const SizedBox(),
                 const Divider(),
                 SettingsCard(
@@ -140,7 +139,8 @@ class SettingsScreen extends ConsumerWidget {
                     title: 'Privacy',
                     description: 'Manage privacy and data settings',
                     icon: LucideIcons.shield,
-                    onTap: () => Navigator.pushNamed(context, '/privacy')),
+                    onTap: () =>
+                        Navigator.pushNamed(context, '/settings/privacy')),
                 SettingsCard(
                     title: 'About',
                     description: 'About the app',
@@ -175,7 +175,8 @@ class SettingsScreen extends ConsumerWidget {
                     title: 'Experiments',
                     description: 'Enable features that may be unstable',
                     icon: LucideIcons.flask_conical,
-                    onTap: () => Navigator.pushNamed(context, '/experiments')),
+                    onTap: () =>
+                        Navigator.pushNamed(context, '/settings/experiments')),
                 if (isDebug ||
                     (Supabase.instance.client.auth.currentUser?.email
                             ?.endsWith("@questkeeper.app") ??
@@ -193,36 +194,18 @@ class SettingsScreen extends ConsumerWidget {
                     iconColor: Colors.amber,
                   ),
                 SettingsCard(
+                  title: 'Account Management',
+                  description: 'Manage your account settings and data',
+                  icon: LucideIcons.user_cog,
+                  onTap: () =>
+                      Navigator.pushNamed(context, '/settings/account'),
+                ),
+                SettingsCard(
                   title: 'Sign out',
                   description: 'Sign out and remove local data',
                   icon: LucideIcons.log_out,
                   iconColor: Colors.redAccent,
-                  onTap: () async {
-                    AuthNotifier().clearToken();
-                    await SharedPreferences.getInstance().then((prefs) {
-                      prefs.clear();
-                    });
-
-                    // Clear cache manager
-                    final CacheManager cacheManager = DefaultCacheManager();
-                    await cacheManager.emptyCache();
-
-                    Posthog().reset();
-
-                    await Supabase.instance.client.auth.signOut().then(
-                          (value) => {
-                            if (context.mounted)
-                              Navigator.pushReplacementNamed(
-                                  context, "/signin"),
-                          },
-                        );
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: const Text(
-                      textAlign: TextAlign.center,
-                      'To delete your account, please message us at contact@questkeeper.app'),
+                  onTap: () => signOut(context),
                 ),
               ],
             ),
@@ -231,4 +214,24 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+void signOut(BuildContext context) async {
+  AuthNotifier().clearToken();
+  await SharedPreferences.getInstance().then((prefs) {
+    prefs.clear();
+  });
+
+  // Clear cache manager
+  final CacheManager cacheManager = DefaultCacheManager();
+  await cacheManager.emptyCache();
+
+  Posthog().reset();
+
+  await Supabase.instance.client.auth.signOut().then(
+        (value) => {
+          if (context.mounted)
+            Navigator.pushReplacementNamed(context, "/signin"),
+        },
+      );
 }

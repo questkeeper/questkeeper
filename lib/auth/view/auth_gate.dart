@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:questkeeper/auth/providers/auth_state_provider.dart';
 import 'package:questkeeper/auth/view/auth_spaces.dart';
+import 'package:questkeeper/settings/views/account/account_management_screen.dart';
 import 'package:questkeeper/shared/screens/onboarding_page.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:questkeeper/tabs/tabview.dart';
@@ -38,6 +39,18 @@ class _AuthGateState extends ConsumerState<AuthGate> {
 
     if (authState.isLoading) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    // If authenticated but deactivated, show account management screen
+    if ((authState.isAuthenticated ?? false) &&
+        (authState.isDeactivated == true)) {
+      return Navigator(
+        onGenerateRoute: (settings) => MaterialPageRoute(
+          builder: (context) => const AccountManagementScreen(),
+          settings:
+              const RouteSettings(arguments: true), // Pass isDeactivated flag
+        ),
+      );
     }
 
     return authState.isAuthenticated ?? false
