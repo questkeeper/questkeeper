@@ -7,6 +7,8 @@ class Profile {
   final String created_at;
   final String updated_at;
   final int points;
+  final bool isActive;
+  final bool isPublic;
   final bool? isPro;
   Profile({
     required this.user_id,
@@ -14,6 +16,8 @@ class Profile {
     required this.created_at,
     required this.updated_at,
     required this.points,
+    required this.isActive,
+    required this.isPublic,
     this.isPro,
   });
 
@@ -23,6 +27,8 @@ class Profile {
     String? created_at,
     String? updated_at,
     int? points,
+    bool? isActive,
+    bool? isPublic,
     bool? isPro,
   }) {
     return Profile(
@@ -31,6 +37,8 @@ class Profile {
       created_at: created_at ?? this.created_at,
       updated_at: updated_at ?? this.updated_at,
       points: points ?? this.points,
+      isActive: isActive ?? this.isActive,
+      isPublic: isPublic ?? this.isPublic,
       isPro: isPro ?? this.isPro,
     );
   }
@@ -42,6 +50,8 @@ class Profile {
       'created_at': created_at,
       'updated_at': updated_at,
       'points': points,
+      'isActive': isActive,
+      'isPublic': isPublic,
       'isPro': isPro,
     };
   }
@@ -53,6 +63,8 @@ class Profile {
       created_at: map['created_at'] as String,
       updated_at: map['updated_at'] as String,
       points: map['points'] as int,
+      isActive: map['isActive'] as bool,
+      isPublic: map['isPublic'] as bool,
       isPro: map['isPro'] != null ? map['isPro'] as bool : null,
     );
   }
@@ -64,7 +76,7 @@ class Profile {
 
   @override
   String toString() {
-    return 'Profile(user_id: $user_id, username: $username, created_at: $created_at, updated_at: $updated_at, points: $points, isPro: $isPro)';
+    return 'Profile(user_id: $user_id, username: $username, created_at: $created_at, updated_at: $updated_at, points: $points, isActive: $isActive, isPublic: $isPublic, isPro: $isPro)';
   }
 
   @override
@@ -76,6 +88,8 @@ class Profile {
         other.created_at == created_at &&
         other.updated_at == updated_at &&
         other.points == points &&
+        other.isActive == isActive &&
+        other.isPublic == isPublic &&
         other.isPro == isPro;
   }
 
@@ -86,6 +100,8 @@ class Profile {
         created_at.hashCode ^
         updated_at.hashCode ^
         points.hashCode ^
+        isActive.hashCode ^
+        isPublic.hashCode ^
         isPro.hashCode;
   }
 }
