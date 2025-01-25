@@ -1,0 +1,344 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:questkeeper/shared/widgets/avatar_widget.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+
+final navRailExpandedProvider = StateProvider<bool>((ref) => false);
+
+class DesktopLayout extends ConsumerStatefulWidget {
+  final Widget mainContent;
+  final Widget? contextPane;
+  final int selectedIndex;
+  final Function(int) onTabSelected;
+
+  const DesktopLayout({
+    super.key,
+    required this.mainContent,
+    this.contextPane,
+    required this.selectedIndex,
+    required this.onTabSelected,
+  });
+
+  @override
+  ConsumerState<DesktopLayout> createState() => _DesktopLayoutState();
+}
+
+class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isNavRailExpanded = ref.watch(navRailExpandedProvider);
+
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      body: Row(
+        children: [
+          // Floating Nav Rail with expansion
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: isNavRailExpanded ? 200 : 80,
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerLow,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Toggle expand/collapse button
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton.filled(
+                      style: IconButton.styleFrom(
+                        backgroundColor: colorScheme.primaryContainer,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: Icon(
+                        isNavRailExpanded
+                            ? LucideIcons.panel_left
+                            : LucideIcons.panel_right,
+                        color: colorScheme.primary,
+                      ),
+                      onPressed: () {
+                        ref.read(navRailExpandedProvider.notifier).state =
+                            !isNavRailExpanded;
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Custom Nav Rail
+                  Expanded(
+                    child: Column(
+                      children: [
+                        _NavRailItem(
+                          icon: LucideIcons.eclipse,
+                          label: 'Spaces',
+                          isSelected: widget.selectedIndex == 0,
+                          isExpanded: isNavRailExpanded,
+                          onTap: () => widget.onTabSelected(0),
+                        ),
+                        _NavRailItem(
+                          icon: LucideIcons.handshake,
+                          label: 'Friends',
+                          isSelected: widget.selectedIndex == 1,
+                          isExpanded: isNavRailExpanded,
+                          onTap: () => widget.onTabSelected(1),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const Divider(indent: 16, endIndent: 16),
+
+                  Consumer(
+                    builder: (context, ref, child) =>
+                        ref.watch(profileManagerProvider).when(
+                              error: (error, stack) {
+                                Sentry.captureException(
+                                  error,
+                                  stackTrace: stack,
+                                );
+
+                                return const Center(
+                                  child: Text("Failed to fetch friends list"),
+                                );
+                              },
+                              loading: () =>
+                                  Center(child: CircularProgressIndicator()),
+                              data: (profileData) => Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: colorScheme.shadow
+                                                .withValues(alpha: 0.1),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: AvatarWidget(
+                                        seed: profileData.user_id,
+                                        radius: 16,
+                                      ),
+                                    ),
+                                    if (isNavRailExpanded) ...[
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          "@${profileData.username}",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                color: colorScheme.onSurface
+                                                    .withValues(alpha: 0.8),
+                                              ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Main Content Area with Resizable Panes
+          Expanded(
+            child: ResizablePaneContainer(
+              mainContent: widget.mainContent,
+              contextPane: widget.contextPane,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavRailItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final bool isExpanded;
+  final VoidCallback onTap;
+
+  const _NavRailItem({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.isExpanded,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: isSelected ? colorScheme.primaryContainer : null,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 20,
+                  color: isSelected
+                      ? colorScheme.primary
+                      : colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
+                if (isExpanded) ...[
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        color: isSelected
+                            ? colorScheme.primary
+                            : colorScheme.onSurface.withValues(alpha: 0.8),
+                        fontWeight: isSelected ? FontWeight.w600 : null,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ResizablePaneContainer extends StatefulWidget {
+  final Widget mainContent;
+  final Widget? contextPane;
+
+  const ResizablePaneContainer({
+    super.key,
+    required this.mainContent,
+    this.contextPane,
+  });
+
+  @override
+  State<ResizablePaneContainer> createState() => _ResizablePaneContainerState();
+}
+
+class _ResizablePaneContainerState extends State<ResizablePaneContainer> {
+  double _contextPaneWidth = 320;
+  bool _isContextPaneCollapsed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Main content
+        Expanded(child: widget.mainContent),
+
+        // Resizable context pane
+        if (widget.contextPane != null) ...[
+          !_isContextPaneCollapsed
+              ? GestureDetector(
+                  onHorizontalDragUpdate: (details) {
+                    setState(() {
+                      _contextPaneWidth = (_contextPaneWidth - details.delta.dx)
+                          .clamp(320.0, 600.0);
+                    });
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(0, 24, 8, 24),
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.resizeLeftRight,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).dividerColor.withAlpha(100),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        width: 4,
+                      ),
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
+            child: AnimatedContainer(
+              decoration: BoxDecoration(
+                color: ColorScheme.of(context).surfaceContainerLow,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              duration: const Duration(milliseconds: 200),
+              width: _isContextPaneCollapsed ? 48 : _contextPaneWidth,
+              child: Column(
+                children: [
+                  // Toggle collapse button
+                  IconButton(
+                    icon: Icon(_isContextPaneCollapsed
+                        ? LucideIcons.chevron_right
+                        : LucideIcons.chevron_left),
+                    onPressed: () {
+                      setState(() {
+                        _isContextPaneCollapsed = !_isContextPaneCollapsed;
+                      });
+                    },
+                  ),
+                  Expanded(
+                    child: _isContextPaneCollapsed
+                        ? GestureDetector(
+                            onTap: () => {
+                              setState(() {
+                                _isContextPaneCollapsed = false;
+                              })
+                            },
+                            child: RotatedBox(
+                              quarterTurns: 1,
+                              child: Center(
+                                child: Text('Expand'),
+                              ),
+                            ),
+                          )
+                        : widget.contextPane!,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}

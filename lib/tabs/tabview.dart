@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:questkeeper/layout/desktop_layout.dart';
+import 'package:questkeeper/spaces/views/desktop_spaces_screen.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
-import 'package:questkeeper/constants.dart';
+
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
@@ -23,8 +24,13 @@ class TabView extends ConsumerStatefulWidget {
 class _TabViewState extends ConsumerState<TabView> {
   int _selectedIndex = 0;
 
-  static const List<Widget> pages = [
+  static const List<Widget> _mobilePages = [
     AllSpacesScreen(),
+    FriendsList(),
+  ];
+
+  static const List<Widget> _desktopPages = [
+    DesktopSpacesScreen(),
     FriendsList(),
   ];
 
@@ -53,19 +59,9 @@ class _TabViewState extends ConsumerState<TabView> {
             extendBody: true,
             body: Stack(
               children: [
-                // Main content scaffold that contains the pages
-                // Scaffold(
-                //   body: IndexedStack(
-                //     // Using IndexedStack for better state preservation
-                //     index: _selectedIndex,
-                //     children: pages,
-                //   ),
-                //   // Remove bottom navigation bar from here
-                // ),
-
                 Scaffold(
                   body: Stack(
-                    children: List.generate(pages.length, (index) {
+                    children: List.generate(_mobilePages.length, (index) {
                       return AnimatedOpacity(
                         // FadeThrough transition
                         duration: const Duration(milliseconds: 300),
@@ -73,7 +69,7 @@ class _TabViewState extends ConsumerState<TabView> {
                         curve: Curves.easeInToLinear,
                         child: IgnorePointer(
                           ignoring: _selectedIndex != index,
-                          child: pages[index],
+                          child: _mobilePages[index],
                         ),
                       );
                     }),
@@ -121,53 +117,30 @@ class _TabViewState extends ConsumerState<TabView> {
             ),
           );
         } else {
-          // Tablet layout
-          return Scaffold(
-            body: Row(
-              children: [
-                NavigationRail(
-                  selectedIndex: _selectedIndex,
-                  onDestinationSelected: _onItemTapped,
-                  labelType: NavigationRailLabelType.all,
-                  destinations: const <NavigationRailDestination>[
-                    if (isDebug)
-                      NavigationRailDestination(
-                          icon: Icon(LucideIcons.trophy),
-                          label: Text('Quests')),
-                    NavigationRailDestination(
-                        icon: Icon(LucideIcons.eclipse), label: Text('Spaces')),
-                    NavigationRailDestination(
-                        icon: Icon(LucideIcons.handshake),
-                        label: Text('Friends')),
-                    NavigationRailDestination(
-                        icon: Icon(LucideIcons.user_cog),
-                        label: Text('Settings')),
-                  ],
-                ),
-                const VerticalDivider(thickness: 1, width: 1),
-                Expanded(
-                  child: Scaffold(
-                    body: pages[_selectedIndex],
-                    floatingActionButton: FloatingActionButton(
-                      key: const Key('add_task_button'),
-                      heroTag: 'add_task_button',
-                      onPressed: () => {
-                        showTaskDrawer(
-                          context: context,
-                          ref: ref,
-                          existingTask: null,
-                        ),
-                      },
-                      child: const Icon(LucideIcons.plus),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          return DesktopLayout(
+            selectedIndex: _selectedIndex,
+            onTabSelected: _onItemTapped,
+            mainContent: _desktopPages[_selectedIndex],
+            contextPane: _buildContextualPane(_selectedIndex),
           );
         }
       },
     );
+  }
+
+  Widget? _buildContextualPane(int index) {
+    switch (index) {
+      case 0: // Spaces tab
+        return getTaskDrawerContent(
+          context: context,
+          ref: ref,
+          existingTask: null,
+        );
+      case 1: // Friends tab
+        return FriendSearchView();
+      default:
+        return null;
+    }
   }
 
   Widget _buildContextualAction(int index) {
