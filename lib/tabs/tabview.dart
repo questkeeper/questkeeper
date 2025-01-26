@@ -13,6 +13,7 @@ import 'package:questkeeper/shared/widgets/show_drawer.dart';
 import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:questkeeper/tabs/modern_bottom_bar.dart';
 import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 
 class TabView extends ConsumerStatefulWidget {
   const TabView({super.key});
@@ -50,10 +51,21 @@ class _TabViewState extends ConsumerState<TabView> {
   @override
   Widget build(BuildContext context) {
     final pointsBadge = ref.watch(pointsNotificationManagerProvider);
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final double width = constraints.maxWidth;
-        if (width < 800) {
+        // Schedule the size update for the next frame
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(windowSizeProvider.notifier).setSize(Size(
+                constraints.maxWidth,
+                constraints.maxHeight,
+              ));
+        });
+
+        final isMobile = ref.watch(isMobileProvider);
+        final isCompact = ref.watch(isCompactProvider);
+
+        if (isMobile) {
           // Mobile layout
           return Scaffold(
             extendBody: true,
@@ -117,11 +129,14 @@ class _TabViewState extends ConsumerState<TabView> {
             ),
           );
         } else {
+          // Desktop layout with responsive pane behavior
           return DesktopLayout(
             selectedIndex: _selectedIndex,
             onTabSelected: _onItemTapped,
             mainContent: _desktopPages[_selectedIndex],
-            contextPane: _buildContextualPane(_selectedIndex),
+            contextPane: isCompact
+                ? null // Don't pass contextPane if in compact mode
+                : _buildContextualPane(_selectedIndex),
           );
         }
       },
@@ -129,14 +144,43 @@ class _TabViewState extends ConsumerState<TabView> {
   }
 
   Widget? _buildContextualPane(int index) {
+    final isCompact = ref.watch(isCompactProvider);
+
+    // If in compact mode, show the contextual content in a drawer instead
+    if (isCompact) {
+      switch (index) {
+        case 0: // Spaces tab
+          showDrawer(
+            context: context,
+            key: 'task_drawer',
+            child: getTaskDrawerContent(
+              context: context,
+              ref: ref,
+              existingTask: null,
+            ),
+          );
+          return null;
+        case 1: // Friends tab
+          showDrawer(
+            context: context,
+            key: 'friend_search_drawer',
+            child: FriendSearchView(),
+          );
+          return null;
+        default:
+          return null;
+      }
+    }
+
+    // Original pane behavior for larger screens
     switch (index) {
-      case 0: // Spaces tab
+      case 0:
         return getTaskDrawerContent(
           context: context,
           ref: ref,
           existingTask: null,
         );
-      case 1: // Friends tab
+      case 1:
         return FriendSearchView();
       default:
         return null;

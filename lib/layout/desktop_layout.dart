@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
+import 'package:questkeeper/shared/widgets/show_drawer.dart';
+import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
+import 'package:questkeeper/friends/widgets/friend_search.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 final navRailExpandedProvider = StateProvider<bool>((ref) => false);
@@ -30,6 +34,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isNavRailExpanded = ref.watch(navRailExpandedProvider);
+    final isCompact = ref.watch(isCompactProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -168,14 +173,53 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
           // Main Content Area with Resizable Panes
           Expanded(
-            child: ResizablePaneContainer(
-              mainContent: widget.mainContent,
-              contextPane: widget.contextPane,
-            ),
+            child: widget.contextPane != null
+                ? ResizablePaneContainer(
+                    mainContent: widget.mainContent,
+                    contextPane: widget.contextPane,
+                  )
+                : widget.mainContent,
           ),
         ],
       ),
+      // Add FAB for contextual actions in compact mode
+      floatingActionButton: isCompact ? _buildContextualFAB() : null,
     );
+  }
+
+  Widget? _buildContextualFAB() {
+    switch (widget.selectedIndex) {
+      case 0: // Spaces tab
+        return FloatingActionButton(
+          heroTag: 'add_task_button_desktop',
+          onPressed: () {
+            showDrawer(
+              context: context,
+              key: 'new_task_drawer',
+              child: getTaskDrawerContent(
+                context: context,
+                ref: ref,
+                existingTask: null,
+              ),
+            );
+          },
+          child: const Icon(LucideIcons.plus),
+        );
+      case 1: // Friends tab
+        return FloatingActionButton(
+          heroTag: 'friend_search_button',
+          onPressed: () {
+            showDrawer(
+              context: context,
+              key: 'friend_search_drawer',
+              child: FriendSearchView(),
+            );
+          },
+          child: const Icon(LucideIcons.user_search),
+        );
+      default:
+        return null;
+    }
   }
 }
 
