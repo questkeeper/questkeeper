@@ -87,25 +87,30 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                             }
 
                             final space = spaces[index];
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: ListTile(
-                                  selected: currentPageValue.value == index,
-                                  selectedTileColor:
-                                      colorScheme.primaryContainer,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                            return ValueListenableBuilder<int>(
+                              valueListenable: currentPageValue,
+                              builder: (context, currentPage, _) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 2),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: ListTile(
+                                      selected: currentPage == index,
+                                      selectedTileColor:
+                                          colorScheme.primaryContainer,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      leading: const Icon(LucideIcons.eclipse),
+                                      title: Text(space.title.capitalize()),
+                                      onTap: () {
+                                        pageController.jumpToPage(index);
+                                      },
+                                    ),
                                   ),
-                                  leading: const Icon(LucideIcons.eclipse),
-                                  title: Text(space.title.capitalize()),
-                                  onTap: () {
-                                    pageController.jumpToPage(index);
-                                  },
-                                ),
-                              ),
+                                );
+                              },
                             );
                           },
                         ),
