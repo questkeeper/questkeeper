@@ -218,7 +218,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                         children: [
                           // Floating Nav Rail with expansion
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               width: isNavRailExpanded ? 200 : 80,
