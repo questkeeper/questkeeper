@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/layout/utils/command_palette_list.dart';
+import 'package:questkeeper/layout/widgets/nav_rail_item.dart';
+import 'package:questkeeper/layout/widgets/resizable_pane_container.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
@@ -52,57 +55,11 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     });
   }
 
-  List<Command> get _commands => [
-        Command(
-          title: 'New Task',
-          description: 'Create a new task',
-          icon: LucideIcons.plus,
-          onExecute: () {
-            showDrawer(
-              context: context,
-              key: 'new_task_drawer',
-              child: getTaskDrawerContent(
-                context: context,
-                ref: ref,
-                existingTask: null,
-              ),
-            );
-          },
-        ),
-        Command(
-          title: 'Search Friends',
-          description: 'Find and add new friends',
-          icon: LucideIcons.users,
-          onExecute: () {
-            showDrawer(
-              context: context,
-              key: 'friend_search_drawer',
-              child: FriendSearchView(),
-            );
-          },
-        ),
-        Command(
-          title: 'Toggle Navigation',
-          description: 'Expand or collapse the navigation rail',
-          icon: LucideIcons.menu,
-          onExecute: () {
-            ref.read(navRailExpandedProvider.notifier).state =
-                !ref.watch(navRailExpandedProvider);
-          },
-        ),
-        Command(
-          title: 'Go to Spaces',
-          description: 'Switch to the Spaces tab',
-          icon: LucideIcons.eclipse,
-          onExecute: () => widget.onTabSelected(0),
-        ),
-        Command(
-          title: 'Go to Friends',
-          description: 'Switch to the Friends tab',
-          icon: LucideIcons.handshake,
-          onExecute: () => widget.onTabSelected(1),
-        ),
-      ];
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   void _toggleCommandPalette() {
     commandPaletteVisibleNotifier.value = !commandPaletteVisibleNotifier.value;
@@ -237,29 +194,37 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                 children: [
                                   // Custom Nav Rail
                                   Expanded(
-                                    child: Column(
-                                      children: [
-                                        _NavRailItem(
-                                          icon: LucideIcons.eclipse,
-                                          label: 'Spaces',
-                                          isSelected: widget.selectedIndex == 0,
-                                          isExpanded: isNavRailExpanded,
-                                          onTap: () => widget.onTabSelected(0),
-                                        ),
-                                        _NavRailItem(
-                                          icon: LucideIcons.handshake,
-                                          label: 'Friends',
-                                          isSelected: widget.selectedIndex == 1,
-                                          isExpanded: isNavRailExpanded,
-                                          onTap: () => widget.onTabSelected(1),
-                                        ),
-                                      ],
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16.0),
+                                      child: Column(
+                                        children: [
+                                          NavRailItem(
+                                            icon: LucideIcons.eclipse,
+                                            label: 'Spaces',
+                                            isSelected:
+                                                widget.selectedIndex == 0,
+                                            isExpanded: isNavRailExpanded,
+                                            onTap: () =>
+                                                widget.onTabSelected(0),
+                                          ),
+                                          NavRailItem(
+                                            icon: LucideIcons.handshake,
+                                            label: 'Friends',
+                                            isSelected:
+                                                widget.selectedIndex == 1,
+                                            isExpanded: isNavRailExpanded,
+                                            onTap: () =>
+                                                widget.onTabSelected(1),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
 
                                   const Divider(indent: 16, endIndent: 16),
 
-                                  _NavRailItem(
+                                  NavRailItem(
                                     icon: LucideIcons.settings,
                                     label: 'Settings',
                                     isSelected: false,
@@ -267,7 +232,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                     onTap: () => widget.onTabSelected(2),
                                   ),
 
-                                  _NavRailItem(
+                                  NavRailItem(
                                     icon: isNavRailExpanded
                                         ? LucideIcons.panel_left
                                         : LucideIcons.panel_right,
@@ -367,7 +332,11 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                 ),
                 floatingActionButton: isCompact ? _buildContextualFAB() : null,
               ),
-              if (isCommandPaletteVisible) CommandPalette(commands: _commands),
+              if (isCommandPaletteVisible)
+                CommandPalette(
+                  commands: buildCommandPaletteList(
+                      context, ref, widget.onTabSelected),
+                ),
             ],
           );
         },
@@ -408,169 +377,5 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       default:
         return null;
     }
-  }
-}
-
-class _NavRailItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final bool isExpanded;
-  final VoidCallback onTap;
-
-  const _NavRailItem({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.isExpanded,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            decoration: BoxDecoration(
-              color: isSelected ? colorScheme.primaryContainer : null,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  size: 20,
-                  color: isSelected
-                      ? colorScheme.primary
-                      : colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
-                if (isExpanded) ...[
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        color: isSelected
-                            ? colorScheme.primary
-                            : colorScheme.onSurface.withValues(alpha: 0.8),
-                        fontWeight: isSelected ? FontWeight.w600 : null,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ResizablePaneContainer extends StatefulWidget {
-  final Widget mainContent;
-  final Widget? contextPane;
-
-  const ResizablePaneContainer({
-    super.key,
-    required this.mainContent,
-    this.contextPane,
-  });
-
-  @override
-  State<ResizablePaneContainer> createState() => _ResizablePaneContainerState();
-}
-
-class _ResizablePaneContainerState extends State<ResizablePaneContainer> {
-  double _contextPaneWidth = 320;
-  bool _isContextPaneCollapsed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Main content
-        Expanded(child: widget.mainContent),
-
-        // Resizable context pane
-        if (widget.contextPane != null) ...[
-          !_isContextPaneCollapsed
-              ? GestureDetector(
-                  onHorizontalDragUpdate: (details) {
-                    setState(() {
-                      _contextPaneWidth = (_contextPaneWidth - details.delta.dx)
-                          .clamp(320.0, 600.0);
-                    });
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(0, 24, 8, 24),
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.resizeLeftRight,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).dividerColor.withAlpha(100),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        width: 4,
-                      ),
-                    ),
-                  ),
-                )
-              : SizedBox.shrink(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
-            child: AnimatedContainer(
-              decoration: BoxDecoration(
-                color: ColorScheme.of(context).surfaceContainerLow,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              duration: const Duration(milliseconds: 200),
-              width: _isContextPaneCollapsed ? 48 : _contextPaneWidth,
-              child: Column(
-                children: [
-                  // Toggle collapse button
-                  IconButton(
-                    icon: Icon(_isContextPaneCollapsed
-                        ? LucideIcons.chevron_right
-                        : LucideIcons.chevron_left),
-                    onPressed: () {
-                      setState(() {
-                        _isContextPaneCollapsed = !_isContextPaneCollapsed;
-                      });
-                    },
-                  ),
-                  Expanded(
-                    child: _isContextPaneCollapsed
-                        ? GestureDetector(
-                            onTap: () => {
-                              setState(() {
-                                _isContextPaneCollapsed = false;
-                              })
-                            },
-                            child: RotatedBox(
-                              quarterTurns: 1,
-                              child: Center(
-                                child: Text('Expand'),
-                              ),
-                            ),
-                          )
-                        : widget.contextPane!,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
   }
 }
