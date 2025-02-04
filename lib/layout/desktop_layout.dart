@@ -14,9 +14,6 @@ import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/command_palette.dart';
-import 'package:questkeeper/shared/widgets/show_drawer.dart';
-import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
-import 'package:questkeeper/friends/widgets/friend_search.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 final navRailExpandedProvider = StateProvider<bool>((ref) => false);
@@ -191,6 +188,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                 ],
                               ),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // Custom Nav Rail
                                   Expanded(
@@ -244,73 +242,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                         .state = !isNavRailExpanded,
                                   ),
 
-                                  Consumer(
-                                    builder: (context, ref, child) => ref
-                                        .watch(profileManagerProvider)
-                                        .when(
-                                          error: (error, stack) {
-                                            Sentry.captureException(
-                                              error,
-                                              stackTrace: stack,
-                                            );
-
-                                            return const Center(
-                                              child: Text(
-                                                  "Failed to fetch friends list"),
-                                            );
-                                          },
-                                          loading: () => Center(
-                                              child:
-                                                  CircularProgressIndicator()),
-                                          data: (profileData) => Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: colorScheme
-                                                            .shadow
-                                                            .withValues(
-                                                                alpha: 0.1),
-                                                        blurRadius: 8,
-                                                        offset:
-                                                            const Offset(0, 2),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: AvatarWidget(
-                                                    seed: profileData.user_id,
-                                                    radius: 16,
-                                                  ),
-                                                ),
-                                                if (isNavRailExpanded) ...[
-                                                  const SizedBox(width: 12),
-                                                  Expanded(
-                                                    child: Text(
-                                                      "@${profileData.username}",
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyLarge
-                                                          ?.copyWith(
-                                                            color: colorScheme
-                                                                .onSurface
-                                                                .withValues(
-                                                                    alpha: 0.8),
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                  ),
+                                  _buildProfileView(
+                                      isNavRailExpanded, colorScheme),
                                 ],
                               ),
                             ),
@@ -322,6 +255,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                 ? ResizablePaneContainer(
                                     mainContent: widget.mainContent,
                                     contextPane: widget.contextPane,
+                                    isCompact: isCompact,
                                   )
                                 : widget.mainContent,
                           ),
@@ -330,7 +264,6 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                     ),
                   ],
                 ),
-                floatingActionButton: isCompact ? _buildContextualFAB() : null,
               ),
               if (isCommandPaletteVisible)
                 CommandPalette(
@@ -344,38 +277,58 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     );
   }
 
-  Widget? _buildContextualFAB() {
-    switch (widget.selectedIndex) {
-      case 0: // Spaces tab
-        return FloatingActionButton(
-          heroTag: 'add_task_button_desktop',
-          onPressed: () {
-            showDrawer(
-              context: context,
-              key: 'new_task_drawer',
-              child: getTaskDrawerContent(
-                context: context,
-                ref: ref,
-                existingTask: null,
+  Widget _buildProfileView(bool isNavRailExpanded, ColorScheme colorScheme) {
+    return Consumer(
+      builder: (context, ref, child) => ref.watch(profileManagerProvider).when(
+            error: (error, stack) {
+              Sentry.captureException(
+                error,
+                stackTrace: stack,
+              );
+
+              return const Center(
+                child: Text("Failed to fetch friends list"),
+              );
+            },
+            loading: () => Center(child: CircularProgressIndicator()),
+            data: (profileData) => Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.shadow.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: AvatarWidget(
+                      seed: profileData.user_id,
+                      radius: 16,
+                    ),
+                  ),
+                  if (isNavRailExpanded) ...[
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "@${profileData.username}",
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color:
+                                  colorScheme.onSurface.withValues(alpha: 0.8),
+                            ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
-            );
-          },
-          child: const Icon(LucideIcons.plus),
-        );
-      case 1: // Friends tab
-        return FloatingActionButton(
-          heroTag: 'friend_search_button',
-          onPressed: () {
-            showDrawer(
-              context: context,
-              key: 'friend_search_drawer',
-              child: FriendSearchView(),
-            );
-          },
-          child: const Icon(LucideIcons.users),
-        );
-      default:
-        return null;
-    }
+            ),
+          ),
+    );
   }
 }
