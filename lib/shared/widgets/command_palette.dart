@@ -79,8 +79,9 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
     return Material(
       color: Colors.black54,
       child: GestureDetector(
-        onTap: () =>
-            ref.read(commandPaletteVisibleProvider.notifier).state = false,
+        onTap: () => setState(() {
+          ref.read(commandPaletteVisibleProvider.notifier).state = false;
+        }),
         child: Center(
           child: GestureDetector(
             onTap: () {},
