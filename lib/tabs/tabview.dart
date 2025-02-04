@@ -33,6 +33,7 @@ class _TabViewState extends ConsumerState<TabView> {
   static const List<Widget> _desktopPages = [
     DesktopSpacesScreen(),
     FriendsList(),
+    SettingsScreen(),
   ];
 
   @override

@@ -235,35 +235,6 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                               ),
                               child: Column(
                                 children: [
-                                  // Toggle expand/collapse button
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: IconButton.filled(
-                                      style: IconButton.styleFrom(
-                                        backgroundColor:
-                                            colorScheme.primaryContainer,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                      ),
-                                      icon: Icon(
-                                        isNavRailExpanded
-                                            ? LucideIcons.panel_left
-                                            : LucideIcons.panel_right,
-                                        color: colorScheme.primary,
-                                      ),
-                                      onPressed: () {
-                                        ref
-                                            .read(navRailExpandedProvider
-                                                .notifier)
-                                            .state = !isNavRailExpanded;
-                                      },
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 8),
-
                                   // Custom Nav Rail
                                   Expanded(
                                     child: Column(
@@ -287,6 +258,26 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                   ),
 
                                   const Divider(indent: 16, endIndent: 16),
+
+                                  _NavRailItem(
+                                    icon: LucideIcons.settings,
+                                    label: 'Settings',
+                                    isSelected: false,
+                                    isExpanded: isNavRailExpanded,
+                                    onTap: () => widget.onTabSelected(2),
+                                  ),
+
+                                  _NavRailItem(
+                                    icon: isNavRailExpanded
+                                        ? LucideIcons.panel_left
+                                        : LucideIcons.panel_right,
+                                    label: 'Shrink',
+                                    isSelected: !isNavRailExpanded,
+                                    isExpanded: isNavRailExpanded,
+                                    onTap: () => ref
+                                        .read(navRailExpandedProvider.notifier)
+                                        .state = !isNavRailExpanded,
+                                  ),
 
                                   Consumer(
                                     builder: (context, ref, child) => ref
