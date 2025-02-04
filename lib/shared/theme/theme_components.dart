@@ -13,6 +13,8 @@ class ModernTheme {
           const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         minimumSize: WidgetStateProperty.all(const Size(64, buttonHeight)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.standard,
         foregroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return colors.onSurface.withValues(alpha: 0.38);
@@ -67,6 +69,8 @@ class ModernTheme {
           const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         minimumSize: WidgetStateProperty.all(const Size(64, buttonHeight)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.standard,
         backgroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return colors.onSurface.withValues(alpha: 0.12);
@@ -121,6 +125,8 @@ class ModernTheme {
           const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         minimumSize: WidgetStateProperty.all(const Size(64, buttonHeight)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.standard,
         backgroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return colors.onSurface.withValues(alpha: 0.12);
@@ -163,6 +169,8 @@ class ModernTheme {
           const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         minimumSize: WidgetStateProperty.all(const Size(64, buttonHeight)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.standard,
         foregroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return colors.onSurface.withValues(alpha: 0.38);
