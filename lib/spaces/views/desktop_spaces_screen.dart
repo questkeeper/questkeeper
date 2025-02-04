@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/mixins/spaces_screen_mixin.dart';
@@ -26,6 +27,7 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
     final spacesAsync = ref.watch(spacesManagerProvider);
     final colorScheme = Theme.of(context).colorScheme;
     final game = ref.watch(gameProvider);
+    final zenMode = ref.watch(zenModeProvider);
 
     return spacesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -43,94 +45,96 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
             child: Row(
               children: [
                 // Left panel - Space List with Familiars
-                Container(
-                  width: 260,
-                  margin: const EdgeInsets.only(right: 16),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: colorScheme.shadow.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      // Spaces List
-                      Expanded(
-                        child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          itemCount: spaces.length + 1,
-                          itemBuilder: (context, index) {
-                            if (index == spaces.length) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                child: OutlinedButton.icon(
-                                  style: OutlinedButton.styleFrom(
-                                    padding: const EdgeInsets.all(16),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  icon: const Icon(LucideIcons.plus),
-                                  label: const Text('Create Space'),
-                                  onPressed: () => showSpaceBottomSheet(
-                                    context: context,
-                                    ref: ref,
-                                  ),
-                                ),
-                              );
-                            }
-
-                            final space = spaces[index];
-                            return ValueListenableBuilder<int>(
-                              valueListenable: currentPageValue,
-                              builder: (context, currentPage, _) {
+                if (!zenMode)
+                  Container(
+                    width: 260,
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.shadow.withValues(alpha: 0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        // Spaces List
+                        Expanded(
+                          child: ListView.builder(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            itemCount: spaces.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == spaces.length) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 2),
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: ListTile(
-                                      selected: currentPage == index,
-                                      selectedTileColor:
-                                          colorScheme.primaryContainer,
+                                      horizontal: 16, vertical: 8),
+                                  child: OutlinedButton.icon(
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.all(16),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      title: Text(space.title.capitalize()),
-                                      onTap: () {
-                                        pageController.jumpToPage(index);
-                                      },
+                                    ),
+                                    icon: const Icon(LucideIcons.plus),
+                                    label: const Text('Create Space'),
+                                    onPressed: () => showSpaceBottomSheet(
+                                      context: context,
+                                      ref: ref,
                                     ),
                                   ),
                                 );
-                              },
-                            );
-                          },
-                        ),
-                      ),
+                              }
 
-                      // Familiars Game at bottom
-                      if (game != null && isGameInitialized)
-                        Container(
-                          height: 210,
-                          padding: const EdgeInsets.all(16),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: AnimatedGameContainer(
-                              game: game,
-                              heightFactor: ref.watch(gameHeightProvider),
-                            ),
+                              final space = spaces[index];
+                              return ValueListenableBuilder<int>(
+                                valueListenable: currentPageValue,
+                                builder: (context, currentPage, _) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 2),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: ListTile(
+                                        selected: currentPage == index,
+                                        selectedTileColor:
+                                            colorScheme.primaryContainer,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        title: Text(space.title.capitalize()),
+                                        onTap: () {
+                                          pageController.jumpToPage(index);
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ),
-                    ],
+
+                        // Familiars Game at bottom
+                        if (game != null && isGameInitialized)
+                          Container(
+                            height: 210,
+                            padding: const EdgeInsets.all(16),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: AnimatedGameContainer(
+                                game: game,
+                                heightFactor: ref.watch(gameHeightProvider),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
 
                 // Main content area - Tasks and Categories with PageView
                 Expanded(

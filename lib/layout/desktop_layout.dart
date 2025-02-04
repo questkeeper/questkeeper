@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/layout/utils/command_palette_list.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/layout/widgets/nav_rail_item.dart';
 import 'package:questkeeper/layout/widgets/resizable_pane_container.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
@@ -15,9 +16,6 @@ import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/command_palette.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-
-final navRailExpandedProvider = StateProvider<bool>((ref) => false);
-final commandPaletteVisibleProvider = StateProvider<bool>((ref) => false);
 
 class DesktopLayout extends ConsumerStatefulWidget {
   final Widget mainContent;

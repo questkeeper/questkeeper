@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
-import 'package:questkeeper/layout/desktop_layout.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/shared/widgets/command_palette.dart';
 import 'package:questkeeper/shared/widgets/show_drawer.dart';
 import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
@@ -45,6 +45,21 @@ List<Command> buildCommandPaletteList(BuildContext context, WidgetRef ref,
         onExecute: () {
           ref.read(navRailExpandedProvider.notifier).state =
               !ref.watch(navRailExpandedProvider);
+        },
+      ),
+      Command(
+        title: 'Zen mode',
+        description: 'Enter zen mode and remove all distractions',
+        icon: LucideIcons.menu,
+        onExecute: () {
+          if (ref.read(zenModeProvider.notifier).state == false) {
+            ref.read(navRailExpandedProvider.notifier).state = false;
+            ref.read(zenModeProvider.notifier).state = true;
+          } else {
+            ref.read(zenModeProvider.notifier).state = false;
+            ref.read(navRailExpandedProvider.notifier).state =
+                !ref.watch(navRailExpandedProvider);
+          }
         },
       ),
       Command(
