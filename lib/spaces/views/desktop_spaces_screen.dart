@@ -154,6 +154,7 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: PageView.builder(
+                        key: PageStorageKey('desktop_spaces_pageview'),
                         controller: pageController,
                         onPageChanged: (page) =>
                             handlePageChanged(page, spaces),
