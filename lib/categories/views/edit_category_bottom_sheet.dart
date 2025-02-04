@@ -7,6 +7,7 @@ import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/widgets/delete_category_dialog.dart';
 import 'package:questkeeper/shared/extensions/color_extensions.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
@@ -24,27 +25,51 @@ void showCategoryBottomSheet({
   final isEditing = existingCategory != null;
   Color? initialColor =
       existingCategory?.color != null ? existingCategory!.color!.toColor : null;
+  final isDesktop = !ref.read(isMobileProvider);
 
-  showModalBottomSheet(
-    context: context,
-    enableDrag: true,
-    isDismissible: true,
-    showDragHandle: true,
-    isScrollControlled: true,
-    backgroundColor: Colors
-        .transparent, // Make the background transparent to show the gradient
-    builder: (BuildContext context) {
-      return _CategoryBottomSheetContent(
-        nameController: nameController,
-        isEditing: isEditing,
-        initialColor: initialColor,
-        ref: ref,
-        existingCategory: existingCategory,
-        existingSpace: existingSpace,
-        openedFrom: openedFrom,
-      );
-    },
-  );
+  if (isDesktop) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: _CategoryBottomSheetContent(
+              nameController: nameController,
+              isEditing: isEditing,
+              initialColor: initialColor,
+              ref: ref,
+              existingCategory: existingCategory,
+              existingSpace: existingSpace,
+              openedFrom: openedFrom,
+              isDesktop: true,
+            ),
+          ),
+        );
+      },
+    );
+  } else {
+    showModalBottomSheet(
+      context: context,
+      enableDrag: true,
+      isDismissible: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      backgroundColor: Colors
+          .transparent, // Make the background transparent to show the gradient
+      builder: (BuildContext context) {
+        return _CategoryBottomSheetContent(
+          nameController: nameController,
+          isEditing: isEditing,
+          initialColor: initialColor,
+          ref: ref,
+          existingCategory: existingCategory,
+          existingSpace: existingSpace,
+          openedFrom: openedFrom,
+        );
+      },
+    );
+  }
 }
 
 class _CategoryBottomSheetContent extends StatefulWidget {
@@ -55,6 +80,7 @@ class _CategoryBottomSheetContent extends StatefulWidget {
   final Categories? existingCategory;
   final Spaces? existingSpace;
   final String? openedFrom;
+  final bool isDesktop;
 
   const _CategoryBottomSheetContent({
     required this.nameController,
@@ -64,6 +90,7 @@ class _CategoryBottomSheetContent extends StatefulWidget {
     this.existingCategory,
     this.existingSpace,
     this.openedFrom,
+    this.isDesktop = false,
   });
 
   @override
@@ -98,7 +125,8 @@ class _CategoryBottomSheetContentState
           borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
         ),
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+          bottom:
+              widget.isDesktop ? 16 : MediaQuery.of(context).viewInsets.bottom,
           left: 24,
           right: 24,
           top: 16,
