@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:questkeeper/shared/widgets/show_drawer.dart';
 
 class ResizablePaneContainer extends StatefulWidget {
   final Widget mainContent;
   final Widget? contextPane;
+  final bool isCompact;
 
   const ResizablePaneContainer({
     super.key,
     required this.mainContent,
     this.contextPane,
+    this.isCompact = false,
   });
 
   @override
@@ -21,48 +24,91 @@ class _ResizablePaneContainerState extends State<ResizablePaneContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Main content
-        Expanded(child: widget.mainContent),
-
-        // Resizable context pane
-        if (widget.contextPane != null) ...[
-          !_isContextPaneCollapsed
-              ? GestureDetector(
-                  onHorizontalDragUpdate: (details) {
-                    setState(() {
-                      _contextPaneWidth = (_contextPaneWidth - details.delta.dx)
-                          .clamp(320.0, 600.0);
-                    });
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(0, 24, 8, 24),
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.resizeLeftRight,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).dividerColor.withAlpha(100),
-                          borderRadius: BorderRadius.circular(12),
+    if (widget.isCompact) {
+      return Row(
+        children: [
+          Expanded(child: widget.mainContent),
+          if (widget.contextPane != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
+              child: Container(
+                width: 48,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    IconButton(
+                      icon: const Icon(LucideIcons.panel_left),
+                      onPressed: () {
+                        showDrawer(
+                          context: context,
+                          key: 'context_drawer',
+                          child: widget.contextPane!,
+                        );
+                      },
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          showDrawer(
+                            context: context,
+                            key: 'context_drawer',
+                            child: widget.contextPane!,
+                          );
+                        },
+                        child: const RotatedBox(
+                          quarterTurns: 1,
+                          child: Center(
+                            child: Text('Open'),
+                          ),
                         ),
-                        width: 4,
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      );
+    }
+
+    return Row(
+      children: [
+        Expanded(child: widget.mainContent),
+        if (widget.contextPane != null) ...[
+          if (!_isContextPaneCollapsed)
+            GestureDetector(
+              onHorizontalDragUpdate: (details) {
+                setState(() {
+                  _contextPaneWidth = (_contextPaneWidth - details.delta.dx)
+                      .clamp(320.0, 600.0);
+                });
+              },
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeLeftRight,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 24),
+                  width: 4,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).dividerColor.withAlpha(100),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                )
-              : SizedBox.shrink(),
+                ),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
             child: AnimatedContainer(
-              decoration: BoxDecoration(
-                color: ColorScheme.of(context).surfaceContainerLow,
-                borderRadius: BorderRadius.circular(12),
-              ),
               duration: const Duration(milliseconds: 200),
               width: _isContextPaneCollapsed ? 48 : _contextPaneWidth,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
                 children: [
-                  // Toggle collapse button
                   IconButton(
                     icon: Icon(_isContextPaneCollapsed
                         ? LucideIcons.chevron_right
@@ -76,12 +122,12 @@ class _ResizablePaneContainerState extends State<ResizablePaneContainer> {
                   Expanded(
                     child: _isContextPaneCollapsed
                         ? GestureDetector(
-                            onTap: () => {
+                            onTap: () {
                               setState(() {
                                 _isContextPaneCollapsed = false;
-                              })
+                              });
                             },
-                            child: RotatedBox(
+                            child: const RotatedBox(
                               quarterTurns: 1,
                               child: Center(
                                 child: Text('Expand'),
