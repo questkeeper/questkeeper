@@ -64,7 +64,6 @@ class _TabViewState extends ConsumerState<TabView> {
         });
 
         final isMobile = ref.watch(isMobileProvider);
-        final isCompact = ref.watch(isCompactProvider);
 
         if (isMobile) {
           // Mobile layout
@@ -135,9 +134,7 @@ class _TabViewState extends ConsumerState<TabView> {
             selectedIndex: _selectedIndex,
             onTabSelected: _onItemTapped,
             mainContent: _desktopPages[_selectedIndex],
-            contextPane: isCompact
-                ? null // Don't pass contextPane if in compact mode
-                : _buildContextualPane(_selectedIndex),
+            contextPane: _buildContextualPane(_selectedIndex),
           );
         }
       },
@@ -145,34 +142,6 @@ class _TabViewState extends ConsumerState<TabView> {
   }
 
   Widget? _buildContextualPane(int index) {
-    final isCompact = ref.watch(isCompactProvider);
-
-    // If in compact mode, show the contextual content in a drawer instead
-    if (isCompact) {
-      switch (index) {
-        case 0: // Spaces tab
-          showDrawer(
-            context: context,
-            key: 'task_drawer',
-            child: getTaskDrawerContent(
-              context: context,
-              ref: ref,
-              existingTask: null,
-            ),
-          );
-          return null;
-        case 1: // Friends tab
-          showDrawer(
-            context: context,
-            key: 'friend_search_drawer',
-            child: FriendSearchView(),
-          );
-          return null;
-        default:
-          return null;
-      }
-    }
-
     // Original pane behavior for larger screens
     switch (index) {
       case 0:

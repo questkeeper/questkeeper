@@ -44,7 +44,7 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
               children: [
                 // Left panel - Space List with Familiars
                 Container(
-                  width: 280,
+                  width: 260,
                   margin: const EdgeInsets.only(right: 16),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerLow,
@@ -102,7 +102,6 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      leading: const Icon(LucideIcons.eclipse),
                                       title: Text(space.title.capitalize()),
                                       onTap: () {
                                         pageController.jumpToPage(index);
@@ -119,7 +118,7 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                       // Familiars Game at bottom
                       if (game != null && isGameInitialized)
                         Container(
-                          height: 200,
+                          height: 210,
                           padding: const EdgeInsets.all(16),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),

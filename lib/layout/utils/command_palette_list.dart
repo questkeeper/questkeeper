@@ -61,7 +61,7 @@ List<Command> buildCommandPaletteList(BuildContext context, WidgetRef ref,
       Command(
         title: 'Go to Settings',
         description: 'Switch to the Settings tab',
-        icon: LucideIcons.handshake,
+        icon: LucideIcons.settings,
         onExecute: () => onTabSelected(2),
       ),
     ];
