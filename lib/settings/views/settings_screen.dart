@@ -7,7 +7,14 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/constants.dart';
+import 'package:questkeeper/settings/views/about/about_screen.dart';
+import 'package:questkeeper/settings/views/account/account_management_screen.dart';
 import 'package:questkeeper/settings/views/debug/debug_settings.dart';
+import 'package:questkeeper/settings/views/notifications/notifications_screen.dart';
+import 'package:questkeeper/settings/views/privacy/privacy_screen.dart';
+import 'package:questkeeper/settings/views/profile/profile_settings_screen.dart';
+import 'package:questkeeper/settings/views/theme/theme_screen.dart';
+import 'package:questkeeper/settings/views/experiments/experiments_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -19,20 +26,51 @@ import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/settings/widgets/settings_card.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  Widget? _currentContent;
+
+  void _navigateToContent(Widget content) {
+    final isMobile = ref.read(isMobileProvider);
+
+    if (isMobile) {
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => content,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ),
+      );
+    } else {
+      setState(() {
+        _currentContent = content;
+      });
+    }
+  }
+
+  Widget _buildSettingsList(BuildContext context) {
     final user = Supabase.instance.client.auth.currentUser;
     final platform = Platform.isIOS
         ? 'iOS'
-        : (
-            Platform.isMacOS
-                ? 'macOS'
-                : (Platform.isAndroid ? 'Android' : 'Unknown'),
-          );
+        : (Platform.isMacOS
+            ? 'macOS'
+            : (Platform.isAndroid ? 'Android' : 'Unknown'));
 
     return SingleChildScrollView(
       child: Container(
@@ -102,24 +140,25 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 10),
                 const Divider(),
                 SettingsCard(
-                    title: 'Profile',
-                    description: 'Manage your profile settings',
-                    icon: LucideIcons.user,
-                    onTap: () =>
-                        Navigator.pushNamed(context, '/settings/profile')),
+                  title: 'Profile',
+                  description: 'Manage your profile settings',
+                  icon: LucideIcons.user,
+                  onTap: () =>
+                      _navigateToContent(const ProfileSettingsScreen()),
+                ),
                 SettingsCard(
-                    title: 'Notifications',
-                    description: 'Manage your notifications',
-                    icon: LucideIcons.bell_ring,
-                    onTap: () => Navigator.pushNamed(
-                        context, '/settings/notifications')),
+                  title: 'Notifications',
+                  description: 'Manage your notifications',
+                  icon: LucideIcons.bell_ring,
+                  onTap: () => _navigateToContent(const NotificationsScreen()),
+                ),
                 isDebug
                     ? SettingsCard(
                         title: 'Theme',
                         description: 'Change the app theme',
                         icon: LucideIcons.palette,
-                        onTap: () =>
-                            Navigator.pushNamed(context, '/settings/theme'))
+                        onTap: () => _navigateToContent(const ThemeScreen()),
+                      )
                     : const SizedBox(),
                 const Divider(),
                 SettingsCard(
@@ -127,27 +166,26 @@ class SettingsScreen extends ConsumerWidget {
                   description: 'Send us your feedback',
                   icon: LucideIcons.bug,
                   onTap: () async {
-                    if (!context.mounted) {
-                      return;
-                    }
+                    if (!context.mounted) return;
                     BetterFeedback.of(context).showAndUploadToSentry(
-                        name: user?.id ?? 'Unknown',
-                        email: user?.email ?? 'Unknown@questkeeper.app');
+                      name: user?.id ?? 'Unknown',
+                      email: user?.email ?? 'Unknown@questkeeper.app',
+                    );
                   },
                 ),
                 SettingsCard(
-                    title: 'Privacy',
-                    description: 'Manage privacy and data settings',
-                    icon: LucideIcons.shield,
-                    onTap: () =>
-                        Navigator.pushNamed(context, '/settings/privacy')),
+                  title: 'Privacy',
+                  description: 'Manage privacy and data settings',
+                  icon: LucideIcons.shield,
+                  onTap: () => _navigateToContent(const PrivacyScreen()),
+                ),
                 SettingsCard(
-                    title: 'About',
-                    description: 'About the app',
-                    icon: LucideIcons.info,
-                    onTap: () =>
-                        Navigator.pushNamed(context, '/settings/about')),
-                platform != "unkown"
+                  title: 'About',
+                  description: 'About the app',
+                  icon: LucideIcons.info,
+                  onTap: () => _navigateToContent(const AboutScreen()),
+                ),
+                platform != "unknown"
                     ? SettingsCard(
                         title: 'Review the app',
                         description:
@@ -172,11 +210,11 @@ class SettingsScreen extends ConsumerWidget {
                       )
                     : const SizedBox(),
                 SettingsCard(
-                    title: 'Experiments',
-                    description: 'Enable features that may be unstable',
-                    icon: LucideIcons.flask_conical,
-                    onTap: () =>
-                        Navigator.pushNamed(context, '/settings/experiments')),
+                  title: 'Experiments',
+                  description: 'Enable features that may be unstable',
+                  icon: LucideIcons.flask_conical,
+                  onTap: () => _navigateToContent(const ExperimentsScreen()),
+                ),
                 if (isDebug ||
                     (Supabase.instance.client.auth.currentUser?.email
                             ?.endsWith("@questkeeper.app") ??
@@ -185,12 +223,8 @@ class SettingsScreen extends ConsumerWidget {
                     title: "Super Secret Debug Menu",
                     description: "Only for debug purposes lol",
                     icon: LucideIcons.bug_off,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SuperSecretDebugSettings(),
-                      ),
-                    ),
+                    onTap: () =>
+                        _navigateToContent(const SuperSecretDebugSettings()),
                     iconColor: Colors.amber,
                   ),
                 SettingsCard(
@@ -198,7 +232,7 @@ class SettingsScreen extends ConsumerWidget {
                   description: 'Manage your account settings and data',
                   icon: LucideIcons.user_cog,
                   onTap: () =>
-                      Navigator.pushNamed(context, '/settings/account'),
+                      _navigateToContent(const AccountManagementScreen()),
                 ),
                 SettingsCard(
                   title: 'Sign out',
@@ -211,6 +245,60 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = ref.watch(isMobileProvider);
+
+    if (isMobile) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Settings'),
+        ),
+        body: _buildSettingsList(context),
+      );
+    }
+
+    return Scaffold(
+      body: Row(
+        children: [
+          Container(
+            width: 350,
+            decoration: BoxDecoration(
+              border: Border(
+                right: BorderSide(
+                  color: Theme.of(context).dividerColor,
+                  width: 1,
+                ),
+              ),
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: _buildSettingsList(context),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: _currentContent != null
+                ? Expanded(
+                    child: _currentContent!,
+                  )
+                : const Center(
+                    child: Text(
+                      'Select a setting from the left to view or edit',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+          ),
+        ],
       ),
     );
   }
