@@ -45,7 +45,7 @@ class DefaultFirebaseOptions {
     appId: '1:479691835174:ios:a6fddf000f1cd2c33763e7',
     messagingSenderId: '479691835174',
     projectId: 'assigngo-d890c',
-    storageBucket: 'assigngo-d890c.appspot.com',
+    storageBucket: 'assigngo-d890c.firebasestorage.app',
     iosBundleId: 'app.questkeeper',
   );
 
@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:479691835174:ios:c0d4ddc476aaa1e13763e7',
     messagingSenderId: '479691835174',
     projectId: 'assigngo-d890c',
-    storageBucket: 'assigngo-d890c.appspot.com',
+    storageBucket: 'assigngo-d890c.firebasestorage.app',
     iosBundleId: 'app.questkeeper.macos',
   );
 
@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '479691835174',
     projectId: 'assigngo-d890c',
     authDomain: 'assigngo-d890c.firebaseapp.com',
-    storageBucket: 'assigngo-d890c.appspot.com',
+    storageBucket: 'assigngo-d890c.firebasestorage.app',
     measurementId: 'G-RG7VWPHH79',
   );
 
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     appId: '1:479691835174:android:6777d673619a007c3763e7',
     messagingSenderId: '479691835174',
     projectId: 'assigngo-d890c',
-    storageBucket: 'assigngo-d890c.appspot.com',
+    storageBucket: 'assigngo-d890c.firebasestorage.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
@@ -82,7 +82,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '479691835174',
     projectId: 'assigngo-d890c',
     authDomain: 'assigngo-d890c.firebaseapp.com',
-    storageBucket: 'assigngo-d890c.appspot.com',
+    storageBucket: 'assigngo-d890c.firebasestorage.app',
     measurementId: 'G-S5TFLWYEJ9',
   );
 
