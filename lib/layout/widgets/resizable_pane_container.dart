@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/shared/widgets/show_drawer.dart';
 
-class ResizablePaneContainer extends StatefulWidget {
+class ResizablePaneContainer extends ConsumerStatefulWidget {
   final Widget mainContent;
   final Widget? contextPane;
   final bool isCompact;
@@ -15,20 +17,24 @@ class ResizablePaneContainer extends StatefulWidget {
   });
 
   @override
-  State<ResizablePaneContainer> createState() => _ResizablePaneContainerState();
+  ConsumerState<ResizablePaneContainer> createState() =>
+      _ResizablePaneContainerState();
 }
 
-class _ResizablePaneContainerState extends State<ResizablePaneContainer> {
+class _ResizablePaneContainerState
+    extends ConsumerState<ResizablePaneContainer> {
   double _contextPaneWidth = 320;
   bool _isContextPaneCollapsed = false;
 
   @override
   Widget build(BuildContext context) {
+    final contextPane = ref.watch(contextPaneProvider) ?? widget.contextPane;
+
     if (widget.isCompact) {
       return Row(
         children: [
           Expanded(child: widget.mainContent),
-          if (widget.contextPane != null)
+          if (contextPane != null)
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
               child: Container(
@@ -45,7 +51,7 @@ class _ResizablePaneContainerState extends State<ResizablePaneContainer> {
                         showDrawer(
                           context: context,
                           key: 'context_drawer',
-                          child: widget.contextPane!,
+                          child: contextPane,
                         );
                       },
                     ),
@@ -55,7 +61,7 @@ class _ResizablePaneContainerState extends State<ResizablePaneContainer> {
                           showDrawer(
                             context: context,
                             key: 'context_drawer',
-                            child: widget.contextPane!,
+                            child: contextPane,
                           );
                         },
                         child: const RotatedBox(
@@ -77,7 +83,7 @@ class _ResizablePaneContainerState extends State<ResizablePaneContainer> {
     return Row(
       children: [
         Expanded(child: widget.mainContent),
-        if (widget.contextPane != null) ...[
+        if (contextPane != null) ...[
           if (!_isContextPaneCollapsed)
             GestureDetector(
               onHorizontalDragUpdate: (details) {
@@ -98,50 +104,61 @@ class _ResizablePaneContainerState extends State<ResizablePaneContainer> {
                 ),
               ),
             ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: _isContextPaneCollapsed ? 48 : _contextPaneWidth,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                children: [
-                  IconButton(
-                    icon: Icon(_isContextPaneCollapsed
-                        ? LucideIcons.chevron_right
-                        : LucideIcons.chevron_left),
-                    onPressed: () {
-                      setState(() {
-                        _isContextPaneCollapsed = !_isContextPaneCollapsed;
-                      });
-                    },
-                  ),
-                  Expanded(
-                    child: _isContextPaneCollapsed
-                        ? GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isContextPaneCollapsed = false;
-                              });
-                            },
-                            child: const RotatedBox(
-                              quarterTurns: 1,
-                              child: Center(
-                                child: Text('Expand'),
-                              ),
-                            ),
-                          )
-                        : widget.contextPane!,
-                  ),
-                ],
-              ),
-            ),
-          ),
+          _main(contextPane),
         ],
       ],
+    );
+  }
+
+  Widget _main(Widget contextPane) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
+      child: MouseRegion(
+        cursor: _isContextPaneCollapsed
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
+        child: GestureDetector(
+          onTap: _isContextPaneCollapsed
+              ? () {
+                  setState(() {
+                    _isContextPaneCollapsed = false;
+                  });
+                }
+              : null,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: _isContextPaneCollapsed ? 48 : _contextPaneWidth,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                IconButton(
+                  icon: Icon(_isContextPaneCollapsed
+                      ? LucideIcons.chevron_right
+                      : LucideIcons.chevron_left),
+                  onPressed: () {
+                    setState(() {
+                      _isContextPaneCollapsed = !_isContextPaneCollapsed;
+                    });
+                  },
+                ),
+                Expanded(
+                  child: _isContextPaneCollapsed
+                      ? const RotatedBox(
+                          quarterTurns: 1,
+                          child: Center(
+                            child: Text('Expand'),
+                          ),
+                        )
+                      : contextPane,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
