@@ -44,9 +44,17 @@ Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Initialize Firebase only on supported platforms
+  final firebaseOptions = DefaultFirebaseOptions.currentPlatform;
+  if (firebaseOptions != null) {
+    try {
+      await Firebase.initializeApp(
+        options: firebaseOptions,
+      );
+    } catch (e) {
+      debugPrint('Failed to initialize Firebase: $e');
+    }
+  }
 
   await Supabase.initialize(
     url: "https://mzudaknbrzixjkvjqayw.supabase.co",
