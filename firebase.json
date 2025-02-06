@@ -9,23 +9,13 @@
           "fileOutput": "ios/Runner/GoogleService-Info.plist"
         }
       },
-      "macos": {
-        "default": {
-          "projectId": "assigngo-d890c",
-          "appId": "1:479691835174:ios:c0d4ddc476aaa1e13763e7",
-          "uploadDebugSymbols": false,
-          "fileOutput": "macos/Runner/GoogleService-Info.plist"
-        }
-      },
       "dart": {
         "lib/firebase_options.dart": {
           "projectId": "assigngo-d890c",
           "configurations": {
             "android": "1:479691835174:android:6777d673619a007c3763e7",
             "ios": "1:479691835174:ios:a6fddf000f1cd2c33763e7",
-            "macos": "1:479691835174:ios:c0d4ddc476aaa1e13763e7",
-            "web": "1:479691835174:web:a47b44273e5f9ae23763e7",
-            "windows": "1:479691835174:web:b489bf676a41a1a33763e7"
+            "web": "1:479691835174:web:a47b44273e5f9ae23763e7"
           }
         }
       },
