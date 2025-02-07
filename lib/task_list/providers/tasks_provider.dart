@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,18 +8,29 @@ import 'package:questkeeper/shared/utils/home_widget/home_widget_mobile.dart';
 import 'package:questkeeper/shared/utils/undo_manager_mixin.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:questkeeper/task_list/repositories/tasks_repository.dart';
+import 'package:questkeeper/shared/notifications/local_notification_service.dart';
 
 part 'tasks_provider.g.dart';
 
 @riverpod
 class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
   final TasksRepository _repository;
+  final LocalNotificationService _notificationService =
+      LocalNotificationService();
 
   TasksManager() : _repository = TasksRepository();
 
   @override
-  FutureOr<List<Tasks>> build() {
-    return fetchTasks();
+  FutureOr<List<Tasks>> build() async {
+    // Fetch tasks first
+    final tasks = await fetchTasks();
+
+    // Handle notifications in a microtask to avoid blocking UI
+    if (!_notificationService.isInitialized) {
+      unawaited(_initializeNotifications());
+    }
+
+    return tasks;
   }
 
   void updateHomeWidget(List<Tasks> tasks) {
@@ -47,6 +59,9 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
       final createdTask = await _repository.createTask(task);
       state = AsyncValue.data([...state.value ?? [], createdTask.data]);
 
+      // Sync notifications after creating a task
+      await _syncNotificationsIfInitialized();
+
       return createdTask.data.id;
     } catch (error) {
       // Handle error
@@ -59,7 +74,11 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
       UndoAction(
         previousState: state.value ?? [],
         newState: (state.value ?? []).where((a) => a.id != task.id).toList(),
-        repositoryAction: () => _repository.toggleComplete(task),
+        repositoryAction: () async {
+          await _repository.toggleComplete(task);
+          // Sync notifications after toggling complete
+          await _syncNotificationsIfInitialized();
+        },
         successMessage: "Task updated",
         timing: ActionTiming.afterUndoPeriod,
       ),
@@ -88,6 +107,8 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
 
     try {
       await repositoryAction();
+      // Sync notifications after updating a task
+      await _syncNotificationsIfInitialized();
     } catch (error) {
       // Handle error and possibly revert state
     }
@@ -98,11 +119,31 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
       performActionWithUndo(UndoAction(
         previousState: state.value ?? [],
         newState: (state.value ?? []).where((a) => a.id != task.id).toList(),
-        repositoryAction: () => _repository.deleteTask(task),
+        repositoryAction: () async {
+          await _repository.deleteTask(task);
+          // Sync notifications after deleting a task
+          await _syncNotificationsIfInitialized();
+        },
         successMessage: "Task deleted successfully",
       ));
     } catch (error) {
       // Handle error
+    }
+  }
+
+  Future<void> _initializeNotifications() async {
+    final initSuccessful = await _notificationService.initialize();
+    if (initSuccessful) {
+      await _notificationService.syncNotificationsFromSchedule();
+    }
+  }
+
+  Future<void> _syncNotificationsIfInitialized() async {
+    if (_notificationService.isInitialized) {
+      // Use microtask to avoid blocking UI during sync
+      unawaited(Future.microtask(() async {
+        await _notificationService.syncNotificationsFromSchedule();
+      }));
     }
   }
 }

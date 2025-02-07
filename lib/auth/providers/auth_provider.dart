@@ -159,9 +159,12 @@ class AuthNotifier {
   Future<void> _initializeLocalNotifications() async {
     if (!isLocalNotificationsSupported) return;
 
-    final initSuccessful = await _localNotificationService.initialize();
-    if (initSuccessful == true) {
-      await _localNotificationService.syncNotificationsFromSchedule();
-    }
+    Future.microtask(() async {
+      final initSuccessful = await _localNotificationService.initialize();
+
+      if (initSuccessful == true) {
+        await _localNotificationService.syncNotificationsFromSchedule();
+      }
+    });
   }
 }
