@@ -1,5 +1,7 @@
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/utils/hex_color.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/providers/onboarding_provider.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
@@ -128,8 +130,18 @@ class _TaskCardState extends ConsumerState<TaskCard> {
         splashColor: Colors.transparent,
         enableFeedback: true,
         onTap: () {
-          // FIXME: this will probably break stuff.
-          if (MediaQuery.of(context).size.width < 800) {
+          final isDesktop = ref.watch(isCompactProvider) == false;
+          if (isDesktop) {
+            // In desktop mode, we'll use the context pane
+            final contextPane = getTaskDrawerContent(
+              context: context,
+              ref: ref,
+              existingTask: task,
+            );
+
+            // Update the context pane
+            ref.read(contextPaneProvider.notifier).state = contextPane;
+          } else {
             showTaskDrawer(context: context, ref: ref, existingTask: task);
           }
         },
