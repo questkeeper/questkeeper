@@ -36,6 +36,7 @@ import 'package:questkeeper/shared/widgets/connectivity_wrapper.dart';
 import 'package:questkeeper/shared/widgets/network_error_screen.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/shared/theme/theme_components.dart';
+import 'package:questkeeper/shared/utils/analytics/analytics.dart';
 
 import 'firebase_options.dart';
 import 'tabs/tabview.dart';
@@ -78,7 +79,7 @@ Future<void> main() async {
   final doNotTrack =
       SharedPreferencesManager.instance.getBool("posthogDoNotTrack") ?? false;
 
-  doNotTrack ? Posthog().disable() : Posthog().enable();
+  doNotTrack ? Analytics.instance.disable() : Analytics.instance.enable();
 
   if (isDebug) {
     // Run app without sentry

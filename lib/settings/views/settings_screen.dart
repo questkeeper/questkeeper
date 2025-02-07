@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/constants.dart';
 import 'package:questkeeper/settings/views/about/about_screen.dart';
 import 'package:questkeeper/settings/views/account/account_management_screen.dart';
@@ -27,6 +26,7 @@ import 'package:questkeeper/settings/widgets/settings_card.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
+import 'package:questkeeper/shared/utils/analytics/analytics.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -312,7 +312,7 @@ void signOut(BuildContext context) async {
   final CacheManager cacheManager = DefaultCacheManager();
   await cacheManager.emptyCache();
 
-  Posthog().reset();
+  Analytics.instance.reset();
 
   await Supabase.instance.client.auth.signOut().then(
         (value) => {

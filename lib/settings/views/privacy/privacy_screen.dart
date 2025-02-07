@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/settings/widgets/settings_switch_tile.dart';
+import 'package:questkeeper/shared/utils/analytics/analytics.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,7 +13,6 @@ class PrivacyScreen extends StatefulWidget {
 }
 
 class _PrivacyScreenState extends State<PrivacyScreen> {
-  final posthog = Posthog();
   static final SharedPreferencesManager prefs =
       SharedPreferencesManager.instance;
   bool posthogDoNotTrack = false;
@@ -21,11 +20,11 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
   void onToggle(bool newValue) async {
     if (newValue == true) {
       posthogDoNotTrack = true;
-      posthog.disable();
+      Analytics.instance.disable();
       await prefs.setBool("posthogDoNotTrack", true);
     } else {
       posthogDoNotTrack = false;
-      posthog.enable();
+      Analytics.instance.enable();
       await prefs.setBool("posthogDoNotTrack", false);
     }
 
