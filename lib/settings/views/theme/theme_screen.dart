@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:questkeeper/settings/widgets/settings_switch_tile.dart';
 import 'package:questkeeper/shared/providers/theme_notifier.dart';
 
 class ThemeScreen extends StatefulWidget {
@@ -14,14 +15,22 @@ class _ThemeScreenState extends State<ThemeScreen> {
   @override
   void initState() {
     super.initState();
+    themeNotifier.init();
   }
 
   void onToggleTheme(bool newValue) {
     themeNotifier.setThemeToDark(newValue);
   }
 
+  void onChangeTextScale(double value) {
+    themeNotifier.setTextScale(value);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Theme settings"),
@@ -32,32 +41,90 @@ class _ThemeScreenState extends State<ThemeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Dark mode toggle
               ValueListenableBuilder<ThemeMode>(
                 valueListenable: themeNotifier.themeModeNotifier,
                 builder: (context, themeMode, child) {
-                  return SwitchListTile(
-                    value: themeMode == ThemeMode.dark,
-                    onChanged: onToggleTheme,
-                    title: const Text("Enable dark mode"),
-                    subtitle: const Text(
-                      "Enable or disable dark mode. Default follows system setting.",
-                    ),
+                  return SettingsSwitchTile(
+                    isEnabled: themeMode == ThemeMode.dark,
+                    onTap: (_) => onToggleTheme(themeMode == ThemeMode.dark),
+                    title: "Enable dark mode",
+                    description:
+                        "Enable or disable dark mode. Default follows system setting.",
                   );
                 },
               ),
-              Text.rich(
-                TextSpan(
-                  text: "Note: ",
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.redAccent,
-                      ),
-                  children: [
-                    TextSpan(
-                      text:
-                          "Theme settings is currently in beta. QuestKeeper may need to be restarted to apply the changes.",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: Colors.grey[400],
+
+              const SizedBox(height: 24),
+
+              // Text scale slider
+              Text(
+                "Text Size",
+                style: textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              ValueListenableBuilder<double>(
+                valueListenable: themeNotifier.textScaleNotifier,
+                builder: (context, scale, _) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.text_fields, size: 16),
+                          Expanded(
+                            child: Slider(
+                              value: scale,
+                              min: 0.8,
+                              max: 1.4,
+                              divisions: 6,
+                              label: '${(scale * 100).round()}%',
+                              onChanged: onChangeTextScale,
+                            ),
                           ),
+                          const Icon(Icons.text_fields, size: 24),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          "Sample text at ${(scale * 100).round()}% size",
+                          style: textTheme.bodyMedium?.copyWith(
+                            fontSize:
+                                (textTheme.bodyMedium?.fontSize ?? 14) * scale,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+
+              const SizedBox(height: 24),
+
+              // Beta notice
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: colorScheme.errorContainer.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: colorScheme.error,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "Theme settings is currently in beta. QuestKeeper may need to be restarted to apply some changes.",
+                        style: textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onErrorContainer,
+                        ),
+                      ),
                     ),
                   ],
                 ),

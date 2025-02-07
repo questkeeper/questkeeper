@@ -37,6 +37,7 @@ import 'package:questkeeper/shared/widgets/network_error_screen.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/shared/theme/theme_components.dart';
 import 'package:questkeeper/shared/utils/analytics/analytics.dart';
+import 'package:questkeeper/shared/providers/theme_notifier.dart';
 
 import 'firebase_options.dart';
 import 'tabs/tabview.dart';
@@ -138,68 +139,77 @@ class MyApp extends ConsumerWidget {
 
     return DynamicColorBuilder(
       builder: (lightColorScheme, darkColorScheme) {
-        return MaterialApp(
-          title: 'QuestKeeper',
-          themeMode: ThemeMode.system,
-          home: const AuthGate(),
-          theme: ModernTheme.modernThemeData(
-            _colorScheme(darkColorScheme?.primary, Brightness.light),
-          ).copyWith(
-            textTheme: createTextTheme(
-              context,
-              displayFont: GoogleFonts.outfit,
-              bodyFont: GoogleFonts.inter,
-              brightness: Brightness.light,
-            ),
-          ),
-          darkTheme: ModernTheme.modernThemeData(
-            _colorScheme(darkColorScheme?.primary, Brightness.dark),
-          ).copyWith(
-            textTheme: createTextTheme(
-              context,
-              displayFont: GoogleFonts.outfit,
-              bodyFont: GoogleFonts.inter,
-              brightness: Brightness.dark,
-            ),
-          ),
-          routes: {
-            '/signin': (context) => const AuthSpaces(),
-            '/home': (context) => const TabView(),
-
-            // Familiars stuff
-            '/badges': (context) => const QuestsView(),
-
-            // Friends
-            "/friends": (context) => const FriendsList(),
-
-            // Settings stuff
-            '/settings/about': (context) => const AboutScreen(),
-            '/settings/profile': (context) => const ProfileSettingsScreen(),
-            '/settings/account': (context) => const AccountManagementScreen(),
-            '/settings/notifications': (context) => const NotificationsScreen(),
-            '/settings/privacy': (context) => const PrivacyScreen(),
-            '/settings/theme': (context) => const ThemeScreen(),
-            '/settings/experiments': (context) => const ExperimentsScreen(),
-
-            // Network error
-            '/network-error': (context) => const NetworkErrorScreen(),
-          },
-          navigatorObservers: [
-            PosthogObserver(),
-          ],
-          builder: (context, child) {
-            return ConnectivityWrapper(
-              child: StreamBuilder<String>(
-                stream: NotificationService().messageStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      SnackbarService.showSuccessSnackbar(snapshot.data!);
-                    });
-                  }
-                  return child ?? const SizedBox();
-                },
+        return ValueListenableBuilder<double>(
+          valueListenable: themeNotifier.textScaleNotifier,
+          builder: (context, textScale, child) {
+            return MaterialApp(
+              title: 'QuestKeeper',
+              themeMode: ThemeMode.system,
+              home: const AuthGate(),
+              theme: ModernTheme.modernThemeData(
+                context,
+                _colorScheme(darkColorScheme?.primary, Brightness.light),
+              ).copyWith(
+                textTheme: ModernTextTheme.create(
+                  context,
+                  displayFont: GoogleFonts.outfit,
+                  bodyFont: GoogleFonts.inter,
+                  brightness: Brightness.light,
+                ),
               ),
+              darkTheme: ModernTheme.modernThemeData(
+                context,
+                _colorScheme(darkColorScheme?.primary, Brightness.dark),
+              ).copyWith(
+                textTheme: ModernTextTheme.create(
+                  context,
+                  displayFont: GoogleFonts.outfit,
+                  bodyFont: GoogleFonts.inter,
+                  brightness: Brightness.dark,
+                ),
+              ),
+              routes: {
+                '/signin': (context) => const AuthSpaces(),
+                '/home': (context) => const TabView(),
+
+                // Familiars stuff
+                '/badges': (context) => const QuestsView(),
+
+                // Friends
+                "/friends": (context) => const FriendsList(),
+
+                // Settings stuff
+                '/settings/about': (context) => const AboutScreen(),
+                '/settings/profile': (context) => const ProfileSettingsScreen(),
+                '/settings/account': (context) =>
+                    const AccountManagementScreen(),
+                '/settings/notifications': (context) =>
+                    const NotificationsScreen(),
+                '/settings/privacy': (context) => const PrivacyScreen(),
+                '/settings/theme': (context) => const ThemeScreen(),
+                '/settings/experiments': (context) => const ExperimentsScreen(),
+
+                // Network error
+                '/network-error': (context) => const NetworkErrorScreen(),
+              },
+              navigatorObservers: [
+                PosthogObserver(),
+              ],
+              builder: (context, child) {
+                return ConnectivityWrapper(
+                  child: StreamBuilder<String>(
+                    stream: NotificationService().messageStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          SnackbarService.showSuccessSnackbar(snapshot.data!);
+                        });
+                      }
+                      return child ?? const SizedBox();
+                    },
+                  ),
+                );
+              },
             );
           },
         );

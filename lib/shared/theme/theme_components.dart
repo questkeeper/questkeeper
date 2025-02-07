@@ -1,5 +1,7 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:questkeeper/shared/theme/text_theme.dart';
 
 class ResponsiveTheme {
   static bool get isDesktop =>
@@ -324,14 +326,16 @@ class ModernTheme {
   }
 
   static IconButtonThemeData iconButtonTheme(ColorScheme colors) {
-    return IconButtonThemeData(style: ButtonStyle(
-      iconColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.disabled)) {
-          return colors.onSurface.withValues(alpha: 0.38);
-        }
-        return colors.primary;
-      }),
-    ));
+    return IconButtonThemeData(
+      style: ButtonStyle(
+        iconColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return colors.onSurface.withValues(alpha: 0.38);
+          }
+          return colors.primary;
+        }),
+      ),
+    );
   }
 
   static DialogThemeData dialogTheme(ColorScheme colors) {
@@ -354,9 +358,16 @@ class ModernTheme {
     ];
   }
 
-  static ThemeData modernThemeData(ColorScheme colorScheme) {
+  static ThemeData modernThemeData(
+      BuildContext context, ColorScheme colorScheme) {
     return ThemeData(
       colorScheme: colorScheme,
+      textTheme: ModernTextTheme.create(
+        context,
+        displayFont: GoogleFonts.outfit,
+        bodyFont: GoogleFonts.inter,
+        brightness: Brightness.light,
+      ),
       textButtonTheme: textButtonTheme(colorScheme),
       outlinedButtonTheme: outlinedButtonTheme(colorScheme),
       elevatedButtonTheme: elevatedButtonTheme(colorScheme),
