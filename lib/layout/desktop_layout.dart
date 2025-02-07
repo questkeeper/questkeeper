@@ -96,26 +96,30 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           return Stack(
             children: [
               Scaffold(
+                appBar: AppBar(
+                  toolbarHeight: MediaQuery.of(context).padding.top,
+                  backgroundColor: colorScheme.surface,
+                ),
                 backgroundColor: colorScheme.surface,
                 body: Column(
                   children: [
                     // Command Palette Bar
                     Container(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
                       child: Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 800),
                           child: InkWell(
                             onTap: _toggleCommandPalette,
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(6),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
+                                horizontal: 12,
+                                vertical: 6,
                               ),
                               decoration: BoxDecoration(
                                 color: colorScheme.surfaceContainerLow,
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(6),
                                 border: Border.all(
                                   color: colorScheme.outlineVariant,
                                   width: 1,
@@ -170,13 +174,13 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                         children: [
                           // Floating Nav Rail with expansion
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
+                            padding: const EdgeInsets.fromLTRB(12, 12, 0, 12),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
-                              width: isNavRailExpanded ? 200 : 80,
+                              width: isNavRailExpanded ? 180 : 72,
                               decoration: BoxDecoration(
                                 color: colorScheme.surfaceContainerLow,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
                                     color: colorScheme.shadow.withOpacity(0.05),
@@ -192,7 +196,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                   Expanded(
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 16.0),
+                                          vertical: 12.0),
                                       child: Column(
                                         children: [
                                           NavRailItem(
@@ -218,12 +222,12 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                     ),
                                   ),
 
-                                  const Divider(indent: 16, endIndent: 16),
+                                  const Divider(indent: 12, endIndent: 12),
 
                                   NavRailItem(
                                     icon: LucideIcons.settings,
                                     label: 'Settings',
-                                    isSelected: false,
+                                    isSelected: widget.selectedIndex == 2,
                                     isExpanded: isNavRailExpanded,
                                     onTap: () => widget.onTabSelected(2),
                                   ),
@@ -290,7 +294,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
             },
             loading: () => Center(child: CircularProgressIndicator()),
             data: (profileData) => Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(12.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -300,23 +304,23 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                       boxShadow: [
                         BoxShadow(
                           color: colorScheme.shadow.withValues(alpha: 0.1),
-                          blurRadius: 8,
+                          blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
                       ],
                     ),
                     child: AvatarWidget(
                       seed: profileData.user_id,
-                      radius: 16,
+                      radius: 14,
                     ),
                   ),
                   if (isNavRailExpanded) ...[
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         "@${profileData.username}",
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color:
                                   colorScheme.onSurface.withValues(alpha: 0.8),
                             ),

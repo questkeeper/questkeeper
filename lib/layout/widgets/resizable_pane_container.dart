@@ -36,7 +36,7 @@ class _ResizablePaneContainerState
           Expanded(child: widget.mainContent),
           if (contextPane != null)
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
+              padding: const EdgeInsets.fromLTRB(0, 12, 12, 12),
               child: Container(
                 width: 48,
                 decoration: BoxDecoration(

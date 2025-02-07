@@ -5,10 +5,10 @@ import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/mixins/spaces_screen_mixin.dart';
-import 'package:questkeeper/spaces/providers/game_height_provider.dart';
-import 'package:questkeeper/spaces/providers/game_provider.dart';
+// import 'package:questkeeper/spaces/providers/game_height_provider.dart';
+// import 'package:questkeeper/spaces/providers/game_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
-import 'package:questkeeper/spaces/widgets/animated_game_container.dart';
+// import 'package:questkeeper/spaces/widgets/animated_game_container.dart';
 import 'package:questkeeper/spaces/widgets/space_card.dart';
 import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -26,7 +26,7 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
   Widget build(BuildContext context) {
     final spacesAsync = ref.watch(spacesManagerProvider);
     final colorScheme = Theme.of(context).colorScheme;
-    final game = ref.watch(gameProvider);
+    // final game = ref.watch(gameProvider);
     final zenMode = ref.watch(zenModeProvider);
 
     return spacesAsync.when(
@@ -41,21 +41,21 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
         return Scaffold(
           backgroundColor: colorScheme.surface,
           body: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
+            padding: const EdgeInsets.fromLTRB(12, 12, 0, 12),
             child: Row(
               children: [
                 // Left panel - Space List with Familiars
                 if (!zenMode)
                   Container(
-                    width: 260,
-                    margin: const EdgeInsets.only(right: 16),
+                    width: 240,
+                    margin: const EdgeInsets.only(right: 12),
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
                           color: colorScheme.shadow.withValues(alpha: 0.05),
-                          blurRadius: 10,
+                          blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
                       ],
@@ -65,15 +65,16 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                         // Spaces List
                         Expanded(
                           child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
                             itemCount: spaces.length + 1,
                             itemBuilder: (context, index) {
                               if (index == spaces.length) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
+                                      horizontal: 12, vertical: 6),
                                   child: OutlinedButton.icon(
-                                    icon: const Icon(LucideIcons.plus),
+                                    icon:
+                                        const Icon(LucideIcons.plus, size: 16),
                                     label: const Text('Create Space'),
                                     onPressed: () => showSpaceBottomSheet(
                                       context: context,
@@ -89,18 +90,25 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                                 builder: (context, currentPage, _) {
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 2),
+                                        horizontal: 6, vertical: 1),
                                     child: Material(
                                       color: Colors.transparent,
                                       child: ListTile(
+                                        dense: true,
+                                        visualDensity: VisualDensity.compact,
                                         selected: currentPage == index,
                                         selectedTileColor:
                                             colorScheme.primaryContainer,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
-                                              BorderRadius.circular(12),
+                                              BorderRadius.circular(8),
                                         ),
-                                        title: Text(space.title.capitalize()),
+                                        title: Text(
+                                          space.title.capitalize(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                        ),
                                         onTap: () {
                                           pageController.jumpToPage(index);
                                         },
@@ -113,19 +121,19 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                           ),
                         ),
 
-                        // Familiars Game at bottom
-                        if (game != null && isGameInitialized)
-                          Container(
-                            height: 210,
-                            padding: const EdgeInsets.all(16),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: AnimatedGameContainer(
-                                game: game,
-                                heightFactor: ref.watch(gameHeightProvider),
-                              ),
-                            ),
-                          ),
+                        // TODO: Reimplement Familiars Game at bottom
+                        // if (game != null && isGameInitialized)
+                        //   Container(
+                        //     height: 180,
+                        //     padding: const EdgeInsets.all(12),
+                        //     child: ClipRRect(
+                        //       borderRadius: BorderRadius.circular(8),
+                        //       child: AnimatedGameContainer(
+                        //         game: game,
+                        //         heightFactor: ref.watch(gameHeightProvider),
+                        //       ),
+                        //     ),
+                        //   ),
                       ],
                     ),
                   ),
@@ -133,14 +141,14 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                 // Main content area - Tasks and Categories with PageView
                 Expanded(
                   child: Container(
-                    margin: const EdgeInsets.only(right: 16),
+                    margin: const EdgeInsets.only(right: 12),
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
                           color: colorScheme.shadow.withValues(alpha: 0.05),
-                          blurRadius: 10,
+                          blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
                       ],
