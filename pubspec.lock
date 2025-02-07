@@ -13,10 +13,10 @@ packages:
     dependency: transitive
     description:
       name: _flutterfire_internals
-      sha256: e4f2a7ef31b0ab2c89d2bde35ef3e6e6aff1dce5e66069c6540b0e9cfe33ee6b
+      sha256: e051259913915ea5bc8fe18664596bea08592fd123930605d562969cd7315fcd
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.50"
+    version: "1.3.51"
   _macros:
     dependency: transitive
     description: dart
@@ -482,10 +482,10 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_core
-      sha256: d851c1ca98fd5a4c07c747f8c65dacc2edd84a4d9ac055d32a5f0342529069f5
+      sha256: "93dc4dd12f9b02c5767f235307f609e61ed9211047132d07f9e02c668f0bfc33"
       url: "https://pub.dev"
     source: hosted
-    version: "3.10.1"
+    version: "3.11.0"
   firebase_core_platform_interface:
     dependency: transitive
     description:
@@ -498,34 +498,34 @@ packages:
     dependency: transitive
     description:
       name: firebase_core_web
-      sha256: fbc008cf390d909b823763064b63afefe9f02d8afdb13eb3f485b871afee956b
+      sha256: "0e13c80f0de8acaa5d0519cbe23c8b4cc138a2d5d508b5755c861bdfc9762678"
       url: "https://pub.dev"
     source: hosted
-    version: "2.19.0"
+    version: "2.20.0"
   firebase_messaging:
     dependency: "direct main"
     description:
       name: firebase_messaging
-      sha256: e20ea2a0ecf9b0971575ab3ab42a6e285a94e50092c555b090c1a588a81b4d54
+      sha256: "3dee3b0cbfe719e64773cb7d1cad57c58b2235a8c136f5715fe733a54058c783"
       url: "https://pub.dev"
     source: hosted
-    version: "15.2.1"
+    version: "15.2.2"
   firebase_messaging_platform_interface:
     dependency: transitive
     description:
       name: firebase_messaging_platform_interface
-      sha256: c57a92b5ae1857ef4fe4ae2e73452b44d32e984e15ab8b53415ea1bb514bdabd
+      sha256: e9ea726b9bb864fc6223bb66422bd9877b9973ae51967754a769b0d01e201c1e
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.1"
+    version: "4.6.2"
   firebase_messaging_web:
     dependency: transitive
     description:
       name: firebase_messaging_web
-      sha256: "83694a990d8525d6b01039240b97757298369622ca0253ad0ebcfed221bf8ee0"
+      sha256: "5f7b40e8bf861a37f8b8196e347d8a919750421a45f0b45d1bb74e98fa72726e"
       url: "https://pub.dev"
     source: hosted
-    version: "3.10.1"
+    version: "3.10.2"
   fixnum:
     dependency: transitive
     description:
@@ -538,18 +538,18 @@ packages:
     dependency: "direct main"
     description:
       name: flame
-      sha256: "0bd0d5bfaf270e4c1624f8d966ca42951479d1b59371058898bdd6ce41bce27a"
+      sha256: "75eb2b2814a0af2686e9f36649f72249f1921b565d11d5bf956d17f9d8cfa67f"
       url: "https://pub.dev"
     source: hosted
-    version: "1.23.0"
+    version: "1.24.0"
   flame_riverpod:
     dependency: "direct main"
     description:
       name: flame_riverpod
-      sha256: "058b7390db518d080a18eacb3840c63915609f2f5c5131c3694dc7300e071df8"
+      sha256: a04daf207937af5196741023345cd2765baf772b394b8e33c8d4ec0ade793ae9
       url: "https://pub.dev"
     source: hosted
-    version: "5.4.7"
+    version: "5.4.8"
   flame_tiled:
     dependency: "direct main"
     description:
@@ -655,26 +655,34 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_local_notifications
-      sha256: "55b9b229307a10974b26296ff29f2e132256ba4bd74266939118eaefa941cb00"
+      sha256: "10f8fa688ac11e62f45699f37c3fd698db572170ffd63c980792cb4d428c09e6"
       url: "https://pub.dev"
     source: hosted
-    version: "16.3.3"
+    version: "19.0.0-dev.5"
   flutter_local_notifications_linux:
     dependency: "direct main"
     description:
       name: flutter_local_notifications_linux
-      sha256: c49bd06165cad9beeb79090b18cd1eb0296f4bf4b23b84426e37dd7c027fc3af
+      sha256: "265340ee321634e7cc11c740252cf8ba71dc5ffaf33e8c5da0ee4d1465d5a3eb"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.1"
+    version: "5.0.1-dev.1"
   flutter_local_notifications_platform_interface:
     dependency: "direct main"
     description:
       name: flutter_local_notifications_platform_interface
-      sha256: "85f8d07fe708c1bdcf45037f2c0109753b26ae077e9d9e899d55971711a4ea66"
+      sha256: "2e387899e2bf22a6e5de22c719701a067521c6f7a810d3b0fbb8bfaf5a2771c7"
       url: "https://pub.dev"
     source: hosted
-    version: "7.2.0"
+    version: "8.1.0-dev.1"
+  flutter_local_notifications_windows:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications_windows
+      sha256: "282bb8afc16e3867b3a251b28c20af6eee00bd448444590cf203740afa4419e4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0-dev.3"
   flutter_localizations:
     dependency: transitive
     description: flutter
@@ -830,10 +838,10 @@ packages:
     dependency: "direct main"
     description:
       name: home_widget
-      sha256: b313e3304c0429669fddf1286e1fbf61a64b873f38ba30b3eb890ef0d7560b12
+      sha256: "7430f7549d42cef2e729bd3c779de748b93f1eb78b1abfe6bca8fffd1cfce3e9"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.0"
+    version: "0.7.0+1"
   hotreloader:
     dependency: transitive
     description:
@@ -1222,10 +1230,10 @@ packages:
     dependency: "direct main"
     description:
       name: posthog_flutter
-      sha256: a9ec9787861cd2882b13cfa2333e94fc3733ffab96a4bd2579d37060ed5019ec
+      sha256: e614e15b627c5419e1c6d03817f5bb86c28a94c4f7bae52416462994247347a1
       url: "https://pub.dev"
     source: hosted
-    version: "4.10.0"
+    version: "4.10.2"
   pub_semver:
     dependency: transitive
     description:
@@ -1334,26 +1342,26 @@ packages:
     dependency: transitive
     description:
       name: sentry
-      sha256: "576ad83415102ba2060142a6701611abc6e67a55af1d7ab339cedd3ba1b0f84c"
+      sha256: "41a3c8e61d5194f5e12adf469fc430d7fa76a373fde6b11280f7df05c24e19e2"
       url: "https://pub.dev"
     source: hosted
-    version: "8.12.0"
+    version: "8.13.0"
   sentry_dio:
     dependency: "direct main"
     description:
       name: sentry_dio
-      sha256: fd5dcef32e6920730110ae66267e32bcc1d1f64ce18ba68ff54f0e6779a787f4
+      sha256: "6e0b43cdd1cae4db1eac1c56181544a80df7215ffd7b6ca347042cc423b09d94"
       url: "https://pub.dev"
     source: hosted
-    version: "8.12.0"
+    version: "8.13.0"
   sentry_flutter:
     dependency: "direct main"
     description:
       name: sentry_flutter
-      sha256: dc3761e8659839cc67a18432d9f12e5531affb7ff68e196dbb56846909b5dfdc
+      sha256: "86ba98250bfc55cf3a9908afa46a851a46706e8338413d062daa5705ce016d05"
       url: "https://pub.dev"
     source: hosted
-    version: "8.12.0"
+    version: "8.13.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1627,10 +1635,10 @@ packages:
     dependency: "direct main"
     description:
       name: timezone
-      sha256: "2236ec079a174ce07434e89fcd3fcda430025eb7692244139a9cf54fdcf1fc7d"
+      sha256: ffc9d5f4d1193534ef051f9254063fa53d588609418c84299956c3db9383587d
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.4"
+    version: "0.10.0"
   timing:
     dependency: transitive
     description:
@@ -1739,10 +1747,10 @@ packages:
     dependency: transitive
     description:
       name: vector_graphics
-      sha256: a1870d398158844fe5db12441611ed9a2222ff4340258b539eaf3590c1b4bd7e
+      sha256: "44cc7104ff32563122a929e4620cf3efd584194eec6d1d913eb5ba593dbcf6de"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.17"
+    version: "1.1.18"
   vector_graphics_codec:
     dependency: transitive
     description:
@@ -1857,4 +1865,4 @@ packages:
     version: "2.0.3"
 sdks:
   dart: ">=3.6.0 <4.0.0"
-  flutter: ">=3.27.0"
+  flutter: ">=3.27.1"
