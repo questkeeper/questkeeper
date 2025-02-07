@@ -142,6 +142,8 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
     if (_notificationService.isInitialized) {
       // Use microtask to avoid blocking UI during sync
       unawaited(Future.microtask(() async {
+        // Await so that supabase has time to update the scheduled_at
+        await Future.delayed(const Duration(seconds: 3));
         await _notificationService.syncNotificationsFromSchedule();
       }));
     }
