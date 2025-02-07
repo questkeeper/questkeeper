@@ -285,9 +285,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           Expanded(
             child: _currentContent != null
-                ? Expanded(
-                    child: _currentContent!,
-                  )
+                ? _currentContent!
                 : const Center(
                     child: Text(
                       'Select a setting from the left to view or edit',
