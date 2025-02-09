@@ -48,11 +48,7 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                 if (!zenMode)
                   Container(
                     width: 200,
-                    margin: const EdgeInsets.only(
-                      right: 12,
-                      top: 12,
-                      bottom: 12,
-                    ),
+                    margin: const EdgeInsets.only(right: 12),
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(12),
@@ -69,8 +65,8 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                         // Spaces List
                         Expanded(
                           child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(vertical: 6),
                             itemCount: spaces.length + 1,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             itemBuilder: (context, index) {
                               if (index == spaces.length) {
                                 return Padding(

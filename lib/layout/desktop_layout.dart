@@ -99,6 +99,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                 appBar: AppBar(
                   toolbarHeight: MediaQuery.of(context).padding.top,
                   backgroundColor: colorScheme.surface,
+                  elevation: 0,
                 ),
                 backgroundColor: colorScheme.surface,
                 body: Column(

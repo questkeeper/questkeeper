@@ -3,6 +3,7 @@ import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
 import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/providers/game_height_provider.dart';
 import 'package:questkeeper/spaces/providers/game_provider.dart';
@@ -87,6 +88,8 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
     final tasks = ref.watch(tasksManagerProvider.select((value) =>
         value.value?.where((task) => task.spaceId == space.id).toList()));
     final gameHeight = ref.watch(gameHeightProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final isMobile = ref.watch(isMobileProvider);
 
     final currentSpaceCategories = ref.watch(categoriesManagerProvider
         .select((value) => value.value?.where((category) {
@@ -97,13 +100,23 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
       color: widget.backgroundColorHex.toColor(),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            child: ListTile(
-              titleTextStyle: Theme.of(context).textTheme.headlineMedium,
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: !isMobile ? 16 : 8,
+              vertical: !isMobile ? 8 : 12,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    space.title,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(height: 1),
+                  ),
+                ),
+                if (isMobile)
                   IconButton(
                     color: Theme.of(context).colorScheme.onSurface,
                     icon: gameHeight > 0.3
@@ -114,10 +127,8 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                           gameHeight > 0.3 ? 0.3 : 1.0;
                     },
                   ),
-                  SpaceActionWidgets(space: space, ref: ref),
-                ],
-              ),
-              title: Text(space.title),
+                SpaceActionWidgets(space: space, ref: ref),
+              ],
             ),
           ),
           Expanded(
@@ -185,30 +196,29 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                               children: [
                                 const SizedBox(height: 16),
                                 Center(
-                                  child: FilledButton(
+                                  child: FilledButton.icon(
                                     onPressed: () => showCategoryBottomSheet(
-                                        context: context,
-                                        ref: ref,
-                                        existingSpace: space),
-                                    child: Text('Create a category'),
+                                      context: context,
+                                      ref: ref,
+                                      existingSpace: space,
+                                    ),
+                                    icon: const Icon(LucideIcons.folder_plus),
+                                    label: const Text('Create a category'),
                                   ),
                                 ),
                                 const SizedBox(height: 8),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
+                                    horizontal: 16,
+                                  ),
                                   child: Text(
                                     textAlign: TextAlign.center,
                                     'Or create a task and an "uncategorized" category will be created automatically',
                                     style: Theme.of(context)
                                         .textTheme
-                                        .bodyLarge
+                                        .bodyMedium
                                         ?.copyWith(
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.color
-                                              ?.withValues(alpha: 0.75),
+                                          color: colorScheme.onSurfaceVariant,
                                         ),
                                   ),
                                 ),
@@ -220,7 +230,8 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                           }
 
                           return const SizedBox(
-                              height: kBottomNavigationBarHeight + 48);
+                            height: kBottomNavigationBarHeight + 48,
+                          );
                         }
                       },
                     ),
@@ -245,8 +256,12 @@ class SpaceActionWidgets extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final game = ref.read(gameProvider);
+    final isMobile = ref.watch(isMobileProvider);
+
     return PopupMenuButton<SpaceAction>(
-      icon: const Icon(LucideIcons.menu),
+      icon: Icon(
+        isMobile ? LucideIcons.menu : LucideIcons.ellipsis_vertical,
+      ),
       iconColor: Theme.of(context).colorScheme.onSurface,
       iconSize: 32,
       onSelected: (action) {
