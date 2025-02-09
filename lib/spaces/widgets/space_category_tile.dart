@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
@@ -89,8 +90,11 @@ class SpaceCategoryTile extends ConsumerWidget {
             ),
             children: tasks?.isNotEmpty == true && tasks != null
                 ? tasks!
-                    .map((task) => Padding(
-                        padding: const EdgeInsets.all(8),
+                    .mapIndexed((index, task) => Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: index == tasks!.length - 1 ? 8 : 0,
+                        ),
                         child: TaskCard(
                           task: task,
                           key: ValueKey(task.id),
