@@ -5,10 +5,10 @@ import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/mixins/spaces_screen_mixin.dart';
-// import 'package:questkeeper/spaces/providers/game_height_provider.dart';
-// import 'package:questkeeper/spaces/providers/game_provider.dart';
+import 'package:questkeeper/spaces/providers/game_height_provider.dart';
+import 'package:questkeeper/spaces/providers/game_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
-// import 'package:questkeeper/spaces/widgets/animated_game_container.dart';
+import 'package:questkeeper/spaces/widgets/animated_game_container.dart';
 import 'package:questkeeper/spaces/widgets/space_card.dart';
 import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -26,7 +26,7 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
   Widget build(BuildContext context) {
     final spacesAsync = ref.watch(spacesManagerProvider);
     final colorScheme = Theme.of(context).colorScheme;
-    // final game = ref.watch(gameProvider);
+    final game = ref.watch(gameProvider);
     final zenMode = ref.watch(zenModeProvider);
 
     return spacesAsync.when(
@@ -47,8 +47,12 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                 // Left panel - Space List with Familiars
                 if (!zenMode)
                   Container(
-                    width: 240,
-                    margin: const EdgeInsets.only(right: 12),
+                    width: 200,
+                    margin: const EdgeInsets.only(
+                      right: 12,
+                      top: 12,
+                      bottom: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(12),
@@ -121,19 +125,18 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                           ),
                         ),
 
-                        // TODO: Reimplement Familiars Game at bottom
-                        // if (game != null && isGameInitialized)
-                        //   Container(
-                        //     height: 180,
-                        //     padding: const EdgeInsets.all(12),
-                        //     child: ClipRRect(
-                        //       borderRadius: BorderRadius.circular(8),
-                        //       child: AnimatedGameContainer(
-                        //         game: game,
-                        //         heightFactor: ref.watch(gameHeightProvider),
-                        //       ),
-                        //     ),
-                        //   ),
+                        if (game != null && isGameInitialized)
+                          Container(
+                            height: 0,
+                            padding: const EdgeInsets.all(12),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: AnimatedGameContainer(
+                                game: game,
+                                heightFactor: ref.watch(gameHeightProvider),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
