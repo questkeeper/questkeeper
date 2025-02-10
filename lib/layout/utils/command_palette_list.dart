@@ -21,7 +21,6 @@ List<Command> buildCommandPaletteList(
     BuildContext context, WidgetRef ref, dynamic Function(int) onTabSelected) {
   final isDarkMode = Theme.of(context).brightness == Brightness.dark;
   final textScale = themeNotifier.textScaleNotifier.value;
-  final tasks = ref.watch(tasksManagerProvider);
 
   return [
     // Main Quick Actions (Always visible at top)
@@ -29,62 +28,74 @@ List<Command> buildCommandPaletteList(
       title: 'Find Task',
       description: 'Search and edit existing tasks',
       icon: LucideIcons.search,
-      onExecute: () {
-        showDialog(
-          context: context,
-          builder: (context) => SearchDialog<Tasks>(
-            items: tasks.value ?? [],
-            getTitle: (task) => task.title,
-            getDescription: (task) => task.description,
-            hintText: 'Search tasks...',
-            searchFilter: (task, query) {
-              final titleMatch = task.title.toLowerCase().contains(query);
-              final descriptionMatch =
-                  task.description?.toLowerCase().contains(query) ?? false;
-              return titleMatch || descriptionMatch;
-            },
-            onItemSelected: (Tasks task) {
-              onTabSelected(0).then((_) async {
-                if (context.mounted) {
-                  final parentContext = Navigator.of(context).context;
-                  ref.read(commandPaletteVisibleProvider.notifier).state =
-                      false;
+      onExecute: () async {
+        // First switch to spaces tab
+        await onTabSelected(0);
 
-                  final spacesList =
-                      ref.read(spacesManagerProvider).asData?.value ?? [];
-                  final spaceIndex = spacesList
-                      .indexWhere((space) => space.id == task.spaceId);
+        if (!context.mounted) return;
 
-                  if (spaceIndex != -1) {
-                    final pageController = ref.read(pageControllerProvider);
+        if (context.mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) => Consumer(
+              builder: (context, ref, _) {
+                final tasks = ref.watch(tasksManagerProvider);
+                return tasks.when(
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  error: (error, stack) => Center(
+                    child: Text('Error loading tasks: $error'),
+                  ),
+                  data: (currentTasks) => SearchDialog<Tasks>(
+                    items: currentTasks,
+                    getTitle: (task) => task.title,
+                    getDescription: (task) => task.description,
+                    hintText: 'Search tasks...',
+                    searchFilter: (task, query) {
+                      final titleMatch =
+                          task.title.toLowerCase().contains(query);
+                      final descriptionMatch =
+                          task.description?.toLowerCase().contains(query) ??
+                              false;
+                      return titleMatch || descriptionMatch;
+                    },
+                    onItemSelected: (Tasks task) async {
+                      if (context.mounted) {
+                        final parentContext = Navigator.of(context).context;
+                        ref.read(commandPaletteVisibleProvider.notifier).state =
+                            false;
 
-                    await pageController.animateToPage(
-                      spaceIndex,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
+                        final spacesList =
+                            ref.read(spacesManagerProvider).asData?.value ?? [];
+                        final spaceIndex = spacesList
+                            .indexWhere((space) => space.id == task.spaceId);
 
-                    if (parentContext.mounted) {
-                      showTaskDrawer(
-                        context: parentContext,
-                        ref: ref,
-                        existingTask: task,
-                      );
-                    }
-                  } else {
-                    if (parentContext.mounted) {
-                      showTaskDrawer(
-                        context: parentContext,
-                        ref: ref,
-                        existingTask: task,
-                      );
-                    }
-                  }
-                }
-              });
-            },
-          ),
-        );
+                        if (spaceIndex != -1) {
+                          final pageController =
+                              ref.read(pageControllerProvider);
+                          await pageController.animateToPage(
+                            spaceIndex,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+
+                        if (parentContext.mounted) {
+                          showTaskDrawer(
+                            context: parentContext,
+                            ref: ref,
+                            existingTask: task,
+                          );
+                        }
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
+          );
+        }
       },
       searchTerms: 'find search task edit modify update',
     ),
