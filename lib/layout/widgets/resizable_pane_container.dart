@@ -36,12 +36,15 @@ class _ResizablePaneContainerState
           Expanded(child: widget.mainContent),
           if (contextPane != null)
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 12, 12, 12),
+              padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
               child: Container(
                 width: 48,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -99,7 +102,10 @@ class _ResizablePaneContainerState
                   width: 4,
                   decoration: BoxDecoration(
                     color: Theme.of(context).dividerColor.withAlpha(100),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      bottomLeft: Radius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -112,7 +118,7 @@ class _ResizablePaneContainerState
 
   Widget _main(Widget contextPane) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
+      padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
       child: MouseRegion(
         cursor: _isContextPaneCollapsed
             ? SystemMouseCursors.click
@@ -130,7 +136,10 @@ class _ResizablePaneContainerState
             width: _isContextPaneCollapsed ? 48 : _contextPaneWidth,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                bottomLeft: Radius.circular(12),
+              ),
             ),
             child: Column(
               children: [
