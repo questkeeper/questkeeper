@@ -139,6 +139,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               children: [
                 const SizedBox(height: 10),
                 const Divider(),
+                // Profile & Account Group
                 SettingsCard(
                   title: 'Profile',
                   description: 'Manage your profile settings',
@@ -147,20 +148,34 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       _navigateToContent(const ProfileSettingsScreen()),
                 ),
                 SettingsCard(
+                  title: 'Account Management',
+                  description: 'Manage your account settings and data',
+                  icon: LucideIcons.user_cog,
+                  onTap: () =>
+                      _navigateToContent(const AccountManagementScreen()),
+                ),
+                const Divider(),
+                // App Preferences Group
+                SettingsCard(
+                  title: 'Theme',
+                  description: 'Change the app theme',
+                  icon: LucideIcons.palette,
+                  onTap: () => _navigateToContent(const ThemeScreen()),
+                ),
+                SettingsCard(
                   title: 'Notifications',
                   description: 'Manage your notifications',
                   icon: LucideIcons.bell_ring,
                   onTap: () => _navigateToContent(const NotificationsScreen()),
                 ),
-                isDebug
-                    ? SettingsCard(
-                        title: 'Theme',
-                        description: 'Change the app theme',
-                        icon: LucideIcons.palette,
-                        onTap: () => _navigateToContent(const ThemeScreen()),
-                      )
-                    : const SizedBox(),
+                SettingsCard(
+                  title: 'Privacy',
+                  description: 'Manage privacy and data settings',
+                  icon: LucideIcons.shield,
+                  onTap: () => _navigateToContent(const PrivacyScreen()),
+                ),
                 const Divider(),
+                // Support & Feedback Group
                 SettingsCard(
                   title: 'Feedback',
                   description: 'Send us your feedback',
@@ -172,18 +187,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       email: user?.email ?? 'Unknown@questkeeper.app',
                     );
                   },
-                ),
-                SettingsCard(
-                  title: 'Privacy',
-                  description: 'Manage privacy and data settings',
-                  icon: LucideIcons.shield,
-                  onTap: () => _navigateToContent(const PrivacyScreen()),
-                ),
-                SettingsCard(
-                  title: 'About',
-                  description: 'About the app',
-                  icon: LucideIcons.info,
-                  onTap: () => _navigateToContent(const AboutScreen()),
                 ),
                 platform != "unknown"
                     ? SettingsCard(
@@ -209,6 +212,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         },
                       )
                     : const SizedBox(),
+                const Divider(),
+                // App Information Group
+                SettingsCard(
+                  title: 'About',
+                  description: 'About the app',
+                  icon: LucideIcons.info,
+                  onTap: () => _navigateToContent(const AboutScreen()),
+                ),
                 SettingsCard(
                   title: 'Experiments',
                   description: 'Enable features that may be unstable',
@@ -227,13 +238,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _navigateToContent(const SuperSecretDebugSettings()),
                     iconColor: Colors.amber,
                   ),
-                SettingsCard(
-                  title: 'Account Management',
-                  description: 'Manage your account settings and data',
-                  icon: LucideIcons.user_cog,
-                  onTap: () =>
-                      _navigateToContent(const AccountManagementScreen()),
-                ),
+                const Divider(),
+                // Sign Out (at the bottom)
                 SettingsCard(
                   title: 'Sign out',
                   description: 'Sign out and remove local data',
