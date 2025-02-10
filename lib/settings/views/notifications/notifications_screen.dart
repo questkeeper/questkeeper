@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
@@ -16,10 +15,6 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   final supabaseClient = Supabase.instance.client;
   var selected = _NotificationType.previous;
-  late final isNotificationEnabled =
-      FirebaseMessaging.instance.getNotificationSettings().then((settings) {
-    return settings.authorizationStatus == AuthorizationStatus.authorized;
-  });
 
   @override
   void initState() {
@@ -71,112 +66,82 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
       body: SafeArea(
         child: Center(
-          child: FutureBuilder(
-            future: isNotificationEnabled,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+          child: Column(
+            children: [
+              FutureBuilder(
+                future: AuthNotifier().isFCMSupported,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Push notifications are disabled or not supported on this device, this list may not be fully accurate.",
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  }
 
-              if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
-              }
-
-              if (snapshot.hasData) {
-                final isEnabled = snapshot.data as bool;
-                if (!isEnabled) {
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: Text(
-                            "Notifications are disabled\n"
-                            "Enable notifications to receive updates",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            await AuthNotifier().setFirebaseMessaging();
-                            setState(() {});
-                          },
-                          child: const Text("Enable Notifications"),
-                        ),
-                      ],
-                    ),
+                  return const SizedBox.shrink();
+                },
+              ),
+              SegmentedButton(
+                segments: _NotificationType.values.map((it) {
+                  return ButtonSegment(
+                    value: it.name,
+                    label: Text(it.display),
                   );
-                }
-              }
-
-              return Column(
-                children: [
-                  SegmentedButton(
-                    segments: _NotificationType.values.map((it) {
-                      return ButtonSegment(
-                        value: it.name,
-                        label: Text(it.display),
+                }).toList(),
+                selected: {selected.name},
+                onSelectionChanged: (selections) {
+                  setState(() {
+                    selected = _NotificationType.values
+                        .firstWhere((it) => it.name == selections.first);
+                  });
+                },
+              ),
+              Expanded(
+                child: FutureBuilder(
+                  future: supabaseQueryBuilder(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
                       );
-                    }).toList(),
-                    selected: {selected.name},
-                    onSelectionChanged: (selections) {
-                      setState(() {
-                        selected = _NotificationType.values
-                            .firstWhere((it) => it.name == selections.first);
-                      });
-                    },
-                  ),
-                  Expanded(
-                    child: FutureBuilder(
-                      future: supabaseQueryBuilder(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
+                    }
 
-                        if (snapshot.hasError) {
-                          return Text("Error: ${snapshot.error}");
-                        }
+                    if (snapshot.hasError) {
+                      return Text("Error: ${snapshot.error}");
+                    }
 
-                        if (snapshot.hasData) {
-                          final data =
-                              snapshot.data as List<Map<String, dynamic>>;
-                          return ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              final notification = data.elementAt(index);
+                    if (snapshot.hasData) {
+                      final data = snapshot.data as List<Map<String, dynamic>>;
+                      return ListView.builder(
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          final notification = data.elementAt(index);
 
-                              switch (selected) {
-                                case _NotificationType.previous:
-                                  return PreviousNotification(
-                                      index: index,
-                                      data: notification,
-                                      onDismiss: () async {
-                                        await dismissNotification(
-                                            notification["id"] as int);
-                                      });
-                                case _NotificationType.upcoming:
-                                  return UpcomingNotification(
-                                      index: index, data: notification);
-                              }
-                            },
-                          );
-                        }
+                          switch (selected) {
+                            case _NotificationType.previous:
+                              return PreviousNotification(
+                                  index: index,
+                                  data: notification,
+                                  onDismiss: () async {
+                                    await dismissNotification(
+                                        notification["id"] as int);
+                                  });
+                            case _NotificationType.upcoming:
+                              return UpcomingNotification(
+                                  index: index, data: notification);
+                          }
+                        },
+                      );
+                    }
 
-                        return const Text("No notifications");
-                      },
-                    ),
-                  ),
-                ],
-              );
-            },
+                    return const Text("No notifications");
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
