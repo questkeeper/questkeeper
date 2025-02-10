@@ -156,12 +156,41 @@ class _ResizablePaneContainerState
                 Expanded(
                   child: _isContextPaneCollapsed
                       ? const RotatedBox(
+                          key: ValueKey('collapsed'),
                           quarterTurns: 1,
                           child: Center(
                             child: Text('Expand'),
                           ),
                         )
-                      : contextPane,
+                      : AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: _isContextPaneCollapsed
+                              ? 0
+                              : _contextPaneWidth - 48,
+                          child: OverflowBox(
+                            maxWidth: _contextPaneWidth,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              physics: const NeverScrollableScrollPhysics(),
+                              child: SizedBox(
+                                width: _contextPaneWidth,
+                                child: FutureBuilder(
+                                  future: Future.delayed(
+                                      const Duration(milliseconds: 200)),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return contextPane;
+                                    }
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                 ),
               ],
             ),
