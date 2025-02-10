@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/shared/widgets/command_palette_pills.dart';
 import 'package:questkeeper/shared/widgets/command_palette_item.dart';
 import 'dart:math' show min;
-
-final commandPaletteVisibleProvider = StateProvider<bool>((ref) => false);
 
 class Command {
   final String title;

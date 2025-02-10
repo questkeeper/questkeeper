@@ -36,8 +36,6 @@ class DesktopLayout extends ConsumerStatefulWidget {
 }
 
 class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
-  final ValueNotifier<bool> commandPaletteVisibleNotifier =
-      ValueNotifier(false);
   final FocusNode _focusNode = FocusNode(
     debugLabel: 'command_palete_keyboard_listener',
   );
@@ -57,7 +55,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   }
 
   void _toggleCommandPalette() {
-    commandPaletteVisibleNotifier.value = !commandPaletteVisibleNotifier.value;
+    ref.read(commandPaletteVisibleProvider.notifier).state =
+        !ref.read(commandPaletteVisibleProvider);
   }
 
   void _handleKeyEvent(RawKeyEvent event) {
@@ -76,8 +75,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
     // Handle Escape key
     if (event.logicalKey == LogicalKeyboardKey.escape &&
-        commandPaletteVisibleNotifier.value) {
-      commandPaletteVisibleNotifier.value = false;
+        ref.read(commandPaletteVisibleProvider)) {
+      ref.read(commandPaletteVisibleProvider.notifier).state = false;
     }
   }
 
@@ -86,197 +85,186 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     final colorScheme = Theme.of(context).colorScheme;
     final isNavRailExpanded = ref.watch(navRailExpandedProvider);
     final isCompact = ref.watch(isCompactProvider);
+    final isCommandPaletteVisible = ref.watch(commandPaletteVisibleProvider);
 
     return RawKeyboardListener(
       focusNode: _focusNode,
       onKey: _handleKeyEvent,
-      child: ValueListenableBuilder<bool>(
-        valueListenable: commandPaletteVisibleNotifier,
-        builder: (context, isCommandPaletteVisible, _) {
-          return SafeArea(
-            child: Stack(
-              children: [
-                Scaffold(
-                  backgroundColor: colorScheme.surface,
-                  body: Column(
-                    children: [
-                      // Command Palette Bar
-                      Container(
-                        padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 800),
-                            child: InkWell(
-                              onTap: _toggleCommandPalette,
+      child: SafeArea(
+        child: Stack(
+          children: [
+            Scaffold(
+              backgroundColor: colorScheme.surface,
+              body: Column(
+                children: [
+                  // Command Palette Bar
+                  Container(
+                    padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 800),
+                        child: InkWell(
+                          onTap: _toggleCommandPalette,
+                          borderRadius: BorderRadius.circular(6),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceContainerLow,
                               borderRadius: BorderRadius.circular(6),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
+                              border: Border.all(
+                                color: colorScheme.outlineVariant,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  LucideIcons.search,
+                                  size: 16,
+                                  color: colorScheme.onSurface.withOpacity(0.5),
                                 ),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerLow,
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: colorScheme.outlineVariant,
-                                    width: 1,
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Search or type a command...',
+                                  style: TextStyle(
+                                    color:
+                                        colorScheme.onSurface.withOpacity(0.5),
                                   ),
                                 ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      LucideIcons.search,
-                                      size: 16,
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surfaceContainerHigh,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    Platform.isMacOS ? '⌘P' : 'Ctrl+P',
+                                    style: TextStyle(
+                                      fontSize: 12,
                                       color: colorScheme.onSurface
                                           .withOpacity(0.5),
                                     ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Search or type a command...',
-                                      style: TextStyle(
-                                        color: colorScheme.onSurface
-                                            .withOpacity(0.5),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 6,
-                                        vertical: 2,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: colorScheme.surfaceContainerHigh,
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Text(
-                                        Platform.isMacOS ? '⌘P' : 'Ctrl+P',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: colorScheme.onSurface
-                                              .withOpacity(0.5),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
                           ),
                         ),
                       ),
+                    ),
+                  ),
 
-                      // Main Content
-                      Expanded(
-                        child: Row(
-                          children: [
-                            // Floating Nav Rail with expansion
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                width: isNavRailExpanded ? 200 : 72,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerLow,
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(12),
-                                    bottomRight: Radius.circular(12),
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          colorScheme.shadow.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Custom Nav Rail
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12.0),
-                                        child: Column(
-                                          children: [
-                                            NavRailItem(
-                                              icon: LucideIcons.eclipse,
-                                              label: 'Spaces',
-                                              isSelected:
-                                                  widget.selectedIndex == 0,
-                                              isExpanded: isNavRailExpanded,
-                                              onTap: () =>
-                                                  widget.onTabSelected(0),
-                                            ),
-                                            NavRailItem(
-                                              icon: LucideIcons.handshake,
-                                              label: 'Friends',
-                                              isSelected:
-                                                  widget.selectedIndex == 1,
-                                              isExpanded: isNavRailExpanded,
-                                              onTap: () =>
-                                                  widget.onTabSelected(1),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-
-                                    const Divider(indent: 12, endIndent: 12),
-
-                                    NavRailItem(
-                                      icon: LucideIcons.settings,
-                                      label: 'Settings',
-                                      isSelected: widget.selectedIndex == 2,
-                                      isExpanded: isNavRailExpanded,
-                                      onTap: () => widget.onTabSelected(2),
-                                    ),
-
-                                    NavRailItem(
-                                      icon: isNavRailExpanded
-                                          ? LucideIcons.panel_left
-                                          : LucideIcons.panel_right,
-                                      label: 'Shrink',
-                                      isSelected: !isNavRailExpanded,
-                                      isExpanded: isNavRailExpanded,
-                                      onTap: () => ref
-                                          .read(
-                                              navRailExpandedProvider.notifier)
-                                          .state = !isNavRailExpanded,
-                                    ),
-
-                                    _buildProfileView(colorScheme),
-                                  ],
-                                ),
+                  // Main Content
+                  Expanded(
+                    child: Row(
+                      children: [
+                        // Floating Nav Rail with expansion
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: isNavRailExpanded ? 200 : 72,
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceContainerLow,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(12),
+                                bottomRight: Radius.circular(12),
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: colorScheme.shadow.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
                             ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Custom Nav Rail
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12.0),
+                                    child: Column(
+                                      children: [
+                                        NavRailItem(
+                                          icon: LucideIcons.eclipse,
+                                          label: 'Spaces',
+                                          isSelected: widget.selectedIndex == 0,
+                                          isExpanded: isNavRailExpanded,
+                                          onTap: () => widget.onTabSelected(0),
+                                        ),
+                                        NavRailItem(
+                                          icon: LucideIcons.handshake,
+                                          label: 'Friends',
+                                          isSelected: widget.selectedIndex == 1,
+                                          isExpanded: isNavRailExpanded,
+                                          onTap: () => widget.onTabSelected(1),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
 
-                            // Main Content Area with Resizable Panes
-                            Expanded(
-                              child: widget.contextPane != null
-                                  ? ResizablePaneContainer(
-                                      mainContent: widget.mainContent,
-                                      contextPane: widget.contextPane,
-                                      isCompact: isCompact,
-                                    )
-                                  : widget.mainContent,
+                                const Divider(indent: 12, endIndent: 12),
+
+                                NavRailItem(
+                                  icon: LucideIcons.settings,
+                                  label: 'Settings',
+                                  isSelected: widget.selectedIndex == 2,
+                                  isExpanded: isNavRailExpanded,
+                                  onTap: () => widget.onTabSelected(2),
+                                ),
+
+                                NavRailItem(
+                                  icon: isNavRailExpanded
+                                      ? LucideIcons.panel_left
+                                      : LucideIcons.panel_right,
+                                  label: 'Shrink',
+                                  isSelected: !isNavRailExpanded,
+                                  isExpanded: isNavRailExpanded,
+                                  onTap: () => ref
+                                      .read(navRailExpandedProvider.notifier)
+                                      .state = !isNavRailExpanded,
+                                ),
+
+                                _buildProfileView(colorScheme),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+
+                        // Main Content Area with Resizable Panes
+                        Expanded(
+                          child: widget.contextPane != null
+                              ? ResizablePaneContainer(
+                                  mainContent: widget.mainContent,
+                                  contextPane: widget.contextPane,
+                                  isCompact: isCompact,
+                                )
+                              : widget.mainContent,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                if (isCommandPaletteVisible)
-                  CommandPalette(
-                    commands: buildCommandPaletteList(
-                        context, ref, widget.onTabSelected),
-                  ),
-              ],
+                ],
+              ),
             ),
-          );
-        },
+            if (isCommandPaletteVisible)
+              CommandPalette(
+                commands:
+                    buildCommandPaletteList(context, ref, widget.onTabSelected),
+              ),
+          ],
+        ),
       ),
     );
   }
