@@ -149,6 +149,7 @@ List<Command> buildCommandPaletteList(
         if (ref.read(zenModeProvider.notifier).state == false) {
           ref.read(navRailExpandedProvider.notifier).state = false;
           ref.read(zenModeProvider.notifier).state = true;
+          ref.read(isContextPaneCollapsedProvider.notifier).state = true;
         } else {
           ref.read(zenModeProvider.notifier).state = false;
           ref.read(navRailExpandedProvider.notifier).state =
