@@ -14,6 +14,8 @@ import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
 import 'package:questkeeper/shared/providers/theme_notifier.dart'
     show themeNotifier;
+import 'package:questkeeper/spaces/providers/spaces_provider.dart';
+import 'package:questkeeper/spaces/providers/page_provider.dart';
 
 List<Command> buildCommandPaletteList(
     BuildContext context, WidgetRef ref, dynamic Function(int) onTabSelected) {
@@ -41,14 +43,45 @@ List<Command> buildCommandPaletteList(
                   task.description?.toLowerCase().contains(query) ?? false;
               return titleMatch || descriptionMatch;
             },
-            onItemSelected: (task) {
-              // First navigate to spaces tab
-              onTabSelected(0);
-              showTaskDrawer(
-                context: context,
-                ref: ref,
-                existingTask: task,
-              );
+            onItemSelected: (Tasks task) {
+              onTabSelected(0).then((_) async {
+                if (context.mounted) {
+                  final parentContext = Navigator.of(context).context;
+                  ref.read(commandPaletteVisibleProvider.notifier).state =
+                      false;
+
+                  final spacesList =
+                      ref.read(spacesManagerProvider).asData?.value ?? [];
+                  final spaceIndex = spacesList
+                      .indexWhere((space) => space.id == task.spaceId);
+
+                  if (spaceIndex != -1) {
+                    final pageController = ref.read(pageControllerProvider);
+
+                    await pageController.animateToPage(
+                      spaceIndex,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+
+                    if (parentContext.mounted) {
+                      showTaskDrawer(
+                        context: parentContext,
+                        ref: ref,
+                        existingTask: task,
+                      );
+                    }
+                  } else {
+                    if (parentContext.mounted) {
+                      showTaskDrawer(
+                        context: parentContext,
+                        ref: ref,
+                        existingTask: task,
+                      );
+                    }
+                  }
+                }
+              });
             },
           ),
         );
