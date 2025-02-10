@@ -34,8 +34,17 @@ void showSpaceBottomSheet({
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.transparent,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 600),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: _SpaceBottomSheetContent(
               spaceType: existingSpace?.spaceType ?? "office",
               nameController: nameController,

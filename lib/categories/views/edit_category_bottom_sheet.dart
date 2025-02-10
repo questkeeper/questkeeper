@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/widgets/delete_category_dialog.dart';
-import 'package:questkeeper/shared/extensions/color_extensions.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
@@ -32,8 +31,17 @@ void showCategoryBottomSheet({
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.transparent,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 600),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: _CategoryBottomSheetContent(
               nameController: nameController,
               isEditing: isEditing,
@@ -53,10 +61,7 @@ void showCategoryBottomSheet({
       context: context,
       enableDrag: true,
       isDismissible: true,
-      showDragHandle: true,
       isScrollControlled: true,
-      backgroundColor: Colors
-          .transparent, // Make the background transparent to show the gradient
       builder: (BuildContext context) {
         return _CategoryBottomSheetContent(
           nameController: nameController,
@@ -101,6 +106,7 @@ class _CategoryBottomSheetContent extends StatefulWidget {
 class _CategoryBottomSheetContentState
     extends State<_CategoryBottomSheetContent> {
   Color? selectedColor;
+  final double colorOpacity = 0.6;
 
   @override
   void initState() {
@@ -116,12 +122,14 @@ class _CategoryBottomSheetContentState
 
   @override
   Widget build(BuildContext context) {
+    final adjustedColor = selectedColor?.withOpacity(colorOpacity);
+    final bgColor = adjustedColor?.withOpacity(0.15) ??
+        Theme.of(context).scaffoldBackgroundColor;
+
     return SingleChildScrollView(
       child: Container(
         decoration: BoxDecoration(
-          color:
-              selectedColor?.withValues(alpha: 0.6).blendWith(Colors.black) ??
-                  Theme.of(context).scaffoldBackgroundColor,
+          color: bgColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
         ),
         padding: EdgeInsets.only(
@@ -141,25 +149,63 @@ class _CategoryBottomSheetContentState
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
-
               TextField(
                 controller: widget.nameController,
                 decoration: InputDecoration(
                   labelText: 'Category Name',
+                  filled: true,
+                  fillColor:
+                      Theme.of(context).colorScheme.surface.withOpacity(0.5),
                 ),
               ),
-
-              const SizedBox(height: 16),
-
-              // Button to show the color picker dialog
-              FocusScope(
-                canRequestFocus: false,
-                child: ColorPicker(
-                  onColorChanged: _updateColor,
-                  color: selectedColor ?? Colors.blue,
+              const SizedBox(height: 24),
+              Text(
+                'Category Color',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (selectedColor != null)
+                      Container(
+                        height: 48,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: adjustedColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    FocusScope(
+                      canRequestFocus: false,
+                      child: ColorPicker(
+                        pickersEnabled: const {
+                          ColorPickerType.accent: false,
+                          ColorPickerType.primary: true,
+                          ColorPickerType.wheel: false,
+                        },
+                        enableShadesSelection: false,
+                        showColorCode: false,
+                        columnSpacing: 8,
+                        padding: EdgeInsets.zero,
+                        runSpacing: 8,
+                        onColorChanged: _updateColor,
+                        color: selectedColor ?? Colors.blue,
+                        width: 32,
+                        height: 32,
+                        borderRadius: 8,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-
+              const SizedBox(height: 24),
               Flex(
                 direction: Axis.horizontal,
                 children: [
