@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/layout/desktop_layout.dart';
 import 'package:questkeeper/spaces/views/desktop_spaces_screen.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
 
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
@@ -47,6 +48,9 @@ class _TabViewState extends ConsumerState<TabView> {
     setState(() {
       _selectedIndex = index;
     });
+
+    // Update the context pane provider when tab changes
+    ref.read(contextPaneProvider.notifier).state = _buildContextualPane(index);
   }
 
   @override
