@@ -77,6 +77,16 @@ class _TaskCardState extends ConsumerState<TaskCard> {
         break;
       case 'edit':
         if (!isMobile && !isCompact) {
+          // First set the state to null to trigger cleanup
+          ref.read(contextPaneProvider.notifier).state = null;
+
+          // Wait for the next frame to ensure cleanup is complete
+          await Future.microtask(() {});
+
+          // Only proceed if still mounted
+          if (!mounted) return;
+
+          // Create and set the new context pane
           final contextPane = getTaskDrawerContent(
             context: context,
             ref: ref,
@@ -306,18 +316,21 @@ class _TaskCardState extends ConsumerState<TaskCard> {
           ],
         ),
       ),
-      child: GestureDetector(
-        onTap: () => _handleTaskAction('edit'),
-        onSecondaryTapDown: (details) => _showContextMenu(context, details),
-        child: Card(
-          color: category?.color != null
-              ? HexColor(category!.color!).withValues(alpha: 0.1)
-              : Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => _handleTaskAction('edit'),
+          onSecondaryTapDown: (details) => _showContextMenu(context, details),
+          child: Card(
+            color: category?.color != null
+                ? HexColor(category!.color!).withValues(alpha: 0.1)
+                : Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 2.0,
+            child: _buildTaskContent(context, isMobile),
           ),
-          elevation: 2.0,
-          child: _buildTaskContent(context, isMobile),
         ),
       ),
     );

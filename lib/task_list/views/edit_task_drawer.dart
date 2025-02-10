@@ -158,17 +158,50 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.initialTitle);
-    descriptionController =
-        TextEditingController(text: widget.initialDescription);
+
+    // Initialize with empty values first
+    nameController = TextEditingController();
+    descriptionController = TextEditingController();
     dueDate = widget.existingTask?.dueDate ?? DateTime.now();
+
+    // Set the values after the widget is mounted
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        nameController.text = widget.initialTitle;
+        descriptionController.text = widget.initialDescription;
+        setState(() {});
+      }
+    });
   }
 
   @override
   void dispose() {
-    nameController.dispose();
-    descriptionController.dispose();
-    subtasksControllers.forEach((_, controller) => controller.dispose());
+    // Safely dispose controllers
+    try {
+      nameController.dispose();
+    } catch (e) {
+      // Ignore if already disposed
+    }
+
+    try {
+      descriptionController.dispose();
+    } catch (e) {
+      // Ignore if already disposed
+    }
+
+    // Safely dispose subtask controllers
+    for (final controller in subtasksControllers.values) {
+      try {
+        if (controller.text.isNotEmpty) {
+          controller.dispose();
+        }
+      } catch (e) {
+        // Ignore if already disposed
+      }
+    }
+
+    subtasksControllers.clear();
+    subtasks.clear();
     super.dispose();
   }
 
