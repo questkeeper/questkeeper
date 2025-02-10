@@ -79,6 +79,8 @@ class _TaskCardState extends ConsumerState<TaskCard> {
         if (!isMobile && !isCompact) {
           // First set the state to null to trigger cleanup
           ref.read(contextPaneProvider.notifier).state = null;
+          // Ensure the context pane is not collapsed
+          ref.read(isContextPaneCollapsedProvider.notifier).state = false;
 
           // Wait for the next frame to ensure cleanup is complete
           await Future.microtask(() {});

@@ -24,11 +24,11 @@ class ResizablePaneContainer extends ConsumerStatefulWidget {
 class _ResizablePaneContainerState
     extends ConsumerState<ResizablePaneContainer> {
   double _contextPaneWidth = 320;
-  bool _isContextPaneCollapsed = false;
 
   @override
   Widget build(BuildContext context) {
     final contextPane = ref.watch(contextPaneProvider) ?? widget.contextPane;
+    final isContextPaneCollapsed = ref.watch(isContextPaneCollapsedProvider);
 
     if (widget.isCompact) {
       return Row(
@@ -87,7 +87,7 @@ class _ResizablePaneContainerState
       children: [
         Expanded(child: widget.mainContent),
         if (contextPane != null) ...[
-          if (!_isContextPaneCollapsed)
+          if (!isContextPaneCollapsed)
             GestureDetector(
               onHorizontalDragUpdate: (details) {
                 setState(() {
@@ -117,23 +117,23 @@ class _ResizablePaneContainerState
   }
 
   Widget _main(Widget contextPane) {
+    final isContextPaneCollapsed = ref.watch(isContextPaneCollapsedProvider);
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
       child: MouseRegion(
-        cursor: _isContextPaneCollapsed
+        cursor: isContextPaneCollapsed
             ? SystemMouseCursors.click
             : SystemMouseCursors.basic,
         child: GestureDetector(
-          onTap: _isContextPaneCollapsed
+          onTap: isContextPaneCollapsed
               ? () {
-                  setState(() {
-                    _isContextPaneCollapsed = false;
-                  });
+                  ref.read(isContextPaneCollapsedProvider.notifier).state =
+                      false;
                 }
               : null,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: _isContextPaneCollapsed ? 48 : _contextPaneWidth,
+            width: isContextPaneCollapsed ? 48 : _contextPaneWidth,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerLow,
               borderRadius: BorderRadius.only(
@@ -144,17 +144,16 @@ class _ResizablePaneContainerState
             child: Column(
               children: [
                 IconButton(
-                  icon: Icon(_isContextPaneCollapsed
+                  icon: Icon(isContextPaneCollapsed
                       ? LucideIcons.chevron_right
                       : LucideIcons.chevron_left),
                   onPressed: () {
-                    setState(() {
-                      _isContextPaneCollapsed = !_isContextPaneCollapsed;
-                    });
+                    ref.read(isContextPaneCollapsedProvider.notifier).state =
+                        !isContextPaneCollapsed;
                   },
                 ),
                 Expanded(
-                  child: _isContextPaneCollapsed
+                  child: isContextPaneCollapsed
                       ? const RotatedBox(
                           key: ValueKey('collapsed'),
                           quarterTurns: 1,
@@ -164,7 +163,7 @@ class _ResizablePaneContainerState
                         )
                       : AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
-                          width: _isContextPaneCollapsed
+                          width: isContextPaneCollapsed
                               ? 0
                               : _contextPaneWidth - 48,
                           child: OverflowBox(
