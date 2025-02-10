@@ -245,8 +245,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                         .state = !isNavRailExpanded,
                                   ),
 
-                                  _buildProfileView(
-                                      isNavRailExpanded, colorScheme),
+                                  _buildProfileView(colorScheme),
                                 ],
                               ),
                             ),
@@ -280,7 +279,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     );
   }
 
-  Widget _buildProfileView(bool isNavRailExpanded, ColorScheme colorScheme) {
+  Widget _buildProfileView(ColorScheme colorScheme) {
+    final isNavRailExpanded = ref.watch(navRailExpandedProvider);
     return Consumer(
       builder: (context, ref, child) => ref.watch(profileManagerProvider).when(
             error: (error, stack) {
@@ -293,44 +293,21 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                 child: Text("Failed to fetch friends list"),
               );
             },
-            loading: () => Center(child: CircularProgressIndicator()),
-            data: (profileData) => Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorScheme.shadow.withValues(alpha: 0.1),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: AvatarWidget(
-                      seed: profileData.user_id,
-                      radius: 14,
-                    ),
-                  ),
-                  if (isNavRailExpanded) ...[
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        "@${profileData.username}",
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color:
-                                  colorScheme.onSurface.withValues(alpha: 0.8),
-                            ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            data: (profileData) {
+              return NavRailItem(
+                leading: AvatarWidget(
+                  seed: profileData.user_id,
+                  radius: 14,
+                ),
+                label: "@${profileData.username}",
+                isSelected: false,
+                isExpanded: isNavRailExpanded,
+                onTap: () => {
+                  debugPrint("tapped"),
+                },
+              );
+            },
           ),
     );
   }
