@@ -25,7 +25,6 @@ void showDrawer({
   final isDesktop = deviceWidth > 800;
   final drawerWidth =
       isDesktop ? 600.0 : MediaQuery.of(context).size.width * 0.85;
-  debugPrint('drawerWidth: $drawerWidth');
 
   Navigator.of(context).push(
     PageRouteBuilder(
