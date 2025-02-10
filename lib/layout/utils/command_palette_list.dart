@@ -38,8 +38,8 @@ List<Command> buildCommandPaletteList(
           await showDialog(
             context: context,
             builder: (context) => Consumer(
-              builder: (context, ref, _) {
-                final tasks = ref.watch(tasksManagerProvider);
+              builder: (context, dialogRef, _) {
+                final tasks = dialogRef.watch(tasksManagerProvider);
                 return tasks.when(
                   loading: () => const Center(
                     child: CircularProgressIndicator(),
@@ -63,17 +63,21 @@ List<Command> buildCommandPaletteList(
                     onItemSelected: (Tasks task) async {
                       if (context.mounted) {
                         final parentContext = Navigator.of(context).context;
-                        ref.read(commandPaletteVisibleProvider.notifier).state =
-                            false;
+                        dialogRef
+                            .read(commandPaletteVisibleProvider.notifier)
+                            .state = false;
 
-                        final spacesList =
-                            ref.read(spacesManagerProvider).asData?.value ?? [];
+                        final spacesList = dialogRef
+                                .read(spacesManagerProvider)
+                                .asData
+                                ?.value ??
+                            [];
                         final spaceIndex = spacesList
                             .indexWhere((space) => space.id == task.spaceId);
 
                         if (spaceIndex != -1) {
                           final pageController =
-                              ref.read(pageControllerProvider);
+                              dialogRef.read(pageControllerProvider);
                           await pageController.animateToPage(
                             spaceIndex,
                             duration: const Duration(milliseconds: 300),
@@ -81,6 +85,7 @@ List<Command> buildCommandPaletteList(
                           );
                         }
 
+                        // Use the parent context ref after animation
                         if (parentContext.mounted) {
                           showTaskDrawer(
                             context: parentContext,
