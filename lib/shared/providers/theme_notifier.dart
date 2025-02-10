@@ -13,19 +13,21 @@ class ThemeNotifier {
   static const String _textScaleKey = "text_scale_factor";
 
   Future<void> init() async {
-    final prefs = SharedPreferencesManager.instance;
-    final savedTheme = prefs.getString(_themeKey);
-    if (savedTheme != null) {
-      themeModeNotifier.value = ThemeMode.values.firstWhere(
-        (e) => e.toString() == savedTheme,
-        orElse: () => ThemeMode.system,
-      );
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final prefs = SharedPreferencesManager.instance;
+      final savedTheme = prefs.getString(_themeKey);
+      if (savedTheme != null) {
+        themeModeNotifier.value = ThemeMode.values.firstWhere(
+          (e) => e.toString() == savedTheme,
+          orElse: () => ThemeMode.system,
+        );
+      }
 
-    final savedScale = prefs.getDouble(_textScaleKey);
-    if (savedScale != null) {
-      textScaleNotifier.value = savedScale;
-    }
+      final savedScale = prefs.getDouble(_textScaleKey);
+      if (savedScale != null) {
+        textScaleNotifier.value = savedScale;
+      }
+    });
   }
 
   Future<void> setThemeToDark(bool isDark) async {
