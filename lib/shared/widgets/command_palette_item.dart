@@ -23,12 +23,17 @@ class CommandPaletteItem extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Material(
-      color: isSelected ? colorScheme.primaryContainer : Colors.transparent,
+      color: isSelected
+          ? colorScheme.primary.withValues(alpha: 0.2)
+          : Colors.transparent,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onTap,
         onHover: onHover,
-        borderRadius: BorderRadius.circular(8),
+        hoverColor: colorScheme.primary.withValues(alpha: 0.1),
+        customBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16,

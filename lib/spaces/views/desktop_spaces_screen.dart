@@ -97,8 +97,10 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                                         dense: true,
                                         visualDensity: VisualDensity.compact,
                                         selected: currentPage == index,
-                                        selectedTileColor:
-                                            colorScheme.primaryContainer,
+                                        selectedTileColor: colorScheme.primary
+                                            .withValues(alpha: 0.2),
+                                        hoverColor: colorScheme.primary
+                                            .withValues(alpha: 0.1),
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(8),
@@ -107,7 +109,13 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                                           space.title.capitalize(),
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyMedium,
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: currentPage == index
+                                                    ? colorScheme.primary
+                                                    : colorScheme.onSurface,
+                                              ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                         onTap: () {
                                           pageController.jumpToPage(index);
