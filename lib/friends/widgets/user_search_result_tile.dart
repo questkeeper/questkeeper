@@ -40,7 +40,7 @@ class UserSearchResultTile extends ConsumerWidget {
       }
     }
 
-    Widget _buildTrailing() {
+    Widget buildTrailing() {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: _buildActionButtons(
@@ -70,9 +70,10 @@ class UserSearchResultTile extends ConsumerWidget {
       margin: const EdgeInsets.all(8),
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: isMobile
-          ? Theme.of(context).focusColor
-          : Theme.of(context).colorScheme.surfaceContainer,
+      color: Theme.of(context)
+          .colorScheme
+          .surfaceContainerHigh
+          .withValues(alpha: 0.7),
       key: key,
       child: Column(
         children: [
@@ -82,9 +83,9 @@ class UserSearchResultTile extends ConsumerWidget {
                 ? Text(_getSubtitleText(isFriend, isPending, sent))
                 : Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: _buildTrailing(),
+                    child: buildTrailing(),
                   ),
-            trailing: isMobile ? _buildTrailing() : null,
+            trailing: isMobile ? buildTrailing() : null,
             contentPadding: EdgeInsets.symmetric(horizontal: 16),
           )
         ],
