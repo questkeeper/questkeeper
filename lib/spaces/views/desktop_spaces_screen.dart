@@ -130,16 +130,27 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                         ),
 
                         if (game != null && isGameInitialized)
-                          Container(
-                            height: 0,
-                            padding: const EdgeInsets.all(12),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: AnimatedGameContainer(
-                                game: game,
-                                heightFactor: ref.watch(gameHeightProvider),
+                          Stack(
+                            children: [
+                              Container(
+                                height: 200,
+                                padding: const EdgeInsets.all(12),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: AnimatedGameContainer(
+                                    game: game,
+                                    heightFactor: ref.watch(gameHeightProvider),
+                                  ),
+                                ),
                               ),
-                            ),
+                              Container(
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.surfaceContainerLow,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ],
                           ),
                       ],
                     ),

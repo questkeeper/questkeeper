@@ -41,6 +41,7 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
@@ -74,10 +75,12 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
   /// A hacky way to ensure onScroll isn't called again due to the bounce effect/
   /// list height being too small
   void _resetScrollListener() {
+    if (!mounted) return;
     _scrollController.removeListener(_onScroll);
 
     // 200ms delay to prevent multiple calls
     Future.delayed(const Duration(milliseconds: 200), () {
+      if (!mounted) return;
       _scrollController.addListener(_onScroll);
     });
   }
