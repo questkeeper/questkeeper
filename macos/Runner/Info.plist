@@ -48,5 +48,7 @@
 	<true/>
 	<key>com.posthog.posthog.POSTHOG_HOST</key>
 	<string>https://us.i.posthog.com</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
 </dict>
 </plist>
