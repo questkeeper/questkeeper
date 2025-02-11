@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -113,6 +114,15 @@ Future<void> main() async {
         ),
       ),
     );
+  }
+
+  if (Platform.isMacOS) {
+    doWhenWindowReady(() {
+      final win = appWindow;
+      win.minSize = const Size(360, 400);
+      win.alignment = Alignment.center;
+      win.show();
+    });
   }
 }
 
