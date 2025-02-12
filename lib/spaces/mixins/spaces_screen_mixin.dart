@@ -26,11 +26,21 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
   // Override this in mobile view to handle app bar color
   ValueNotifier<String>? get appBarBackgroundColor => null;
 
+  static const String defaultBackgroundColor =
+      "#80bac6"; // Default office color
+  static const String defaultTopBackgroundColor =
+      "#A6CDCF"; // Default office top color
+
   @override
   void initState() {
     super.initState();
+
     pageController = ref.read(pageControllerProvider);
     tabController = TabController(length: 1, vsync: this);
+    backgroundColor.value = defaultBackgroundColor;
+    if (appBarBackgroundColor != null) {
+      appBarBackgroundColor!.value = defaultTopBackgroundColor;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) => setup());
   }
 
@@ -127,25 +137,41 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
   }
 
   void updateBackgroundColors(int page, List<dynamic> spaces, String dateType) {
-    if (page >= spaces.length) {
-      // For the "Create" page
-      final defaultSpace = spaces[0];
-      backgroundColor.value =
-          prefs.getString("background_${defaultSpace.spaceType}_$dateType") ??
-              "#000000";
-      if (appBarBackgroundColor != null) {
-        appBarBackgroundColor!.value = "#000000";
+    try {
+      if (page >= spaces.length) {
+        // For the "Create" page
+        final defaultSpace = spaces.isNotEmpty ? spaces[0] : null;
+        final spaceType = defaultSpace?.spaceType ?? "office";
+
+        backgroundColor.value =
+            prefs.getString("background_${spaceType}_$dateType") ??
+                defaultBackgroundColor;
+
+        if (appBarBackgroundColor != null) {
+          appBarBackgroundColor!.value =
+              prefs.getString("background_${spaceType}_top_$dateType") ??
+                  defaultTopBackgroundColor;
+        }
+      } else {
+        // For regular space pages
+        final space = spaces[page];
+        final spaceType = space?.spaceType ?? "office";
+
+        backgroundColor.value =
+            prefs.getString("background_${spaceType}_$dateType") ??
+                defaultBackgroundColor;
+
+        if (appBarBackgroundColor != null) {
+          appBarBackgroundColor!.value =
+              prefs.getString("background_${spaceType}_top_$dateType") ??
+                  defaultTopBackgroundColor;
+        }
       }
-    } else {
-      // For regular space pages
-      final space = spaces[page];
-      backgroundColor.value =
-          prefs.getString("background_${space.spaceType}_$dateType") ??
-              "#000000";
+    } catch (e) {
+      debugPrint('Error updating background colors: $e');
+      backgroundColor.value = defaultBackgroundColor;
       if (appBarBackgroundColor != null) {
-        appBarBackgroundColor!.value =
-            prefs.getString("background_${space.spaceType}_top_$dateType") ??
-                "#000000";
+        appBarBackgroundColor!.value = defaultTopBackgroundColor;
       }
     }
   }
@@ -154,43 +180,53 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
       {bool isMobile = false}) {
     if (!mounted) return;
 
-    final dateType = DateTime.now().getTimeOfDayType();
-    final currentGame = ref.read(gameProvider);
+    try {
+      final dateType = DateTime.now().getTimeOfDayType();
+      final currentGame = ref.read(gameProvider);
 
-    if (currentGame == null) return;
+      if (currentGame == null) return;
 
-    // Update current page value first
-    currentPageValue.value = page;
+      // Update current page value first
+      currentPageValue.value = page;
 
-    // Update game background
-    currentGame.updateBackground(
-      page == spaces.length
-          ? initialBackgroundPath ?? "placeholder"
-          : "backgrounds/${spaces[page].spaceType}/$dateType.png",
-    );
+      // Update game background
+      final spaceType = page >= spaces.length
+          ? (spaces.isNotEmpty ? spaces[0].spaceType : "office")
+          : spaces[page].spaceType;
 
-    // Determine animation direction based on actual page change
-    final isForward = page > (pageController.page?.floor() ?? 0);
+      currentGame.updateBackground(
+        "backgrounds/$spaceType/$dateType.png",
+      );
 
-    // Sync tab controller
-    if (tabController.index != page) {
-      tabController.animateTo(page);
+      // Determine animation direction based on actual page change
+      final isForward = page > (pageController.page?.floor() ?? 0);
+
+      // Sync tab controller
+      if (tabController.index != page) {
+        tabController.animateTo(page);
+      }
+
+      // Animate game transition
+      currentGame.animateEntry(isForward ? Direction.left : Direction.right);
+
+      // Handle mobile-specific behaviors
+      if (isMobile && page == spaces.length) {
+        showSpaceBottomSheet(context: context, ref: ref);
+        ref.read(gameHeightProvider.notifier).state = 0.3;
+      } else if (isMobile && !isForward && page == spaces.length - 1) {
+        ref.read(gameHeightProvider.notifier).state =
+            ref.read(gameHeightProvider) < 0.2 ? 0.3 : 1.0;
+      }
+
+      // Update background colors
+      updateBackgroundColors(page, spaces, dateType);
+    } catch (e) {
+      debugPrint('Error in handlePageChanged: $e');
+      backgroundColor.value = defaultBackgroundColor;
+      if (appBarBackgroundColor != null) {
+        appBarBackgroundColor!.value = defaultTopBackgroundColor;
+      }
     }
-
-    // Animate game transition
-    currentGame.animateEntry(isForward ? Direction.left : Direction.right);
-
-    // Handle mobile-specific behaviors
-    if (isMobile && page == spaces.length) {
-      showSpaceBottomSheet(context: context, ref: ref);
-      ref.read(gameHeightProvider.notifier).state = 0.3;
-    } else if (isMobile && !isForward && page == spaces.length - 1) {
-      ref.read(gameHeightProvider.notifier).state =
-          ref.read(gameHeightProvider) < 0.2 ? 0.3 : 1.0;
-    }
-
-    // Update background colors
-    updateBackgroundColors(page, spaces, dateType);
   }
 
   @override
