@@ -104,9 +104,9 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: !isMobile ? 16 : 8,
-              vertical: !isMobile ? 8 : 12,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
             ),
             child: Row(
               children: [
@@ -115,7 +115,7 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                     space.title,
                     style: Theme.of(context)
                         .textTheme
-                        .titleLarge
+                        .headlineMedium
                         ?.copyWith(height: 1),
                   ),
                 ),
@@ -221,7 +221,7 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
-                                          color: colorScheme.onSurfaceVariant,
+                                          color: colorScheme.onSurface,
                                         ),
                                   ),
                                 ),

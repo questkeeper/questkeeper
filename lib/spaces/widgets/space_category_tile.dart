@@ -34,7 +34,7 @@ class SpaceCategoryTile extends ConsumerWidget {
         return Container(
           margin:
               category.id == null ? const EdgeInsets.only(bottom: 48) : null,
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: ExpansionTile(
             key: PageStorageKey(category.id),
             backgroundColor: category.color != null
