@@ -260,7 +260,7 @@ class _TaskCardState extends ConsumerState<TaskCard> {
     final isMobile = ref.watch(isMobileProvider);
 
     return Dismissible(
-      key: ValueKey(task.id),
+      key: ValueKey("${task.id}-${task.completed}"),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
           await ref.read(tasksManagerProvider.notifier).toggleStar(widget.task);
@@ -284,6 +284,12 @@ class _TaskCardState extends ConsumerState<TaskCard> {
           return true;
         }
       },
+      onDismissed: (_) {
+        // This is called after the dismissal animation completes
+        // No need to do anything here as the state is already updated
+      },
+      direction:
+          task.completed ? DismissDirection.none : DismissDirection.horizontal,
       background: Container(
         color: Colors.amber,
         alignment: Alignment.centerLeft,
@@ -318,23 +324,26 @@ class _TaskCardState extends ConsumerState<TaskCard> {
           ],
         ),
       ),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: () => _handleTaskAction('edit'),
-          onSecondaryTapDown: (details) => _showContextMenu(context, details),
-          child: Card(
-            color: category?.color != null
-                ? HexColor(category!.color!).withValues(alpha: 0.1)
-                : Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+      child: task.completed
+          ? SizedBox()
+          : MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => _handleTaskAction('edit'),
+                onSecondaryTapDown: (details) =>
+                    _showContextMenu(context, details),
+                child: Card(
+                  color: category?.color != null
+                      ? HexColor(category!.color!).withValues(alpha: 0.1)
+                      : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 2.0,
+                  child: _buildTaskContent(context, isMobile),
+                ),
+              ),
             ),
-            elevation: 2.0,
-            child: _buildTaskContent(context, isMobile),
-          ),
-        ),
-      ),
     );
   }
 }
