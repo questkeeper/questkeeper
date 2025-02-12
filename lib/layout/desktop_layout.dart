@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:questkeeper/layout/utils/command_palette_list.dart';
 import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/layout/widgets/nav_rail_item.dart';
@@ -102,75 +101,63 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                   Container(
                     height: 48, // Adding fixed height for the title bar
                     padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-                    child: MoveWindow(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Center(
-                              child: ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 800),
-                                child: InkWell(
-                                  onTap: _toggleCommandPalette,
-                                  borderRadius: BorderRadius.circular(6),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.surfaceContainerLow,
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(
-                                        color: colorScheme.outlineVariant,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          LucideIcons.search,
-                                          size: 16,
-                                          color: colorScheme.onSurface
-                                              .withOpacity(0.5),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Search or type a command...',
-                                          style: TextStyle(
-                                            color: colorScheme.onSurface
-                                                .withOpacity(0.5),
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 6,
-                                            vertical: 2,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: colorScheme
-                                                .surfaceContainerHigh,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: Text(
-                                            Platform.isMacOS ? '⌘P' : 'Ctrl+P',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: colorScheme.onSurface
-                                                  .withOpacity(0.5),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 800),
+                        child: InkWell(
+                          onTap: _toggleCommandPalette,
+                          borderRadius: BorderRadius.circular(6),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceContainerLow,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: colorScheme.outlineVariant,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  LucideIcons.search,
+                                  size: 16,
+                                  color: colorScheme.onSurface.withOpacity(0.5),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Search or type a command...',
+                                  style: TextStyle(
+                                    color:
+                                        colorScheme.onSurface.withOpacity(0.5),
+                                  ),
+                                ),
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surfaceContainerHigh,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    Platform.isMacOS ? '⌘P' : 'Ctrl+P',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: colorScheme.onSurface
+                                          .withOpacity(0.5),
                                     ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
