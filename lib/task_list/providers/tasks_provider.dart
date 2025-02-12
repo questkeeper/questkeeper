@@ -36,9 +36,7 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
   void updateHomeWidget(List<Tasks> tasks) {
     try {
       if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
-        HomeWidgetMobile().updateHomeWidget(
-          tasks,
-        );
+        HomeWidgetMobile().updateHomeWidget(tasks);
       }
     } catch (e) {
       debugPrint("Platform implementation error: $e");
@@ -70,10 +68,15 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
   }
 
   Future<void> toggleComplete(Tasks task) async {
+    final oldState = state.value ?? [];
+    final updatedTask = task.copyWith(completed: !task.completed);
+    final newState =
+        oldState.map((t) => t.id == task.id ? updatedTask : t).toList();
+
     performActionWithUndo(
       UndoAction(
-        previousState: state.value ?? [],
-        newState: (state.value ?? []).where((a) => a.id != task.id).toList(),
+        previousState: oldState,
+        newState: newState,
         repositoryAction: () async {
           await _repository.toggleComplete(task);
           // Sync notifications after toggling complete
@@ -87,14 +90,14 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
 
   Future<void> toggleStar(Tasks task) async {
     final updatedTask = task.copyWith(starred: !task.starred);
-    _updateTask(updatedTask, () => _repository.toggleStar(task));
+    _updateTaskInPlace(updatedTask, () => _repository.toggleStar(task));
   }
 
   Future<void> updateTask(Tasks task) async {
-    _updateTask(task, () => _repository.updateTask(task));
+    _updateTaskInPlace(task, () => _repository.updateTask(task));
   }
 
-  void _updateTask(
+  void _updateTaskInPlace(
       Tasks updatedTask, Future<void> Function() repositoryAction) async {
     final oldState = state.value ?? [];
     final taskIndex = oldState.indexWhere((t) => t.id == updatedTask.id);
@@ -103,6 +106,7 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
     final newState = List<Tasks>.from(oldState);
     newState[taskIndex] = updatedTask;
 
+    // Update state immediately but maintain list order
     state = AsyncValue.data(newState);
 
     try {
@@ -110,15 +114,19 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
       // Sync notifications after updating a task
       await _syncNotificationsIfInitialized();
     } catch (error) {
-      // Handle error and possibly revert state
+      // Revert state on error
+      state = AsyncValue.data(oldState);
     }
   }
 
   Future<void> deleteTask(Tasks task) async {
+    final oldState = state.value ?? [];
+    final newState = oldState.where((t) => t.id != task.id).toList();
+
     try {
       performActionWithUndo(UndoAction(
-        previousState: state.value ?? [],
-        newState: (state.value ?? []).where((a) => a.id != task.id).toList(),
+        previousState: oldState,
+        newState: newState,
         repositoryAction: () async {
           await _repository.deleteTask(task);
           // Sync notifications after deleting a task
@@ -127,7 +135,7 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
         successMessage: "Task deleted successfully",
       ));
     } catch (error) {
-      // Handle error
+      // State will be handled by UndoManagerMixin
     }
   }
 
