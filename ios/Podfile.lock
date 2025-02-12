@@ -3,7 +3,6 @@ PODS:
     - Flutter
   - connectivity_plus (0.0.1):
     - Flutter
-    - FlutterMacOS
   - device_info_plus (0.0.1):
     - Flutter
   - Firebase/CoreOnly (11.7.0):
@@ -84,7 +83,7 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - PostHog (3.19.4)
+  - PostHog (3.19.5)
   - posthog_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -108,7 +107,7 @@ PODS:
 
 DEPENDENCIES:
   - app_links (from `.symlinks/plugins/app_links/ios`)
-  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/darwin`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
@@ -144,7 +143,7 @@ EXTERNAL SOURCES:
   app_links:
     :path: ".symlinks/plugins/app_links/ios"
   connectivity_plus:
-    :path: ".symlinks/plugins/connectivity_plus/darwin"
+    :path: ".symlinks/plugins/connectivity_plus/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   firebase_core:
@@ -180,7 +179,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   app_links: 3da4c36b46cac3bf24eb897f1a6ce80bda109874
-  connectivity_plus: 2256d3e20624a7749ed21653aafe291a46446fee
+  connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   Firebase: a64bf6a8546e6eab54f1c715cd6151f39d2329f4
   firebase_core: 3d36094af9b47c46bfb965943413a39eebaca4db
@@ -199,7 +198,7 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
-  PostHog: 3de27170578be89278ae28546c9ae33f7ff8eb71
+  PostHog: 2b7809b229fc923f3597e04f53d8c2549463ddfc
   posthog_flutter: 18dfd69569a72d593cdaf6f2833e9eda5e27b4b8
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   rive_common: dd421daaf9ae69f0125aa761dd96abd278399952

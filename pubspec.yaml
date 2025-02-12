@@ -29,15 +29,15 @@ dependencies:
   supabase: ^2.6.2
   supabase_flutter: ^2.8.3
   home_widget: ^0.7.0+1
-  shared_preferences: ^2.5.1
+  shared_preferences: ^2.5.2
   flutter_lucide: ^1.6.2
   riverpod_generator: ^2.6.4
   rename_app: ^1.6.2
   email_validator: ^3.0.0
   sentry_flutter: ^8.13.0
   feedback_sentry: ^3.1.0
-  package_info_plus: ^8.2.0
-  device_info_plus: ^11.2.2
+  package_info_plus: ^8.2.1
+  device_info_plus: ^11.3.0
   http: ^1.3.0
   flame: ^1.24.0
   flame_tiled: ^1.21.2
@@ -58,8 +58,8 @@ dependencies:
   sentry_dio: ^8.13.0
   numberpicker: ^2.1.2
   posthog_flutter: ^4.10.2
-  connectivity_plus: ^6.1.2
-  introduction_screen: ^3.1.14
+  connectivity_plus: ^6.1.3
+  introduction_screen: ^3.1.16
   lottie: ^3.3.0
   dotlottie_loader: ^0.0.4
   rive: ^0.13.20
@@ -77,10 +77,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  build_runner: ^2.4.14
-  custom_lint: ^0.7.2
+  build_runner: ^2.4.15
+  custom_lint: ^0.7.3
   riverpod_lint: ^2.6.4
-  json_serializable: ^6.9.3
+  json_serializable: ^6.9.4
   msix: ^3.16.8
 
 dependency_overrides:
