@@ -20,9 +20,8 @@ Widget getTaskDrawerContent({
   required WidgetRef ref,
   Tasks? existingTask,
 }) {
-  final PageController pageController = ref.read(pageControllerProvider);
   final spacesList = ref.read(spacesManagerProvider).asData;
-  final existingSpace = getCurrentSpace(ref, pageController, spacesList);
+  final existingSpace = getCurrentSpace(ref);
 
   final subtasksList = existingTask != null
       ? ref
@@ -67,9 +66,8 @@ void showTaskDrawer({
   required WidgetRef ref,
   Tasks? existingTask,
 }) {
-  final PageController pageController = ref.read(pageControllerProvider);
   final spacesList = ref.read(spacesManagerProvider).asData;
-  final existingSpace = getCurrentSpace(ref, pageController, spacesList);
+  final existingSpace = getCurrentSpace(ref);
 
   final subtasksList = existingTask != null
       ? ref
@@ -433,11 +431,12 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
   }
 }
 
-Spaces? getCurrentSpace(WidgetRef ref, PageController pageController,
-    AsyncValue<List<Spaces>>? spacesList) {
-  if (spacesList != null && spacesList.asData == null) return null;
+Spaces? getCurrentSpace(WidgetRef ref) {
+  final spacesList = ref.read(spacesManagerProvider).asData;
+  final pageController = ref.read(pageControllerProvider);
+  if (spacesList == null) return null;
 
-  final spaces = spacesList?.asData!.value;
+  final spaces = spacesList.asData?.value;
   if (spaces == null) return null;
 
   final currentPage = pageController.page?.round() ?? 0;

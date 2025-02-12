@@ -119,6 +119,7 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                                         ),
                                         onTap: () {
                                           pageController.jumpToPage(index);
+                                          currentPageValue.value = index;
                                         },
                                       ),
                                     ),

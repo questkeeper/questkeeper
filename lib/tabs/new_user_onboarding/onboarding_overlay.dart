@@ -107,10 +107,7 @@ class _OnboardingModal extends ConsumerWidget {
                     description: 'A category helps you group related tasks',
                     onTap: () async {
                       // Get current space
-                      final currentSpace = getCurrentSpace(
-                          ref,
-                          ref.read(pageControllerProvider),
-                          AsyncValue.data(spaces));
+                      final currentSpace = getCurrentSpace(ref);
 
                       if (currentSpace == null) return;
                       showCategoryBottomSheet(
