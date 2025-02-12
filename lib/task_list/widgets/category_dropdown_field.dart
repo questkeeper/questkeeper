@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
 
 class CategoryDropdownField extends ConsumerStatefulWidget {
@@ -27,6 +28,31 @@ class CategoryDropdownField extends ConsumerStatefulWidget {
 }
 
 class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
+  late PageController _pageController;
+  int _lastKnownPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = ref.read(pageControllerProvider);
+    _pageController.addListener(_onPageChanged);
+  }
+
+  @override
+  void dispose() {
+    _pageController.removeListener(_onPageChanged);
+    super.dispose();
+  }
+
+  void _onPageChanged() {
+    final newPage = _pageController.page?.round() ?? 0;
+    if (_lastKnownPage != newPage) {
+      _lastKnownPage = newPage;
+      // Force a rebuild of just this widget
+      if (mounted) setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Watch the provider to get the latest categories
