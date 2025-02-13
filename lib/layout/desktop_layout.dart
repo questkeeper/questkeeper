@@ -90,12 +90,12 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     return RawKeyboardListener(
       focusNode: _focusNode,
       onKey: _handleKeyEvent,
-      child: SafeArea(
-        child: Stack(
-          children: [
-            Scaffold(
-              backgroundColor: colorScheme.surface,
-              body: Column(
+      child: Stack(
+        children: [
+          Scaffold(
+            backgroundColor: colorScheme.surface,
+            body: SafeArea(
+              child: Column(
                 children: [
                   // Command Palette Bar with Window Controls
                   Container(
@@ -259,13 +259,13 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                 ],
               ),
             ),
-            if (isCommandPaletteVisible)
-              CommandPalette(
-                commands:
-                    buildCommandPaletteList(context, ref, widget.onTabSelected),
-              ),
-          ],
-        ),
+          ),
+          if (isCommandPaletteVisible)
+            CommandPalette(
+              commands:
+                  buildCommandPaletteList(context, ref, widget.onTabSelected),
+            ),
+        ],
       ),
     );
   }
