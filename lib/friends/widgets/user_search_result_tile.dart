@@ -5,6 +5,7 @@ import 'package:questkeeper/friends/providers/friends_provider.dart';
 import 'package:questkeeper/friends/providers/friends_request_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 
 class UserSearchResultTile extends ConsumerWidget {
   const UserSearchResultTile({
@@ -18,6 +19,7 @@ class UserSearchResultTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isMobile = ref.watch(isMobileProvider);
     final friendRequestManager =
         ref.watch(friendsRequestManagerProvider.notifier);
     final friendsManager = ref.watch(friendsManagerProvider.notifier);
@@ -27,49 +29,64 @@ class UserSearchResultTile extends ConsumerWidget {
     final sent = user.sent;
 
     void reloadSearch() {
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      } else {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const FriendSearchView()),
-        );
+      if (isMobile) {
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const FriendSearchView()),
+          );
+        }
       }
+    }
+
+    Widget buildTrailing() {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: _buildActionButtons(
+            isFriend: isFriend,
+            isPending: isPending,
+            sent: sent,
+            onRemoveFriend: () {
+              friendsManager.removeFriend(user.username);
+              reloadSearch();
+            },
+            onRejectRequest: () {
+              friendRequestManager.rejectRequest(user);
+              reloadSearch();
+            },
+            onAcceptRequest: () {
+              friendRequestManager.acceptRequest(user);
+              reloadSearch();
+            },
+            onSendRequest: () {
+              friendRequestManager.sendRequest(user.username);
+              reloadSearch();
+            }),
+      );
     }
 
     return Card(
       margin: const EdgeInsets.all(8),
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: Theme.of(context).focusColor,
+      color: Theme.of(context)
+          .colorScheme
+          .surfaceContainerHigh
+          .withValues(alpha: 0.7),
       key: key,
       child: Column(
         children: [
           ListTile(
             title: Text(user.username),
-            subtitle: Text(_getSubtitleText(isFriend, isPending, sent)),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: _buildActionButtons(
-                  isFriend: isFriend,
-                  isPending: isPending,
-                  sent: sent,
-                  onRemoveFriend: () {
-                    friendsManager.removeFriend(user.username);
-                    reloadSearch();
-                  },
-                  onRejectRequest: () {
-                    friendRequestManager.rejectRequest(user);
-                    reloadSearch();
-                  },
-                  onAcceptRequest: () {
-                    friendRequestManager.acceptRequest(user);
-                    reloadSearch();
-                  },
-                  onSendRequest: () {
-                    friendRequestManager.sendRequest(user.username);
-                    reloadSearch();
-                  }),
-            ),
+            subtitle: isMobile
+                ? Text(_getSubtitleText(isFriend, isPending, sent))
+                : Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: buildTrailing(),
+                  ),
+            trailing: isMobile ? buildTrailing() : null,
+            contentPadding: EdgeInsets.symmetric(horizontal: 16),
           )
         ],
       ),

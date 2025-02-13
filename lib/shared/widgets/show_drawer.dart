@@ -22,6 +22,10 @@ void showDrawer({
   final deviceWidth = MediaQuery.of(context).size.width;
   bool isPopping = false;
 
+  final isDesktop = deviceWidth > 800;
+  final drawerWidth =
+      isDesktop ? 600.0 : MediaQuery.of(context).size.width * 0.85;
+
   Navigator.of(context).push(
     PageRouteBuilder(
       opaque: false,
@@ -55,48 +59,77 @@ void showDrawer({
               }
             }
           },
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: Offset(widthOffsetLeftLean ? 1.0 : -1.0, 0.0),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.fastEaseInToSlowEaseOut,
-            )),
-            child: Dismissible(
-              key: Key(key),
-              confirmDismiss: (_) async {
-                if (!isPopping && context.mounted) {
-                  isPopping = false;
-                  await Navigator.of(context).maybePop(true);
-                  isPopping = false;
-                }
-                return true;
-              },
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: deviceWidth * (widthOffsetLeftLean ? 0.13 : 0.02),
-                  right: deviceWidth * (widthOffsetLeftLean ? 0.02 : 0.13),
-                ),
-                child: SafeArea(
-                  child: Material(
-                    color: Colors.transparent,
+          child: SafeArea(
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: Offset(widthOffsetLeftLean ? 1.0 : -1.0, 0.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.fastEaseInToSlowEaseOut,
+              )),
+              child: Dismissible(
+                key: Key(key),
+                confirmDismiss: (_) async {
+                  if (!isPopping && context.mounted) {
+                    isPopping = false;
+                    await Navigator.of(context).maybePop(true);
+                    isPopping = false;
+                  }
+                  return true;
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: deviceWidth * (widthOffsetLeftLean ? 0.13 : 0.02),
+                    right: deviceWidth * (widthOffsetLeftLean ? 0.02 : 0.13),
+                    // if safearea is 0, then add 16 to top and bottom
+                    top: MediaQuery.of(context).padding.top == 0 ? 16 : 0,
+                    bottom: MediaQuery.of(context).padding.bottom == 0 ? 16 : 0,
+                  ),
+                  child: Align(
+                    alignment: widthOffsetLeftLean
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
                     child: Container(
+                      width: drawerWidth,
                       decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: Colors.black.withOpacity(0.1),
                             blurRadius: 10,
                             offset: const Offset(-2, 0),
                           ),
                         ],
                       ),
-                      width: MediaQuery.of(context).size.width * 0.85,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
-                        child: child,
+                        child: SafeArea(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.1),
+                                    blurRadius: 10,
+                                    offset: const Offset(-2, 0),
+                                  ),
+                                ],
+                              ),
+                              constraints:
+                                  BoxConstraints(maxWidth: drawerWidth),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: child,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),

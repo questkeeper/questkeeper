@@ -18,6 +18,18 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>QuestKeeper</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>questkeeper</string>
+				<string>app.questkeeper</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSMinimumSystemVersion</key>
@@ -28,32 +40,15 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-
-	<!-- Deeplinks  -->
-	<key>CFBundleURLTypes</key>
-	<array>
-    	<dict>
-			<key>CFBundleURLName</key>
-			<!-- abstract name for this URL type (you can leave it blank) -->
-			<string>QuestKeeper</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<!-- your schemes -->
-				<string>questkeeper</string>
-				<string>app.questkeeper</string>
-        	</array>
-    	</dict>
-	</array>
-
-	<!-- Posthog stuff -->
 	<key>com.posthog.posthog.API_KEY</key>
-    <string>phc_qnSKWJwL6oOoLYSEDEf6EVvDFyu336zFsUUq4loX3e6</string>
-    <key>com.posthog.posthog.POSTHOG_HOST</key>
-    <string>https://us.i.posthog.com</string>
-    <key>com.posthog.posthog.CAPTURE_APPLICATION_LIFECYCLE_EVENTS</key>
-    <true/>
-    <key>com.posthog.posthog.DEBUG</key>
-    <true/>
-
+	<string>phc_qnSKWJwL6oOoLYSEDEf6EVvDFyu336zFsUUq4loX3e6</string>
+	<key>com.posthog.posthog.CAPTURE_APPLICATION_LIFECYCLE_EVENTS</key>
+	<true/>
+	<key>com.posthog.posthog.DEBUG</key>
+	<true/>
+	<key>com.posthog.posthog.POSTHOG_HOST</key>
+	<string>https://us.i.posthog.com</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
 </dict>
 </plist>

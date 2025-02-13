@@ -50,7 +50,7 @@ class _FriendsListState extends ConsumerState<FriendsList> {
           children: [
             Material(
               elevation: 1,
-              child: UserProfileView(theme: theme),
+              child: UserProfileView(),
             ),
 
             Material(

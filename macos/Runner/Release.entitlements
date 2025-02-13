@@ -4,9 +4,17 @@
 <dict>
 	<key>com.apple.developer.aps-environment</key>
 	<string>development</string>
+	<key>com.apple.developer.push-to-talk</key>
+	<true/>
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.questkeeper</string>
+	</array>
 	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.network.server</key>
 	<true/>
 </dict>
 </plist>

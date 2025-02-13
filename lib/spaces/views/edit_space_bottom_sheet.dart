@@ -5,6 +5,7 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
 import 'package:questkeeper/shared/extensions/datetime_extensions.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
@@ -26,25 +27,56 @@ void showSpaceBottomSheet({
   final TextEditingController nameController =
       TextEditingController(text: existingSpace?.title);
   final isEditing = existingSpace != null;
+  final isDesktop = !ref.read(isMobileProvider);
 
-  showModalBottomSheet(
-    context: context,
-    enableDrag: true,
-    isDismissible: true,
-    showDragHandle: true,
-    isScrollControlled: true,
-    backgroundColor: Colors
-        .transparent, // Make the background transparent to show the gradient
-    builder: (BuildContext context) {
-      return _SpaceBottomSheetContent(
-        spaceType: existingSpace?.spaceType ?? "office",
-        nameController: nameController,
-        isEditing: isEditing,
-        ref: ref,
-        existingSpace: existingSpace,
-      );
-    },
-  );
+  if (isDesktop) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 600),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: _SpaceBottomSheetContent(
+              spaceType: existingSpace?.spaceType ?? "office",
+              nameController: nameController,
+              isEditing: isEditing,
+              ref: ref,
+              existingSpace: existingSpace,
+              isDesktop: true,
+            ),
+          ),
+        );
+      },
+    );
+  } else {
+    showModalBottomSheet(
+      context: context,
+      enableDrag: true,
+      isDismissible: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      backgroundColor: Colors
+          .transparent, // Make the background transparent to show the gradient
+      builder: (BuildContext context) {
+        return _SpaceBottomSheetContent(
+          spaceType: existingSpace?.spaceType ?? "office",
+          nameController: nameController,
+          isEditing: isEditing,
+          ref: ref,
+          existingSpace: existingSpace,
+        );
+      },
+    );
+  }
 }
 
 class _SpaceBottomSheetContent extends StatefulWidget {
@@ -53,6 +85,7 @@ class _SpaceBottomSheetContent extends StatefulWidget {
   final bool isEditing;
   final WidgetRef ref;
   final Spaces? existingSpace;
+  final bool isDesktop;
 
   const _SpaceBottomSheetContent({
     required this.nameController,
@@ -60,6 +93,7 @@ class _SpaceBottomSheetContent extends StatefulWidget {
     required this.isEditing,
     required this.ref,
     this.existingSpace,
+    this.isDesktop = false,
   });
 
   @override
@@ -394,7 +428,8 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
           borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
         ),
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+          bottom:
+              widget.isDesktop ? 16 : MediaQuery.of(context).viewInsets.bottom,
           left: 24,
           right: 24,
           top: 16,

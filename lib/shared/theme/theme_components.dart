@@ -1,18 +1,50 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:questkeeper/shared/theme/text_theme.dart';
+
+class ResponsiveTheme {
+  static bool get isDesktop =>
+      Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+
+  // Button dimensions
+  static double get buttonHeight => isDesktop ? 28.0 : 32.0;
+  static double get buttonPadding => isDesktop ? 12.0 : 16.0;
+  static double get buttonVerticalPadding => isDesktop ? 8.0 : 12.0;
+
+  // Border radius
+  static double get smallRadius => isDesktop ? 6.0 : 8.0;
+  static double get mediumRadius => isDesktop ? 8.0 : 12.0;
+  static double get largeRadius => isDesktop ? 12.0 : 16.0;
+
+  // Input field
+  static double get inputHorizontalPadding => isDesktop ? 12.0 : 16.0;
+  static double get inputVerticalPadding => isDesktop ? 8.0 : 12.0;
+
+  // Text sizes
+  static double get bodyTextSize => isDesktop ? 13.0 : 14.0;
+  static double get labelTextSize => isDesktop ? 12.0 : 14.0;
+  static double get helperTextSize => isDesktop ? 11.0 : 12.0;
+}
 
 class ModernTheme {
-  static const double buttonHeight = 32.0;
-  static const double mediumRadius = 12.0;
-  static const double largeRadius = 16.0;
-  static const double smallRadius = 8.0;
+  static double get buttonHeight => ResponsiveTheme.buttonHeight;
+  static double get mediumRadius => ResponsiveTheme.mediumRadius;
+  static double get largeRadius => ResponsiveTheme.largeRadius;
+  static double get smallRadius => ResponsiveTheme.smallRadius;
 
   static OutlinedButtonThemeData outlinedButtonTheme(ColorScheme colors) {
     return OutlinedButtonThemeData(
       style: ButtonStyle(
         padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          EdgeInsets.symmetric(
+            horizontal: ResponsiveTheme.buttonPadding,
+            vertical: ResponsiveTheme.buttonVerticalPadding,
+          ),
         ),
-        minimumSize: WidgetStateProperty.all(const Size(64, buttonHeight)),
+        minimumSize: WidgetStateProperty.all(Size(64, buttonHeight)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.standard,
         foregroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return colors.onSurface.withValues(alpha: 0.38);
@@ -50,8 +82,8 @@ class ModernTheme {
           ),
         ),
         textStyle: WidgetStateProperty.all(
-          const TextStyle(
-            fontSize: 14,
+          TextStyle(
+            fontSize: ResponsiveTheme.bodyTextSize,
             fontWeight: FontWeight.w500,
             letterSpacing: 0.1,
           ),
@@ -64,9 +96,14 @@ class ModernTheme {
     return ElevatedButtonThemeData(
       style: ButtonStyle(
         padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          EdgeInsets.symmetric(
+            horizontal: ResponsiveTheme.buttonPadding,
+            vertical: ResponsiveTheme.buttonVerticalPadding,
+          ),
         ),
-        minimumSize: WidgetStateProperty.all(const Size(64, buttonHeight)),
+        minimumSize: WidgetStateProperty.all(Size(64, buttonHeight)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.standard,
         backgroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return colors.onSurface.withValues(alpha: 0.12);
@@ -104,8 +141,8 @@ class ModernTheme {
           ),
         ),
         textStyle: WidgetStateProperty.all(
-          const TextStyle(
-            fontSize: 14,
+          TextStyle(
+            fontSize: ResponsiveTheme.bodyTextSize,
             fontWeight: FontWeight.w500,
             letterSpacing: 0.1,
           ),
@@ -118,9 +155,14 @@ class ModernTheme {
     return FilledButtonThemeData(
       style: ButtonStyle(
         padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          EdgeInsets.symmetric(
+            horizontal: ResponsiveTheme.buttonPadding,
+            vertical: ResponsiveTheme.buttonVerticalPadding,
+          ),
         ),
-        minimumSize: WidgetStateProperty.all(const Size(64, buttonHeight)),
+        minimumSize: WidgetStateProperty.all(Size(64, buttonHeight)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.standard,
         backgroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return colors.onSurface.withValues(alpha: 0.12);
@@ -146,8 +188,8 @@ class ModernTheme {
           ),
         ),
         textStyle: WidgetStateProperty.all(
-          const TextStyle(
-            fontSize: 14,
+          TextStyle(
+            fontSize: ResponsiveTheme.bodyTextSize,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.1,
           ),
@@ -160,9 +202,14 @@ class ModernTheme {
     return TextButtonThemeData(
       style: ButtonStyle(
         padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          EdgeInsets.symmetric(
+            horizontal: ResponsiveTheme.buttonPadding,
+            vertical: ResponsiveTheme.buttonVerticalPadding,
+          ),
         ),
-        minimumSize: WidgetStateProperty.all(const Size(64, buttonHeight)),
+        minimumSize: WidgetStateProperty.all(Size(64, buttonHeight)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.standard,
         foregroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return colors.onSurface.withValues(alpha: 0.38);
@@ -178,8 +225,8 @@ class ModernTheme {
           ),
         ),
         textStyle: WidgetStateProperty.all(
-          const TextStyle(
-            fontSize: 14,
+          TextStyle(
+            fontSize: ResponsiveTheme.bodyTextSize,
             fontWeight: FontWeight.w500,
             letterSpacing: 0.1,
           ),
@@ -197,9 +244,9 @@ class ModernTheme {
         color: colors.primary,
         width: 2,
       ),
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: largeRadius,
-        vertical: mediumRadius,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: ResponsiveTheme.inputHorizontalPadding,
+        vertical: ResponsiveTheme.inputVerticalPadding,
       ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(mediumRadius),
@@ -223,19 +270,19 @@ class ModernTheme {
       ),
       labelStyle: TextStyle(
         color: colors.onSurfaceVariant,
-        fontSize: 14,
+        fontSize: ResponsiveTheme.labelTextSize,
       ),
       hintStyle: TextStyle(
         color: colors.onSurfaceVariant.withValues(alpha: 0.7),
-        fontSize: 14,
+        fontSize: ResponsiveTheme.labelTextSize,
       ),
       helperStyle: TextStyle(
         color: colors.onSurfaceVariant,
-        fontSize: 12,
+        fontSize: ResponsiveTheme.helperTextSize,
       ),
       errorStyle: TextStyle(
         color: colors.error,
-        fontSize: 12,
+        fontSize: ResponsiveTheme.helperTextSize,
       ),
     );
   }
@@ -269,7 +316,7 @@ class ModernTheme {
     return BottomSheetThemeData(
       backgroundColor: colors.surface,
       modalBackgroundColor: colors.surface,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(largeRadius),
         ),
@@ -279,14 +326,16 @@ class ModernTheme {
   }
 
   static IconButtonThemeData iconButtonTheme(ColorScheme colors) {
-    return IconButtonThemeData(style: ButtonStyle(
-      iconColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.disabled)) {
-          return colors.onSurface.withValues(alpha: 0.38);
-        }
-        return colors.primary;
-      }),
-    ));
+    return IconButtonThemeData(
+      style: ButtonStyle(
+        iconColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return colors.onSurface.withValues(alpha: 0.38);
+          }
+          return colors.primary;
+        }),
+      ),
+    );
   }
 
   static DialogThemeData dialogTheme(ColorScheme colors) {
@@ -309,9 +358,16 @@ class ModernTheme {
     ];
   }
 
-  static ThemeData modernThemeData(ColorScheme colorScheme) {
+  static ThemeData modernThemeData(
+      BuildContext context, ColorScheme colorScheme) {
     return ThemeData(
       colorScheme: colorScheme,
+      textTheme: ModernTextTheme.create(
+        context,
+        displayFont: GoogleFonts.outfit,
+        bodyFont: GoogleFonts.inter,
+        brightness: Brightness.light,
+      ),
       textButtonTheme: textButtonTheme(colorScheme),
       outlinedButtonTheme: outlinedButtonTheme(colorScheme),
       elevatedButtonTheme: elevatedButtonTheme(colorScheme),

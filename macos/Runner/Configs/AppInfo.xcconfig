@@ -8,7 +8,7 @@
 PRODUCT_NAME = QuestKeeper
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = app.questkeeper.macos
+PRODUCT_BUNDLE_IDENTIFIER = app.questkeeper
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 Ishan Misra. All rights reserved.

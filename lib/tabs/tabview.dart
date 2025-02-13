@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:questkeeper/friends/views/desktop_friends_leaderboard.dart';
+import 'package:questkeeper/layout/desktop_layout.dart';
+import 'package:questkeeper/spaces/views/desktop_spaces_screen.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
-import 'package:questkeeper/constants.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
+
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
@@ -12,6 +15,7 @@ import 'package:questkeeper/shared/widgets/show_drawer.dart';
 import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:questkeeper/tabs/modern_bottom_bar.dart';
 import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 
 class TabView extends ConsumerStatefulWidget {
   const TabView({super.key});
@@ -23,9 +27,15 @@ class TabView extends ConsumerStatefulWidget {
 class _TabViewState extends ConsumerState<TabView> {
   int _selectedIndex = 0;
 
-  static const List<Widget> pages = [
+  static const List<Widget> _mobilePages = [
     AllSpacesScreen(),
     FriendsList(),
+  ];
+
+  static const List<Widget> _desktopPages = [
+    DesktopSpacesScreen(),
+    DesktopFriendsLeaderboard(),
+    SettingsScreen(),
   ];
 
   @override
@@ -39,33 +49,36 @@ class _TabViewState extends ConsumerState<TabView> {
     setState(() {
       _selectedIndex = index;
     });
+
+    // Update the context pane provider when tab changes
+    ref.read(contextPaneProvider.notifier).state = _buildContextualPane(index);
   }
 
   @override
   Widget build(BuildContext context) {
     final pointsBadge = ref.watch(pointsNotificationManagerProvider);
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final double width = constraints.maxWidth;
-        if (width < 800) {
+        // Schedule the size update for the next frame
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(windowSizeProvider.notifier).setSize(Size(
+                constraints.maxWidth,
+                constraints.maxHeight,
+              ));
+        });
+
+        final isMobile = ref.watch(isMobileProvider);
+
+        if (isMobile) {
           // Mobile layout
           return Scaffold(
             extendBody: true,
             body: Stack(
               children: [
-                // Main content scaffold that contains the pages
-                // Scaffold(
-                //   body: IndexedStack(
-                //     // Using IndexedStack for better state preservation
-                //     index: _selectedIndex,
-                //     children: pages,
-                //   ),
-                //   // Remove bottom navigation bar from here
-                // ),
-
                 Scaffold(
                   body: Stack(
-                    children: List.generate(pages.length, (index) {
+                    children: List.generate(_mobilePages.length, (index) {
                       return AnimatedOpacity(
                         // FadeThrough transition
                         duration: const Duration(milliseconds: 300),
@@ -73,7 +86,7 @@ class _TabViewState extends ConsumerState<TabView> {
                         curve: Curves.easeInToLinear,
                         child: IgnorePointer(
                           ignoring: _selectedIndex != index,
-                          child: pages[index],
+                          child: _mobilePages[index],
                         ),
                       );
                     }),
@@ -121,53 +134,32 @@ class _TabViewState extends ConsumerState<TabView> {
             ),
           );
         } else {
-          // Tablet layout
-          return Scaffold(
-            body: Row(
-              children: [
-                NavigationRail(
-                  selectedIndex: _selectedIndex,
-                  onDestinationSelected: _onItemTapped,
-                  labelType: NavigationRailLabelType.all,
-                  destinations: const <NavigationRailDestination>[
-                    if (isDebug)
-                      NavigationRailDestination(
-                          icon: Icon(LucideIcons.trophy),
-                          label: Text('Quests')),
-                    NavigationRailDestination(
-                        icon: Icon(LucideIcons.eclipse), label: Text('Spaces')),
-                    NavigationRailDestination(
-                        icon: Icon(LucideIcons.handshake),
-                        label: Text('Friends')),
-                    NavigationRailDestination(
-                        icon: Icon(LucideIcons.user_cog),
-                        label: Text('Settings')),
-                  ],
-                ),
-                const VerticalDivider(thickness: 1, width: 1),
-                Expanded(
-                  child: Scaffold(
-                    body: pages[_selectedIndex],
-                    floatingActionButton: FloatingActionButton(
-                      key: const Key('add_task_button'),
-                      heroTag: 'add_task_button',
-                      onPressed: () => {
-                        showTaskDrawer(
-                          context: context,
-                          ref: ref,
-                          existingTask: null,
-                        ),
-                      },
-                      child: const Icon(LucideIcons.plus),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          // Desktop layout with responsive pane behavior
+          return DesktopLayout(
+            selectedIndex: _selectedIndex,
+            onTabSelected: _onItemTapped,
+            mainContent: _desktopPages[_selectedIndex],
+            contextPane: _buildContextualPane(_selectedIndex),
           );
         }
       },
     );
+  }
+
+  Widget? _buildContextualPane(int index) {
+    // Original pane behavior for larger screens
+    switch (index) {
+      case 0:
+        return getTaskDrawerContent(
+          context: context,
+          ref: ref,
+          existingTask: null,
+        );
+      case 1:
+        return FriendSearchView();
+      default:
+        return null;
+    }
   }
 
   Widget _buildContextualAction(int index) {

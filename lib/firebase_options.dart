@@ -15,7 +15,7 @@ import 'package:flutter/foundation.dart'
 /// );
 /// ```
 class DefaultFirebaseOptions {
-  static FirebaseOptions get currentPlatform {
+  static FirebaseOptions? get currentPlatform {
     if (kIsWeb) {
       return web;
     }
@@ -25,18 +25,11 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
       case TargetPlatform.windows:
-        return windows;
       case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return null;
       default:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform.',
-        );
+        return null;
     }
   }
 
@@ -45,17 +38,8 @@ class DefaultFirebaseOptions {
     appId: '1:479691835174:ios:a6fddf000f1cd2c33763e7',
     messagingSenderId: '479691835174',
     projectId: 'assigngo-d890c',
-    storageBucket: 'assigngo-d890c.appspot.com',
+    storageBucket: 'assigngo-d890c.firebasestorage.app',
     iosBundleId: 'app.questkeeper',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyARDl3gLf4TqQ3M7VRCi95at_DjP-Ei1Q0',
-    appId: '1:479691835174:ios:c0d4ddc476aaa1e13763e7',
-    messagingSenderId: '479691835174',
-    projectId: 'assigngo-d890c',
-    storageBucket: 'assigngo-d890c.appspot.com',
-    iosBundleId: 'app.questkeeper.macos',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
@@ -64,7 +48,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '479691835174',
     projectId: 'assigngo-d890c',
     authDomain: 'assigngo-d890c.firebaseapp.com',
-    storageBucket: 'assigngo-d890c.appspot.com',
+    storageBucket: 'assigngo-d890c.firebasestorage.app',
     measurementId: 'G-RG7VWPHH79',
   );
 
@@ -73,17 +57,6 @@ class DefaultFirebaseOptions {
     appId: '1:479691835174:android:6777d673619a007c3763e7',
     messagingSenderId: '479691835174',
     projectId: 'assigngo-d890c',
-    storageBucket: 'assigngo-d890c.appspot.com',
+    storageBucket: 'assigngo-d890c.firebasestorage.app',
   );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAEoFGpjPeK5xK53akStqUmTuIYuj6Y_VY',
-    appId: '1:479691835174:web:b489bf676a41a1a33763e7',
-    messagingSenderId: '479691835174',
-    projectId: 'assigngo-d890c',
-    authDomain: 'assigngo-d890c.firebaseapp.com',
-    storageBucket: 'assigngo-d890c.appspot.com',
-    measurementId: 'G-S5TFLWYEJ9',
-  );
-
 }

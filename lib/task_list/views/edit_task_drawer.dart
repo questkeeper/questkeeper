@@ -15,14 +15,13 @@ import 'package:questkeeper/task_list/subtasks/providers/subtasks_providers.dart
 import 'package:questkeeper/task_list/widgets/action_buttons.dart';
 import 'package:questkeeper/task_list/widgets/task_form.dart';
 
-void showTaskDrawer({
+Widget getTaskDrawerContent({
   required BuildContext context,
   required WidgetRef ref,
   Tasks? existingTask,
 }) {
-  final PageController pageController = ref.read(pageControllerProvider);
   final spacesList = ref.read(spacesManagerProvider).asData;
-  final existingSpace = getCurrentSpace(ref, pageController, spacesList);
+  final existingSpace = getCurrentSpace(ref);
 
   final subtasksList = existingTask != null
       ? ref
@@ -30,10 +29,52 @@ void showTaskDrawer({
           .getSubtasksByTaskId(existingTask.id!)
       : Future.value(<Subtask>[]);
 
-  final TextEditingController nameController =
-      TextEditingController(text: existingTask?.title);
-  final TextEditingController descriptionController =
-      TextEditingController(text: existingTask?.description);
+  final isEditing = existingTask != null;
+
+  Future<int?> createTask(Tasks task) async {
+    task = task.copyWith(spaceId: existingSpace?.id);
+    final newTaskId =
+        await ref.read(tasksManagerProvider.notifier).createTask(task);
+
+    return newTaskId;
+  }
+
+  Future<void> updateTask(Tasks task) async {
+    await ref.read(tasksManagerProvider.notifier).updateTask(
+          task.copyWith(
+            spaceId: existingSpace?.id,
+          ),
+        );
+  }
+
+  return _TaskBottomSheetContent(
+    initialTitle: existingTask?.title ?? '',
+    initialDescription: existingTask?.description ?? '',
+    isEditing: isEditing,
+    ref: ref,
+    existingTask: existingTask,
+    existingSpace: existingSpace,
+    spacesList: spacesList,
+    subtasksList: subtasksList,
+    createTask: createTask,
+    updateTask: updateTask,
+  );
+}
+
+void showTaskDrawer({
+  required BuildContext context,
+  required WidgetRef ref,
+  Tasks? existingTask,
+}) {
+  final spacesList = ref.read(spacesManagerProvider).asData;
+  final existingSpace = getCurrentSpace(ref);
+
+  final subtasksList = existingTask != null
+      ? ref
+          .read(subtasksManagerProvider.notifier)
+          .getSubtasksByTaskId(existingTask.id!)
+      : Future.value(<Subtask>[]);
+
   final isEditing = existingTask != null;
 
   Future<int?> createTask(Tasks task) async {
@@ -57,8 +98,8 @@ void showTaskDrawer({
     context: context,
     key: existingTask?.id.toString() ?? 'new-task',
     child: _TaskBottomSheetContent(
-      nameController: nameController,
-      descriptionController: descriptionController,
+      initialTitle: existingTask?.title ?? '',
+      initialDescription: existingTask?.description ?? '',
       isEditing: isEditing,
       ref: ref,
       existingTask: existingTask,
@@ -72,8 +113,8 @@ void showTaskDrawer({
 }
 
 class _TaskBottomSheetContent extends StatefulWidget {
-  final TextEditingController nameController;
-  final TextEditingController descriptionController;
+  final String initialTitle;
+  final String initialDescription;
   final bool isEditing;
   final WidgetRef ref;
   final Tasks? existingTask;
@@ -84,8 +125,8 @@ class _TaskBottomSheetContent extends StatefulWidget {
   final Future<void> Function(Tasks task) updateTask;
 
   const _TaskBottomSheetContent({
-    required this.nameController,
-    required this.descriptionController,
+    required this.initialTitle,
+    required this.initialDescription,
     required this.isEditing,
     required this.ref,
     this.existingTask,
@@ -101,35 +142,91 @@ class _TaskBottomSheetContent extends StatefulWidget {
 }
 
 class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    widget.nameController.dispose();
-    widget.descriptionController.dispose();
-    super.dispose();
-  }
-
+  late final TextEditingController nameController;
+  late final TextEditingController descriptionController;
+  final Map<String, TextEditingController> subtasksControllers = {};
   final formKey = GlobalKey<FormState>();
-  late DateTime dueDate = widget.existingTask?.dueDate ?? DateTime.now();
+  late DateTime dueDate;
   int? categoryId;
   int? spaceId;
   bool hasCategoryChanged = false;
   bool hasSpaceChanged = false;
   List<Subtask> subtasks = [];
-  final Map<String, TextEditingController> subtasksControllers = {};
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize with empty values first
+    nameController = TextEditingController();
+    descriptionController = TextEditingController();
+    dueDate = widget.existingTask?.dueDate ?? DateTime.now();
+
+    // Set the values after the widget is mounted
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        nameController.text = widget.initialTitle;
+        descriptionController.text = widget.initialDescription;
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Safely dispose controllers
+    try {
+      nameController.dispose();
+    } catch (e) {
+      // Ignore if already disposed
+    }
+
+    try {
+      descriptionController.dispose();
+    } catch (e) {
+      // Ignore if already disposed
+    }
+
+    // Safely dispose subtask controllers
+    for (final controller in subtasksControllers.values) {
+      try {
+        if (controller.text.isNotEmpty) {
+          controller.dispose();
+        }
+      } catch (e) {
+        // Ignore if already disposed
+      }
+    }
+
+    subtasksControllers.clear();
+    subtasks.clear();
+    super.dispose();
+  }
+
+  void _cleanup() {
+    if (!Navigator.canPop(context)) {
+      nameController.clear();
+      descriptionController.clear();
+      subtasksControllers.forEach((_, controller) => controller.clear());
+      setState(() {
+        subtasks.clear();
+        dueDate = DateTime.now();
+        categoryId = null;
+        spaceId = null;
+        hasCategoryChanged = false;
+        hasSpaceChanged = false;
+      });
+    }
+  }
 
   Future<void> _submitForm() async {
     setState(() {});
 
     if (formKey.currentState!.validate()) {
       Tasks task = Tasks(
-        title: widget.nameController.text,
+        title: nameController.text,
         dueDate: dueDate,
-        description: widget.descriptionController.text,
+        description: descriptionController.text,
         categoryId:
             hasCategoryChanged ? categoryId : widget.existingTask?.categoryId,
       );
@@ -188,7 +285,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
             : "Task created successfully",
       );
 
-      Navigator.of(context).pop();
+      if (Navigator.canPop(context)) Navigator.of(context).pop();
 
       if (!widget.isEditing &&
           widget.ref.read(onboardingProvider).hasCreatedTask == false &&
@@ -229,8 +326,8 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                       return Future.value();
                     },
                     formKey: formKey,
-                    titleController: widget.nameController,
-                    descriptionController: widget.descriptionController,
+                    titleController: nameController,
+                    descriptionController: descriptionController,
                     dueDate: dueDate,
                     spacesList: widget.spacesList,
                     subtasks: widget.subtasksList,
@@ -306,7 +403,10 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                         ),
                       ),
                       child: const Text('Cancel'),
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => {
+                        _cleanup(),
+                        if (Navigator.canPop(context)) Navigator.pop(context),
+                      },
                     ),
                     const SizedBox(width: 8), // Gap between buttons
                     Expanded(
@@ -331,11 +431,12 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
   }
 }
 
-Spaces? getCurrentSpace(WidgetRef ref, PageController pageController,
-    AsyncValue<List<Spaces>>? spacesList) {
-  if (spacesList != null && spacesList.asData == null) return null;
+Spaces? getCurrentSpace(WidgetRef ref) {
+  final spacesList = ref.read(spacesManagerProvider).asData;
+  final pageController = ref.read(pageControllerProvider);
+  if (spacesList == null) return null;
 
-  final spaces = spacesList?.asData!.value;
+  final spaces = spacesList.asData?.value;
   if (spaces == null) return null;
 
   final currentPage = pageController.page?.round() ?? 0;

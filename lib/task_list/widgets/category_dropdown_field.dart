@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
+import 'package:questkeeper/spaces/providers/page_provider.dart';
+import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
 
 class CategoryDropdownField extends ConsumerStatefulWidget {
   const CategoryDropdownField({
@@ -12,11 +14,13 @@ class CategoryDropdownField extends ConsumerStatefulWidget {
     required this.onCategoryChanged,
     this.existingSpace,
     this.defaultCategoryId,
+    this.useCurrentSpace = true,
   });
 
   final void Function(String?) onCategoryChanged;
   final String? defaultCategoryId;
   final Spaces? existingSpace;
+  final bool useCurrentSpace;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -24,6 +28,31 @@ class CategoryDropdownField extends ConsumerStatefulWidget {
 }
 
 class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
+  late PageController _pageController;
+  int _lastKnownPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = ref.read(pageControllerProvider);
+    _pageController.addListener(_onPageChanged);
+  }
+
+  @override
+  void dispose() {
+    _pageController.removeListener(_onPageChanged);
+    super.dispose();
+  }
+
+  void _onPageChanged() {
+    final newPage = _pageController.page?.round() ?? 0;
+    if (_lastKnownPage != newPage) {
+      _lastKnownPage = newPage;
+      // Force a rebuild of just this widget
+      if (mounted) setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Watch the provider to get the latest categories
@@ -31,6 +60,11 @@ class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
 
     return categoriesAsync.when(
       data: (categories) {
+        // Get the space to filter categories by
+        final targetSpace = widget.useCurrentSpace
+            ? getCurrentSpace(ref) ?? widget.existingSpace
+            : widget.existingSpace;
+
         // Combine predefined categories with the dynamic list
         final categoriesList = [
               const Categories(
@@ -39,8 +73,7 @@ class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
               ),
             ] +
             categories
-                .where(
-                    (category) => category.spaceId == widget.existingSpace?.id)
+                .where((category) => category.spaceId == targetSpace?.id)
                 .toList() +
             [
               const Categories(title: "Create New Category", id: -1),
@@ -65,7 +98,7 @@ class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
               showCategoryBottomSheet(
                 context: context,
                 ref: ref,
-                existingSpace: widget.existingSpace,
+                existingSpace: targetSpace,
               );
             }
             widget.onCategoryChanged(newValue);
