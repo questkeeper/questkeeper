@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "assigngo_rewrite",
+            "name": "QuestKeeper",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "assigngo_rewrite (profile mode)",
+            "name": "QuestKeeper (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "assigngo_rewrite (release mode)",
+            "name": "QuestKeeper (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
