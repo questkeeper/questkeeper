@@ -5,6 +5,7 @@ import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -128,6 +129,14 @@ class MyApp extends ConsumerWidget {
       seedColor: seed,
       brightness: brightness,
     );
+
+    if (Platform.isAndroid) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          systemNavigationBarColor: scheme.surface,
+        ),
+      );
+    }
 
     return scheme.harmonized();
   }
