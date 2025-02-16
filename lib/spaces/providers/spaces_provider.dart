@@ -43,7 +43,7 @@ class SpacesManager extends _$SpacesManager
                 })),
         (_, __) {});
 
-    if (_cachedSpaces == null) {
+    if (_cachedSpaces == null || _cachedSpaces!.isEmpty) {
       return fetchSpaces();
     }
     return _cachedSpaces!;
@@ -156,7 +156,7 @@ class SpacesManager extends _$SpacesManager
   Future<void> refreshSpaces() async {
     try {
       final spaces = await _repository.getSpaces();
-      if (_hasUnassignedItems) {
+      if (_hasUnassignedItems || spaces.isEmpty) {
         spaces.add(_createUnassignedSpace());
       }
       _cachedSpaces = spaces;
