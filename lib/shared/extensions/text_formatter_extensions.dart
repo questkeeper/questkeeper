@@ -4,9 +4,13 @@ class LowerCaseTextFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
+    String newText = newValue.text.toLowerCase().replaceAll(" ", "_");
+
     return TextEditingValue(
-      text: newValue.text.toLowerCase().replaceAll(" ", "_"),
-      selection: newValue.selection,
+      text: newText,
+      selection: TextSelection.collapsed(
+        offset: newValue.selection.end,
+      ),
     );
   }
 }
@@ -15,8 +19,13 @@ class AlphaNumericTextFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
+    String newText = newValue.text.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '');
+
     return TextEditingValue(
-      text: newValue.text.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), ''),
+      text: newText,
+      selection: TextSelection.collapsed(
+        offset: newValue.selection.end,
+      ),
     );
   }
 }
