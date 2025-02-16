@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 
 import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/show_drawer.dart';
@@ -32,7 +34,7 @@ Widget getTaskDrawerContent({
   final isEditing = existingTask != null;
 
   Future<int?> createTask(Tasks task) async {
-    task = task.copyWith(spaceId: existingSpace?.id);
+    task = task.copyWith(spaceId: task.spaceId ?? existingSpace?.id);
     final newTaskId =
         await ref.read(tasksManagerProvider.notifier).createTask(task);
 
@@ -42,7 +44,7 @@ Widget getTaskDrawerContent({
   Future<void> updateTask(Tasks task) async {
     await ref.read(tasksManagerProvider.notifier).updateTask(
           task.copyWith(
-            spaceId: existingSpace?.id,
+            spaceId: task.spaceId ?? existingSpace?.id,
           ),
         );
   }
@@ -78,7 +80,7 @@ void showTaskDrawer({
   final isEditing = existingTask != null;
 
   Future<int?> createTask(Tasks task) async {
-    task = task.copyWith(spaceId: existingSpace?.id);
+    task = task.copyWith(spaceId: task.spaceId ?? existingSpace?.id);
     final newTaskId =
         await ref.read(tasksManagerProvider.notifier).createTask(task);
 
@@ -88,7 +90,7 @@ void showTaskDrawer({
   Future<void> updateTask(Tasks task) async {
     await ref.read(tasksManagerProvider.notifier).updateTask(
           task.copyWith(
-            spaceId: existingSpace?.id,
+            spaceId: task.spaceId ?? existingSpace?.id,
           ),
         );
   }
@@ -162,6 +164,10 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
     descriptionController = TextEditingController();
     dueDate = widget.existingTask?.dueDate ?? DateTime.now();
 
+    // Ensure we have the correct initial space ID
+    spaceId = widget.existingTask?.spaceId ?? widget.existingSpace?.id;
+    categoryId = widget.existingTask?.categoryId;
+
     // Set the values after the widget is mounted
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -170,6 +176,21 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
         setState(() {});
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(_TaskBottomSheetContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Handle space changes
+    if (oldWidget.existingSpace?.id != widget.existingSpace?.id) {
+      setState(() {
+        spaceId = widget.existingSpace?.id;
+        // Reset category when space changes
+        categoryId = null;
+        hasCategoryChanged = true;
+      });
+    }
   }
 
   @override
@@ -208,12 +229,13 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
       nameController.clear();
       descriptionController.clear();
       subtasksControllers.forEach((_, controller) => controller.clear());
+      hasCategoryChanged = true;
+
       setState(() {
         subtasks.clear();
         dueDate = DateTime.now();
         categoryId = null;
         spaceId = null;
-        hasCategoryChanged = false;
         hasSpaceChanged = false;
       });
     }
@@ -223,12 +245,18 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
     setState(() {});
 
     if (formKey.currentState!.validate()) {
+      // Ensure we have a space ID, falling back to the current space
+      final currentSpace = getCurrentSpace(widget.ref);
+      final targetSpaceId =
+          hasSpaceChanged ? spaceId : (currentSpace?.id ?? spaceId);
+
       Tasks task = Tasks(
         title: nameController.text,
         dueDate: dueDate,
         description: descriptionController.text,
         categoryId:
             hasCategoryChanged ? categoryId : widget.existingTask?.categoryId,
+        spaceId: targetSpaceId,
       );
 
       if (widget.isEditing && widget.existingTask != null) {
@@ -285,7 +313,11 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
             : "Task created successfully",
       );
 
-      if (Navigator.canPop(context)) Navigator.of(context).pop();
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).pop();
+      } else {
+        _cleanup();
+      }
 
       if (!widget.isEditing &&
           widget.ref.read(onboardingProvider).hasCreatedTask == false &&
@@ -306,6 +338,9 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
 
   @override
   Widget build(BuildContext context) {
+    final isCompact = widget.ref.read(isCompactProvider);
+    final isMobile = widget.ref.read(isMobileProvider);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -349,10 +384,10 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     onCategoryChanged: (id) {
                       hasCategoryChanged = true;
                       setState(() {
-                        if (id == null.toString()) {
+                        if (id == null.toString() || id == null) {
                           categoryId = null;
                         } else {
-                          categoryId = int.tryParse(id!);
+                          categoryId = int.tryParse(id);
                         }
                       });
                     },
@@ -376,12 +411,27 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     await widget.ref
                         .read(tasksManagerProvider.notifier)
                         .toggleComplete(task);
-                    if (context.mounted) Navigator.of(context).pop();
+
+                    if (!isMobile && !isCompact) {
+                      _cleanup();
+                      widget.ref.read(contextPaneProvider.notifier).state =
+                          null;
+                    }
+
+                    if (context.mounted && Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
                   },
                   deleteTask: (task) async {
                     await widget.ref
                         .read(tasksManagerProvider.notifier)
                         .deleteTask(task);
+
+                    if (!isMobile && !isCompact) {
+                      _cleanup();
+                      widget.ref.read(contextPaneProvider.notifier).state =
+                          null;
+                    }
 
                     if (context.mounted && Navigator.canPop(context)) {
                       Navigator.pop(context);

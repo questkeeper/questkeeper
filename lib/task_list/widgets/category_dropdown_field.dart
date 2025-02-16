@@ -4,6 +4,7 @@ import 'package:questkeeper/categories/models/categories_model.dart';
 import 'package:flutter/material.dart';
 import 'package:questkeeper/categories/providers/categories_provider.dart';
 import 'package:questkeeper/categories/views/edit_category_bottom_sheet.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
@@ -30,51 +31,104 @@ class CategoryDropdownField extends ConsumerStatefulWidget {
 class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
   late PageController _pageController;
   int _lastKnownPage = 0;
+  String? categoryId;
 
   @override
   void initState() {
     super.initState();
     _pageController = ref.read(pageControllerProvider);
     _pageController.addListener(_onPageChanged);
+    categoryId = widget.defaultCategoryId;
+  }
+
+  void _validateCategory() {
+    // Schedule the validation for after the current frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final categories =
+          ref.read(categoriesManagerProvider).asData?.value ?? [];
+      final targetSpace = widget.useCurrentSpace
+          ? getCurrentSpace(ref) ?? widget.existingSpace
+          : widget.existingSpace;
+
+      final spaceCategories = categories
+          .where((category) => category.spaceId == targetSpace?.id)
+          .toList();
+
+      if (categoryId != null && categoryId != "-1" && categoryId != "null") {
+        final categoryExists = spaceCategories
+            .any((category) => category.id.toString() == categoryId);
+        if (!categoryExists) {
+          setState(() {
+            categoryId = null;
+          });
+          widget.onCategoryChanged(null);
+        }
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(CategoryDropdownField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Reset category if space changes or if default category changes
+    if (oldWidget.existingSpace?.id != widget.existingSpace?.id ||
+        oldWidget.defaultCategoryId != widget.defaultCategoryId) {
+      setState(() {
+        categoryId = null;
+      });
+      widget.onCategoryChanged(null);
+    }
+
+    // Validate category whenever widget updates
+    _validateCategory();
   }
 
   @override
   void dispose() {
+    categoryId = null;
+    widget.onCategoryChanged(null);
     _pageController.removeListener(_onPageChanged);
     super.dispose();
   }
 
   void _onPageChanged() {
+    if (!mounted) return;
+    setState(() {
+      categoryId = null;
+    });
+    widget.onCategoryChanged(null);
+    ref.read(contextPaneProvider.notifier).state = null;
+
     final newPage = _pageController.page?.round() ?? 0;
     if (_lastKnownPage != newPage) {
       _lastKnownPage = newPage;
-      // Force a rebuild of just this widget
-      if (mounted) setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Watch the provider to get the latest categories
     final categoriesAsync = ref.watch(categoriesManagerProvider);
 
     return categoriesAsync.when(
       data: (categories) {
-        // Get the space to filter categories by
         final targetSpace = widget.useCurrentSpace
             ? getCurrentSpace(ref) ?? widget.existingSpace
             : widget.existingSpace;
 
-        // Combine predefined categories with the dynamic list
+        final spaceCategories = categories
+            .where((category) => category.spaceId == targetSpace?.id)
+            .toList();
+
         final categoriesList = [
               const Categories(
                 id: null,
                 title: "No Category",
               ),
             ] +
-            categories
-                .where((category) => category.spaceId == targetSpace?.id)
-                .toList() +
+            spaceCategories +
             [
               const Categories(title: "Create New Category", id: -1),
             ];
@@ -89,11 +143,11 @@ class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
             ),
             offset: const Offset(-20, 0),
           ),
-          value:
-              widget.defaultCategoryId == null || widget.defaultCategoryId == ""
-                  ? categoriesList.first.id.toString()
-                  : widget.defaultCategoryId,
+          value: categoryId ?? "null",
           onChanged: (newValue) {
+            setState(() {
+              categoryId = newValue;
+            });
             if (newValue == "-1") {
               showCategoryBottomSheet(
                 context: context,
@@ -114,8 +168,8 @@ class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
               .toList(),
         );
       },
-      loading: () => const LinearProgressIndicator(), // Show a loading spinner
-      error: (error, stackTrace) => Text('Error: $error'), // Handle errors
+      loading: () => const LinearProgressIndicator(),
+      error: (error, stackTrace) => Text('Error: $error'),
     );
   }
 }

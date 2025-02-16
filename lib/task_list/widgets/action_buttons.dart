@@ -86,9 +86,10 @@ class ActionButtons extends ConsumerWidget {
                             onPressed: () async {
                               await deleteTask(updatedTask);
 
-                              context.mounted
-                                  ? Navigator.of(context).pop()
-                                  : null;
+                              if (context.mounted &&
+                                  Navigator.canPop(context)) {
+                                Navigator.of(context).pop();
+                              }
                             },
                             style: ButtonStyle(
                               backgroundColor:
