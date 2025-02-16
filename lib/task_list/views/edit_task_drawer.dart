@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/layout/utils/state_providers.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 
 import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 import 'package:questkeeper/shared/widgets/show_drawer.dart';
@@ -208,12 +210,13 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
       nameController.clear();
       descriptionController.clear();
       subtasksControllers.forEach((_, controller) => controller.clear());
+      hasCategoryChanged = true;
+
       setState(() {
         subtasks.clear();
         dueDate = DateTime.now();
         categoryId = null;
         spaceId = null;
-        hasCategoryChanged = false;
         hasSpaceChanged = false;
       });
     }
@@ -229,6 +232,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
         description: descriptionController.text,
         categoryId:
             hasCategoryChanged ? categoryId : widget.existingTask?.categoryId,
+        spaceId: hasSpaceChanged ? spaceId : getCurrentSpace(widget.ref)?.id,
       );
 
       if (widget.isEditing && widget.existingTask != null) {
@@ -285,7 +289,11 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
             : "Task created successfully",
       );
 
-      if (Navigator.canPop(context)) Navigator.of(context).pop();
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).pop();
+      } else {
+        _cleanup();
+      }
 
       if (!widget.isEditing &&
           widget.ref.read(onboardingProvider).hasCreatedTask == false &&
@@ -306,6 +314,9 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
 
   @override
   Widget build(BuildContext context) {
+    final isCompact = widget.ref.read(isCompactProvider);
+    final isMobile = widget.ref.read(isMobileProvider);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -349,10 +360,10 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     onCategoryChanged: (id) {
                       hasCategoryChanged = true;
                       setState(() {
-                        if (id == null.toString()) {
+                        if (id == null.toString() || id == null) {
                           categoryId = null;
                         } else {
-                          categoryId = int.tryParse(id!);
+                          categoryId = int.tryParse(id);
                         }
                       });
                     },
@@ -376,12 +387,27 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
                     await widget.ref
                         .read(tasksManagerProvider.notifier)
                         .toggleComplete(task);
-                    if (context.mounted) Navigator.of(context).pop();
+
+                    if (!isMobile && !isCompact) {
+                      _cleanup();
+                      widget.ref.read(contextPaneProvider.notifier).state =
+                          null;
+                    }
+
+                    if (context.mounted && Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
                   },
                   deleteTask: (task) async {
                     await widget.ref
                         .read(tasksManagerProvider.notifier)
                         .deleteTask(task);
+
+                    if (!isMobile && !isCompact) {
+                      _cleanup();
+                      widget.ref.read(contextPaneProvider.notifier).state =
+                          null;
+                    }
 
                     if (context.mounted && Navigator.canPop(context)) {
                       Navigator.pop(context);
