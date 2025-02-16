@@ -34,7 +34,7 @@ Widget getTaskDrawerContent({
   final isEditing = existingTask != null;
 
   Future<int?> createTask(Tasks task) async {
-    task = task.copyWith(spaceId: existingSpace?.id);
+    task = task.copyWith(spaceId: task.spaceId ?? existingSpace?.id);
     final newTaskId =
         await ref.read(tasksManagerProvider.notifier).createTask(task);
 
@@ -44,7 +44,7 @@ Widget getTaskDrawerContent({
   Future<void> updateTask(Tasks task) async {
     await ref.read(tasksManagerProvider.notifier).updateTask(
           task.copyWith(
-            spaceId: existingSpace?.id,
+            spaceId: task.spaceId ?? existingSpace?.id,
           ),
         );
   }
@@ -80,7 +80,7 @@ void showTaskDrawer({
   final isEditing = existingTask != null;
 
   Future<int?> createTask(Tasks task) async {
-    task = task.copyWith(spaceId: existingSpace?.id);
+    task = task.copyWith(spaceId: task.spaceId ?? existingSpace?.id);
     final newTaskId =
         await ref.read(tasksManagerProvider.notifier).createTask(task);
 
@@ -90,7 +90,7 @@ void showTaskDrawer({
   Future<void> updateTask(Tasks task) async {
     await ref.read(tasksManagerProvider.notifier).updateTask(
           task.copyWith(
-            spaceId: existingSpace?.id,
+            spaceId: task.spaceId ?? existingSpace?.id,
           ),
         );
   }
@@ -164,6 +164,10 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
     descriptionController = TextEditingController();
     dueDate = widget.existingTask?.dueDate ?? DateTime.now();
 
+    // Ensure we have the correct initial space ID
+    spaceId = widget.existingTask?.spaceId ?? widget.existingSpace?.id;
+    categoryId = widget.existingTask?.categoryId;
+
     // Set the values after the widget is mounted
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -172,6 +176,21 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
         setState(() {});
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(_TaskBottomSheetContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Handle space changes
+    if (oldWidget.existingSpace?.id != widget.existingSpace?.id) {
+      setState(() {
+        spaceId = widget.existingSpace?.id;
+        // Reset category when space changes
+        categoryId = null;
+        hasCategoryChanged = true;
+      });
+    }
   }
 
   @override
@@ -226,13 +245,18 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
     setState(() {});
 
     if (formKey.currentState!.validate()) {
+      // Ensure we have a space ID, falling back to the current space
+      final currentSpace = getCurrentSpace(widget.ref);
+      final targetSpaceId =
+          hasSpaceChanged ? spaceId : (currentSpace?.id ?? spaceId);
+
       Tasks task = Tasks(
         title: nameController.text,
         dueDate: dueDate,
         description: descriptionController.text,
         categoryId:
             hasCategoryChanged ? categoryId : widget.existingTask?.categoryId,
-        spaceId: hasSpaceChanged ? spaceId : getCurrentSpace(widget.ref)?.id,
+        spaceId: targetSpaceId,
       );
 
       if (widget.isEditing && widget.existingTask != null) {

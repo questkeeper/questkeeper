@@ -177,8 +177,14 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                       child: PageView.builder(
                         key: PageStorageKey('desktop_spaces_pageview'),
                         controller: pageController,
-                        onPageChanged: (page) =>
-                            handlePageChanged(page, spaces),
+                        onPageChanged: (page) {
+                          // Clear the context pane when switching spaces
+                          ref.read(contextPaneProvider.notifier).state = null;
+                          ref
+                              .read(isContextPaneCollapsedProvider.notifier)
+                              .state = false;
+                          handlePageChanged(page, spaces);
+                        },
                         itemCount: spaces.length + 1,
                         itemBuilder: (context, index) {
                           if (index == spaces.length) {

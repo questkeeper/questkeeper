@@ -113,7 +113,11 @@ class _TaskFormState extends State<TaskForm> {
               Expanded(
                 child: CategoryDropdownField(
                   onCategoryChanged: widget.onCategoryChanged,
-                  defaultCategoryId: widget.categoryId,
+                  defaultCategoryId: widget.categoryId == "null" ||
+                          widget.categoryId == "-1" ||
+                          widget.categoryId.isEmpty
+                      ? null
+                      : widget.categoryId,
                   existingSpace: widget.existingSpace,
                 ),
               ),
