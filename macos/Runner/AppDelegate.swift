@@ -4,6 +4,10 @@ import UserNotifications
 
 @main
 class AppDelegate: FlutterAppDelegate, UNUserNotificationCenterDelegate {
+  override func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+    return true // Quits app when window is closed
+  }
+
   override func applicationDidFinishLaunching(_ notification: Notification) {
     // Set UNUserNotificationCenter delegate for notification handling
     UNUserNotificationCenter.current().delegate = self
