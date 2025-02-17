@@ -101,4 +101,5 @@ flutter:
     - assets/trophy/
     - assets/lottie/
     - assets/rive/
+    - assets/auth/
     - shorebird.yaml

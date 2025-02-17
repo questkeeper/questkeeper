@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/settings/views/account/account_management_screen.dart';
+import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
     show SupaMagicAuth; // Overriding the supa auth UI with own flow
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -19,6 +21,8 @@ class AuthScreen extends ConsumerStatefulWidget {
 }
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +31,30 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<void> _signInWithProvider(OAuthProvider provider) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      await Supabase.instance.client.auth.signInWithOAuth(
+        provider,
+        redirectTo:
+            kIsWeb ? "${Uri.base.toString()}/signin" : 'questkeeper://signin',
+      );
+    } catch (e) {
+      if (mounted) {
+        SnackbarService.showErrorSnackbar(
+            "Failed to sign in with ${provider.name}");
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   void onSuccess(Session response) async {
@@ -74,6 +102,42 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     }
   }
 
+  Widget _buildSocialButton({
+    required String assetPath,
+    required OAuthProvider provider,
+    required String label,
+    required Color color,
+  }) {
+    return Tooltip(
+      message: 'Continue with $label',
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: _isLoading ? null : () => _signInWithProvider(provider),
+        child: Container(
+          width: 48,
+          height: 48,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: SvgPicture.asset(
+            assetPath,
+            fit: BoxFit.contain,
+            width: 24,
+            height: 24,
+            colorFilter: provider == OAuthProvider.google
+                ? null
+                : const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -95,6 +159,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 textAlign: TextAlign.left,
               ),
             ),
+            // Terms of Service Text
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
               child: Text.rich(
@@ -140,6 +205,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 ),
               ),
             ),
+            // Email Auth
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
               child: SupaMagicAuth(
@@ -148,6 +214,51 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     : 'questkeeper://signin',
                 onSuccess: onSuccess,
                 onError: onError,
+              ),
+            ),
+            // Social Sign In Buttons
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
+              child: Column(
+                children: [
+                  const Row(
+                    children: [
+                      Expanded(child: Divider()),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text('or continue with'),
+                      ),
+                      Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildSocialButton(
+                        assetPath: 'assets/auth/google_logo.svg',
+                        provider: OAuthProvider.google,
+                        label: 'Google',
+                        color: "#F2F2F2".toColor(),
+                      ),
+                      const SizedBox(width: 16),
+                      _buildSocialButton(
+                        assetPath: 'assets/auth/apple_logo.svg',
+                        provider: OAuthProvider.apple,
+                        label: 'Apple',
+                        color: Colors.black,
+                      ),
+                      const SizedBox(width: 16),
+                      _buildSocialButton(
+                        assetPath: 'assets/auth/discord_logo.svg',
+                        provider: OAuthProvider.discord,
+                        color: "#5865F2".toColor(),
+                        label: 'Discord',
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
