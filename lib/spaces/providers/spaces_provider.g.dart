@@ -6,7 +6,7 @@ part of 'spaces_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$spacesManagerHash() => r'87c79ed1e3513291b12a681586a9462e288a2691';
+String _$spacesManagerHash() => r'a372b531a5611d5266cb16ab92ce7354079e83b0';
 
 /// See also [SpacesManager].
 @ProviderFor(SpacesManager)
