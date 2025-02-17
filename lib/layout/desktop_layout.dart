@@ -210,6 +210,13 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                           isExpanded: isNavRailExpanded,
                                           onTap: () => widget.onTabSelected(1),
                                         ),
+                                        NavRailItem(
+                                          icon: LucideIcons.trophy,
+                                          label: 'Quests',
+                                          isSelected: widget.selectedIndex == 2,
+                                          isExpanded: isNavRailExpanded,
+                                          onTap: () => widget.onTabSelected(2),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -220,9 +227,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                 NavRailItem(
                                   icon: LucideIcons.settings,
                                   label: 'Settings',
-                                  isSelected: widget.selectedIndex == 2,
+                                  isSelected: widget.selectedIndex == 3,
                                   isExpanded: isNavRailExpanded,
-                                  onTap: () => widget.onTabSelected(2),
+                                  onTap: () => widget.onTabSelected(3),
                                 ),
 
                                 NavRailItem(

@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/friends/views/desktop_friends_leaderboard.dart';
 import 'package:questkeeper/layout/desktop_layout.dart';
+import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/spaces/views/desktop_spaces_screen.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/layout/utils/state_providers.dart';
@@ -35,6 +36,7 @@ class _TabViewState extends ConsumerState<TabView> {
   static const List<Widget> _desktopPages = [
     DesktopSpacesScreen(),
     DesktopFriendsLeaderboard(),
+    QuestsView(),
     SettingsScreen(),
   ];
 
