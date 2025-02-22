@@ -1,17 +1,22 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
+import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
+    show SupaMagicAuth; // Overriding the supa auth UI with own flow
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/settings/views/account/account_management_screen.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
-    show SupaMagicAuth; // Overriding the supa auth UI with own flow
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -22,6 +27,7 @@ class AuthScreen extends ConsumerStatefulWidget {
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
   bool _isLoading = false;
+  final supabase = Supabase.instance.client;
 
   @override
   void initState() {
@@ -38,15 +44,57 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       setState(() {
         _isLoading = true;
       });
-      await Supabase.instance.client.auth.signInWithOAuth(
-        provider,
-        redirectTo:
-            kIsWeb ? "${Uri.base.toString()}/signin" : 'questkeeper://signin',
-      );
+
+      if (provider == OAuthProvider.apple) {
+        final rawNonce = supabase.auth.generateRawNonce();
+        final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
+
+        final credential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+          nonce: hashedNonce,
+        );
+
+        final idToken = credential.identityToken;
+        if (idToken == null) {
+          throw const AuthException(
+              'Could not find ID Token from generated credential.');
+        }
+
+        await supabase.auth.signInWithIdToken(
+          provider: OAuthProvider.apple,
+          idToken: idToken,
+          nonce: rawNonce,
+        );
+      } else {
+        await supabase.auth.signInWithOAuth(
+          provider,
+          redirectTo:
+              kIsWeb ? "${Uri.base.toString()}/signin" : 'questkeeper://signin',
+        );
+      }
     } catch (e) {
       if (mounted) {
+        if (e.runtimeType == AuthException) {
+          if ((e as AuthException).code == "access_denied") {
+            SnackbarService.showInfoSnackbar("Authentication cancelled");
+            return;
+          }
+        }
+
+        if (e.runtimeType == SignInWithAppleAuthorizationException &&
+            (e as SignInWithAppleAuthorizationException).code ==
+                AuthorizationErrorCode.canceled) {
+          SnackbarService.showInfoSnackbar("Authorization cancelled");
+          return;
+        }
+
         SnackbarService.showErrorSnackbar(
             "Failed to sign in with ${provider.name}");
+
+        debugPrint(e.toString());
       }
     } finally {
       if (mounted) {
@@ -124,8 +172,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           child: SvgPicture.asset(
             assetPath,
             fit: BoxFit.contain,
-            width: 24,
-            height: 24,
             colorFilter: provider == OAuthProvider.google
                 ? null
                 : const ColorFilter.mode(
@@ -242,14 +288,16 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         label: 'Google',
                         color: "#F2F2F2".toColor(),
                       ),
-                      const SizedBox(width: 16),
-                      _buildSocialButton(
-                        assetPath: 'assets/auth/apple_logo.svg',
-                        provider: OAuthProvider.apple,
-                        label: 'Apple',
-                        color: Colors.black,
-                      ),
-                      const SizedBox(width: 16),
+                      if (Platform.isIOS || Platform.isMacOS) ...[
+                        const SizedBox(width: 8),
+                        _buildSocialButton(
+                          assetPath: 'assets/auth/apple_logo.svg',
+                          provider: OAuthProvider.apple,
+                          label: 'Apple',
+                          color: Colors.black,
+                        ),
+                      ],
+                      const SizedBox(width: 8),
                       _buildSocialButton(
                         assetPath: 'assets/auth/discord_logo.svg',
                         provider: OAuthProvider.discord,
