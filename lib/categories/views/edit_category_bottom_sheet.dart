@@ -122,8 +122,8 @@ class _CategoryBottomSheetContentState
 
   @override
   Widget build(BuildContext context) {
-    final adjustedColor = selectedColor?.withOpacity(colorOpacity);
-    final bgColor = adjustedColor?.withOpacity(0.15) ??
+    final adjustedColor = selectedColor?.withValues(alpha: colorOpacity);
+    final bgColor = adjustedColor?.withValues(alpha: 0.15) ??
         Theme.of(context).scaffoldBackgroundColor;
 
     return SingleChildScrollView(
@@ -154,8 +154,10 @@ class _CategoryBottomSheetContentState
                 decoration: InputDecoration(
                   labelText: 'Category Name',
                   filled: true,
-                  fillColor:
-                      Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                  fillColor: Theme.of(context)
+                      .colorScheme
+                      .surface
+                      .withValues(alpha: 0.5),
                 ),
               ),
               const SizedBox(height: 24),
@@ -167,7 +169,10 @@ class _CategoryBottomSheetContentState
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surface
+                      .withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
