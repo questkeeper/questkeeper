@@ -72,6 +72,8 @@ dependencies:
   timezone: ^0.10.0
   sign_in_with_apple: ^6.1.4
   crypto: ^3.0.6
+  google_sign_in: ^6.2.2
+  google_sign_in_ios: ^5.8.0
 
 dev_dependencies:
   flutter_test:
