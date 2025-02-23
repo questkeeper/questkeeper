@@ -30,7 +30,6 @@ class HomeWidgetMobile implements HomeWidgetInterface {
 
       HomeWidget.updateWidget(
         name: 'QuestKeeper',
-        name: 'QuestKeeper',
         iOSName: 'QuestKeeper',
         androidName: 'QuestKeeper',
         qualifiedAndroidName: 'app.questkeeper',
