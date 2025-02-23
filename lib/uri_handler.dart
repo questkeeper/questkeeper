@@ -3,25 +3,29 @@ import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Handles custom URI schemes.
 class QkUriHandler {
   QkUriHandler({required this.supportedSchemes}) {
     _appLinks.uriLinkStream.listen((uri) async {
+      debugPrint(uri.toString());
       try {
         await _processUri(uri);
-      } on UnsupportedUriScheme {
-        // URI is unsupported.
-        // FIXME: Unsure how to handle exceptions.
-        rethrow;
-      } on UnknownCustomUri {
-        // No way to handle the URI.
-        // FIXME: Unsure how to handle exceptions.
-        rethrow;
-      } catch (error) {
-        // FIXME: Unsure how to handle exceptions.
-        rethrow;
+      }
+      // on UnsupportedUriScheme {
+      //   // URI is unsupported.
+      //   // Unsure how to handle exceptions.
+      //   rethrow;
+      // } on UnknownCustomUri {
+      //   // No way to handle the URI.
+      //   // Unsure how to handle exceptions.
+      //   rethrow;
+      // }
+      catch (error) {
+        SnackbarService.showErrorSnackbar("Unsupported action");
       }
     });
   }
@@ -37,10 +41,7 @@ class QkUriHandler {
 
     // Only allow supported schemes.
     if (!supportedSchemes.contains(uri.scheme)) {
-      throw UnsupportedUriScheme(
-          uri: uri,
-          supportedSchemes: supportedSchemes
-      );
+      throw UnsupportedUriScheme(uri: uri, supportedSchemes: supportedSchemes);
     }
 
     switch (uri.host) {
@@ -51,7 +52,8 @@ class QkUriHandler {
         }
 
         final packageInfo = await PackageInfo.fromPlatform();
-        debugPrint("Running ${packageInfo.appName} version ${packageInfo.version} (build ${packageInfo.buildNumber})");
+        debugPrint(
+            "Running ${packageInfo.appName} version ${packageInfo.version} (build ${packageInfo.buildNumber})");
         debugPrint("Current time is ${DateTime.now()}. Process ID is $pid.");
         debugPrint("");
         debugPrint("$uri");
@@ -62,11 +64,14 @@ class QkUriHandler {
 
         try {
           await Supabase.instance.client.auth.getSessionFromUrl(uri);
-        } on AuthException {
-          // FIXME: Unsure how to handle this exception
-          rethrow;
+        } on AuthException catch (e) {
+          if (e.code == "access_denied") {
+            closeInAppWebView();
+            SnackbarService.showInfoSnackbar("Authorization cancelled.");
+          }
         } catch (error) {
-          // FIXME: Handle other exceptions
+          closeInAppWebView();
+          SnackbarService.showErrorSnackbar("Something went wrong...");
           rethrow;
         }
 
@@ -88,11 +93,19 @@ class UnknownCustomUri implements Exception {
 
 /// Thrown when a custom URI has a scheme that isn't supported.
 class UnsupportedUriScheme implements Exception {
-  const UnsupportedUriScheme({
-    required this.uri,
-    required this.supportedSchemes
-  });
+  const UnsupportedUriScheme(
+      {required this.uri, required this.supportedSchemes});
 
   final Uri uri;
   final List<String> supportedSchemes;
+}
+
+Future<void> closeInAppBrowser() async {
+  if (Platform.isAndroid || Platform.isIOS) {
+    try {
+      await launchUrl(Uri.parse(''), mode: LaunchMode.inAppWebView);
+    } catch (e) {
+      debugPrint('Failed to close in-app browser: $e');
+    }
+  }
 }
