@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
 import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
     show SupaMagicAuth; // Overriding the supa auth UI with own flow
@@ -39,6 +40,38 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     super.dispose();
   }
 
+  Future<void> _nativeGoogleSignIn() async {
+    /// Web Client ID that you registered with Google Cloud.
+    const webClientId =
+        '479691835174-o5i59ui07vtj7r3n45h38hjeuq1s764e.apps.googleusercontent.com';
+
+    /// iOS Client ID that you registered with Google Cloud.
+    const iosClientId =
+        '479691835174-82kej9lnri53rffa25im0a5q312hsn3h.apps.googleusercontent.com';
+
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      clientId: iosClientId,
+      serverClientId: webClientId,
+    );
+    final googleUser = await googleSignIn.signIn();
+    final googleAuth = await googleUser!.authentication;
+    final accessToken = googleAuth.accessToken;
+    final idToken = googleAuth.idToken;
+
+    if (accessToken == null) {
+      throw 'No Access Token found.';
+    }
+    if (idToken == null) {
+      throw 'No ID Token found.';
+    }
+
+    await supabase.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+      accessToken: accessToken,
+    );
+  }
+
   Future<void> _signInWithProvider(OAuthProvider provider) async {
     try {
       setState(() {
@@ -68,6 +101,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           idToken: idToken,
           nonce: rawNonce,
         );
+      } else if (provider == OAuthProvider.google &&
+          ((!kIsWasm || !kIsWeb) && (Platform.isAndroid || Platform.isIOS))) {
+        await _nativeGoogleSignIn();
       } else {
         await supabase.auth.signInWithOAuth(
           provider,
