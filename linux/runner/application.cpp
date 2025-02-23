@@ -30,7 +30,7 @@ static void my_application_activate(GApplication *application) {
   auto *window = GTK_WINDOW(gtk_application_window_new(gtk_application));
 
   bool use_header_bar = true;
-  const std::string title_text = "Quest Keeper";
+  const std::string title_text = "QuestKeeper";
 
 #ifdef GDK_WINDOWING_X11
   auto *screen = gtk_window_get_screen(window);
