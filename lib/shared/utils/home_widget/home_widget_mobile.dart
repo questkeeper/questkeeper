@@ -29,9 +29,10 @@ class HomeWidgetMobile implements HomeWidgetInterface {
           "assignments", const JsonEncoder().convert(tasksJson));
 
       HomeWidget.updateWidget(
-        name: 'Quest Keeper',
-        iOSName: 'Quest Keeper',
-        androidName: 'Quest Keeper',
+        name: 'QuestKeeper',
+        name: 'QuestKeeper',
+        iOSName: 'QuestKeeper',
+        androidName: 'QuestKeeper',
         qualifiedAndroidName: 'app.questkeeper',
       );
     } catch (e) {
