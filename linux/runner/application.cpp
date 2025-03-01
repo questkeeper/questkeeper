@@ -17,12 +17,20 @@ G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
 static void my_application_activate(GApplication *application) {
   const auto *self = MY_APPLICATION(application);
-  auto *window = GTK_WINDOW(
-    gtk_application_window_new(GTK_APPLICATION(application))
-  );
+  const auto gtk_application = GTK_APPLICATION(application);
+
+  // Focus existing window if present
+  const auto* windows = gtk_application_get_windows(gtk_application);
+  if (windows) {
+    gtk_window_present(GTK_WINDOW(windows->data));
+    return;
+  }
+
+  // Create new window
+  auto *window = GTK_WINDOW(gtk_application_window_new(gtk_application));
 
   bool use_header_bar = true;
-  const std::string title_text = "Quest Keeper";
+  const std::string title_text = "QuestKeeper";
 
 #ifdef GDK_WINDOWING_X11
   auto *screen = gtk_window_get_screen(window);
@@ -81,7 +89,7 @@ static gboolean my_application_local_command_line(GApplication *application, gch
   g_application_activate(application);
   *exit_status = 0;
 
-  return true;
+  return false;
 }
 
 static void my_application_startup(GApplication *application) {
@@ -129,6 +137,6 @@ MyApplication *my_application_new() {
     g_object_new(
       my_application_get_type(),
       "application-id", APPLICATION_ID,
-      "flags", G_APPLICATION_NON_UNIQUE,
+      "flags", G_APPLICATION_HANDLES_COMMAND_LINE | G_APPLICATION_HANDLES_OPEN,
       nullptr));
 }

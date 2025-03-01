@@ -16,9 +16,21 @@ class SpacesManager extends _$SpacesManager
 
   SpacesManager() : _repository = SpacesRepository();
 
+  // Add method to check for unassigned items
+  Future<bool> _checkForUnassignedItems() async {
+    final tasksResult = await ref.read(tasksManagerProvider.future);
+    final categoriesResult = await ref.read(categoriesManagerProvider.future);
+
+    final hasUnassignedTasks = tasksResult.any((task) => task.spaceId == null);
+    final hasUnassignedCategories =
+        categoriesResult.any((category) => category.spaceId == null);
+
+    return hasUnassignedTasks || hasUnassignedCategories;
+  }
+
   @override
   FutureOr<List<Spaces>> build() async {
-    // Only rebuild when the unassigned status changes, not on every task/category change
+    // Keep existing listeners for real-time updates
     ref.listen(
         tasksManagerProvider.select((value) => value.whenData((tasks) {
               final hasUnassigned = tasks.any((task) => task.spaceId == null);
@@ -81,6 +93,9 @@ class SpacesManager extends _$SpacesManager
     try {
       final spaces = await _repository.getSpaces();
 
+      // Check current state of unassigned items
+      _hasUnassignedItems = await _checkForUnassignedItems();
+
       if (_hasUnassignedItems || spaces.isEmpty) {
         spaces.add(_createUnassignedSpace());
       }
@@ -96,12 +111,7 @@ class SpacesManager extends _$SpacesManager
   Future<void> createSpace(Spaces space) async {
     try {
       await _repository.createSpace(space);
-      final spaces = await _repository.getSpaces();
-      if (_hasUnassignedItems) {
-        spaces.add(_createUnassignedSpace());
-      }
-      _cachedSpaces = spaces;
-      state = AsyncValue.data(spaces);
+      await refreshSpaces();
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
@@ -110,12 +120,7 @@ class SpacesManager extends _$SpacesManager
   Future<void> updateSpace(Spaces space) async {
     try {
       await _repository.updateSpace(space);
-      final spaces = await _repository.getSpaces();
-      if (_hasUnassignedItems) {
-        spaces.add(_createUnassignedSpace());
-      }
-      _cachedSpaces = spaces;
-      state = AsyncValue.data(spaces);
+      await refreshSpaces();
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
@@ -132,22 +137,12 @@ class SpacesManager extends _$SpacesManager
         newState: newSpaces,
         repositoryAction: () async {
           await _repository.deleteSpace(space);
-          final spaces = await _repository.getSpaces();
-          if (_hasUnassignedItems) {
-            spaces.add(_createUnassignedSpace());
-          }
-          _cachedSpaces = spaces;
-          state = AsyncValue.data(spaces);
+          await refreshSpaces();
         },
         successMessage: "Space deleted",
         timing: ActionTiming.afterUndoPeriod,
         postUndoAction: () async {
-          final spaces = await _repository.getSpaces();
-          if (_hasUnassignedItems) {
-            spaces.add(_createUnassignedSpace());
-          }
-          _cachedSpaces = spaces;
-          state = AsyncValue.data(spaces);
+          await refreshSpaces();
         },
       ),
     );
@@ -156,9 +151,14 @@ class SpacesManager extends _$SpacesManager
   Future<void> refreshSpaces() async {
     try {
       final spaces = await _repository.getSpaces();
+
+      // Check current state of unassigned items
+      _hasUnassignedItems = await _checkForUnassignedItems();
+
       if (_hasUnassignedItems || spaces.isEmpty) {
         spaces.add(_createUnassignedSpace());
       }
+
       _cachedSpaces = spaces;
       state = AsyncValue.data(spaces);
     } catch (e) {

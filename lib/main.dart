@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:questkeeper/settings/views/profile/profile_settings_screen.dart';
+import 'package:questkeeper/uri_handler.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
@@ -63,6 +64,15 @@ Future<void> main() async {
     url: "https://mzudaknbrzixjkvjqayw.supabase.co",
     anonKey:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16dWRha25icnppeGprdmpxYXl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI0MjU3NDgsImV4cCI6MjAyODAwMTc0OH0.b71_fWtic8S4sfNmCMlwLAlzZwhS_lHGBEW1ZQynfsc",
+    authOptions: FlutterAuthClientOptions(
+      // Disable Supabase handling URI schemes
+      detectSessionInUri: false,
+    )
+  );
+
+  // Handle URL schemes
+  QkUriHandler(
+    supportedSchemes: ["questkeeper"],
   );
 
   HomeWidgetInterface? homeWidget;

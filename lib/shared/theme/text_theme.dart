@@ -54,7 +54,7 @@ class ModernTextTheme {
     final Color secondaryTextColor = isDark ? Colors.white70 : Colors.black54;
 
     // Helper to create a TextStyle with the correct scaling and font
-    TextStyle _createStyle(
+    TextStyle createStyle(
       double fontSize,
       FontWeight weight,
       double height,
@@ -75,7 +75,7 @@ class ModernTextTheme {
 
     return TextTheme(
       // Display styles
-      displayLarge: _createStyle(
+      displayLarge: createStyle(
         baseSize.displayLarge,
         FontWeight.w400,
         1.12,
@@ -83,7 +83,7 @@ class ModernTextTheme {
         true,
         primaryTextColor,
       ),
-      displayMedium: _createStyle(
+      displayMedium: createStyle(
         baseSize.displayMedium,
         FontWeight.w400,
         1.16,
@@ -91,7 +91,7 @@ class ModernTextTheme {
         true,
         primaryTextColor,
       ),
-      displaySmall: _createStyle(
+      displaySmall: createStyle(
         baseSize.displaySmall,
         FontWeight.w400,
         1.22,
@@ -101,7 +101,7 @@ class ModernTextTheme {
       ),
 
       // Headline styles
-      headlineLarge: _createStyle(
+      headlineLarge: createStyle(
         baseSize.headlineLarge,
         FontWeight.w400,
         1.25,
@@ -109,7 +109,7 @@ class ModernTextTheme {
         true,
         primaryTextColor,
       ),
-      headlineMedium: _createStyle(
+      headlineMedium: createStyle(
         baseSize.headlineMedium,
         FontWeight.w400,
         1.29,
@@ -117,7 +117,7 @@ class ModernTextTheme {
         true,
         primaryTextColor,
       ),
-      headlineSmall: _createStyle(
+      headlineSmall: createStyle(
         baseSize.headlineSmall,
         FontWeight.w400,
         1.33,
@@ -127,7 +127,7 @@ class ModernTextTheme {
       ),
 
       // Title styles
-      titleLarge: _createStyle(
+      titleLarge: createStyle(
         baseSize.titleLarge,
         FontWeight.w400,
         1.27,
@@ -135,7 +135,7 @@ class ModernTextTheme {
         true,
         primaryTextColor,
       ),
-      titleMedium: _createStyle(
+      titleMedium: createStyle(
         baseSize.titleMedium,
         FontWeight.w500,
         1.5,
@@ -143,7 +143,7 @@ class ModernTextTheme {
         false,
         primaryTextColor,
       ),
-      titleSmall: _createStyle(
+      titleSmall: createStyle(
         baseSize.titleSmall,
         FontWeight.w500,
         1.43,
@@ -153,7 +153,7 @@ class ModernTextTheme {
       ),
 
       // Body styles
-      bodyLarge: _createStyle(
+      bodyLarge: createStyle(
         baseSize.bodyLarge,
         FontWeight.w400,
         1.5,
@@ -161,7 +161,7 @@ class ModernTextTheme {
         false,
         primaryTextColor,
       ),
-      bodyMedium: _createStyle(
+      bodyMedium: createStyle(
         baseSize.bodyMedium,
         FontWeight.w400,
         1.43,
@@ -169,7 +169,7 @@ class ModernTextTheme {
         false,
         primaryTextColor,
       ),
-      bodySmall: _createStyle(
+      bodySmall: createStyle(
         baseSize.bodySmall,
         FontWeight.w400,
         1.33,
@@ -179,7 +179,7 @@ class ModernTextTheme {
       ),
 
       // Label styles
-      labelLarge: _createStyle(
+      labelLarge: createStyle(
         baseSize.labelLarge,
         FontWeight.w500,
         1.43,
@@ -187,7 +187,7 @@ class ModernTextTheme {
         false,
         primaryTextColor,
       ),
-      labelMedium: _createStyle(
+      labelMedium: createStyle(
         baseSize.labelMedium,
         FontWeight.w500,
         1.33,
@@ -195,7 +195,7 @@ class ModernTextTheme {
         false,
         secondaryTextColor,
       ),
-      labelSmall: _createStyle(
+      labelSmall: createStyle(
         baseSize.labelSmall,
         FontWeight.w500,
         1.45,

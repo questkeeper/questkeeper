@@ -2,11 +2,13 @@
 // This is because of rawbeyboardlistener, if the regular kb listener worked
 // we'd use that instead..
 
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, exit;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/categories/providers/categories_provider.dart';
+import 'package:questkeeper/friends/providers/friends_provider.dart';
 import 'package:questkeeper/layout/utils/command_palette_list.dart';
 import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/layout/widgets/nav_rail_item.dart';
@@ -15,6 +17,8 @@ import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/command_palette.dart';
+import 'package:questkeeper/spaces/providers/spaces_provider.dart';
+import 'package:questkeeper/task_list/providers/tasks_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class DesktopLayout extends ConsumerStatefulWidget {
@@ -62,6 +66,30 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   void _handleKeyEvent(RawKeyEvent event) {
     // Only handle key down events to avoid double-triggering
     if (event is! RawKeyDownEvent) return;
+
+    if (event.logicalKey == LogicalKeyboardKey.keyQ ||
+        event.logicalKey == LogicalKeyboardKey.keyW) {
+      exit(0);
+    }
+
+    if (event.logicalKey == LogicalKeyboardKey.keyR) {
+      // Refresh the app
+      ref.invalidate(
+        spacesManagerProvider,
+      );
+      ref.invalidate(
+        profileManagerProvider,
+      );
+      ref.invalidate(
+        tasksManagerProvider,
+      );
+      ref.invalidate(
+        categoriesManagerProvider,
+      );
+      ref.invalidate(
+        friendsManagerProvider,
+      );
+    }
 
     // Check for Cmd+P (macOS) or Ctrl+P (Windows/Linux)
     if (event.logicalKey == LogicalKeyboardKey.keyP) {
