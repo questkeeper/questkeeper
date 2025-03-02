@@ -29,7 +29,7 @@ class BadgesRepository {
     return ReturnModel(
       data: jsonResponse,
       message: jsonResponse['pointsAwarded'].toString(),
-      success: jsonResponse['success'],
+      success: jsonResponse['success'] ?? false,
       error: jsonResponse['error'],
     );
   }
