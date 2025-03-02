@@ -6,30 +6,35 @@ import 'package:questkeeper/quests/models/badge_model.dart';
 class UserBadge {
   final int id;
   final int progress;
-  final String earnedAt;
   final String monthYear;
   final Badge badge;
+  final bool redeemed;
+  final String? earnedAt;
+
   UserBadge({
     required this.id,
     required this.progress,
-    required this.earnedAt,
     required this.monthYear,
     required this.badge,
+    this.redeemed = false,
+    this.earnedAt,
   });
 
   UserBadge copyWith({
     int? id,
     int? progress,
-    String? earnedAt,
     String? monthYear,
     Badge? badge,
+    bool? redeemed,
+    String? earnedAt,
   }) {
     return UserBadge(
       id: id ?? this.id,
       progress: progress ?? this.progress,
-      earnedAt: earnedAt ?? this.earnedAt,
       monthYear: monthYear ?? this.monthYear,
       badge: badge ?? this.badge,
+      redeemed: redeemed ?? this.redeemed,
+      earnedAt: earnedAt ?? this.earnedAt,
     );
   }
 
@@ -37,9 +42,10 @@ class UserBadge {
     return <String, dynamic>{
       'id': id,
       'progress': progress,
-      'earnedAt': earnedAt,
       'monthYear': monthYear,
       'badge': badge.toMap(),
+      'redeemed': redeemed,
+      'earnedAt': earnedAt,
     };
   }
 
@@ -47,9 +53,10 @@ class UserBadge {
     return UserBadge(
       id: map['id'] as int,
       progress: map['progress'] as int,
-      earnedAt: map['earnedAt'] as String,
       monthYear: map['monthYear'] as String,
       badge: Badge.fromMap(map['badge'] as Map<String, dynamic>),
+      redeemed: map['redeemed'] as bool,
+      earnedAt: map['earnedAt'] != null ? map['earnedAt'] as String : null,
     );
   }
 
@@ -60,7 +67,7 @@ class UserBadge {
 
   @override
   String toString() {
-    return 'UserBadge(id: $id, progress: $progress, earnedAt: $earnedAt, monthYear: $monthYear, badge: $badge)';
+    return 'UserBadge(id: $id, progress: $progress, monthYear: $monthYear, badge: $badge, redeemed: $redeemed, earnedAt: $earnedAt)';
   }
 
   @override
@@ -69,17 +76,19 @@ class UserBadge {
 
     return other.id == id &&
         other.progress == progress &&
-        other.earnedAt == earnedAt &&
         other.monthYear == monthYear &&
-        other.badge == badge;
+        other.badge == badge &&
+        other.redeemed == redeemed &&
+        other.earnedAt == earnedAt;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
         progress.hashCode ^
-        earnedAt.hashCode ^
         monthYear.hashCode ^
-        badge.hashCode;
+        badge.hashCode ^
+        redeemed.hashCode ^
+        earnedAt.hashCode;
   }
 }

@@ -36,4 +36,34 @@ class BadgesManager extends _$BadgesManager {
       state = AsyncValue.error(error, StackTrace.current);
     }
   }
+
+  Future<void> redeemBadge(int userBadgeId) async {
+    try {
+      // Get current state
+      final currentState = state.valueOrNull;
+      if (currentState == null) return;
+
+      final (badges, userBadges) = currentState;
+
+      // Call the API to redeem the badge
+      final result = await _repository.redeemBadge(userBadgeId);
+
+      if (result.success) {
+        // Update the state with the redeemed badge
+        final updatedUserBadges = userBadges.map((ub) {
+          if (ub.id == userBadgeId) {
+            return ub.copyWith(redeemed: true);
+          }
+          return ub;
+        }).toList();
+
+        state = AsyncValue.data((badges, updatedUserBadges));
+      } else {
+        state = AsyncValue.error(
+            result.error ?? 'Unknown error', StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncValue.error(error, StackTrace.current);
+    }
+  }
 }

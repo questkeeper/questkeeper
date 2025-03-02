@@ -1,5 +1,6 @@
 import 'package:questkeeper/quests/models/badge_model.dart';
 import 'package:questkeeper/quests/models/user_badge_model.dart';
+import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:questkeeper/shared/utils/http_service.dart';
 
 class BadgesRepository {
@@ -17,5 +18,19 @@ class BadgesRepository {
     final response = await _httpService.get('/social/badges/me');
     final List<dynamic> data = response.data;
     return data.map((e) => UserBadge.fromMap(e)).toList();
+  }
+
+  Future<ReturnModel> redeemBadge(int userBadgeId) async {
+    final response =
+        await _httpService.post('/social/badges/$userBadgeId/redeem');
+
+    final jsonResponse = response.data;
+
+    return ReturnModel(
+      data: jsonResponse,
+      message: jsonResponse['pointsAwarded'].toString(),
+      success: jsonResponse['success'],
+      error: jsonResponse['error'],
+    );
   }
 }
