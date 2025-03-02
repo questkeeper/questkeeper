@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/quests/providers/badges_provider.dart';
 import 'package:questkeeper/shared/extensions/color_extensions.dart';
+import 'package:questkeeper/shared/widgets/filled_loading_button.dart';
 
 class QuestsView extends ConsumerWidget {
   const QuestsView({super.key});
@@ -49,6 +50,12 @@ class QuestsView extends ConsumerWidget {
                           )
                           .firstOrNull;
 
+                      // Check if badge is completed but not redeemed
+                      final bool isCompleted =
+                          userBadge != null && userBadge.earnedAt != null;
+                      final bool canRedeem = isCompleted && !userBadge.redeemed;
+                      final redeemText = ValueNotifier('Redeem Badge');
+
                       return Card(
                         child: ListTile(
                           title: Text(badge.name),
@@ -67,6 +74,56 @@ class QuestsView extends ConsumerWidget {
                                 'Progress: ${userBadge?.progress ?? 0}/${badge.requirementCount}',
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
+                              if (userBadge != null && userBadge.redeemed)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    'Redeemed',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                              if (canRedeem)
+                                ValueListenableBuilder(
+                                  valueListenable: redeemText,
+                                  builder: (context, value, child) {
+                                    if (value != 'Redeem Badge') {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: Text(
+                                          value,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(color: Colors.red),
+                                        ),
+                                      );
+                                    }
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: FilledLoadingButton(
+                                        onPressed: () async {
+                                          try {
+                                            await ref
+                                                .read(badgesManagerProvider
+                                                    .notifier)
+                                                .redeemBadge(userBadge.id);
+                                          } catch (e) {
+                                            redeemText.value =
+                                                'This badge is no longer available to redeem :(';
+                                          }
+                                        },
+                                        child: Text(redeemText.value),
+                                      ),
+                                    );
+                                  },
+                                )
                             ],
                           ),
                           trailing: Column(
