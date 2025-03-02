@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:questkeeper/settings/widgets/settings_switch_tile.dart';
 import 'package:questkeeper/shared/experiments/providers/experiments_provider.dart';
 
 class ExperimentsScreen extends ConsumerWidget {
@@ -35,11 +36,12 @@ class ExperimentsScreen extends ConsumerWidget {
                   final experiment = Experiments.values[index];
                   final isEnabled = enabledExperiments.contains(experiment);
 
-                  return ListTile(
-                    title: Text(experiment.name),
-                    trailing: Switch(
-                      value: isEnabled,
-                      onChanged: (value) async {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: SettingsSwitchTile(
+                      title: experiment.name,
+                      isEnabled: isEnabled,
+                      onTap: (value) async {
                         if (value) {
                           await ref
                               .read(experimentsManagerProvider.notifier)
