@@ -66,37 +66,35 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   void _handleKeyEvent(RawKeyEvent event) {
     // Only handle key down events to avoid double-triggering
     if (event is! RawKeyDownEvent) return;
+    final isModifierPressed =
+        Platform.isMacOS ? event.isMetaPressed : event.isControlPressed;
 
-    if (event.logicalKey == LogicalKeyboardKey.keyQ ||
-        event.logicalKey == LogicalKeyboardKey.keyW) {
-      exit(0);
-    }
+    if (isModifierPressed) {
+      if (event.logicalKey == LogicalKeyboardKey.keyQ) {
+        exit(0);
+      }
 
-    if (event.logicalKey == LogicalKeyboardKey.keyR) {
-      // Refresh the app
-      ref.invalidate(
-        spacesManagerProvider,
-      );
-      ref.invalidate(
-        profileManagerProvider,
-      );
-      ref.invalidate(
-        tasksManagerProvider,
-      );
-      ref.invalidate(
-        categoriesManagerProvider,
-      );
-      ref.invalidate(
-        friendsManagerProvider,
-      );
-    }
+      if (event.logicalKey == LogicalKeyboardKey.keyR) {
+        // Refresh the app
+        ref.invalidate(
+          spacesManagerProvider,
+        );
+        ref.invalidate(
+          profileManagerProvider,
+        );
+        ref.invalidate(
+          tasksManagerProvider,
+        );
+        ref.invalidate(
+          categoriesManagerProvider,
+        );
+        ref.invalidate(
+          friendsManagerProvider,
+        );
+      }
 
-    // Check for Cmd+P (macOS) or Ctrl+P (Windows/Linux)
-    if (event.logicalKey == LogicalKeyboardKey.keyP) {
-      final isModifierPressed =
-          Platform.isMacOS ? event.isMetaPressed : event.isControlPressed;
-
-      if (isModifierPressed) {
+      // Check for Cmd+P (macOS) or Ctrl+P (Windows/Linux)
+      if (event.logicalKey == LogicalKeyboardKey.keyP) {
         _toggleCommandPalette();
       }
     }
