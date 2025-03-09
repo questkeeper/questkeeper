@@ -10,6 +10,7 @@ class Badge {
   final String category;
   final int tier;
   final bool resetMonthly;
+  final int redemptionCount;
 
   Badge({
     required this.id,
@@ -20,6 +21,7 @@ class Badge {
     required this.category,
     required this.tier,
     required this.resetMonthly,
+    required this.redemptionCount,
   });
 
   Badge copyWith({
@@ -31,6 +33,7 @@ class Badge {
     String? category,
     int? tier,
     bool? resetMonthly,
+    int? redemptionCount,
   }) {
     return Badge(
       id: id ?? this.id,
@@ -41,6 +44,7 @@ class Badge {
       category: category ?? this.category,
       tier: tier ?? this.tier,
       resetMonthly: resetMonthly ?? this.resetMonthly,
+      redemptionCount: redemptionCount ?? this.redemptionCount,
     );
   }
 
@@ -54,6 +58,7 @@ class Badge {
       'category': category,
       'tier': tier,
       'resetMonthly': resetMonthly,
+      'redemptionCount': redemptionCount,
     };
   }
 
@@ -67,6 +72,7 @@ class Badge {
       category: map['category'] as String,
       tier: map['tier'] as int,
       resetMonthly: map['resetMonthly'] as bool,
+      redemptionCount: map['redemptionCount'] as int,
     );
   }
 
@@ -77,7 +83,7 @@ class Badge {
 
   @override
   String toString() {
-    return 'Badge(id: $id, name: $name, description: $description, points: $points, requirementCount: $requirementCount, category: $category, tier: $tier, resetMonthly: $resetMonthly)';
+    return 'Badge(id: $id, name: $name, description: $description, points: $points, requirementCount: $requirementCount, category: $category, tier: $tier, resetMonthly: $resetMonthly, redemptionCount: $redemptionCount)';
   }
 
   @override
@@ -91,7 +97,8 @@ class Badge {
         other.requirementCount == requirementCount &&
         other.category == category &&
         other.tier == tier &&
-        other.resetMonthly == resetMonthly;
+        other.resetMonthly == resetMonthly &&
+        other.redemptionCount == redemptionCount;
   }
 
   @override
@@ -103,6 +110,7 @@ class Badge {
         requirementCount.hashCode ^
         category.hashCode ^
         tier.hashCode ^
-        resetMonthly.hashCode;
+        resetMonthly.hashCode ^
+        redemptionCount.hashCode;
   }
 }
