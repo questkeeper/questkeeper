@@ -14,6 +14,7 @@ import 'package:questkeeper/layout/utils/state_providers.dart';
 import 'package:questkeeper/layout/widgets/nav_rail_item.dart';
 import 'package:questkeeper/layout/widgets/resizable_pane_container.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:questkeeper/shared/experiments/providers/experiments_provider.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/command_palette.dart';
@@ -236,13 +237,22 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                           isExpanded: isNavRailExpanded,
                                           onTap: () => widget.onTabSelected(1),
                                         ),
-                                        NavRailItem(
-                                          icon: LucideIcons.trophy,
-                                          label: 'Quests',
-                                          isSelected: widget.selectedIndex == 2,
-                                          isExpanded: isNavRailExpanded,
-                                          onTap: () => widget.onTabSelected(2),
-                                        ),
+                                        if (ref
+                                                .watch(
+                                                    experimentsManagerProvider)
+                                                .value
+                                                ?.contains(
+                                                    Experiments.quests) ??
+                                            false)
+                                          NavRailItem(
+                                            icon: LucideIcons.trophy,
+                                            label: 'Quests',
+                                            isSelected:
+                                                widget.selectedIndex == 2,
+                                            isExpanded: isNavRailExpanded,
+                                            onTap: () =>
+                                                widget.onTabSelected(2),
+                                          ),
                                       ],
                                     ),
                                   ),
