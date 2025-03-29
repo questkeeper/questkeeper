@@ -75,35 +75,48 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
         exit(0);
       }
 
-      if (event.logicalKey == LogicalKeyboardKey.keyR) {
-        // Refresh the app
-        ref.invalidate(
-          spacesManagerProvider,
-        );
-        ref.invalidate(
-          profileManagerProvider,
-        );
-        ref.invalidate(
-          tasksManagerProvider,
-        );
-        ref.invalidate(
-          categoriesManagerProvider,
-        );
-        ref.invalidate(
-          friendsManagerProvider,
-        );
+      // Handle Escape key
+      if (event.logicalKey == LogicalKeyboardKey.escape &&
+          ref.read(commandPaletteVisibleProvider)) {
+        ref.read(commandPaletteVisibleProvider.notifier).state = false;
       }
 
-      // Check for Cmd+P (macOS) or Ctrl+P (Windows/Linux)
-      if (event.logicalKey == LogicalKeyboardKey.keyP) {
-        _toggleCommandPalette();
+      switch (event.logicalKey) {
+        case LogicalKeyboardKey.digit1:
+          widget.onTabSelected(0);
+          break;
+        case LogicalKeyboardKey.digit2:
+          widget.onTabSelected(1);
+          break;
+        case LogicalKeyboardKey.digit3:
+          widget.onTabSelected(2);
+          break;
+        case LogicalKeyboardKey.digit4:
+          widget.onTabSelected(3);
+          break;
+        case LogicalKeyboardKey.keyR:
+          ref.invalidate(
+            spacesManagerProvider,
+          );
+          ref.invalidate(
+            profileManagerProvider,
+          );
+          ref.invalidate(
+            tasksManagerProvider,
+          );
+          ref.invalidate(
+            categoriesManagerProvider,
+          );
+          ref.invalidate(
+            friendsManagerProvider,
+          );
+          break;
+        case LogicalKeyboardKey.keyP:
+          _toggleCommandPalette();
+          break;
+        default:
+          break;
       }
-    }
-
-    // Handle Escape key
-    if (event.logicalKey == LogicalKeyboardKey.escape &&
-        ref.read(commandPaletteVisibleProvider)) {
-      ref.read(commandPaletteVisibleProvider.notifier).state = false;
     }
   }
 
