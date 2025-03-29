@@ -10,6 +10,7 @@ class UserBadge {
   final Badge badge;
   final bool redeemed;
   final String? earnedAt;
+  final int redemptionCount;
 
   UserBadge({
     required this.id,
@@ -18,6 +19,7 @@ class UserBadge {
     required this.badge,
     this.redeemed = false,
     this.earnedAt,
+    required this.redemptionCount,
   });
 
   UserBadge copyWith({
@@ -27,6 +29,7 @@ class UserBadge {
     Badge? badge,
     bool? redeemed,
     String? earnedAt,
+    int? redemptionCount,
   }) {
     return UserBadge(
       id: id ?? this.id,
@@ -35,6 +38,7 @@ class UserBadge {
       badge: badge ?? this.badge,
       redeemed: redeemed ?? this.redeemed,
       earnedAt: earnedAt ?? this.earnedAt,
+      redemptionCount: redemptionCount ?? this.redemptionCount,
     );
   }
 
@@ -46,6 +50,7 @@ class UserBadge {
       'badge': badge.toMap(),
       'redeemed': redeemed,
       'earnedAt': earnedAt,
+      'redemptionCount': redemptionCount,
     };
   }
 
@@ -57,6 +62,7 @@ class UserBadge {
       badge: Badge.fromMap(map['badge'] as Map<String, dynamic>),
       redeemed: map['redeemed'] as bool,
       earnedAt: map['earnedAt'] != null ? map['earnedAt'] as String : null,
+      redemptionCount: map['redemptionCount'] as int,
     );
   }
 
@@ -67,7 +73,7 @@ class UserBadge {
 
   @override
   String toString() {
-    return 'UserBadge(id: $id, progress: $progress, monthYear: $monthYear, badge: $badge, redeemed: $redeemed, earnedAt: $earnedAt)';
+    return 'UserBadge(id: $id, progress: $progress, monthYear: $monthYear, badge: $badge, redeemed: $redeemed, earnedAt: $earnedAt, redemptionCount: $redemptionCount)';
   }
 
   @override
@@ -79,7 +85,8 @@ class UserBadge {
         other.monthYear == monthYear &&
         other.badge == badge &&
         other.redeemed == redeemed &&
-        other.earnedAt == earnedAt;
+        other.earnedAt == earnedAt &&
+        other.redemptionCount == redemptionCount;
   }
 
   @override
@@ -89,6 +96,7 @@ class UserBadge {
         monthYear.hashCode ^
         badge.hashCode ^
         redeemed.hashCode ^
-        earnedAt.hashCode;
+        earnedAt.hashCode ^
+        redemptionCount.hashCode;
   }
 }
