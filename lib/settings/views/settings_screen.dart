@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -15,6 +16,7 @@ import 'package:questkeeper/settings/views/profile/profile_settings_screen.dart'
 import 'package:questkeeper/settings/views/theme/theme_screen.dart';
 import 'package:questkeeper/settings/views/experiments/experiments_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -37,6 +39,35 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget? _currentContent;
+  final debugCheck = isDebug ||
+      (Supabase.instance.client.auth.currentUser?.email
+              ?.endsWith("@questkeeper.app") ??
+          false);
+  final updater = ShorebirdUpdater();
+  bool _needsUpdate = false;
+
+  Future<void> _checkForUpdates() async {
+    // Check whether a new update is available.
+    final status = await updater.checkForUpdate();
+    setState(() {
+      _needsUpdate = status == UpdateStatus.outdated;
+    });
+  }
+
+  Future<void> _performUpdate() async {
+    try {
+      await updater.update();
+    } on UpdateException catch (error) {
+      SnackbarService.showErrorSnackbar('Could not update the app');
+      Sentry.captureException(error);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkForUpdates();
+  }
 
   void _navigateToContent(Widget content) {
     final isMobile = ref.read(isMobileProvider);
@@ -226,10 +257,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   icon: LucideIcons.flask_conical,
                   onTap: () => _navigateToContent(const ExperimentsScreen()),
                 ),
-                if (isDebug ||
-                    (Supabase.instance.client.auth.currentUser?.email
-                            ?.endsWith("@questkeeper.app") ??
-                        false))
+                if (debugCheck)
                   SettingsCard(
                     title: "Super Secret Debug Menu",
                     description: "Only for debug purposes lol",
@@ -239,6 +267,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     iconColor: Colors.amber,
                   ),
                 const Divider(),
+                if (debugCheck)
+                  SettingsCard(
+                    title: 'Shorebird',
+                    description:
+                        'This should only appear after shorebird push is successful',
+                    icon: LucideIcons.trophy,
+                    onTap: () => SnackbarService.showSuccessSnackbar(
+                        "Hello from the other side"),
+                  ),
+                const Divider(),
+                if (_needsUpdate)
+                  SettingsCard(
+                    title: 'Update',
+                    description: 'Update the app',
+                    icon: LucideIcons.trophy,
+                    onTap: () => _performUpdate(),
+                  ),
                 // Sign Out (at the bottom)
                 SettingsCard(
                   title: 'Sign out',

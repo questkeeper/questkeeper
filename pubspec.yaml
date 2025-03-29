@@ -4,7 +4,7 @@ description: "The gamified task tracker"
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.1.3+1
+version: 1.1.3+11
 
 environment:
   sdk: ">=3.3.3 <4.0.0"
@@ -75,6 +75,7 @@ dependencies:
   google_sign_in: ^6.2.2
   google_sign_in_ios: ^5.8.0
   app_links: ^6.4.0
+  shorebird_code_push: ^2.0.3
 
 dev_dependencies:
   flutter_test:
@@ -85,6 +86,8 @@ dev_dependencies:
   riverpod_lint: ^2.6.4
   json_serializable: ^6.9.4
   msix: ^3.16.8
+  pkgr:
+    path: ../pkgr/
 
 dependency_overrides:
   shared_preferences_android: ^2.3.4
