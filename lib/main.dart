@@ -61,14 +61,13 @@ Future<void> main() async {
   }
 
   await Supabase.initialize(
-    url: "https://mzudaknbrzixjkvjqayw.supabase.co",
-    anonKey:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16dWRha25icnppeGprdmpxYXl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI0MjU3NDgsImV4cCI6MjAyODAwMTc0OH0.b71_fWtic8S4sfNmCMlwLAlzZwhS_lHGBEW1ZQynfsc",
-    authOptions: FlutterAuthClientOptions(
-      // Disable Supabase handling URI schemes
-      detectSessionInUri: false,
-    )
-  );
+      url: "https://mzudaknbrzixjkvjqayw.supabase.co",
+      anonKey:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16dWRha25icnppeGprdmpxYXl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI0MjU3NDgsImV4cCI6MjAyODAwMTc0OH0.b71_fWtic8S4sfNmCMlwLAlzZwhS_lHGBEW1ZQynfsc",
+      authOptions: FlutterAuthClientOptions(
+        // Disable Supabase handling URI schemes
+        detectSessionInUri: false,
+      ));
 
   // Handle URL schemes
   QkUriHandler(
@@ -191,8 +190,8 @@ class MyApp extends ConsumerWidget {
                 '/signin': (context) => const AuthSpaces(),
                 '/home': (context) => const TabView(),
 
-                // Familiars stuff
-                '/badges': (context) => const QuestsView(),
+                // Quests
+                '/quests': (context) => const QuestsView(),
 
                 // Friends
                 "/friends": (context) => const FriendsList(),
