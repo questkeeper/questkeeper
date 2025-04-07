@@ -196,9 +196,6 @@ class _DesktopQuestsViewState extends ConsumerState<DesktopQuestsView> {
           loading: isLoading,
           limit: 3,
           showLimit: true,
-          onViewMore: () {
-            _showAllAchievements(context, achievements, isLoading);
-          },
         ),
       ],
     );
