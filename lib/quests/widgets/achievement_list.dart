@@ -4,6 +4,7 @@ import 'package:questkeeper/quests/models/badge_model.dart' as quest_models;
 import 'package:questkeeper/quests/models/user_badge_model.dart';
 import 'package:questkeeper/quests/providers/badges_provider.dart';
 import 'package:questkeeper/quests/widgets/custom_progress_bar.dart';
+import 'package:questkeeper/shared/widgets/empty_state.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -43,27 +44,9 @@ class _AchievementListState extends ConsumerState<AchievementList> {
         if (loading) ...[
           _buildSkeletonList(theme),
         ] else if (displayedAchievements.isEmpty) ...[
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    LucideIcons.award,
-                    size: 48,
-                    color: theme.colorScheme.outline,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    "No achievements available yet",
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          const EmptyState(
+            title: "No achievements available yet",
+            icon: LucideIcons.award,
           ),
         ] else ...[
           ...displayedAchievements
