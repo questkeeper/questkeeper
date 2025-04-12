@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/quests/models/badge_model.dart' as quest_models;
 import 'package:questkeeper/quests/models/user_badge_model.dart';
 import 'package:questkeeper/quests/providers/badges_provider.dart';
+import 'package:questkeeper/quests/utils/group_achievements.dart';
 import 'package:questkeeper/quests/views/all_achievements_view.dart';
 import 'package:questkeeper/quests/widgets/achievement_list.dart';
 import 'package:questkeeper/quests/widgets/desktop/user_quest_profile.dart';
@@ -33,14 +34,7 @@ class _DesktopQuestsViewState extends ConsumerState<DesktopQuestsView> {
 
     // Convert badge data to format needed for achievement list
     final achievements = badgesAsync.maybeWhen(
-      data: (data) {
-        final (badges, userBadges) = data;
-        return badges.map((badge) {
-          final userBadge =
-              userBadges.where((ub) => ub.badge.id == badge.id).firstOrNull;
-          return (badge, userBadge);
-        }).toList();
-      },
+      data: (data) => groupAchievements(data),
       orElse: () => <(quest_models.Badge, UserBadge?)>[],
     );
 
