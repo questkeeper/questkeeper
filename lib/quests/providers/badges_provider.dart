@@ -1,6 +1,7 @@
 import 'package:questkeeper/quests/models/badge_model.dart';
 import 'package:questkeeper/quests/models/user_badge_model.dart';
 import 'package:questkeeper/quests/repositories/badges_repository.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'badges_provider.g.dart';
@@ -23,6 +24,7 @@ class BadgesManager extends _$BadgesManager {
       return (badges, userBadges);
     } catch (error) {
       state = AsyncValue.error(error, StackTrace.current);
+      SnackbarService.showErrorSnackbar("Failed to fetch badges");
       throw Exception("Failed to fetch badges: $error");
     }
   }
@@ -61,6 +63,7 @@ class BadgesManager extends _$BadgesManager {
       } else {
         state = AsyncValue.error(
             result.error ?? 'Unknown error', StackTrace.current);
+        SnackbarService.showErrorSnackbar(result.error ?? 'Unknown error');
       }
     } catch (error) {
       state = AsyncValue.error(error, StackTrace.current);

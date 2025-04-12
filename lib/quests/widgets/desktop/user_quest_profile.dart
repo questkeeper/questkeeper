@@ -3,7 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/quests/providers/badges_provider.dart';
-import 'package:questkeeper/quests/providers/quests_provider.dart';
+// import 'package:questkeeper/quests/providers/quests_provider.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 
@@ -61,6 +61,7 @@ class UserQuestProfile extends ConsumerWidget {
             ),
             const Divider(height: 1),
 
+            /*
             // Today's Highlighted Quest
             Padding(
               padding: const EdgeInsets.all(16),
@@ -76,12 +77,14 @@ class UserQuestProfile extends ConsumerWidget {
                 ],
               ),
             ),
+            */
           ],
         ),
       ),
     );
   }
 
+  /*
   Widget _buildHighlightedQuest(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final userQuestsAsync = ref.watch(questsManagerProvider);
@@ -200,6 +203,7 @@ class UserQuestProfile extends ConsumerWidget {
           );
         });
   }
+  */
 
   Widget _buildQuestStats(BuildContext context, WidgetRef ref,
       {bool isCompact = false}) {

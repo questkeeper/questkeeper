@@ -4,15 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/quests/models/badge_model.dart' as quest_models;
 import 'package:questkeeper/quests/models/user_badge_model.dart';
 import 'package:questkeeper/quests/providers/badges_provider.dart';
-import 'package:questkeeper/quests/providers/global_quests_provider.dart';
-import 'package:questkeeper/quests/providers/quests_provider.dart';
 import 'package:questkeeper/quests/views/all_achievements_view.dart';
 import 'package:questkeeper/quests/widgets/achievement_list.dart';
 import 'package:questkeeper/quests/widgets/desktop/user_quest_profile.dart';
-import 'package:questkeeper/quests/widgets/global_quest_card.dart';
-import 'package:questkeeper/quests/widgets/quest_card.dart';
-import 'package:questkeeper/quests/widgets/skeletonized_quest_grid.dart';
-import 'package:questkeeper/shared/widgets/snackbar.dart';
+// import 'package:questkeeper/quests/widgets/global_quest_card.dart';
+// import 'package:questkeeper/quests/widgets/quest_card.dart';
+// import 'package:questkeeper/quests/widgets/skeletonized_quest_grid.dart';
+// import 'package:questkeeper/quests/providers/global_quests_provider.dart';
+// import 'package:questkeeper/quests/providers/quests_provider.dart';
+// import 'package:questkeeper/shared/widgets/snackbar.dart';
 
 class DesktopQuestsView extends ConsumerStatefulWidget {
   const DesktopQuestsView({super.key});
@@ -28,8 +28,8 @@ class _DesktopQuestsViewState extends ConsumerState<DesktopQuestsView> {
     final badgesAsync = ref.watch(badgesManagerProvider);
 
     // Using the new providers
-    final globalQuestAsync = ref.watch(globalQuestManagerProvider);
-    final userQuestsAsync = ref.watch(questsManagerProvider);
+    // final globalQuestAsync = ref.watch(globalQuestManagerProvider);
+    // final userQuestsAsync = ref.watch(questsManagerProvider);
 
     // Convert badge data to format needed for achievement list
     final achievements = badgesAsync.maybeWhen(
@@ -90,6 +90,7 @@ class _DesktopQuestsViewState extends ConsumerState<DesktopQuestsView> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              /*
                               // Global Quest Section
                               globalQuestAsync.when(
                                 loading: () => const Center(
@@ -147,6 +148,7 @@ class _DesktopQuestsViewState extends ConsumerState<DesktopQuestsView> {
                               ),
 
                               const SizedBox(height: 24),
+                              */
 
                               // Achievements Section
                               _buildTopAchievements(
@@ -194,13 +196,13 @@ class _DesktopQuestsViewState extends ConsumerState<DesktopQuestsView> {
         AchievementList(
           achievements: achievements,
           loading: isLoading,
-          limit: 3,
+          limit: 5,
           showLimit: true,
         ),
       ],
     );
   }
-
+/*
   void _handleQuestReroll(int questId) {
     // Use the quest manager to reroll a quest
     ref
@@ -215,6 +217,7 @@ class _DesktopQuestsViewState extends ConsumerState<DesktopQuestsView> {
       }
     });
   }
+*/
 
   void _showAllAchievements(
     BuildContext context,
