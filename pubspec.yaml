@@ -4,7 +4,7 @@ description: "The gamified task tracker"
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.1.3+11
+version: 1.1.9+1
 
 environment:
   sdk: ">=3.3.3 <4.0.0"
@@ -17,31 +17,31 @@ dependencies:
   riverpod: ^2.6.1
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
-  freezed: ^2.5.8
-  freezed_annotation: ^2.4.4
+  freezed: ^3.0.6
+  freezed_annotation: ^3.0.0
   json_annotation: ^4.9.0
   intl: ^0.19.0
   google_fonts: ^6.2.1
-  firebase_core: ^3.11.0
-  firebase_messaging: ^15.2.2
+  firebase_core: ^3.13.0
+  firebase_messaging: ^15.2.5
   flex_color_picker: ^3.7.0
   url_launcher: ^6.3.1
-  supabase: ^2.6.2
-  supabase_flutter: ^2.8.3
+  supabase: ^2.6.3
+  supabase_flutter: ^2.8.4
   home_widget: ^0.7.0+1
-  shared_preferences: ^2.5.2
+  shared_preferences: ^2.5.3
   flutter_lucide: ^1.6.2
-  riverpod_generator: ^2.6.4
+  riverpod_generator: ^2.6.5
   rename_app: ^1.6.2
   email_validator: ^3.0.0
-  sentry_flutter: ^8.13.0
+  sentry_flutter: ^8.14.1
   feedback_sentry: ^3.1.0
-  package_info_plus: ^8.2.1
+  package_info_plus: ^8.3.0
   device_info_plus: ^11.3.0
   http: ^1.3.0
-  flame: ^1.24.0
-  flame_tiled: ^1.21.2
-  flame_riverpod: ^5.4.8
+  flame: ^1.27.0
+  flame_tiled: ^3.0.0
+  flame_riverpod: ^5.4.12
   flutter_cache_manager: ^3.4.1
   faker: ^2.2.0
   uuid: ^4.5.1
@@ -49,31 +49,31 @@ dependencies:
   skeletonizer: ^1.4.3
   dynamic_color: ^1.7.0
   flutter_svg: ^2.0.17
-  toastification: ^2.3.0
+  toastification: ^3.0.2
   flutter_launcher_icons: ^0.14.3
   flutter_native_splash: ^2.4.4
   showcaseview: ^4.0.1
   dio: ^5.8.0+1
   dio_http2_adapter: ^2.6.0
-  sentry_dio: ^8.13.0
+  sentry_dio: ^8.14.1
   numberpicker: ^2.1.2
-  posthog_flutter: ^4.10.2
+  posthog_flutter: ^4.10.8
   connectivity_plus: ^6.1.3
-  introduction_screen: ^3.1.16
-  lottie: ^3.3.0
-  dotlottie_loader: ^0.0.4
+  introduction_screen: ^3.1.17
+  lottie: ^3.3.1
+  dotlottie_loader: ^0.0.5
   rive: ^0.13.20
   collection: ^1.19.0
   dropdown_button2: ^2.3.9
   smooth_sheets: ^1.0.0-f324.0.10.2
-  flutter_local_notifications: ^19.0.0-dev.5
-  flutter_local_notifications_linux: ^5.0.1-dev.1
-  flutter_local_notifications_platform_interface: ^8.1.0-dev.1
+  flutter_local_notifications: ^19.0.0
+  flutter_local_notifications_linux: ^6.0.0
+  flutter_local_notifications_platform_interface: ^9.0.0
   timezone: ^0.10.0
-  sign_in_with_apple: ^6.1.4
+  sign_in_with_apple: ^7.0.1
   crypto: ^3.0.6
-  google_sign_in: ^6.2.2
-  google_sign_in_ios: ^5.8.0
+  google_sign_in: ^6.3.0
+  google_sign_in_ios: ^5.8.1
   app_links: ^6.4.0
   shorebird_code_push: ^2.0.3
 
@@ -82,15 +82,14 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   build_runner: ^2.4.15
-  custom_lint: ^0.7.3
-  riverpod_lint: ^2.6.4
+  custom_lint: ^0.7.5
+  riverpod_lint: ^2.6.5
   json_serializable: ^6.9.4
   msix: ^3.16.8
   pkgr:
-    path: ../pkgr/
-
-dependency_overrides:
-  shared_preferences_android: ^2.3.4
+    git:
+      url: https://github.com/misraishan/pkgr
+      ref: main
 
 flutter:
   uses-material-design: true
