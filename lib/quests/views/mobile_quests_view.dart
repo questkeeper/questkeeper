@@ -7,6 +7,7 @@ import 'package:questkeeper/quests/providers/badges_provider.dart';
 import 'package:questkeeper/quests/utils/group_achievements.dart';
 import 'package:questkeeper/quests/views/all_achievements_view.dart';
 import 'package:questkeeper/quests/widgets/achievement_list.dart';
+import 'package:questkeeper/quests/widgets/user_quest_profile.dart';
 
 class MobileQuestsView extends ConsumerWidget {
   const MobileQuestsView({super.key});
@@ -22,10 +23,17 @@ class MobileQuestsView extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: _buildAchievementsTab(
-          context,
-          achievements,
-          badgesAsync.isLoading,
+        child: Column(
+          children: [
+            const UserQuestProfile(),
+            Expanded(
+              child: _buildAchievementsTab(
+                context,
+                achievements,
+                badgesAsync.isLoading,
+              ),
+            ),
+          ],
         ),
       ),
     );

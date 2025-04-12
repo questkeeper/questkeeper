@@ -7,7 +7,7 @@ import 'package:questkeeper/quests/providers/badges_provider.dart';
 import 'package:questkeeper/quests/utils/group_achievements.dart';
 import 'package:questkeeper/quests/views/all_achievements_view.dart';
 import 'package:questkeeper/quests/widgets/achievement_list.dart';
-import 'package:questkeeper/quests/widgets/desktop/user_quest_profile.dart';
+import 'package:questkeeper/quests/widgets/user_quest_profile.dart';
 // import 'package:questkeeper/quests/widgets/global_quest_card.dart';
 // import 'package:questkeeper/quests/widgets/quest_card.dart';
 // import 'package:questkeeper/quests/widgets/skeletonized_quest_grid.dart';
