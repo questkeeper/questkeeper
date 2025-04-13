@@ -23,17 +23,21 @@ class MobileQuestsView extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            const UserQuestProfile(),
-            Expanded(
-              child: _buildAchievementsTab(
+        child: RefreshIndicator.adaptive(
+          onRefresh: () async {
+            // ignore: unused_result
+            ref.refresh(badgesManagerProvider);
+          },
+          child: ListView(
+            children: [
+              const UserQuestProfile(),
+              _buildAchievementsTab(
                 context,
                 achievements,
                 badgesAsync.isLoading,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -69,13 +73,11 @@ class MobileQuestsView extends ConsumerWidget {
           const SizedBox(height: 16),
           _buildAchievementStats(context, achievements),
           const SizedBox(height: 16),
-          Expanded(
-            child: AchievementList(
-              achievements: achievements,
-              loading: isLoading,
-              showLimit: true,
-              limit: 5,
-            ),
+          AchievementList(
+            achievements: achievements,
+            loading: isLoading,
+            showLimit: true,
+            limit: 5,
           ),
         ],
       ),

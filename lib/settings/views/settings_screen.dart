@@ -267,16 +267,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     iconColor: Colors.amber,
                   ),
                 const Divider(),
-                if (debugCheck)
-                  SettingsCard(
-                    title: 'Shorebird',
-                    description:
-                        'This should only appear after shorebird push is successful',
-                    icon: LucideIcons.trophy,
-                    onTap: () => SnackbarService.showSuccessSnackbar(
-                        "Hello from the other side"),
-                  ),
-                const Divider(),
                 if (_needsUpdate)
                   SettingsCard(
                     title: 'Update',
@@ -284,7 +274,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     icon: LucideIcons.trophy,
                     onTap: () => _performUpdate(),
                   ),
-                // Sign Out (at the bottom)
+                // Sign Out
                 SettingsCard(
                   title: 'Sign out',
                   description: 'Sign out and remove local data',
