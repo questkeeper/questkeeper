@@ -36,6 +36,7 @@ class MobileQuestsView extends ConsumerWidget {
                 achievements,
                 badgesAsync.isLoading,
               ),
+              const SizedBox(height: 96),
             ],
           ),
         ),
