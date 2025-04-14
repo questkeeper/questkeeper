@@ -129,22 +129,30 @@ class ModernBottomBar extends StatelessWidget {
 
 // Helper widget for action buttons
 class NavActionButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final IconData icon;
+  final bool isEmpty;
+  final VoidCallback? onPressed;
+  final IconData? icon;
   final String? tooltip;
   final bool? isColoredPrimary;
 
   const NavActionButton({
     super.key,
-    required this.onPressed,
-    required this.icon,
+    this.onPressed,
+    this.icon,
     this.tooltip,
+    this.isEmpty = false,
     this.isColoredPrimary = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
+    if (isEmpty) {
+      return SizedBox.fromSize(
+        size: const Size(40, 40),
+      );
+    }
 
     return IconButton.filled(
       visualDensity: VisualDensity.comfortable,

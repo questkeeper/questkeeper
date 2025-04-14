@@ -6,7 +6,6 @@ part 'experiments_provider.g.dart';
 enum Experiments {
   spacesUnassignedDisabled,
   spacesTodayViewEnabled,
-  quests,
 }
 
 @riverpod

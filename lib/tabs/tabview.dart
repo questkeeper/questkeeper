@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/friends/views/desktop_friends_leaderboard.dart';
 import 'package:questkeeper/layout/desktop_layout.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
-import 'package:questkeeper/shared/experiments/providers/experiments_provider.dart';
 import 'package:questkeeper/spaces/views/desktop_spaces_screen.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/layout/utils/state_providers.dart';
@@ -29,7 +28,6 @@ class TabView extends ConsumerStatefulWidget {
 class _TabViewState extends ConsumerState<TabView> {
   int _selectedIndex = 0;
   bool _hasInitialized = false;
-  bool _isQuestsEnabled = false;
 
   static final List<Widget> _mobilePages = [
     AllSpacesScreen(),
@@ -70,16 +68,10 @@ class _TabViewState extends ConsumerState<TabView> {
                 constraints.maxWidth,
                 constraints.maxHeight,
               ));
-
-          _isQuestsEnabled = ref
-                  .watch(experimentsManagerProvider)
-                  .value
-                  ?.contains(Experiments.quests) ??
-              false;
         });
 
         final isMobile = ref.watch(isMobileProvider);
-        if (!_hasInitialized && _isQuestsEnabled == true) {
+        if (!_hasInitialized) {
           _mobilePages.add(const QuestsView());
           _desktopPages.removeLast();
           _desktopPages.addAll([const QuestsView(), const SettingsScreen()]);
@@ -139,11 +131,10 @@ class _TabViewState extends ConsumerState<TabView> {
                         label: 'Friends',
                         icon: LucideIcons.handshake,
                       ),
-                      if (_isQuestsEnabled)
-                        ModernBottomBarItem(
-                          label: 'Quests',
-                          icon: LucideIcons.trophy,
-                        ),
+                      ModernBottomBarItem(
+                        label: 'Quests',
+                        icon: LucideIcons.trophy,
+                      ),
                     ],
                   ),
                 ),
@@ -214,7 +205,9 @@ class _TabViewState extends ConsumerState<TabView> {
           isColoredPrimary: true,
         );
       default:
-        return const SizedBox.shrink();
+        return const NavActionButton(
+          isEmpty: true,
+        );
     }
   }
 }
