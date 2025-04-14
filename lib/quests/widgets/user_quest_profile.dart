@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/quests/providers/badges_provider.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/friends/widgets/user_profile_view.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 // import 'package:questkeeper/quests/providers/quests_provider.dart';
 
 /// A responsive widget that displays the user's quest profile information.
@@ -120,12 +121,7 @@ class UserQuestProfile extends ConsumerWidget {
                         color: theme.colorScheme.tertiary,
                         isCompact: isCompact,
                       ),
-                      _buildStatItem(
-                        context,
-                        icon: LucideIcons.flame,
-                        value: '0',
-                        label: 'Streak',
-                        color: Colors.orange,
+                      _buildFutureStreakStatItem(
                         isCompact: isCompact,
                       ),
                     ],
@@ -154,12 +150,7 @@ class UserQuestProfile extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      _buildStatItem(
-                        context,
-                        icon: LucideIcons.flame,
-                        value: '0',
-                        label: 'Login streak',
-                        color: Colors.orange,
+                      _buildFutureStreakStatItem(
                         isCompact: isCompact,
                       ),
                     ],
@@ -195,6 +186,51 @@ class UserQuestProfile extends ConsumerWidget {
           statsContent,
         ],
       ),
+    );
+  }
+
+  Widget _buildFutureStreakStatItem({required bool isCompact}) {
+    final supabase = Supabase.instance.client;
+    final futureCurrentStreak = supabase
+        .from("user_login_streak")
+        .select("*")
+        .eq("userId", supabase.auth.currentUser?.id ?? "")
+        .maybeSingle();
+
+    return FutureBuilder(
+      future: futureCurrentStreak,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Center(
+            child: Text(':('),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildStatItem(
+            context,
+            icon: LucideIcons.flame,
+            value: "0",
+            label: 'Login Streak',
+            color: Colors.orange,
+            isCompact: isCompact,
+          );
+        }
+
+        final currentStreak = snapshot.data?["currentStreak"] ?? 0;
+        final longestStreak = snapshot.data?["longestStreak"] ?? 0;
+        return Tooltip(
+          message: 'Longest streak: $longestStreak',
+          child: _buildStatItem(
+            context,
+            icon: LucideIcons.flame,
+            value: currentStreak.toString(),
+            label: 'Login Streak',
+            color: Colors.orange,
+            isCompact: isCompact,
+          ),
+        );
+      },
     );
   }
 
