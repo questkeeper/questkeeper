@@ -8,6 +8,7 @@ import 'package:questkeeper/quests/utils/group_achievements.dart';
 import 'package:questkeeper/quests/views/all_achievements_view.dart';
 import 'package:questkeeper/quests/widgets/achievement_list.dart';
 import 'package:questkeeper/quests/widgets/user_quest_profile.dart';
+import 'package:questkeeper/shared/utils/analytics/analytics.dart';
 
 class MobileQuestsView extends ConsumerWidget {
   const MobileQuestsView({super.key});
@@ -25,6 +26,14 @@ class MobileQuestsView extends ConsumerWidget {
       body: SafeArea(
         child: RefreshIndicator.adaptive(
           onRefresh: () async {
+            // Track refresh action
+            Analytics.instance.trackEvent(
+              eventName: 'quests_refreshed',
+              properties: {
+                'source': 'mobile_quests_view',
+              },
+            );
+
             // ignore: unused_result
             ref.refresh(badgesManagerProvider);
           },
@@ -64,6 +73,17 @@ class MobileQuestsView extends ConsumerWidget {
               ),
               TextButton.icon(
                 onPressed: () {
+                  // Track viewing all achievements
+                  Analytics.instance.trackEvent(
+                    eventName: 'view_all_achievements',
+                    properties: {
+                      'total_count': achievements.length,
+                      'completed_count': achievements
+                          .where((a) => a.$2?.redeemed == true)
+                          .length,
+                    },
+                  );
+
                   _showAllAchievements(context, achievements, isLoading);
                 },
                 icon: const Icon(LucideIcons.list),
@@ -95,6 +115,18 @@ class MobileQuestsView extends ConsumerWidget {
     final completedCount =
         achievements.where((a) => a.$2?.redeemed == true).length;
     final completionRate = totalCount > 0 ? completedCount / totalCount : 0.0;
+
+    // Track achievements stats viewed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Analytics.instance.trackEvent(
+        eventName: 'achievement_stats_viewed',
+        properties: {
+          'total_count': totalCount,
+          'completed_count': completedCount,
+          'completion_rate': completionRate,
+        },
+      );
+    });
 
     return Card(
       child: Padding(

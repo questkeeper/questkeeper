@@ -4,6 +4,7 @@ import 'package:questkeeper/quests/models/badge_model.dart' as quest_models;
 import 'package:questkeeper/quests/models/user_badge_model.dart';
 import 'package:questkeeper/quests/providers/badges_provider.dart';
 import 'package:questkeeper/quests/widgets/custom_progress_bar.dart';
+import 'package:questkeeper/shared/utils/analytics/analytics.dart';
 import 'package:questkeeper/shared/widgets/empty_state.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,6 +27,32 @@ class AchievementList extends ConsumerStatefulWidget {
 }
 
 class _AchievementListState extends ConsumerState<AchievementList> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Track achievement list view
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!widget.loading) {
+        Analytics.instance.trackEvent(
+          eventName: 'achievement_list_viewed',
+          properties: {
+            'count': widget.achievements.length,
+            'limited': widget.showLimit,
+            'limit': widget.limit,
+            'complete_count':
+                widget.achievements.where((a) => a.$2?.redeemed == true).length,
+            'redeemable_count': widget.achievements
+                .where((a) =>
+                    a.$2?.progress == a.$1.requirementCount &&
+                    a.$2?.redeemed != true)
+                .length,
+          },
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final achievements = widget.achievements;
@@ -228,6 +255,18 @@ class _AchievementListState extends ConsumerState<AchievementList> {
               const SizedBox(height: 12),
               FilledButton.icon(
                 onPressed: () {
+                  // Track badge redemption
+                  Analytics.instance.trackEvent(
+                    eventName: 'badge_redeemed',
+                    properties: {
+                      'badge_id': badge.id,
+                      'badge_name': badge.name,
+                      'badge_category': badge.category,
+                      'points': badge.points,
+                      'reset_monthly': badge.resetMonthly,
+                    },
+                  );
+
                   ref
                       .read(badgesManagerProvider.notifier)
                       .redeemBadge(userBadge!.id);
