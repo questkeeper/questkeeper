@@ -61,8 +61,19 @@ class _AchievementListState extends ConsumerState<AchievementList> {
     final limit = widget.limit;
 
     final theme = Theme.of(context);
-    final displayedAchievements =
-        showLimit ? achievements.take(limit).toList() : achievements;
+    final displayedAchievements = showLimit
+        ? achievements
+            .where((achievement) => achievement.$2?.redeemed != true)
+            .take(limit)
+            .toList()
+        : achievements;
+
+    if (displayedAchievements.length < limit) {
+      final missingAchievements = limit - displayedAchievements.length;
+      for (var i = 0; i < missingAchievements; i++) {
+        displayedAchievements.add(achievements[i]);
+      }
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
