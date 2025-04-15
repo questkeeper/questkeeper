@@ -15,6 +15,7 @@ import 'package:questkeeper/layout/widgets/nav_rail_item.dart';
 import 'package:questkeeper/layout/widgets/resizable_pane_container.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
+import 'package:questkeeper/shared/utils/analytics/analytics.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/command_palette.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
@@ -50,6 +51,14 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
+
+    // Track desktop layout loaded
+    Analytics.instance.trackEvent(
+      eventName: 'desktop_layout_loaded',
+      properties: {
+        'with_context_pane': widget.contextPane != null,
+      },
+    );
   }
 
   @override
@@ -59,8 +68,19 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   }
 
   void _toggleCommandPalette() {
-    ref.read(commandPaletteVisibleProvider.notifier).state =
-        !ref.read(commandPaletteVisibleProvider);
+    final isVisible = ref.read(commandPaletteVisibleProvider);
+    final willBeVisible = !isVisible;
+
+    Analytics.instance.trackEvent(
+      eventName:
+          willBeVisible ? 'command_palette_opened' : 'command_palette_closed',
+      properties: {
+        'from_tab_index': widget.selectedIndex,
+        'via': 'button_click',
+      },
+    );
+
+    ref.read(commandPaletteVisibleProvider.notifier).state = willBeVisible;
   }
 
   void _handleKeyEvent(RawKeyEvent event) {
@@ -71,29 +91,79 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
     if (isModifierPressed) {
       if (event.logicalKey == LogicalKeyboardKey.keyQ) {
+        Analytics.instance.trackEvent(
+          eventName: 'app_quit',
+          properties: {
+            'via': 'keyboard_shortcut',
+          },
+        );
         exit(0);
       }
 
       // Handle Escape key
       if (event.logicalKey == LogicalKeyboardKey.escape &&
           ref.read(commandPaletteVisibleProvider)) {
+        Analytics.instance.trackEvent(
+          eventName: 'command_palette_closed',
+          properties: {
+            'via': 'escape_key',
+          },
+        );
         ref.read(commandPaletteVisibleProvider.notifier).state = false;
       }
 
       switch (event.logicalKey) {
         case LogicalKeyboardKey.digit1:
+          Analytics.instance.trackEvent(
+            eventName: 'tab_changed',
+            properties: {
+              'from': widget.selectedIndex,
+              'to': 0,
+              'via': 'keyboard_shortcut',
+            },
+          );
           widget.onTabSelected(0);
           break;
         case LogicalKeyboardKey.digit2:
+          Analytics.instance.trackEvent(
+            eventName: 'tab_changed',
+            properties: {
+              'from': widget.selectedIndex,
+              'to': 1,
+              'via': 'keyboard_shortcut',
+            },
+          );
           widget.onTabSelected(1);
           break;
         case LogicalKeyboardKey.digit3:
+          Analytics.instance.trackEvent(
+            eventName: 'tab_changed',
+            properties: {
+              'from': widget.selectedIndex,
+              'to': 2,
+              'via': 'keyboard_shortcut',
+            },
+          );
           widget.onTabSelected(2);
           break;
         case LogicalKeyboardKey.digit4:
+          Analytics.instance.trackEvent(
+            eventName: 'tab_changed',
+            properties: {
+              'from': widget.selectedIndex,
+              'to': 3,
+              'via': 'keyboard_shortcut',
+            },
+          );
           widget.onTabSelected(3);
           break;
         case LogicalKeyboardKey.keyR:
+          Analytics.instance.trackEvent(
+            eventName: 'data_refreshed',
+            properties: {
+              'via': 'keyboard_shortcut',
+            },
+          );
           ref.invalidate(
             spacesManagerProvider,
           );
@@ -111,6 +181,13 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           );
           break;
         case LogicalKeyboardKey.keyP:
+          Analytics.instance.trackEvent(
+            eventName: 'command_palette_toggled',
+            properties: {
+              'via': 'keyboard_shortcut',
+              'from_tab': widget.selectedIndex,
+            },
+          );
           _toggleCommandPalette();
           break;
         default:
@@ -240,21 +317,51 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                           label: 'Spaces',
                                           isSelected: widget.selectedIndex == 0,
                                           isExpanded: isNavRailExpanded,
-                                          onTap: () => widget.onTabSelected(0),
+                                          onTap: () {
+                                            Analytics.instance.trackEvent(
+                                              eventName: 'tab_changed',
+                                              properties: {
+                                                'from': widget.selectedIndex,
+                                                'to': 0,
+                                                'via': 'nav_rail',
+                                              },
+                                            );
+                                            widget.onTabSelected(0);
+                                          },
                                         ),
                                         NavRailItem(
                                           icon: LucideIcons.handshake,
                                           label: 'Friends',
                                           isSelected: widget.selectedIndex == 1,
                                           isExpanded: isNavRailExpanded,
-                                          onTap: () => widget.onTabSelected(1),
+                                          onTap: () {
+                                            Analytics.instance.trackEvent(
+                                              eventName: 'tab_changed',
+                                              properties: {
+                                                'from': widget.selectedIndex,
+                                                'to': 1,
+                                                'via': 'nav_rail',
+                                              },
+                                            );
+                                            widget.onTabSelected(1);
+                                          },
                                         ),
                                         NavRailItem(
                                           icon: LucideIcons.trophy,
                                           label: 'Quests',
                                           isSelected: widget.selectedIndex == 2,
                                           isExpanded: isNavRailExpanded,
-                                          onTap: () => widget.onTabSelected(2),
+                                          onTap: () {
+                                            Analytics.instance.trackEvent(
+                                              eventName: 'tab_changed',
+                                              properties: {
+                                                'from': widget.selectedIndex,
+                                                'to': 2,
+                                                'via': 'nav_rail',
+                                              },
+                                            );
+                                            widget.onTabSelected(2);
+                                          },
                                         ),
                                       ],
                                     ),
@@ -268,7 +375,17 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                   label: 'Settings',
                                   isSelected: widget.selectedIndex == 3,
                                   isExpanded: isNavRailExpanded,
-                                  onTap: () => widget.onTabSelected(3),
+                                  onTap: () {
+                                    Analytics.instance.trackEvent(
+                                      eventName: 'tab_changed',
+                                      properties: {
+                                        'from': widget.selectedIndex,
+                                        'to': 3,
+                                        'via': 'nav_rail',
+                                      },
+                                    );
+                                    widget.onTabSelected(3);
+                                  },
                                 ),
 
                                 NavRailItem(
@@ -278,9 +395,17 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                   label: 'Shrink',
                                   isSelected: !isNavRailExpanded,
                                   isExpanded: isNavRailExpanded,
-                                  onTap: () => ref
-                                      .read(navRailExpandedProvider.notifier)
-                                      .state = !isNavRailExpanded,
+                                  onTap: () {
+                                    final willExpand = !isNavRailExpanded;
+                                    Analytics.instance.trackEvent(
+                                      eventName: willExpand
+                                          ? 'nav_rail_expanded'
+                                          : 'nav_rail_collapsed',
+                                    );
+                                    ref
+                                        .read(navRailExpandedProvider.notifier)
+                                        .state = willExpand;
+                                  },
                                 ),
 
                                 _buildProfileView(colorScheme),

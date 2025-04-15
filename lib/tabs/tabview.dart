@@ -7,6 +7,7 @@ import 'package:questkeeper/quests/views/quests_view.dart';
 import 'package:questkeeper/spaces/views/desktop_spaces_screen.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/layout/utils/state_providers.dart';
+import 'package:questkeeper/shared/utils/analytics/analytics.dart';
 
 import 'package:questkeeper/friends/views/friends_main_leaderboard.dart';
 import 'package:questkeeper/friends/widgets/friend_search.dart';
@@ -17,6 +18,7 @@ import 'package:questkeeper/spaces/views/all_spaces_screen.dart';
 import 'package:questkeeper/tabs/modern_bottom_bar.dart';
 import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TabView extends ConsumerStatefulWidget {
   const TabView({super.key});
@@ -26,6 +28,7 @@ class TabView extends ConsumerStatefulWidget {
 }
 
 class _TabViewState extends ConsumerState<TabView> {
+  final supabase = Supabase.instance.client;
   int _selectedIndex = 0;
   bool _hasInitialized = false;
 
@@ -40,14 +43,63 @@ class _TabViewState extends ConsumerState<TabView> {
     SettingsScreen(),
   ];
 
+  // Tab name mapping for analytics
+  static final List<String> _tabNames = [
+    'spaces',
+    'friends',
+    'quests',
+    'settings',
+  ];
+
   @override
   void initState() {
     super.initState();
 
     AuthNotifier().setFirebaseMessaging();
+
+    // Try registering the user
+    if (supabase.auth.currentUser != null) {
+      Analytics.instance.identify(
+        userId: supabase.auth.currentUser!.id,
+        userPropertiesSetOnce: {
+          "created_at": supabase.auth.currentUser!.createdAt,
+        },
+        userProperties: {
+          'email': supabase.auth.currentUser?.email ?? "",
+          'username': supabase.auth.currentUser?.userMetadata?['username'],
+          'provider': supabase.auth.currentUser?.appMetadata['provider'] ?? "",
+        },
+      );
+    }
+
+    Analytics.instance.trackEvent(
+      eventName: 'app_launched',
+    );
+
+    // Track initial screen view
+    Analytics.instance.trackScreen(
+      screenName: _tabNames[_selectedIndex],
+    );
   }
 
   void _onItemTapped(int index) async {
+    // Don't track if it's the same tab
+    if (index != _selectedIndex) {
+      // Track tab change
+      Analytics.instance.trackEvent(
+        eventName: 'tab_changed',
+        properties: {
+          'from': _tabNames[_selectedIndex],
+          'to': _tabNames[index],
+        },
+      );
+
+      // Track new screen view
+      Analytics.instance.trackScreen(
+        screenName: _tabNames[index],
+      );
+    }
+
     setState(() {
       _selectedIndex = index;
     });
@@ -76,6 +128,16 @@ class _TabViewState extends ConsumerState<TabView> {
           _desktopPages.removeLast();
           _desktopPages.addAll([const QuestsView(), const SettingsScreen()]);
           _hasInitialized = true;
+
+          // Track app layout
+          Analytics.instance.trackEvent(
+            eventName: 'app_layout_loaded',
+            properties: {
+              'is_mobile': isMobile,
+              'width': constraints.maxWidth,
+              'height': constraints.maxHeight,
+            },
+          );
         }
 
         if (isMobile) {
@@ -110,12 +172,20 @@ class _TabViewState extends ConsumerState<TabView> {
                     currentIndex: _selectedIndex,
                     onTap: _onItemTapped,
                     leadingAction: NavActionButton(
-                      onPressed: () => showDrawer(
-                        context: context,
-                        child: SettingsScreen(),
-                        key: 'settings_drawer',
-                        widthOffsetLeftLean: false,
-                      ),
+                      onPressed: () {
+                        Analytics.instance.trackEvent(
+                          eventName: 'settings_opened',
+                          properties: {
+                            'from_tab': _tabNames[_selectedIndex],
+                          },
+                        );
+                        showDrawer(
+                          context: context,
+                          child: SettingsScreen(),
+                          key: 'settings_drawer',
+                          widthOffsetLeftLean: false,
+                        );
+                      },
                       icon: LucideIcons.settings,
                       tooltip: 'Settings',
                     ),
@@ -181,6 +251,12 @@ class _TabViewState extends ConsumerState<TabView> {
           key: const Key('add_task_button_mobile'),
           // heroTag: 'add_task_button_mobile',
           onPressed: () => {
+            Analytics.instance.trackEvent(
+              eventName: 'add_task_drawer_opened',
+              properties: {
+                'from_tab': _tabNames[_selectedIndex],
+              },
+            ),
             showTaskDrawer(
               context: context,
               ref: ref,
@@ -194,6 +270,12 @@ class _TabViewState extends ConsumerState<TabView> {
       case 1: // Friends tab
         return NavActionButton(
           onPressed: () {
+            Analytics.instance.trackEvent(
+              eventName: 'add_friend_drawer_opened',
+              properties: {
+                'from_tab': _tabNames[_selectedIndex],
+              },
+            );
             showDrawer(
               context: context,
               key: "add_friend_drawer",
@@ -261,6 +343,14 @@ class _PointsOverlayState extends ConsumerState<PointsOverlay>
         weight: 20.0,
       ),
     ]).animate(_controller);
+
+    // Track points notification
+    Analytics.instance.trackEvent(
+      eventName: 'points_earned',
+      properties: {
+        'points': widget.points,
+      },
+    );
 
     // Start the animation and trigger badge management after completion
     _controller.forward().then(
