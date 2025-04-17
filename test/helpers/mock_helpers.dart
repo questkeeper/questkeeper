@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:questkeeper/quests/models/badge_model.dart' as models;
 import 'package:questkeeper/quests/models/user_badge_model.dart';
@@ -65,10 +64,10 @@ class TestProviderScope extends StatelessWidget {
   final List<Override> overrides;
 
   const TestProviderScope({
-    Key? key,
+    super.key,
     required this.child,
     this.overrides = const [],
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
