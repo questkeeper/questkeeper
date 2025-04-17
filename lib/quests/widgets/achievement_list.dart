@@ -68,7 +68,8 @@ class _AchievementListState extends ConsumerState<AchievementList> {
             .toList()
         : achievements;
 
-    if (displayedAchievements.length < limit) {
+    if (displayedAchievements.isNotEmpty &&
+        displayedAchievements.length < limit) {
       final missingAchievements = limit - displayedAchievements.length;
       for (var i = 0; i < missingAchievements; i++) {
         displayedAchievements.add(achievements[i]);
