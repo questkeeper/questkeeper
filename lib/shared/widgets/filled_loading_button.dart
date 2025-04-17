@@ -24,21 +24,21 @@ class _FilledLoadingButtonState extends State<FilledLoadingButton> {
   Widget build(BuildContext context) {
     if (_loading) {
       return FilledButton(
-        onPressed: null,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox.square(
-              dimension: 16,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
+          onPressed: null,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox.square(
+                dimension: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            widget.child,
-          ],
-        )
-      );
+              const SizedBox(width: 16),
+              widget.child,
+            ],
+          ));
     } else {
       return FilledButton(
         onPressed: () async {

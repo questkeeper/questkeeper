@@ -13,6 +13,32 @@ class AnalyticsUnsupported implements AnalyticsInterface {
   }
 
   @override
+  void trackEvent({
+    required String eventName,
+    Map<String, dynamic>? properties,
+  }) {
+    // No-op implementation
+  }
+
+  @override
+  void trackScreen({
+    required String screenName,
+    Map<String, dynamic>? properties,
+  }) {
+    // No-op implementation
+  }
+
+  @override
+  void trackError({
+    required String errorName,
+    dynamic error,
+    StackTrace? stackTrace,
+    Map<String, dynamic>? properties,
+  }) {
+    // No-op implementation
+  }
+
+  @override
   void enable() {
     _isEnabled = true;
   }

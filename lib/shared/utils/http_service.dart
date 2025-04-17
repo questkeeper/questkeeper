@@ -103,7 +103,7 @@ class HttpService {
 
   Future<Response> get(String path,
       {Map<String, dynamic>? queryParameters, bool ignoreCache = false}) async {
-    return _dio.get(
+    return await _dio.get(
       path,
       queryParameters: queryParameters,
       options: Options(
@@ -114,18 +114,18 @@ class HttpService {
 
   Future<Response> post(String path,
       {Map<String, dynamic> data = const {}}) async {
-    return _dio.post(path, data: data);
+    return await _dio.post(path, data: data);
   }
 
   Future<Response> put(String path, {Map<String, dynamic>? data}) async {
-    return _dio.put(path, data: data);
+    return await _dio.put(path, data: data);
   }
 
   Future<Response> delete(String path) async {
-    return _dio.delete(path);
+    return await _dio.delete(path);
   }
 
   Future<Response> patch(String path, {Map<String, dynamic>? data}) async {
-    return _dio.patch(path, data: data);
+    return await _dio.patch(path, data: data);
   }
 }

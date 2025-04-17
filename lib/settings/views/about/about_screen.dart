@@ -3,6 +3,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -17,6 +18,8 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final updater = ShorebirdUpdater();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('About'),
@@ -61,6 +64,17 @@ class AboutScreen extends StatelessWidget {
                           ListTile(
                             title: Text(
                                 'v${snapshot.data!.version}+${snapshot.data!.buildNumber}'),
+                            subtitle: FutureBuilder<Patch?>(
+                              future: updater.readCurrentPatch(),
+                              builder: (context, snapshot) {
+                                final patchVersion = snapshot.data?.number;
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return Text('Patch ${patchVersion ?? "0"}');
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            ),
                           ),
                         ],
                       );

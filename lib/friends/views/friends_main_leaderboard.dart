@@ -50,32 +50,33 @@ class _FriendsListState extends ConsumerState<FriendsList> {
           children: [
             Material(
               elevation: 1,
-              child: UserProfileView(),
+              child: const UserProfileView(),
             ),
 
             Material(
               elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: IntrinsicWidth(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: SortWidget(
-                            settings: _sortSettings,
-                            onChange: (settings) {
-                              setState(() {
-                                _sortSettings = settings;
-                              });
-                            },
-                          ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: SortWidget(
+                          settings: _sortSettings,
+                          onChange: (settings) {
+                            setState(() {
+                              _sortSettings = settings;
+                            });
+                          },
                         ),
-                        _friendRequestButton(),
-                      ],
-                    ),
+                      ),
+                      _friendRequestButton(),
+                    ],
                   ),
                 ),
               ),
