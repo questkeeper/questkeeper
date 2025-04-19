@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
 import 'package:questkeeper/friends/repositories/friend_repository.dart';
+import 'package:questkeeper/friends/widgets/friend_profile_view.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/shared/widgets/trophy_avatar.dart';
@@ -67,8 +68,14 @@ class FriendListTile extends StatelessWidget {
                           child: ListTile(
                             leading: Icon(LucideIcons.user),
                             title: Text('View Profile'),
-                            onTap: () => SnackbarService.showInfoSnackbar(
-                                'View Profile not implemented yet'),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              FriendProfileView.show(
+                                context,
+                                friend,
+                                onRemoveFriend: onRemove,
+                              );
+                            },
                           ),
                         ),
                         PopupMenuItem(
@@ -127,6 +134,13 @@ class FriendListTile extends StatelessWidget {
         subtitle: Text(
           '${friend.points} points',
         ),
+        onTap: friend.userId != "current_user"
+            ? () => FriendProfileView.show(
+                  context,
+                  friend,
+                  onRemoveFriend: onRemove,
+                )
+            : null,
       ),
     );
   }

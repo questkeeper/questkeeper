@@ -1,4 +1,5 @@
 import 'package:questkeeper/friends/models/friend_model.dart';
+import 'package:questkeeper/friends/models/friend_badges_profile_model.dart';
 import 'package:questkeeper/friends/models/user_search_model.dart';
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:questkeeper/shared/utils/http_service.dart';
@@ -49,7 +50,7 @@ class FriendRepository {
 
   Future<Friend> getFriendById(String id) async {
     try {
-      final response = await _httpService.get('/friends/$id');
+      final response = await _httpService.get('/social/friends/$id');
 
       if (response.statusCode == 200) {
         return Friend.fromMap(response.data);
@@ -59,6 +60,27 @@ class FriendRepository {
     } catch (error) {
       Sentry.captureException(error);
       throw Exception('Failed to load friend');
+    }
+  }
+
+  Future<FriendBadgesProfileModel> getFriendBadgesByUserId(
+    String userId, {
+    bool ignoreCache = false,
+  }) async {
+    try {
+      final response = await _httpService.get(
+        '/social/friends/$userId/badges',
+        ignoreCache: ignoreCache,
+      );
+
+      if (response.statusCode == 200) {
+        return FriendBadgesProfileModel.fromMap(response.data);
+      } else {
+        throw Exception('Failed to load friend badges');
+      }
+    } catch (error) {
+      Sentry.captureException(error);
+      throw Exception('Failed to load friend badges');
     }
   }
 
