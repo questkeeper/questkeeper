@@ -22,6 +22,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
       SharedPreferencesManager.instance;
   late ValueNotifier<String> backgroundColor = ValueNotifier("");
   bool isGameInitialized = false;
+  late final String _screenId;
 
   // Override this in mobile view to handle app bar color
   ValueNotifier<String>? get appBarBackgroundColor => null;
@@ -35,6 +36,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
   void initState() {
     super.initState();
 
+    _screenId = '${widget.runtimeType}_${DateTime.now().millisecondsSinceEpoch}';
     pageController = ref.read(pageControllerProvider);
     tabController = TabController(length: 1, vsync: this);
     backgroundColor.value = defaultBackgroundColor;
@@ -77,7 +79,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
 
   void setGameStateToNull() {
     isGameInitialized = true;
-    ref.read(gameProvider.notifier).state = null;
+    ref.read(gameManagerProvider).setGameInstance(null, _screenId);
   }
 
   Future<void> initializeGame() async {
@@ -96,8 +98,8 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
 
           if (initialBackgroundPath != null && mounted && !isGameInitialized) {
             isGameInitialized = true;
-            ref.read(gameProvider.notifier).state =
-                FamiliarsWidgetGame(backgroundPath: initialBackgroundPath!);
+            final game = FamiliarsWidgetGame(backgroundPath: initialBackgroundPath!);
+            ref.read(gameManagerProvider).setGameInstance(game, _screenId);
           }
         }
       } catch (e) {
@@ -234,6 +236,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
     if (pageController.hasClients) {
       pageController.removeListener(updatePage);
     }
+    ref.read(gameManagerProvider).releaseOwnership(_screenId);
     currentPageValue.dispose();
     tabController.dispose();
     super.dispose();

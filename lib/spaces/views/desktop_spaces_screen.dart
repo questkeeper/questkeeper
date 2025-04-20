@@ -141,6 +141,7 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                                   child: AnimatedGameContainer(
                                     game: game,
                                     heightFactor: ref.watch(gameHeightProvider),
+                                    ownerId: _screenId,
                                   ),
                                 ),
                               ),

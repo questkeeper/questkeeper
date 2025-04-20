@@ -162,6 +162,7 @@ class _AllSpacesState extends SpacesScreenState<AllSpacesScreen> {
                         game: game,
                         heightFactor: heightFactor,
                         shouldTextShow: currentPageValue.value != spaces.length,
+                        ownerId: _screenId,
                       ),
                     ),
                   Expanded(
