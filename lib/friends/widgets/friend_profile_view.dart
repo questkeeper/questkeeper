@@ -14,16 +14,18 @@ import 'package:questkeeper/shared/widgets/snackbar.dart';
 class FriendProfileView extends StatefulWidget {
   final Friend friend;
   final Function(Friend friend)? onRemoveFriend;
+  final bool isMobile;
 
   const FriendProfileView({
     super.key,
     required this.friend,
     this.onRemoveFriend,
+    this.isMobile = false,
   });
 
   /// Shows the friend profile view in a drawer
   static void show(BuildContext context, Friend friend,
-      {Function(Friend friend)? onRemoveFriend}) {
+      {Function(Friend friend)? onRemoveFriend, bool isMobile = false}) {
     showDrawer(
       context: context,
       key: 'friend_profile_${friend.userId}',
@@ -33,6 +35,7 @@ class FriendProfileView extends StatefulWidget {
         child: FriendProfileView(
           friend: friend,
           onRemoveFriend: onRemoveFriend,
+          isMobile: isMobile,
         ),
       ),
     );
@@ -169,14 +172,8 @@ class _FriendProfileViewState extends State<FriendProfileView> {
                 icon: const Icon(LucideIcons.x),
                 onPressed: () => Navigator.of(context).pop(),
               ),
-              Text(
-                'Viewing ${widget.friend.username}\'s Profile',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(width: 48), // Balance the header
             ],
           ),
-          const SizedBox(height: 16),
           AvatarWidget(
             seed: widget.friend.userId,
             radius: 40,
@@ -235,7 +232,32 @@ class _FriendProfileViewState extends State<FriendProfileView> {
     );
   }
 
+  List<Map<String, dynamic>> _getStatsWithIcons() {
+    return [
+      {
+        'icon': LucideIcons.trophy,
+        'title': 'Completed Achievements this month',
+        'value': _stats['completedAchievements']?.toString() ?? '0',
+        'subtitle': 'Achievements',
+      },
+      {
+        'icon': LucideIcons.medal,
+        'title': 'Lifetime Achievements',
+        'value': _stats['totalAchievements']?.toString() ?? '0',
+        'subtitle': 'Achievements',
+      },
+      if (_stats['joinedAt'] != null) ...[
+        {
+          'icon': LucideIcons.calendar,
+          'title': 'Member Since',
+          'value': formatDateDifference(DateTime.parse(_stats['joinedAt'])),
+        },
+      ],
+    ];
+  }
+
   Widget _buildStatsSection(BuildContext context) {
+    final stats = _getStatsWithIcons();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -248,37 +270,75 @@ class _FriendProfileViewState extends State<FriendProfileView> {
           color: Theme.of(context).colorScheme.surfaceContainerLow,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                _buildStatRow(
-                  context,
-                  icon: LucideIcons.trophy,
-                  title: 'Completed Achievements this month',
-                  value: _stats['completedAchievements']?.toString() ?? '0',
-                ),
-                const Divider(),
-                _buildStatRow(
-                  context,
-                  icon: LucideIcons.medal,
-                  title: 'Lifetime Achievement',
-                  value: _stats['totalAchievements']?.toString() ?? '0',
-                ),
-                if (_stats['joinedAt'] != null) ...[
-                  const Divider(),
-                  _buildStatRow(
-                    context,
-                    icon: LucideIcons.calendar,
-                    title: 'Member Since',
-                    value: formatDateDifference(
-                      DateTime.parse(_stats['joinedAt']),
-                    ),
+            child: widget.isMobile
+                ? Column(
+                    children: [
+                      ...stats.map((stat) => _buildMobileStat(
+                            context,
+                            icon: stat['icon'],
+                            title: stat['title'],
+                            value: "${stat['value']} ${stat['subtitle'] ?? ''}",
+                          )),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      ...stats.map((stat) => _buildStatRow(
+                            context,
+                            icon: stat['icon'],
+                            title: stat['title'],
+                            value: stat['value'],
+                            subtitle: stat['subtitle'],
+                          )),
+                    ],
                   ),
-                ],
-              ],
-            ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildMobileStat(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String value,
+    String? subtitle,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(icon,
+                  size: 28, color: Theme.of(context).colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -356,21 +416,36 @@ class _FriendProfileViewState extends State<FriendProfileView> {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 12),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1.2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
+        if (widget.isMobile)
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            itemCount: _badges.length,
+            itemBuilder: (context, index) {
+              final badge = _badges[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: _buildBadgeCard(context, badge),
+              );
+            },
+          )
+        else
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            itemCount: _badges.length,
+            itemBuilder: (context, index) {
+              final badge = _badges[index];
+              return _buildBadgeCard(context, badge);
+            },
           ),
-          itemCount: _badges.length,
-          itemBuilder: (context, index) {
-            final badge = _badges[index];
-            return _buildBadgeCard(context, badge);
-          },
-        ),
       ],
     );
   }
@@ -380,7 +455,10 @@ class _FriendProfileViewState extends State<FriendProfileView> {
 
     return Card(
       color: isCompleted
-          ? Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3)
+          ? Theme.of(context)
+              .colorScheme
+              .primaryContainer
+              .withValues(alpha: 0.3)
           : Theme.of(context).colorScheme.surfaceContainerLow,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -412,10 +490,11 @@ class _FriendProfileViewState extends State<FriendProfileView> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const Spacer(),
+            const SizedBox(height: 16),
             LinearProgressIndicator(
               value: badge.progress / badge.badge.requirementCount,
-              backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceContainerLow,
               color: Theme.of(context).colorScheme.primary,
             ),
             const SizedBox(height: 4),
