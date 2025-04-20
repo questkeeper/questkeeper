@@ -95,9 +95,20 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
           updateBackgroundColors(0, spaces, dateType);
 
           if (initialBackgroundPath != null && mounted && !isGameInitialized) {
-            isGameInitialized = true;
-            ref.read(gameProvider.notifier).state =
-                FamiliarsWidgetGame(backgroundPath: initialBackgroundPath!);
+            // Dispose of any existing game instance first
+            final currentGame = ref.read(gameProvider);
+            if (currentGame != null) {
+              ref.read(gameProvider.notifier).state = null;
+            }
+
+            // Create a new game instance after a short delay to ensure proper cleanup
+            Future.delayed(const Duration(milliseconds: 50), () {
+              if (mounted) {
+                isGameInitialized = true;
+                ref.read(gameProvider.notifier).state =
+                    FamiliarsWidgetGame(backgroundPath: initialBackgroundPath!);
+              }
+            });
           }
         }
       } catch (e) {
@@ -183,6 +194,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
     try {
       final dateType = DateTime.now().getTimeOfDayType();
       final currentGame = ref.read(gameProvider);
+      bool isForward = false;
 
       if (currentGame == null) return;
 
@@ -194,20 +206,31 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
           ? (spaces.isNotEmpty ? spaces[0].spaceType : "office")
           : spaces[page].spaceType;
 
-      currentGame.updateBackground(
-        "backgrounds/$spaceType/$dateType.png",
-      );
+      // Use a try-catch block around game updates to handle potential attachment issues
+      try {
+        currentGame.updateBackground(
+          "backgrounds/$spaceType/$dateType.png",
+        );
 
-      // Determine animation direction based on actual page change
-      final isForward = page > (pageController.page?.floor() ?? 0);
+        // Determine animation direction based on actual page change
+        isForward = page > (pageController.page?.floor() ?? 0);
 
-      // Sync tab controller
-      if (tabController.index != page) {
-        tabController.animateTo(page);
+        // Sync tab controller
+        if (tabController.index != page) {
+          tabController.animateTo(page);
+        }
+
+        // Animate game transition
+        currentGame.animateEntry(isForward ? Direction.left : Direction.right);
+      } catch (e) {
+        debugPrint('Error updating game during page change: $e');
+        // If we encounter an error, try reinitializing the game
+        if (e.toString().contains('Game attachment error')) {
+          Future.delayed(const Duration(milliseconds: 100), () {
+            initializeGame();
+          });
+        }
       }
-
-      // Animate game transition
-      currentGame.animateEntry(isForward ? Direction.left : Direction.right);
 
       // Handle mobile-specific behaviors
       if (isMobile && page == spaces.length) {

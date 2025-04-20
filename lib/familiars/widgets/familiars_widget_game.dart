@@ -19,7 +19,7 @@ enum Direction { left, right, none }
 /// The character sprite can be animated and moved around the map
 /// Takes in [backgroundPath] as a parameter to set the background map on first load
 /// The game is designed to be used as a widget
-class FamiliarsWidgetGame extends FlameGame {
+class FamiliarsWidgetGame extends FlameGame with SingleGameInstance {
   var _dtSum = 0.0;
   final fixedRate = 1 / 10; // 10 updates per second
 
