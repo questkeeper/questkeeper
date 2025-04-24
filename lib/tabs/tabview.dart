@@ -66,7 +66,8 @@ class _TabViewState extends ConsumerState<TabView> {
         },
         userProperties: {
           'email': supabase.auth.currentUser?.email ?? "",
-          'username': supabase.auth.currentUser?.userMetadata?['username'],
+          'username':
+              supabase.auth.currentUser?.userMetadata?['username'] ?? "",
           'provider': supabase.auth.currentUser?.appMetadata['provider'] ?? "",
         },
       );
