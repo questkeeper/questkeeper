@@ -103,11 +103,12 @@ class HttpService {
 
   Future<Response> get(String path,
       {Map<String, dynamic>? queryParameters, bool ignoreCache = false}) async {
+    debugPrint("GET PATH ****** $path IS IGNORE CACHE? $ignoreCache");
     return await _dio.get(
       path,
       queryParameters: queryParameters,
       options: Options(
-        headers: ignoreCache ? {'Cache-Control': 'no-cache'} : null,
+        headers: ignoreCache ? {'X-IGNORE-CACHE': true} : null,
       ),
     );
   }

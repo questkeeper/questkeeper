@@ -32,7 +32,9 @@ class AnimatedGameContainer extends StatelessWidget {
           AnimatedOpacity(
             duration: const Duration(milliseconds: 200),
             opacity: heightFactor > 0.3 ? 1.0 : 0.0,
-            child: GameWidget(game: game),
+            child: GameWidget.controlled(
+              gameFactory: () => game,
+            ),
           ),
         ],
       ),

@@ -14,3 +14,18 @@ String formatDate(DateTime date) {
 
   return DateFormat('MMMM d, y hh:mm a').format(date);
 }
+
+String formatDateDifference(DateTime date) {
+  final now = DateTime.now();
+  final difference = now.difference(date);
+
+  if (difference.inDays < 30) {
+    return '${difference.inDays} days ago';
+  } else if (difference.inDays < 365) {
+    final months = (difference.inDays / 30).floor();
+    return '$months ${months == 1 ? 'month' : 'months'} ago';
+  } else {
+    final years = (difference.inDays / 365).floor();
+    return '$years ${years == 1 ? 'year' : 'years'} ago';
+  }
+}

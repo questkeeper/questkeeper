@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/friends/models/friend_model.dart';
 import 'package:questkeeper/friends/repositories/friend_repository.dart';
+import 'package:questkeeper/friends/widgets/friend_profile_view.dart';
+import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/shared/widgets/trophy_avatar.dart';
 
-class FriendListTile extends StatelessWidget {
-  final Friend friend;
-  final int position;
-  final Function(Friend friend) onRemove;
+class FriendListTile extends ConsumerWidget {
   static const top3 = {
     "1": TrophyType.gold,
     "2": TrophyType.silver,
     "3": TrophyType.bronze
   };
+  final Friend friend;
+  final int position;
+  final Function(Friend friend) onRemove;
 
   const FriendListTile(
       {super.key,
@@ -23,7 +26,8 @@ class FriendListTile extends StatelessWidget {
       required this.onRemove});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isMobile = ref.watch(isMobileProvider);
     return Container(
       decoration: friend.userId == "current_user"
           ? BoxDecoration(
@@ -67,8 +71,15 @@ class FriendListTile extends StatelessWidget {
                           child: ListTile(
                             leading: Icon(LucideIcons.user),
                             title: Text('View Profile'),
-                            onTap: () => SnackbarService.showInfoSnackbar(
-                                'View Profile not implemented yet'),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              FriendProfileView.show(
+                                context,
+                                friend,
+                                onRemoveFriend: onRemove,
+                                isMobile: isMobile,
+                              );
+                            },
                           ),
                         ),
                         PopupMenuItem(
@@ -127,6 +138,14 @@ class FriendListTile extends StatelessWidget {
         subtitle: Text(
           '${friend.points} points',
         ),
+        onTap: friend.userId != "current_user"
+            ? () => FriendProfileView.show(
+                  context,
+                  friend,
+                  onRemoveFriend: onRemove,
+                  isMobile: isMobile,
+                )
+            : null,
       ),
     );
   }

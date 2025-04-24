@@ -63,7 +63,10 @@ class _AchievementListState extends ConsumerState<AchievementList> {
     final theme = Theme.of(context);
     final displayedAchievements = showLimit
         ? achievements
-            .where((achievement) => achievement.$2?.redeemed != true)
+            .where((achievement) =>
+                achievement.$2 != null && achievement.$2!.redeemed != true)
+            .where((achievement) =>
+                achievement.$2 != null && achievement.$2!.progress > 0)
             .take(limit)
             .toList()
         : achievements;

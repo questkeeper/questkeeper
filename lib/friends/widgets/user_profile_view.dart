@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:questkeeper/shared/widgets/avatar_widget.dart';
+import 'package:questkeeper/shared/widgets/points_badge.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class UserProfileView extends ConsumerWidget {
@@ -48,7 +48,6 @@ class UserProfileView extends ConsumerWidget {
 
   Widget _buildMainContent(BuildContext context, WidgetRef ref) {
     final asyncValue = ref.watch(profileManagerProvider);
-    final theme = Theme.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -94,35 +93,10 @@ class UserProfileView extends ConsumerWidget {
                       ),
                 ),
               const SizedBox(height: 5),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      LucideIcons.star,
-                      size: 16,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      asyncValue is AsyncData
-                          ? '${(asyncValue.value as Profile).points} points'
-                          : '0 points',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+              PointsBadge(
+                points: asyncValue is AsyncData
+                    ? (asyncValue.value as Profile).points
+                    : 0,
               ),
             ],
           ),
