@@ -33,17 +33,27 @@ class SnackbarService {
     );
   }
 
-  static void showErrorSnackbar(String message) {
+  static void showErrorSnackbar(String message,
+      {Function? callback, Icon? callbackIcon, String? callbackText}) {
     debugPrint("Showing error snackback: $message");
     _toast.show(
+      description: callbackText != null ? Text(callbackText) : null,
       autoCloseDuration: const Duration(milliseconds: 3000),
       title: Text(message),
       type: ToastificationType.error,
       backgroundColor: Colors.red,
       showProgressBar: true,
-      icon: null,
+      icon: callbackIcon,
       showIcon: false,
       alignment: Alignment.bottomCenter,
+      style: ToastificationStyle.flatColored,
+      callbacks: ToastificationCallbacks(
+        onTap: (_) {
+          if (callback != null) {
+            callback();
+          }
+        },
+      ),
     );
   }
 

@@ -1,22 +1,17 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
 import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
-    show SupaMagicAuth; // Overriding the supa auth UI with own flow
+    as custom_auth; // Custom email auth implementation
 import 'package:questkeeper/profile/providers/profile_provider.dart';
 import 'package:questkeeper/settings/views/account/account_management_screen.dart';
-import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
@@ -27,7 +22,8 @@ class AuthScreen extends ConsumerStatefulWidget {
 }
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
-  bool _isLoading = false;
+  bool _showEmailAuth = false; // Hidden by default
+  int _tapCount = 0;
   final supabase = Supabase.instance.client;
 
   @override
@@ -40,104 +36,30 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     super.dispose();
   }
 
-  Future<void> _nativeGoogleSignIn() async {
-    /// Web Client ID that you registered with Google Cloud.
-    const webClientId =
-        '479691835174-o5i59ui07vtj7r3n45h38hjeuq1s764e.apps.googleusercontent.com';
+  /// Handle secret gesture to show email auth (tap QuestKeeper title 3 times)
+  void _handleTitleTap() {
+    setState(() {
+      _tapCount++;
+    });
 
-    /// iOS Client ID that you registered with Google Cloud.
-    const iosClientId =
-        '479691835174-82kej9lnri53rffa25im0a5q312hsn3h.apps.googleusercontent.com';
-
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: iosClientId,
-      serverClientId: webClientId,
-    );
-    final googleUser = await googleSignIn.signIn();
-    final googleAuth = await googleUser!.authentication;
-    final accessToken = googleAuth.accessToken;
-    final idToken = googleAuth.idToken;
-
-    if (accessToken == null) {
-      throw 'No Access Token found.';
-    }
-    if (idToken == null) {
-      throw 'No ID Token found.';
-    }
-
-    await supabase.auth.signInWithIdToken(
-      provider: OAuthProvider.google,
-      idToken: idToken,
-      accessToken: accessToken,
-    );
-  }
-
-  Future<void> _signInWithProvider(OAuthProvider provider) async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      if (provider == OAuthProvider.apple) {
-        final rawNonce = supabase.auth.generateRawNonce();
-        final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
-
-        final credential = await SignInWithApple.getAppleIDCredential(
-          scopes: [
-            AppleIDAuthorizationScopes.email,
-            AppleIDAuthorizationScopes.fullName,
-          ],
-          nonce: hashedNonce,
-        );
-
-        final idToken = credential.identityToken;
-        if (idToken == null) {
-          throw const AuthException(
-              'Could not find ID Token from generated credential.');
-        }
-
-        await supabase.auth.signInWithIdToken(
-          provider: OAuthProvider.apple,
-          idToken: idToken,
-          nonce: rawNonce,
-        );
-      } else if (provider == OAuthProvider.google &&
-          ((!kIsWasm || !kIsWeb) && (Platform.isAndroid || Platform.isIOS))) {
-        await _nativeGoogleSignIn();
-      } else {
-        await supabase.auth.signInWithOAuth(
-          provider,
-          redirectTo:
-              kIsWeb ? "${Uri.base.toString()}/signin" : 'questkeeper://signin',
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        if (e.runtimeType == AuthException) {
-          if ((e as AuthException).code == "access_denied") {
-            SnackbarService.showInfoSnackbar("Authentication cancelled");
-            return;
-          }
-        }
-
-        if (e.runtimeType == SignInWithAppleAuthorizationException &&
-            (e as SignInWithAppleAuthorizationException).code ==
-                AuthorizationErrorCode.canceled) {
-          SnackbarService.showInfoSnackbar("Authorization cancelled");
-          return;
-        }
-
-        SnackbarService.showErrorSnackbar(
-            "Failed to sign in with ${provider.name}");
-
-        debugPrint(e.toString());
-      }
-    } finally {
+    // Reset tap count after 2 seconds of no taps
+    Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          _tapCount = 0;
         });
       }
+    });
+
+    // Show email auth after 3 taps
+    if (_tapCount >= 3) {
+      setState(() {
+        _showEmailAuth = true;
+        _tapCount = 0;
+      });
+      SnackbarService.showInfoSnackbar(
+        "Email authentication is deprecated but enabled for this session",
+      );
     }
   }
 
@@ -186,40 +108,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     }
   }
 
-  Widget _buildSocialButton({
-    required String assetPath,
-    required OAuthProvider provider,
-    required String label,
-    required Color color,
-  }) {
-    return Tooltip(
-      message: 'Continue with $label',
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: _isLoading ? null : () => _signInWithProvider(provider),
-        child: Container(
-          width: 48,
-          height: 48,
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: SvgPicture.asset(
-            assetPath,
-            fit: BoxFit.contain,
-            colorFilter: provider == OAuthProvider.google
-                ? null
-                : const ColorFilter.mode(
-                    Colors.white,
-                    BlendMode.srcIn,
-                  ),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -233,14 +121,20 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-              child: Text(
-                "QuestKeeper",
-                style: Theme.of(context).textTheme.displaySmall,
-                textAlign: TextAlign.left,
+            // Tappable title for secret gesture
+            GestureDetector(
+              onTap: _handleTitleTap,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+                child: Text(
+                  "QuestKeeper",
+                  style: Theme.of(context).textTheme.displaySmall,
+                  textAlign: TextAlign.left,
+                ),
               ),
             ),
+
             // Terms of Service Text
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
@@ -287,60 +181,90 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 ),
               ),
             ),
-            // Email Auth
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
-              child: SupaMagicAuth(
-                redirectUrl: kIsWeb
-                    ? "${Uri.base.toString()}/signin"
-                    : 'questkeeper://signin',
-                onSuccess: onSuccess,
-                onError: onError,
+
+            // Email Auth (hidden by default, shown after secret gesture)
+            if (_showEmailAuth)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outline
+                          .withValues(alpha: 0.5),
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: Theme.of(context).colorScheme.error,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "Email authentication is deprecated",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      custom_auth.SupaMagicAuth(
+                        redirectUrl: kIsWeb
+                            ? "${Uri.base.toString()}/signin"
+                            : 'questkeeper://signin',
+                        onSuccess: onSuccess,
+                        onError: onError,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            // Social Sign In Buttons
+
+            // Social Sign In using supabase_auth_ui
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
               child: Column(
                 children: [
-                  const Row(
-                    children: [
-                      Expanded(child: Divider()),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text('or continue with'),
-                      ),
-                      Expanded(child: Divider()),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildSocialButton(
-                        assetPath: 'assets/auth/google_logo.svg',
-                        provider: OAuthProvider.google,
-                        label: 'Google',
-                        color: "#F2F2F2".toColor(),
-                      ),
-                      if (Platform.isIOS || Platform.isMacOS) ...[
-                        const SizedBox(width: 8),
-                        _buildSocialButton(
-                          assetPath: 'assets/auth/apple_logo.svg',
-                          provider: OAuthProvider.apple,
-                          label: 'Apple',
-                          color: Colors.black,
+                  if (_showEmailAuth) ...[
+                    const Row(
+                      children: [
+                        Expanded(child: Divider()),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text('or continue with'),
                         ),
+                        Expanded(child: Divider()),
                       ],
-                      const SizedBox(width: 8),
-                      _buildSocialButton(
-                        assetPath: 'assets/auth/discord_logo.svg',
-                        provider: OAuthProvider.discord,
-                        color: "#5865F2".toColor(),
-                        label: 'Discord',
-                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  SupaSocialsAuth(
+                    socialProviders: [
+                      OAuthProvider.google,
+                      if (Platform.isIOS || Platform.isMacOS)
+                        OAuthProvider.apple,
+                      OAuthProvider.discord,
                     ],
+                    socialButtonVariant: SocialButtonVariant.iconAndText,
+                    redirectUrl: kIsWeb
+                        ? "${Uri.base.toString()}/signin"
+                        : 'questkeeper://signin',
+                    onSuccess: onSuccess,
+                    onError: onError,
                   ),
                 ],
               ),

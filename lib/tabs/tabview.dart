@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/friends/views/desktop_friends_leaderboard.dart';
 import 'package:questkeeper/layout/desktop_layout.dart';
 import 'package:questkeeper/quests/views/quests_view.dart';
+import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/views/desktop_spaces_screen.dart';
 import 'package:questkeeper/auth/providers/auth_provider.dart';
 import 'package:questkeeper/layout/utils/state_providers.dart';
@@ -19,6 +20,7 @@ import 'package:questkeeper/tabs/modern_bottom_bar.dart';
 import 'package:questkeeper/task_list/views/edit_task_drawer.dart';
 import 'package:questkeeper/shared/providers/window_size_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:questkeeper/auth/providers/auth_state_provider.dart';
 
 class TabView extends ConsumerStatefulWidget {
   const TabView({super.key});
@@ -31,15 +33,18 @@ class _TabViewState extends ConsumerState<TabView> {
   final supabase = Supabase.instance.client;
   int _selectedIndex = 0;
   bool _hasInitialized = false;
+  bool _oauthLinkPromptShown = false;
 
   static final List<Widget> _mobilePages = [
     AllSpacesScreen(),
     FriendsList(),
+    QuestsView(),
   ];
 
   static final List<Widget> _desktopPages = [
     DesktopSpacesScreen(),
     DesktopFriendsLeaderboard(),
+    QuestsView(),
     SettingsScreen(),
   ];
 
@@ -112,6 +117,34 @@ class _TabViewState extends ConsumerState<TabView> {
   @override
   Widget build(BuildContext context) {
     final pointsBadge = ref.watch(pointsNotificationManagerProvider);
+    final authState = ref.watch(authStateProvider);
+
+    // Prompt for OAuth linking if applicable and not yet shown
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_oauthLinkPromptShown &&
+          authState.isAuthenticated == true &&
+          authState.profile?.isActive == true) {
+        final currentUser = supabase.auth.currentUser;
+        final isEmailUser = currentUser?.appMetadata['provider'] == 'email';
+        final hasLinkedOauth = currentUser?.identities
+                ?.any((identity) => identity.provider != 'email') ??
+            false;
+
+        if (isEmailUser && !hasLinkedOauth) {
+          SnackbarService.showErrorSnackbar(
+            'Email accounts are being deprecated! Stay logged in by linking a Google or Apple account.',
+            callback: () {
+              Navigator.of(context).pushNamed('/settings/account');
+            },
+            callbackIcon: const Icon(LucideIcons.settings),
+            callbackText: 'Go to Settings',
+          );
+          setState(() {
+            _oauthLinkPromptShown = true;
+          });
+        }
+      }
+    });
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -125,9 +158,6 @@ class _TabViewState extends ConsumerState<TabView> {
 
         final isMobile = ref.watch(isMobileProvider);
         if (!_hasInitialized) {
-          _mobilePages.add(const QuestsView());
-          _desktopPages.removeLast();
-          _desktopPages.addAll([const QuestsView(), const SettingsScreen()]);
           _hasInitialized = true;
 
           // Track app layout
