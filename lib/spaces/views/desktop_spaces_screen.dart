@@ -7,6 +7,7 @@ import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/mixins/spaces_screen_mixin.dart';
 import 'package:questkeeper/spaces/providers/game_height_provider.dart';
 import 'package:questkeeper/spaces/providers/game_provider.dart';
+import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/widgets/animated_game_container.dart';
 import 'package:questkeeper/spaces/widgets/space_card.dart';
@@ -120,6 +121,11 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                                         onTap: () {
                                           pageController.jumpToPage(index);
                                           currentPageValue.value = index;
+                                          // Update the global current page provider
+                                          ref
+                                              .read(
+                                                  currentPageProvider.notifier)
+                                              .state = index;
                                         },
                                       ),
                                     ),

@@ -13,6 +13,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:questkeeper/familiars/widgets/familiars_widget_game.dart';
 import 'package:questkeeper/spaces/providers/game_height_provider.dart';
 import 'package:questkeeper/spaces/providers/game_provider.dart';
+import 'package:questkeeper/spaces/providers/page_provider.dart';
 import 'package:questkeeper/spaces/providers/spaces_provider.dart';
 import 'package:questkeeper/spaces/views/edit_space_bottom_sheet.dart';
 import 'package:questkeeper/spaces/widgets/animated_game_container.dart';
@@ -141,6 +142,9 @@ class _AllSpacesState extends SpacesScreenState<AllSpacesScreen> {
                               : min(spaces.length, currentPageValue.value + 1);
 
                           currentPageValue.value = newPage;
+                          // Update the global current page provider
+                          ref.read(currentPageProvider.notifier).state =
+                              newPage;
 
                           // Animate both the game and PageView
                           pageController.animateToPage(

@@ -41,6 +41,8 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
     if (appBarBackgroundColor != null) {
       appBarBackgroundColor!.value = defaultTopBackgroundColor;
     }
+    // Initialize the current page provider to 0
+    ref.read(currentPageProvider.notifier).state = 0;
     WidgetsBinding.instance.addPostFrameCallback((_) => setup());
   }
 
@@ -126,6 +128,8 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
       final newPage = pageController.page?.round() ?? 0;
       if (currentPageValue.value != newPage) {
         currentPageValue.value = newPage;
+        // Update the global current page provider to avoid PageController.page access issues
+        ref.read(currentPageProvider.notifier).state = newPage;
         tabController.animateTo(newPage);
 
         // updateBackgroundColors(
@@ -200,6 +204,8 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
 
       // Update current page value first
       currentPageValue.value = page;
+      // Update the global current page provider to avoid PageController.page access issues
+      ref.read(currentPageProvider.notifier).state = page;
 
       // Update game background
       final spaceType = page >= spaces.length
