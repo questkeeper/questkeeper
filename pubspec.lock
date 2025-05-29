@@ -1696,7 +1696,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: d2226e9b731de169b7e10bfd79785c662cdc588e
+      resolved-ref: "00a169e747d751361cd85d89bf58be3d411fd260"
       url: "https://github.com/questkeeper/flutter-auth-ui.git"
     source: git
     version: "0.5.5"
