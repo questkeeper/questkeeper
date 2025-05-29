@@ -68,7 +68,7 @@ class Analytics {
     };
 
     instance.trackEvent(
-      eventName: 'feature_${feature}',
+      eventName: 'feature_$feature',
       properties: props,
     );
   }
@@ -85,7 +85,7 @@ class Analytics {
     };
 
     instance.trackEvent(
-      eventName: 'perf_${operation}',
+      eventName: 'perf_$operation',
       properties: props,
     );
   }

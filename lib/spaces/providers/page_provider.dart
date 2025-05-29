@@ -8,3 +8,7 @@ final pageControllerProvider = Provider<PageController>((ref) {
   });
   return controller;
 });
+
+/// Provider to track the current page index
+/// This avoids the issue of reading page property from PageController when multiple PageViews are attached
+final currentPageProvider = StateProvider<int>((ref) => 0);

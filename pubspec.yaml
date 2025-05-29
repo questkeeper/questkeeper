@@ -4,7 +4,7 @@ description: "The gamified task tracker"
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.2.1+1
+version: 1.2.2+1
 
 environment:
   sdk: ">=3.3.3 <4.0.0"
@@ -70,12 +70,12 @@ dependencies:
   flutter_local_notifications_linux: ^6.0.0
   flutter_local_notifications_platform_interface: ^9.0.0
   timezone: ^0.10.0
-  sign_in_with_apple: ^7.0.1
   crypto: ^3.0.6
-  google_sign_in: ^6.3.0
-  google_sign_in_ios: ^5.9.0
   app_links: ^6.4.0
   shorebird_code_push: ^2.0.3
+  supabase_auth_ui:
+    git:
+      url: https://github.com/questkeeper/flutter-auth-ui.git
 
 dev_dependencies:
   flutter_test:

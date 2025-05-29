@@ -483,13 +483,12 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
 
 Spaces? getCurrentSpace(WidgetRef ref) {
   final spacesList = ref.read(spacesManagerProvider).asData;
-  final pageController = ref.read(pageControllerProvider);
   if (spacesList == null) return null;
 
   final spaces = spacesList.asData?.value;
   if (spaces == null) return null;
 
-  final currentPage = pageController.page?.round() ?? 0;
+  final currentPage = ref.read(currentPageProvider);
 
   if (currentPage < spaces.length) {
     return spaces[currentPage];
