@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SettingsCard extends StatefulWidget {
   const SettingsCard({
     super.key,
     required this.title,
     required this.description,
-    required this.icon,
     required this.onTap,
+    this.icon,
+    this.svgIconPath,
     this.backgroundColor,
     this.iconColor,
   });
 
   final String title;
   final String description;
-  final IconData icon;
   final Function onTap;
+  final IconData? icon;
+  final String? svgIconPath;
   final Color? backgroundColor;
   final Color? iconColor;
 
@@ -38,7 +41,21 @@ class _SettingsCardState extends State<SettingsCard> {
         color: Theme.of(context).iconTheme.color,
       ),
       iconColor: widget.iconColor ?? Theme.of(context).iconTheme.color,
-      leading: Icon(widget.icon),
+      leading: widget.svgIconPath != null
+          ? SvgPicture.asset(
+              widget.svgIconPath!,
+              width: 24,
+              height: 24,
+              colorFilter: widget.iconColor != null
+                  ? ColorFilter.mode(
+                      widget.iconColor!,
+                      BlendMode.srcIn,
+                    )
+                  : null,
+            )
+          : widget.icon != null
+              ? Icon(widget.icon)
+              : null,
       title: Text(widget.title),
       subtitle: Text(widget.description),
       onTap: () {
