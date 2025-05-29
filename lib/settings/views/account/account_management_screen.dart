@@ -12,6 +12,7 @@ import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:questkeeper/settings/views/settings_screen.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class AccountManagementScreen extends ConsumerStatefulWidget {
   const AccountManagementScreen({super.key});
@@ -140,9 +141,72 @@ class _AccountManagementScreenState
     );
   }
 
+  Widget _buildAccountLinkingSkeleton() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Linked Accounts',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 8),
+
+        Skeletonizer(
+          enabled: true,
+          child: _buildLinkedIdentityCard(
+            context,
+            ProviderData(
+              name: 'Google',
+              svgIconPath: 'assets/auth/google_logo.svg',
+            ),
+            identity: UserIdentity(
+              provider: 'google',
+              identityData: {
+                "email": "test@test.com",
+              },
+              id: '1',
+              userId: '1',
+              identityId: '1',
+              createdAt: DateTime.now().toIso8601String(),
+              lastSignInAt: DateTime.now().toIso8601String(),
+            ),
+            canUnlink: false,
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Available providers to link
+        Text(
+          'Link Additional Accounts',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 8),
+        Skeletonizer(
+          enabled: true,
+          child: _buildAvailableProvidersSection(
+            context,
+            List.generate(
+              10,
+              (index) => UserIdentity(
+                provider: 'google',
+                identityData: {},
+                id: '1',
+                userId: '1',
+                identityId: '1',
+                createdAt: DateTime.now().toIso8601String(),
+                lastSignInAt: DateTime.now().toIso8601String(),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildAccountLinkingSection(BuildContext context) {
     if (_isLoadingIdentities) {
-      return const Center(child: CircularProgressIndicator());
+      return _buildAccountLinkingSkeleton();
     }
 
     final linkedIdentities = _userIdentities ?? [];
