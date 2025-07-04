@@ -30,6 +30,8 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
       unawaited(_initializeNotifications());
     }
 
+    updateHomeWidget(tasks);
+
     return tasks;
   }
 

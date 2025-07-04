@@ -1,15 +1,15 @@
 //
-//  AppWidgetsLiveActivity.swift
-//  AppWidgets
+//  HomeWidgetsLiveActivity.swift
+//  HomeWidgets
 //
-//  Created by Ishan Misra on 7/14/24.
+//  Created by Ishan Misra on 7/4/25.
 //
 
 import ActivityKit
 import WidgetKit
 import SwiftUI
 
-struct AppWidgetsAttributes: ActivityAttributes {
+struct HomeWidgetsAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
         var emoji: String
@@ -19,9 +19,9 @@ struct AppWidgetsAttributes: ActivityAttributes {
     var name: String
 }
 
-struct AppWidgetsLiveActivity: Widget {
+struct HomeWidgetsLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: AppWidgetsAttributes.self) { context in
+        ActivityConfiguration(for: HomeWidgetsAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
                 Text("Hello \(context.state.emoji)")
@@ -56,25 +56,25 @@ struct AppWidgetsLiveActivity: Widget {
     }
 }
 
-extension AppWidgetsAttributes {
-    fileprivate static var preview: AppWidgetsAttributes {
-        AppWidgetsAttributes(name: "World")
+extension HomeWidgetsAttributes {
+    fileprivate static var preview: HomeWidgetsAttributes {
+        HomeWidgetsAttributes(name: "World")
     }
 }
 
-extension AppWidgetsAttributes.ContentState {
-    fileprivate static var smiley: AppWidgetsAttributes.ContentState {
-        AppWidgetsAttributes.ContentState(emoji: "😀")
+extension HomeWidgetsAttributes.ContentState {
+    fileprivate static var smiley: HomeWidgetsAttributes.ContentState {
+        HomeWidgetsAttributes.ContentState(emoji: "😀")
      }
      
-     fileprivate static var starEyes: AppWidgetsAttributes.ContentState {
-         AppWidgetsAttributes.ContentState(emoji: "🤩")
+     fileprivate static var starEyes: HomeWidgetsAttributes.ContentState {
+         HomeWidgetsAttributes.ContentState(emoji: "🤩")
      }
 }
 
-#Preview("Notification", as: .content, using: AppWidgetsAttributes.preview) {
-   AppWidgetsLiveActivity()
+#Preview("Notification", as: .content, using: HomeWidgetsAttributes.preview) {
+   HomeWidgetsLiveActivity()
 } contentStates: {
-    AppWidgetsAttributes.ContentState.smiley
-    AppWidgetsAttributes.ContentState.starEyes
+    HomeWidgetsAttributes.ContentState.smiley
+    HomeWidgetsAttributes.ContentState.starEyes
 }
