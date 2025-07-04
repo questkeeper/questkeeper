@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/auth/providers/auth_page_controller_provider.dart';
 import 'package:questkeeper/auth/widgets/supa_magic_auth.dart'
@@ -73,6 +74,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             '/home',
             (route) => false,
           );
+          SnackbarService.showSuccessSnackbar(
+            "Welcome back, ${profile.username}!",
+          );
           return;
         }
       } else {
@@ -82,6 +86,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               builder: (context) => const AccountManagementScreen(),
               settings: const RouteSettings(arguments: true),
             ),
+          );
+          SnackbarService.showErrorSnackbar(
+            "Your account is inactive. Time to come back?",
           );
           return;
         }
@@ -94,12 +101,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeIn,
             );
+        SnackbarService.showInfoSnackbar(
+          "Welcome to QuestKeeper!",
+        );
         return;
       }
     }
   }
 
-  void onError(error) {
+  void onError(Object? error) {
     debugPrint(error.toString());
 
     if (mounted) {
@@ -186,89 +196,77 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             if (_showEmailAuth)
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .outline
-                          .withValues(alpha: 0.5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextButton.icon(
+                      label: const Text("Back"),
+                      onPressed: () {
+                        setState(() {
+                          _showEmailAuth = false;
+                        });
+                      },
+                      icon: const Icon(LucideIcons.arrow_left),
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.warning_amber_rounded,
-                            color: Theme.of(context).colorScheme.error,
-                            size: 16,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              "Email authentication is deprecated",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: Theme.of(context).colorScheme.error,
-                                  ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      custom_auth.SupaMagicAuth(
-                        redirectUrl: kIsWeb
-                            ? "${Uri.base.toString()}/signin"
-                            : 'questkeeper://signin',
-                        onSuccess: onSuccess,
-                        onError: onError,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-            // Social Sign In using supabase_auth_ui
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
-              child: Column(
-                children: [
-                  if (_showEmailAuth) ...[
-                    const Row(
+                    Row(
                       children: [
-                        Expanded(child: Divider()),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Text('or continue with'),
+                        Icon(
+                          Icons.warning_amber_rounded,
+                          color: Theme.of(context).colorScheme.error,
+                          size: 16,
                         ),
-                        Expanded(child: Divider()),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            "Email authentication is deprecated",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
+                    custom_auth.SupaMagicAuth(
+                      redirectUrl: kIsWeb
+                          ? "${Uri.base.toString()}/signin"
+                          : 'questkeeper://signin',
+                      onSuccess: onSuccess,
+                      onError: onError,
+                    ),
                   ],
-                  SupaSocialsAuth(
-                    socialProviders: [
-                      OAuthProvider.google,
-                      if (Platform.isIOS || Platform.isMacOS)
-                        OAuthProvider.apple,
-                      OAuthProvider.discord,
-                    ],
-                    socialButtonVariant: SocialButtonVariant.iconAndText,
-                    redirectUrl: kIsWeb
-                        ? "${Uri.base.toString()}/signin"
-                        : 'questkeeper://signin',
-                    onSuccess: onSuccess,
-                    onError: onError,
-                  ),
-                ],
+                ),
               ),
-            ),
+
+            if (!_showEmailAuth) ...[
+              // Social Sign In using supabase_auth_ui
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
+                child: Column(
+                  children: [
+                    SupaSocialsAuth(
+                      socialProviders: [
+                        OAuthProvider.google,
+                        if (Platform.isIOS || Platform.isMacOS)
+                          OAuthProvider.apple,
+                        OAuthProvider.discord,
+                      ],
+                      socialButtonVariant: SocialButtonVariant.iconAndText,
+                      redirectUrl: kIsWeb
+                          ? "${Uri.base.toString()}/signin"
+                          : 'questkeeper://signin',
+                      onSuccess: onSuccess,
+                      onError: onError,
+                      showSuccessSnackBar: false,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
