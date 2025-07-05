@@ -61,6 +61,7 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
 
       // Sync notifications after creating a task
       await _syncNotificationsIfInitialized();
+      updateHomeWidget(state.value ?? []);
 
       return createdTask.data.id;
     } catch (error) {
@@ -115,6 +116,7 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
       await repositoryAction();
       // Sync notifications after updating a task
       await _syncNotificationsIfInitialized();
+      updateHomeWidget(newState);
     } catch (error) {
       // Revert state on error
       state = AsyncValue.data(oldState);
@@ -133,6 +135,7 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
           await _repository.deleteTask(task);
           // Sync notifications after deleting a task
           await _syncNotificationsIfInitialized();
+          updateHomeWidget(newState);
         },
         successMessage: "Task deleted successfully",
       ));
@@ -157,5 +160,10 @@ class TasksManager extends _$TasksManager with UndoManagerMixin<List<Tasks>> {
         await _notificationService.syncNotificationsFromSchedule();
       }));
     }
+  }
+
+  void refreshHomeWidget() {
+    final currentTasks = state.value ?? [];
+    updateHomeWidget(currentTasks);
   }
 }

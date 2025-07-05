@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_keys.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 
 class HomeWidgetMobile implements HomeWidgetInterface {
   static const MethodChannel _channel = MethodChannel('app.questkeeper/data');
@@ -16,23 +18,52 @@ class HomeWidgetMobile implements HomeWidgetInterface {
 
   @override
   void updateHomeWidget(List<Tasks> state) {
-    // Filter incomplete tasks and sort by due date (earliest first)
-    final upcomingTasks = state.where((task) => !task.completed).toList()
-      ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
+    final prefs = SharedPreferencesManager.instance;
 
-    // Get only the most recent/upcoming task
-    final nextTask = upcomingTasks.isNotEmpty ? upcomingTasks.first : null;
+    // Get settings from SharedPreferences
+    final pinnedTaskId =
+        prefs.getInt(SharedPreferencesKeys.homeWidgetPinnedTaskId.key);
+    final backgroundColorValue =
+        prefs.getString(SharedPreferencesKeys.homeWidgetBackgroundColor.key);
 
-    final taskJson = nextTask != null
+    Tasks? selectedTask;
+
+    // First, try to use the pinned task if it exists and is in the current state
+    if (pinnedTaskId != null) {
+      try {
+        selectedTask = state.firstWhere(
+          (task) => task.id == pinnedTaskId && !task.completed,
+        );
+        debugPrint("Using pinned task: ${selectedTask.title}");
+      } catch (e) {
+        debugPrint(
+            "Pinned task not found or completed, falling back to next upcoming task");
+        selectedTask = null;
+      }
+    }
+
+    // If no pinned task or pinned task not found, use the next upcoming task
+    if (selectedTask == null) {
+      final upcomingTasks = state.where((task) => !task.completed).toList()
+        ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
+      selectedTask = upcomingTasks.isNotEmpty ? upcomingTasks.first : null;
+    }
+
+    // Create task JSON data
+    final taskJson = selectedTask != null
         ? {
-            'id': nextTask.id,
-            'title': nextTask.title,
-            'dueDate': nextTask.dueDate.toIso8601String(),
+            'id': selectedTask.id,
+            'title': selectedTask.title,
+            'dueDate': selectedTask.dueDate.toIso8601String(),
+            'backgroundColor': backgroundColorValue,
+            'isPinned': pinnedTaskId != null && selectedTask.id == pinnedTaskId,
           }
         : {
             'id': 0,
             'title': 'No upcoming tasks',
             'dueDate': DateTime.now().toIso8601String(),
+            'backgroundColor': backgroundColorValue,
+            'isPinned': false,
           };
 
     try {
