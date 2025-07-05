@@ -110,4 +110,5 @@ flutter:
     - assets/lottie/
     - assets/rive/
     - assets/auth/
+    - assets/icon/icon.png
     - shorebird.yaml
