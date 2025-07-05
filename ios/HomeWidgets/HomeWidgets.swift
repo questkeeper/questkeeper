@@ -47,20 +47,24 @@ struct Provider: TimelineProvider {
         let task = try JSONDecoder().decode(
           TaskData.self, from: data.data(using: .utf8)!)
 
-        // Parse the ISO8601 date string
+        // Parse the ISO8601 date string - handle both formats with and without milliseconds
         let dateFormatter = ISO8601DateFormatter()
-        // split from . and take the first part
-        let dueDate =
-          dateFormatter.date(
-            from: String(task.dueDate.split(separator: ".").first ?? "") + "Z") ?? Date()
-
-        print(
-          "Due date: \(dueDate) from \(task.dueDate) with \(task.dueDate.split(separator: ".").first ?? "" + "Z")"
-        )
+        dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        
+        var dueDate = dateFormatter.date(from: task.dueDate)
+        
+        // If parsing with fractional seconds fails, try without
+        if dueDate == nil {
+          dateFormatter.formatOptions = [.withInternetDateTime]
+          dueDate = dateFormatter.date(from: task.dueDate)
+        }
+        
+        // Use current date as fallback if parsing still fails
+        let finalDueDate = dueDate ?? Date()
 
         entry = TaskEntry(
           date: Date(),
-          dueDate: dueDate,
+          dueDate: finalDueDate,
           title: task.title,
           id: task.id,
           backgroundColor: task.backgroundColor ?? defaultBackgroundColor)
@@ -275,7 +279,8 @@ func hexStringToUIColor(hex: String) -> UIColor {
   }
 
   if (cString.count) != 6 {
-    return UIColor(named: "WidgetBackground")!
+    // Safe fallback: try named color first, then use system background as final fallback
+    return UIColor(named: "WidgetBackground") ?? UIColor.systemBackground
   }
 
   var rgbValue: UInt64 = 0

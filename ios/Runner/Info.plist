@@ -84,13 +84,7 @@
 		<string>https://us.i.posthog.com</string>
 		<key>com.posthog.posthog.CAPTURE_APPLICATION_LIFECYCLE_EVENTS</key>
 		<true/>
-			<key>com.posthog.posthog.DEBUG</key>
-	<true/>
-	<key>NSBonjourServices</key>
-	<array>
-		<string>_dartobservatory._tcp</string>
-	</array>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>This app uses local network to connect to the Flutter development server.</string>
+		<key>com.posthog.posthog.DEBUG</key>
+		<true/>
 </dict>
 </plist>
