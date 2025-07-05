@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:questkeeper/shared/utils/format_date.dart';
 import 'package:questkeeper/shared/utils/home_widget/home_widget_stub.dart';
 import 'package:questkeeper/task_list/models/tasks_model.dart';
 import 'package:flutter/foundation.dart';
@@ -21,19 +20,24 @@ class HomeWidgetMobile implements HomeWidgetInterface {
     final upcomingTasks = state.where((task) => !task.completed).toList()
       ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
 
-    final tasksJson = upcomingTasks
-        .map((task) => {
-              'id': task.id,
-              'title': task.title,
-              'description': task.description,
-              'dueDate': formatDate(task.dueDate),
-              'starred': task.starred,
-            })
-        .toList();
+    // Get only the most recent/upcoming task
+    final nextTask = upcomingTasks.isNotEmpty ? upcomingTasks.first : null;
+
+    final taskJson = nextTask != null
+        ? {
+            'id': nextTask.id,
+            'title': nextTask.title,
+            'dueDate': nextTask.dueDate.toIso8601String(),
+          }
+        : {
+            'id': 0,
+            'title': 'No upcoming tasks',
+            'dueDate': DateTime.now().toIso8601String(),
+          };
 
     try {
       HomeWidget.saveWidgetData<String>(
-          "assignments", const JsonEncoder().convert(tasksJson));
+          "data", const JsonEncoder().convert(taskJson));
 
       HomeWidget.updateWidget(
         name: 'HomeWidgets',
