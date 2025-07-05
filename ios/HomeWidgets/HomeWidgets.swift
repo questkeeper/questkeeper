@@ -25,7 +25,8 @@ struct Provider: TimelineProvider {
       dueDate: tomorrow,
       title: "Complete Math Homework",
       id: 1,
-      backgroundColor: defaultBackgroundColor)
+      backgroundColor: defaultBackgroundColor,
+      isPinned: false)
   }
 
   func getSnapshot(in context: Context, completion: @escaping (TaskEntry) -> Void) {
@@ -50,15 +51,15 @@ struct Provider: TimelineProvider {
         // Parse the ISO8601 date string - handle both formats with and without milliseconds
         let dateFormatter = ISO8601DateFormatter()
         dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        
+
         var dueDate = dateFormatter.date(from: task.dueDate)
-        
+
         // If parsing with fractional seconds fails, try without
         if dueDate == nil {
           dateFormatter.formatOptions = [.withInternetDateTime]
           dueDate = dateFormatter.date(from: task.dueDate)
         }
-        
+
         // Use current date as fallback if parsing still fails
         let finalDueDate = dueDate ?? Date()
 
@@ -67,7 +68,8 @@ struct Provider: TimelineProvider {
           dueDate: finalDueDate,
           title: task.title,
           id: task.id,
-          backgroundColor: task.backgroundColor ?? defaultBackgroundColor)
+          backgroundColor: task.backgroundColor ?? defaultBackgroundColor,
+          isPinned: task.isPinned ?? false)
       } catch {
         // Fallback entry if JSON parsing fails
         entry = TaskEntry(
@@ -75,7 +77,8 @@ struct Provider: TimelineProvider {
           dueDate: Date(),
           title: "Widget Error",
           id: 0,
-          backgroundColor: defaultBackgroundColor)
+          backgroundColor: defaultBackgroundColor,
+          isPinned: false)
       }
     }
     completion(entry)
@@ -98,7 +101,8 @@ struct Provider: TimelineProvider {
               dueDate: entry.dueDate,
               title: entry.title,
               id: entry.id,
-              backgroundColor: entry.backgroundColor ?? defaultBackgroundColor
+              backgroundColor: entry.backgroundColor ?? defaultBackgroundColor,
+              isPinned: entry.isPinned ?? false
             ))
         }
 
@@ -112,7 +116,8 @@ struct Provider: TimelineProvider {
               dueDate: entry.dueDate,
               title: entry.title,
               id: entry.id,
-              backgroundColor: entry.backgroundColor ?? defaultBackgroundColor
+              backgroundColor: entry.backgroundColor ?? defaultBackgroundColor,
+              isPinned: entry.isPinned ?? false
             ))
         }
 
@@ -129,6 +134,7 @@ struct TaskEntry: TimelineEntry {
   let title: String
   let id: Int
   let backgroundColor: String?
+  let isPinned: Bool?
 }
 
 struct TaskData: Decodable {
@@ -136,6 +142,7 @@ struct TaskData: Decodable {
   let title: String
   let dueDate: String
   let backgroundColor: String?
+  let isPinned: Bool?
 }
 
 // Helper function to format relative time
@@ -186,62 +193,78 @@ struct HomeWidgetsEntryView: View {
 
     if family == .systemSmall {
       // Small widget: Title (small text) + Time (large text)
-      VStack(alignment: .center, spacing: 8) {
-        Spacer()
-
-        Text(entry.title)
-          .font(.footnote)
-          .fontWeight(.medium)
-          .lineLimit(2)
-          .multilineTextAlignment(.center)
-          .foregroundColor(.primary)
-
-        Text(relativeTime)
-          .font(.title2)
-          .fontWeight(.bold)
-          .foregroundColor(isOverdue ? .red : .blue)
-          .lineLimit(2)
-          .minimumScaleFactor(0.8)
-
-        Spacer()
-      }
-      .padding(12)
-      .cornerRadius(16)
-    } else {
-      // Medium widget: Title (left) + Time (right)
-      HStack(alignment: .center, spacing: 12) {
-        VStack(alignment: .leading, spacing: 4) {
-          Text("Next Task")
-            .font(.caption)
-            .fontWeight(.semibold)
+      ZStack(alignment: .topTrailing) {
+        if entry.isPinned ?? false {
+          Image(systemName: "pin")
             .foregroundColor(.secondary)
+            .font(.title3)
+        }
+        VStack(alignment: .center, spacing: 8) {
+          Spacer()
 
           Text(entry.title)
-            .font(.headline)
-            .fontWeight(.semibold)
-            .lineLimit(2)
-            .multilineTextAlignment(.leading)
-            .foregroundColor(.primary)
-        }
-
-        Spacer()
-
-        VStack(alignment: .trailing, spacing: 4) {
-          Text("Due")
-            .font(.caption)
+            .font(.footnote)
             .fontWeight(.medium)
-            .foregroundColor(.secondary)
+            .lineLimit(2)
+            .multilineTextAlignment(.center)
+            .foregroundColor(.primary)
 
           Text(relativeTime)
             .font(.title2)
             .fontWeight(.bold)
             .foregroundColor(isOverdue ? .red : .blue)
-            .lineLimit(1)
-            .multilineTextAlignment(.trailing)
+            .lineLimit(2)
+            .minimumScaleFactor(0.8)
+
+          Spacer()
+        }
+        .padding(12)
+        .cornerRadius(16)
+      }
+    } else {
+      // Medium widget: Title (left) + Time (right)
+      ZStack(alignment: .topTrailing) {
+        HStack(alignment: .center, spacing: 12) {
+          VStack(alignment: .leading, spacing: 4) {
+            Text("Next Task")
+              .font(.caption)
+              .fontWeight(.semibold)
+              .foregroundColor(.secondary)
+
+            Text(entry.title)
+              .font(.headline)
+              .fontWeight(.semibold)
+              .lineLimit(2)
+              .multilineTextAlignment(.leading)
+              .foregroundColor(.primary)
+          }
+
+          Spacer()
+
+          VStack(alignment: .trailing, spacing: 4) {
+            Text("Due")
+              .font(.caption)
+              .fontWeight(.medium)
+              .foregroundColor(.secondary)
+
+            Text(relativeTime)
+              .font(.title2)
+              .fontWeight(.bold)
+              .foregroundColor(isOverdue ? .red : .blue)
+              .lineLimit(1)
+              .multilineTextAlignment(.trailing)
+          }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(16)
+
+        if entry.isPinned ?? false {
+          Image(systemName: "pin")
+            .foregroundColor(.secondary.opacity(0.8))
+            .font(.body)
+            .padding(12)
         }
       }
-      .padding(16)
-      .cornerRadius(20)
     }
   }
 }
