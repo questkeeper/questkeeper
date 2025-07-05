@@ -94,8 +94,19 @@ class AboutScreen extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  title: const Text("View Privacy Policy"),
+                  title: const Text("GitHub"),
                   textColor: primaryColor,
+                  leading: const Icon(LucideIcons.github),
+                  onTap: () {
+                    final uri =
+                        Uri.parse("https://github.com/questkeeper/questkeeper");
+
+                    launchUrl(uri);
+                  },
+                ),
+                ListTile(
+                  title: const Text("View Privacy Policy"),
+                  textColor: secondaryColor,
                   leading: const Icon(LucideIcons.badge_help),
                   onTap: () {
                     final uri =
@@ -106,7 +117,7 @@ class AboutScreen extends StatelessWidget {
                 ),
                 ListTile(
                   title: const Text("View Terms of Service"),
-                  textColor: primaryColor,
+                  textColor: secondaryColor,
                   leading: const Icon(LucideIcons.file_check),
                   onTap: () {
                     final uri =
