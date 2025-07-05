@@ -35,11 +35,13 @@ class AboutScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(24.0),
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          radius: 50,
-                          child: Text(
-                            'QK',
-                            style: Theme.of(context).textTheme.headlineSmall,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.asset(
+                            'assets/icon/icon.png',
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         const SizedBox(height: 20),
