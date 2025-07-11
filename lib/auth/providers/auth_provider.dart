@@ -109,9 +109,8 @@ class AuthNotifier {
 
     // If FCM isn't supported, fall back to local notifications (if enabled)
     if (!fcmSupported) {
-      if (isLocalNotificationsSupported || isLocalNotificationsEnabled) {
-        await _initializeLocalNotifications();
-      }
+      // Falls back to local notifs regardless of user preference
+      await enableLocalNotifications();
       return;
     }
 
