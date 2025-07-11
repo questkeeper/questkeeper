@@ -5,6 +5,7 @@
 enum SharedPreferencesKeys {
   homeWidgetPinnedTaskId,
   homeWidgetBackgroundColor,
+  localNotificationsEnabled,
 }
 
 extension SharedPreferencesKeysExtension on SharedPreferencesKeys {
