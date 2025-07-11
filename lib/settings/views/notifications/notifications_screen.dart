@@ -168,7 +168,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                       isEnabled: _isLocalNotificationsEnabled,
                       onTap: _isLoadingToggle
                           ? (_) {}
-                          : (_) {
+                          : (_) async {
                               if (!_isLocalNotificationsEnabled) {
                                 showDialog(
                                   context: context,
@@ -183,15 +183,21 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                                         child: Text("Cancel"),
                                       ),
                                       FilledButton(
-                                        onPressed: () =>
-                                            _toggleLocalNotifications(true),
+                                        onPressed: () async {
+                                          await _toggleLocalNotifications(true);
+                                          if (context.mounted) {
+                                            Navigator.pop(context);
+                                          } else {
+                                            return;
+                                          }
+                                        },
                                         child: Text("Confirm"),
                                       ),
                                     ],
                                   ),
                                 );
                               } else {
-                                _toggleLocalNotifications(false);
+                                await _toggleLocalNotifications(false);
                               }
                             },
                       icon: LucideIcons.bell,
