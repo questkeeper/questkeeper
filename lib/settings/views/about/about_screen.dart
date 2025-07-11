@@ -35,11 +35,13 @@ class AboutScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(24.0),
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          radius: 50,
-                          child: Text(
-                            'QK',
-                            style: Theme.of(context).textTheme.headlineSmall,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.asset(
+                            'assets/icon/icon.png',
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -94,8 +96,19 @@ class AboutScreen extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  title: const Text("View Privacy Policy"),
+                  title: const Text("GitHub"),
                   textColor: primaryColor,
+                  leading: const Icon(LucideIcons.github),
+                  onTap: () {
+                    final uri =
+                        Uri.parse("https://github.com/questkeeper/questkeeper");
+
+                    launchUrl(uri);
+                  },
+                ),
+                ListTile(
+                  title: const Text("View Privacy Policy"),
+                  textColor: secondaryColor,
                   leading: const Icon(LucideIcons.badge_help),
                   onTap: () {
                     final uri =
@@ -106,7 +119,7 @@ class AboutScreen extends StatelessWidget {
                 ),
                 ListTile(
                   title: const Text("View Terms of Service"),
-                  textColor: primaryColor,
+                  textColor: secondaryColor,
                   leading: const Icon(LucideIcons.file_check),
                   onTap: () {
                     final uri =

@@ -2,6 +2,7 @@ import FirebaseCore
 import FirebaseMessaging
 import Flutter
 import UIKit
+import WidgetKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -31,6 +32,18 @@ import UIKit
       name: "app.questkeeper/data",
       binaryMessenger: controller.binaryMessenger
     )
+
+    // Handle method calls from Flutter
+    flutterChannel?.setMethodCallHandler { (call: FlutterMethodCall, result: @escaping FlutterResult) in
+      if call.method == "reloadWidgets" {
+        if #available(iOS 14.0, *) {
+          WidgetCenter.shared.reloadAllTimelines()
+        }
+        result(nil)
+      } else {
+        result(FlutterMethodNotImplemented)
+      }
+    }
 
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)

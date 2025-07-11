@@ -3,6 +3,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
+import 'package:questkeeper/shared/utils/shared_preferences_keys.dart';
 import 'package:questkeeper/shared/utils/play_services.dart';
 import 'package:questkeeper/shared/notifications/local_notification_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -22,6 +23,13 @@ class AuthNotifier {
         Platform.isLinux ||
         Platform.isIOS ||
         Platform.isWindows;
+  }
+
+  /// Check if local notifications are enabled in user preferences
+  bool get isLocalNotificationsEnabled {
+    final prefs = SharedPreferencesManager.instance;
+    return prefs.getBool(SharedPreferencesKeys.localNotificationsEnabled.key) ??
+        false;
   }
 
   Future<bool> get isFCMSupported async {
@@ -99,11 +107,16 @@ class AuthNotifier {
     // Check if FCM is supported
     final fcmSupported = await isFCMSupported;
 
-    // If FCM isn't supported, fall back to local notifications
+    // If FCM isn't supported, fall back to local notifications (if enabled)
     if (!fcmSupported) {
-      if (isLocalNotificationsSupported) {
-        await _initializeLocalNotifications();
-      }
+      // Falls back to local notifs regardless of user preference
+      await enableLocalNotifications();
+      return;
+    }
+
+    // Check if user prefers local notifications over FCM
+    if (isLocalNotificationsEnabled && isLocalNotificationsSupported) {
+      await _initializeLocalNotifications();
       return;
     }
 
@@ -151,7 +164,7 @@ class AuthNotifier {
   void _fallbackToLocalNotifications() {
     debugPrint(
         "FCM initialization failed, falling back to local notifications");
-    if (isLocalNotificationsSupported) {
+    if (isLocalNotificationsSupported && isLocalNotificationsEnabled) {
       _initializeLocalNotifications();
     }
   }
@@ -166,5 +179,41 @@ class AuthNotifier {
         await _localNotificationService.syncNotificationsFromSchedule();
       }
     });
+  }
+
+  /// Enable local notifications and switch to local notifications
+  /// This should probably be moved to another service
+  Future<void> enableLocalNotifications() async {
+    final prefs = SharedPreferencesManager.instance;
+    await prefs.setBool(
+        SharedPreferencesKeys.localNotificationsEnabled.key, true);
+
+    // Cancel FCM and switch to local notifications
+    if (_firebaseMessagingInitialized) {
+      await clearToken();
+      _firebaseMessagingInitialized = false;
+    }
+
+    if (isLocalNotificationsSupported) {
+      await _initializeLocalNotifications();
+    }
+  }
+
+  /// Disable local notifications and switch to FCM (if supported)
+  /// This should probably be moved to another service
+  Future<void> disableLocalNotifications() async {
+    final prefs = SharedPreferencesManager.instance;
+    await prefs.setBool(
+        SharedPreferencesKeys.localNotificationsEnabled.key, false);
+
+    // Cancel local notifications
+    if (isLocalNotificationsSupported) {
+      await _localNotificationService.cancelAllNotifications();
+    }
+
+    // Try to initialize FCM if supported
+    if (await isFCMSupported) {
+      await setFirebaseMessaging();
+    }
   }
 }
