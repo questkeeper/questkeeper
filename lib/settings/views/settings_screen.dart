@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:questkeeper/settings/views/home_widget/home_widget_screen.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -199,6 +200,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   icon: LucideIcons.bell_ring,
                   onTap: () => _navigateToContent(const NotificationsScreen()),
                 ),
+                if (Platform.isIOS)
+                  SettingsCard(
+                    title: 'Home Widget',
+                    description: 'Configure your home widget settings',
+                    icon: LucideIcons.smartphone,
+                    onTap: () =>
+                        _navigateToContent(const HomeWidgetSettingsScreen()),
+                  ),
                 SettingsCard(
                   title: 'Privacy',
                   description: 'Manage privacy and data settings',
