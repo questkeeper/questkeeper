@@ -33,7 +33,7 @@ jobs:
       - name: ✨ Check Code Formatting
         run: |
           echo "Checking code formatting..."
-          flutter format --set-exit-if-changed .
+          dart format --set-exit-if-changed .
           echo "✅ Code formatting check completed"
 
       # 🔎 Analyze
