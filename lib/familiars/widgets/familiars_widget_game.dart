@@ -8,7 +8,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:questkeeper/familiars/components/characters/character_sprite_component.dart';
 import 'package:questkeeper/familiars/components/characters/character_state.dart';
 import 'package:questkeeper/familiars/components/characters/sprite_sheet_loader.dart';
-import 'package:questkeeper/familiars/components/clock_component.dart';
 
 enum Direction { left, right, none }
 
@@ -45,8 +44,6 @@ class FamiliarsWidgetGame extends FlameGame with SingleGameInstance {
   bool isAnimatingEntry = false;
   Vector2? targetPosition;
   Direction entryDirection = Direction.none;
-
-  late ClockComponent clock;
 
   double idleTime = 0;
   final double idleDuration = 5;
@@ -106,16 +103,6 @@ class FamiliarsWidgetGame extends FlameGame with SingleGameInstance {
 
       await add(mapComponent);
       _isMapInitialized = true;
-
-      clock = ClockComponent(
-        position: Vector2(
-          (size.x / 2) - 23,
-          38,
-        ),
-        size: Vector2(128, 128), // Match your sprite size
-      );
-
-      await add(clock);
     } catch (e) {
       debugPrint('Failed to load background: $e');
     }
