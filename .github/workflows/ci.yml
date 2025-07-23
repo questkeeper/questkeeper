@@ -43,12 +43,12 @@ jobs:
           flutter analyze
           echo "✅ Static analysis completed"
 
-      # 🧪 Run Unit Tests
-      - name: 🧪 Run Unit Tests
-        run: |
-          echo "Running unit tests..."
-          flutter test --coverage
-          echo "✅ Unit tests completed"
+      # 🧪 Run Unit Tests — TODO: uncomment when I get my act together and start writing tests
+      # - name: 🧪 Run Unit Tests
+      #   run: |
+      #     echo "Running unit tests..."
+      #     flutter test --coverage
+      #     echo "✅ Unit tests completed"
 
       # 💾 Cache Pub Dependencies
       - name: 💾 Cache Pub Dependencies
