@@ -1,0 +1,62 @@
+name: Flutter CI/CD
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 📚 Git Checkout
+      - name: 📚 Checkout Repository
+        uses: actions/checkout@v4
+
+      # 🐦 Setup Flutter
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+          channel: "stable"
+          cache: true
+
+      # Verify Flutter installation
+      - name: 🔍 Verify Flutter Installation
+        run: flutter --version
+
+      # 📦 Install Dependencies
+      - name: 📦 Install Dependencies
+        run: flutter pub get
+
+      # ✨ Format
+      - name: ✨ Check Code Formatting
+        run: |
+          echo "Checking code formatting..."
+          flutter format --set-exit-if-changed .
+          echo "✅ Code formatting check completed"
+
+      # 🔎 Analyze
+      - name: 🔎 Analyze Code
+        run: |
+          echo "Running static analysis..."
+          flutter analyze
+          echo "✅ Static analysis completed"
+
+      # 🧪 Run Unit Tests
+      - name: 🧪 Run Unit Tests
+        run: |
+          echo "Running unit tests..."
+          flutter test --coverage
+          echo "✅ Unit tests completed"
+
+      # 💾 Cache Pub Dependencies
+      - name: 💾 Cache Pub Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.PUB_CACHE }}
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
