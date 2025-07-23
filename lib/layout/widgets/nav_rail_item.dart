@@ -37,7 +37,10 @@ class _NavRailItemState extends State<NavRailItem> {
         onEnter: (details) => setState(() => _isHovered = true),
         onExit: (details) => setState(() => _isHovered = false),
         child: widget.isExpanded
-            ? _buildExpandedItem(colorScheme, textColor)
+            ? _buildExpandedItem(
+                colorScheme: colorScheme,
+                textColor: textColor,
+              )
             : Tooltip(
                 message: widget.label,
                 waitDuration: const Duration(milliseconds: 500),
@@ -46,13 +49,19 @@ class _NavRailItemState extends State<NavRailItem> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 textStyle: TextStyle(color: textColor),
-                child: _buildExpandedItem(colorScheme, textColor),
+                child: _buildExpandedItem(
+                  colorScheme: colorScheme,
+                  textColor: textColor,
+                ),
               ),
       ),
     );
   }
 
-  Widget _buildExpandedItem(colorScheme, textColor) {
+  Widget _buildExpandedItem({
+    required ColorScheme colorScheme,
+    required Color textColor,
+  }) {
     return InkWell(
       borderRadius: BorderRadius.circular(8),
       onTap: widget.onTap,

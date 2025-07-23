@@ -9,6 +9,7 @@ part 'global_quests_provider.g.dart';
 
 @riverpod
 class GlobalQuestManager extends _$GlobalQuestManager {
+  // ignore: unused_field
   final GlobalQuestsRepository _repository;
 
   GlobalQuestManager() : _repository = GlobalQuestsRepository();

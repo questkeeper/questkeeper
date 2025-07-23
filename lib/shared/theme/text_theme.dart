@@ -41,6 +41,7 @@ class ModernTextTheme {
     required Brightness brightness,
   }) {
     // Get both system and user-defined text scale factors
+    // ignore: deprecated_member_use
     final systemTextScale = MediaQuery.textScaleFactorOf(context);
     final userTextScale = themeNotifier.textScaleNotifier.value;
     final combinedScale = systemTextScale * userTextScale;
