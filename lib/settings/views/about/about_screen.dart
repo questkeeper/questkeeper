@@ -109,7 +109,7 @@ class AboutScreen extends StatelessWidget {
                 ListTile(
                   title: const Text("View Privacy Policy"),
                   textColor: secondaryColor,
-                  leading: const Icon(LucideIcons.badge_help),
+                  leading: const Icon(LucideIcons.shield_check),
                   onTap: () {
                     final uri =
                         Uri.parse("https://questkeeper.app/privacy-policy");
