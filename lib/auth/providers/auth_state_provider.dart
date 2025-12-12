@@ -95,7 +95,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       final userProfile = await ref.read(profileManagerProvider.future);
 
       await prefs.setBool(_authKey, true);
-      await prefs.setString("user_profile", userProfile.toJson().toString());
+      await prefs.setString("user_profile", jsonEncode(userProfile.toJson()));
 
       try {
         Analytics.instance.identify(

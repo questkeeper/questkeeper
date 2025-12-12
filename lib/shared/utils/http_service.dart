@@ -97,7 +97,7 @@ class HttpService {
     }
 
     SnackbarService.showErrorSnackbar(
-      e.message ?? 'An error occurred',
+      'An error occurred. Try refreshing the app, or contact support if the problem persists.',
     );
   }
 
