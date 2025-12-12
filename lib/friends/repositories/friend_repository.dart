@@ -13,9 +13,8 @@ class FriendRepository {
       final response = await _httpService.get('/social/friends');
 
       if (response.statusCode == 200) {
-        List<Friend> data =
-            response.data.map((e) => Friend.fromJson(e)).toList();
-        return data;
+        List<dynamic> data = response.data;
+        return data.map((json) => Friend.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load friends');
       }

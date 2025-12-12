@@ -185,7 +185,7 @@ class _FriendProfileViewState extends State<FriendProfileView> {
           ),
           const SizedBox(height: 4),
           PointsBadge(
-            points: widget.friend.points,
+            points: int.parse(widget.friend.points),
           ),
           const SizedBox(height: 16),
           Row(

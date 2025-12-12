@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$Friend {
   String get userId;
   String get username;
-  int get points;
+  String get points;
 
   /// Create a copy of Friend
   /// with the given fields replaced by the non-null parameter values.
@@ -54,7 +54,7 @@ abstract mixin class $FriendCopyWith<$Res> {
   factory $FriendCopyWith(Friend value, $Res Function(Friend) _then) =
       _$FriendCopyWithImpl;
   @useResult
-  $Res call({String userId, String username, int points});
+  $Res call({String userId, String username, String points});
 }
 
 /// @nodoc
@@ -85,7 +85,7 @@ class _$FriendCopyWithImpl<$Res> implements $FriendCopyWith<$Res> {
       points: null == points
           ? _self.points
           : points // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
     ));
   }
 }
@@ -183,7 +183,7 @@ extension FriendPatterns on Friend {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String userId, String username, int points)? $default, {
+    TResult Function(String userId, String username, String points)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
@@ -210,7 +210,7 @@ extension FriendPatterns on Friend {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String userId, String username, int points) $default,
+    TResult Function(String userId, String username, String points) $default,
   ) {
     final _that = this;
     switch (_that) {
@@ -235,7 +235,7 @@ extension FriendPatterns on Friend {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String userId, String username, int points)? $default,
+    TResult? Function(String userId, String username, String points)? $default,
   ) {
     final _that = this;
     switch (_that) {
@@ -259,7 +259,7 @@ class _Friend implements Friend {
   @override
   final String username;
   @override
-  final int points;
+  final String points;
 
   /// Create a copy of Friend
   /// with the given fields replaced by the non-null parameter values.
@@ -303,7 +303,7 @@ abstract mixin class _$FriendCopyWith<$Res> implements $FriendCopyWith<$Res> {
       __$FriendCopyWithImpl;
   @override
   @useResult
-  $Res call({String userId, String username, int points});
+  $Res call({String userId, String username, String points});
 }
 
 /// @nodoc
@@ -334,7 +334,7 @@ class __$FriendCopyWithImpl<$Res> implements _$FriendCopyWith<$Res> {
       points: null == points
           ? _self.points
           : points // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
     ));
   }
 }

@@ -8,7 +8,7 @@ abstract class Friend with _$Friend {
   const factory Friend({
     required String userId,
     required String username,
-    required int points,
+    required String points,
   }) = _Friend;
 
   factory Friend.fromJson(Map<String, dynamic> json) => _$FriendFromJson(json);

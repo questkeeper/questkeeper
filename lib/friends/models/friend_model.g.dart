@@ -9,7 +9,7 @@ part of 'friend_model.dart';
 _Friend _$FriendFromJson(Map<String, dynamic> json) => _Friend(
       userId: json['userId'] as String,
       username: json['username'] as String,
-      points: (json['points'] as num).toInt(),
+      points: json['points'] as String,
     );
 
 Map<String, dynamic> _$FriendToJson(_Friend instance) => <String, dynamic>{
