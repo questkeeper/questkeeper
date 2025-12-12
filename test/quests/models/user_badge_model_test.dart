@@ -65,13 +65,13 @@ void main() {
     });
 
     test('toMap should convert UserBadge to a Map correctly', () {
-      final map = testUserBadge.toMap();
+      final map = testUserBadge.toJson();
 
       expect(map, {
         'id': 1,
         'progress': 1,
         'monthYear': '8-2023',
-        'badge': testBadge.toMap(),
+        'badge': testBadge.toJson(),
         'redeemed': true,
         'earnedAt': '2023-08-15T10:00:00.000Z',
         'redemptionCount': 1,
@@ -98,7 +98,7 @@ void main() {
         'redemptionCount': 1,
       };
 
-      final userBadge = UserBadge.fromMap(map);
+      final userBadge = UserBadge.fromJson(map);
 
       expect(userBadge.id, 1);
       expect(userBadge.progress, 1);
@@ -111,8 +111,8 @@ void main() {
     });
 
     test('toJson should convert UserBadge to JSON string correctly', () {
-      final jsonString = testUserBadge.toJson();
-      final decodedJson = json.decode(jsonString);
+      final jsonString = json.encode(testUserBadge.toJson());
+      final decodedJson = jsonDecode(jsonString);
 
       expect(decodedJson['id'], 1);
       expect(decodedJson['progress'], 1);
@@ -143,7 +143,7 @@ void main() {
         'redemptionCount': 1,
       });
 
-      final userBadge = UserBadge.fromJson(jsonString);
+      final userBadge = UserBadge.fromJson(jsonDecode(jsonString));
 
       expect(userBadge.id, 1);
       expect(userBadge.progress, 1);
@@ -207,10 +207,10 @@ void main() {
 
       expect(userBadgeWithNullEarnedAt.earnedAt, null);
 
-      final map = userBadgeWithNullEarnedAt.toMap();
+      final map = userBadgeWithNullEarnedAt.toJson();
       expect(map['earnedAt'], null);
 
-      final fromMap = UserBadge.fromMap(map);
+      final fromMap = UserBadge.fromJson(map);
       expect(fromMap.earnedAt, null);
     });
   });

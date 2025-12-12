@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 
@@ -27,7 +28,7 @@ class ProfileManager extends _$ProfileManager {
 
     if (cachedProfileJson != null) {
       try {
-        return Profile.fromJson(cachedProfileJson);
+        return Profile.fromJson(jsonDecode(cachedProfileJson));
       } catch (e) {
         return fetchProfile();
       }
@@ -47,7 +48,7 @@ class ProfileManager extends _$ProfileManager {
         response = await _repository.getProfile(username);
       }
 
-      var profile = Profile.fromMap(response.data);
+      var profile = Profile.fromJson(response.data);
 
       // Cache my profile
       if (username == "me") {
@@ -91,7 +92,7 @@ class ProfileManager extends _$ProfileManager {
       if (!result.success) return result;
 
       final updatedProfile = await fetchProfile();
-      debugPrint(updatedProfile.toJson());
+      debugPrint(updatedProfile.toJson().toString());
       state = AsyncValue.data(updatedProfile);
 
       return const ReturnModel(

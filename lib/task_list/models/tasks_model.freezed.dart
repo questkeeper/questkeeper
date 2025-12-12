@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,132 +9,69 @@ part of 'tasks_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-Tasks _$TasksFromJson(Map<String, dynamic> json) {
-  return _Tasks.fromJson(json);
-}
 
 /// @nodoc
 mixin _$Tasks {
-  int? get id => throw _privateConstructorUsedError;
-  DateTime? get createdAt => throw _privateConstructorUsedError;
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  DateTime get dueDate => throw _privateConstructorUsedError;
-  int? get categoryId => throw _privateConstructorUsedError;
-  int? get spaceId => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
-  bool get completed => throw _privateConstructorUsedError;
-  bool get starred => throw _privateConstructorUsedError;
-
-  /// Serializes this Tasks to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  int? get id;
+  DateTime? get createdAt;
+  DateTime? get updatedAt;
+  String get title;
+  DateTime get dueDate;
+  int? get categoryId;
+  int? get spaceId;
+  String? get description;
+  bool get completed;
+  bool get starred;
 
   /// Create a copy of Tasks
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $TasksCopyWith<Tasks> get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $TasksCopyWith<$Res> {
-  factory $TasksCopyWith(Tasks value, $Res Function(Tasks) then) =
-      _$TasksCopyWithImpl<$Res, Tasks>;
-  @useResult
-  $Res call(
-      {int? id,
-      DateTime? createdAt,
-      DateTime? updatedAt,
-      String title,
-      DateTime dueDate,
-      int? categoryId,
-      int? spaceId,
-      String? description,
-      bool completed,
-      bool starred});
-}
-
-/// @nodoc
-class _$TasksCopyWithImpl<$Res, $Val extends Tasks>
-    implements $TasksCopyWith<$Res> {
-  _$TasksCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of Tasks
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
+  $TasksCopyWith<Tasks> get copyWith =>
+      _$TasksCopyWithImpl<Tasks>(this as Tasks, _$identity);
+
+  /// Serializes this Tasks to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = freezed,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-    Object? title = null,
-    Object? dueDate = null,
-    Object? categoryId = freezed,
-    Object? spaceId = freezed,
-    Object? description = freezed,
-    Object? completed = null,
-    Object? starred = null,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      dueDate: null == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      categoryId: freezed == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
-              as int?,
-      spaceId: freezed == spaceId
-          ? _value.spaceId
-          : spaceId // ignore: cast_nullable_to_non_nullable
-              as int?,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      completed: null == completed
-          ? _value.completed
-          : completed // ignore: cast_nullable_to_non_nullable
-              as bool,
-      starred: null == starred
-          ? _value.starred
-          : starred // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is Tasks &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.dueDate, dueDate) || other.dueDate == dueDate) &&
+            (identical(other.categoryId, categoryId) ||
+                other.categoryId == categoryId) &&
+            (identical(other.spaceId, spaceId) || other.spaceId == spaceId) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.completed, completed) ||
+                other.completed == completed) &&
+            (identical(other.starred, starred) || other.starred == starred));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, createdAt, updatedAt, title,
+      dueDate, categoryId, spaceId, description, completed, starred);
+
+  @override
+  String toString() {
+    return 'Tasks(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, dueDate: $dueDate, categoryId: $categoryId, spaceId: $spaceId, description: $description, completed: $completed, starred: $starred)';
   }
 }
 
 /// @nodoc
-abstract class _$$TasksImplCopyWith<$Res> implements $TasksCopyWith<$Res> {
-  factory _$$TasksImplCopyWith(
-          _$TasksImpl value, $Res Function(_$TasksImpl) then) =
-      __$$TasksImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $TasksCopyWith<$Res> {
+  factory $TasksCopyWith(Tasks value, $Res Function(Tasks) _then) =
+      _$TasksCopyWithImpl;
   @useResult
   $Res call(
       {int? id,
@@ -150,12 +87,11 @@ abstract class _$$TasksImplCopyWith<$Res> implements $TasksCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$TasksImplCopyWithImpl<$Res>
-    extends _$TasksCopyWithImpl<$Res, _$TasksImpl>
-    implements _$$TasksImplCopyWith<$Res> {
-  __$$TasksImplCopyWithImpl(
-      _$TasksImpl _value, $Res Function(_$TasksImpl) _then)
-      : super(_value, _then);
+class _$TasksCopyWithImpl<$Res> implements $TasksCopyWith<$Res> {
+  _$TasksCopyWithImpl(this._self, this._then);
+
+  final Tasks _self;
+  final $Res Function(Tasks) _then;
 
   /// Create a copy of Tasks
   /// with the given fields replaced by the non-null parameter values.
@@ -173,55 +109,275 @@ class __$$TasksImplCopyWithImpl<$Res>
     Object? completed = null,
     Object? starred = null,
   }) {
-    return _then(_$TasksImpl(
+    return _then(_self.copyWith(
       id: freezed == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
       createdAt: freezed == createdAt
-          ? _value.createdAt
+          ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       updatedAt: freezed == updatedAt
-          ? _value.updatedAt
+          ? _self.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       title: null == title
-          ? _value.title
+          ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
       dueDate: null == dueDate
-          ? _value.dueDate
+          ? _self.dueDate
           : dueDate // ignore: cast_nullable_to_non_nullable
               as DateTime,
       categoryId: freezed == categoryId
-          ? _value.categoryId
+          ? _self.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
               as int?,
       spaceId: freezed == spaceId
-          ? _value.spaceId
+          ? _self.spaceId
           : spaceId // ignore: cast_nullable_to_non_nullable
               as int?,
       description: freezed == description
-          ? _value.description
+          ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
       completed: null == completed
-          ? _value.completed
+          ? _self.completed
           : completed // ignore: cast_nullable_to_non_nullable
               as bool,
       starred: null == starred
-          ? _value.starred
+          ? _self.starred
           : starred // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
   }
 }
 
+/// Adds pattern-matching-related methods to [Tasks].
+extension TasksPatterns on Tasks {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_Tasks value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Tasks() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_Tasks value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Tasks():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_Tasks value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Tasks() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            int? id,
+            DateTime? createdAt,
+            DateTime? updatedAt,
+            String title,
+            DateTime dueDate,
+            int? categoryId,
+            int? spaceId,
+            String? description,
+            bool completed,
+            bool starred)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Tasks() when $default != null:
+        return $default(
+            _that.id,
+            _that.createdAt,
+            _that.updatedAt,
+            _that.title,
+            _that.dueDate,
+            _that.categoryId,
+            _that.spaceId,
+            _that.description,
+            _that.completed,
+            _that.starred);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            int? id,
+            DateTime? createdAt,
+            DateTime? updatedAt,
+            String title,
+            DateTime dueDate,
+            int? categoryId,
+            int? spaceId,
+            String? description,
+            bool completed,
+            bool starred)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Tasks():
+        return $default(
+            _that.id,
+            _that.createdAt,
+            _that.updatedAt,
+            _that.title,
+            _that.dueDate,
+            _that.categoryId,
+            _that.spaceId,
+            _that.description,
+            _that.completed,
+            _that.starred);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            int? id,
+            DateTime? createdAt,
+            DateTime? updatedAt,
+            String title,
+            DateTime dueDate,
+            int? categoryId,
+            int? spaceId,
+            String? description,
+            bool completed,
+            bool starred)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Tasks() when $default != null:
+        return $default(
+            _that.id,
+            _that.createdAt,
+            _that.updatedAt,
+            _that.title,
+            _that.dueDate,
+            _that.categoryId,
+            _that.spaceId,
+            _that.description,
+            _that.completed,
+            _that.starred);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
-class _$TasksImpl implements _Tasks {
-  const _$TasksImpl(
+class _Tasks implements Tasks {
+  const _Tasks(
       {this.id,
       this.createdAt,
       this.updatedAt,
@@ -232,9 +388,7 @@ class _$TasksImpl implements _Tasks {
       this.description,
       this.completed = false,
       this.starred = false});
-
-  factory _$TasksImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TasksImplFromJson(json);
+  factory _Tasks.fromJson(Map<String, dynamic> json) => _$TasksFromJson(json);
 
   @override
   final int? id;
@@ -259,16 +413,26 @@ class _$TasksImpl implements _Tasks {
   @JsonKey()
   final bool starred;
 
+  /// Create a copy of Tasks
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'Tasks(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, dueDate: $dueDate, categoryId: $categoryId, spaceId: $spaceId, description: $description, completed: $completed, starred: $starred)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$TasksCopyWith<_Tasks> get copyWith =>
+      __$TasksCopyWithImpl<_Tasks>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$TasksToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$TasksImpl &&
+            other is _Tasks &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
@@ -291,62 +455,97 @@ class _$TasksImpl implements _Tasks {
   int get hashCode => Object.hash(runtimeType, id, createdAt, updatedAt, title,
       dueDate, categoryId, spaceId, description, completed, starred);
 
-  /// Create a copy of Tasks
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$TasksImplCopyWith<_$TasksImpl> get copyWith =>
-      __$$TasksImplCopyWithImpl<_$TasksImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TasksImplToJson(
-      this,
-    );
+  String toString() {
+    return 'Tasks(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, title: $title, dueDate: $dueDate, categoryId: $categoryId, spaceId: $spaceId, description: $description, completed: $completed, starred: $starred)';
   }
 }
 
-abstract class _Tasks implements Tasks {
-  const factory _Tasks(
-      {final int? id,
-      final DateTime? createdAt,
-      final DateTime? updatedAt,
-      required final String title,
-      required final DateTime dueDate,
-      final int? categoryId,
-      final int? spaceId,
-      final String? description,
-      final bool completed,
-      final bool starred}) = _$TasksImpl;
+/// @nodoc
+abstract mixin class _$TasksCopyWith<$Res> implements $TasksCopyWith<$Res> {
+  factory _$TasksCopyWith(_Tasks value, $Res Function(_Tasks) _then) =
+      __$TasksCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {int? id,
+      DateTime? createdAt,
+      DateTime? updatedAt,
+      String title,
+      DateTime dueDate,
+      int? categoryId,
+      int? spaceId,
+      String? description,
+      bool completed,
+      bool starred});
+}
 
-  factory _Tasks.fromJson(Map<String, dynamic> json) = _$TasksImpl.fromJson;
+/// @nodoc
+class __$TasksCopyWithImpl<$Res> implements _$TasksCopyWith<$Res> {
+  __$TasksCopyWithImpl(this._self, this._then);
 
-  @override
-  int? get id;
-  @override
-  DateTime? get createdAt;
-  @override
-  DateTime? get updatedAt;
-  @override
-  String get title;
-  @override
-  DateTime get dueDate;
-  @override
-  int? get categoryId;
-  @override
-  int? get spaceId;
-  @override
-  String? get description;
-  @override
-  bool get completed;
-  @override
-  bool get starred;
+  final _Tasks _self;
+  final $Res Function(_Tasks) _then;
 
   /// Create a copy of Tasks
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$TasksImplCopyWith<_$TasksImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+    Object? title = null,
+    Object? dueDate = null,
+    Object? categoryId = freezed,
+    Object? spaceId = freezed,
+    Object? description = freezed,
+    Object? completed = null,
+    Object? starred = null,
+  }) {
+    return _then(_Tasks(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      createdAt: freezed == createdAt
+          ? _self.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _self.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      title: null == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      dueDate: null == dueDate
+          ? _self.dueDate
+          : dueDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      categoryId: freezed == categoryId
+          ? _self.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      spaceId: freezed == spaceId
+          ? _self.spaceId
+          : spaceId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      description: freezed == description
+          ? _self.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      completed: null == completed
+          ? _self.completed
+          : completed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      starred: null == starred
+          ? _self.starred
+          : starred // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
 }
+
+// dart format on

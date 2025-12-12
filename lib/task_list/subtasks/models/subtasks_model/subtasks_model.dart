@@ -4,7 +4,7 @@ part 'subtasks_model.freezed.dart';
 part 'subtasks_model.g.dart';
 
 @freezed
-class Subtask with _$Subtask {
+abstract class Subtask with _$Subtask {
   const factory Subtask({
     int? id,
     required String title,

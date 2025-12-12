@@ -5,7 +5,7 @@ part 'categories_model.freezed.dart';
 part 'categories_model.g.dart';
 
 @freezed
-class Categories with _$Categories {
+abstract class Categories with _$Categories {
   const factory Categories({
     int? id,
     required String title,

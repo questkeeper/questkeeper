@@ -11,14 +11,14 @@ class QuestsRepository {
   Future<List<UserQuest>> getActiveQuests() async {
     final response = await _httpService.get('/quests/active');
     final List<dynamic> data = response.data;
-    return data.map((e) => UserQuest.fromMap(e)).toList();
+    return data.map((e) => UserQuest.fromJson(e)).toList();
   }
 
   // Get completed quests history
   Future<List<UserQuest>> getCompletedQuests() async {
     final response = await _httpService.get('/quests/completed');
     final List<dynamic> data = response.data;
-    return data.map((e) => UserQuest.fromMap(e)).toList();
+    return data.map((e) => UserQuest.fromJson(e)).toList();
   }
 
   // Update progress on a quest

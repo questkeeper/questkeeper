@@ -7,7 +7,7 @@ part of 'home_widget_settings_provider.dart';
 // **************************************************************************
 
 String _$homeWidgetSettingsManagerHash() =>
-    r'affce980593201b52b703e015fa4415b2e9e6a2b';
+    r'6fd41fd55be47ec8dcbe1dc0a9b5d2c0ffd97292';
 
 /// Provider for managing home widget settings
 ///

@@ -6,8 +6,7 @@ part of 'subtasks_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SubtaskImpl _$$SubtaskImplFromJson(Map<String, dynamic> json) =>
-    _$SubtaskImpl(
+_Subtask _$SubtaskFromJson(Map<String, dynamic> json) => _Subtask(
       id: (json['id'] as num?)?.toInt(),
       title: json['title'] as String,
       priority: (json['priority'] as num?)?.toInt() ?? 1,
@@ -15,8 +14,7 @@ _$SubtaskImpl _$$SubtaskImplFromJson(Map<String, dynamic> json) =>
       taskId: (json['taskId'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$SubtaskImplToJson(_$SubtaskImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$SubtaskToJson(_Subtask instance) => <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
       'priority': instance.priority,

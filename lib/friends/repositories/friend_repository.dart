@@ -13,8 +13,9 @@ class FriendRepository {
       final response = await _httpService.get('/social/friends');
 
       if (response.statusCode == 200) {
-        List<dynamic> data = response.data;
-        return data.map((json) => Friend.fromMap(json)).toList();
+        List<Friend> data =
+            response.data.map((e) => Friend.fromJson(e)).toList();
+        return data;
       } else {
         throw Exception('Failed to load friends');
       }
@@ -29,14 +30,12 @@ class FriendRepository {
       final response = await _httpService.get('/social/friends/pending');
 
       if (response.statusCode == 200) {
-        List<UserSearchResult> sentRequests = (response.data['sent'] as List)
-            .map((json) => UserSearchResult.fromMap(json).copyWith(sent: true))
+        List<UserSearchResult> sentRequests = response.data['sent']
+            .map((e) => UserSearchResult.fromJson(e).copyWith(sent: true))
             .toList();
-
-        List<UserSearchResult> receivedRequests =
-            (response.data['received'] as List)
-                .map((json) => UserSearchResult.fromMap(json))
-                .toList();
+        List<UserSearchResult> receivedRequests = response.data['received']
+            .map((e) => UserSearchResult.fromJson(e))
+            .toList();
 
         return {'sent': sentRequests, 'received': receivedRequests};
       } else {
@@ -53,7 +52,7 @@ class FriendRepository {
       final response = await _httpService.get('/social/friends/$id');
 
       if (response.statusCode == 200) {
-        return Friend.fromMap(response.data);
+        return Friend.fromJson(response.data);
       } else {
         throw Exception('Failed to load friend');
       }
@@ -74,7 +73,7 @@ class FriendRepository {
       );
 
       if (response.statusCode == 200) {
-        return FriendBadgesProfileModel.fromMap(response.data);
+        return FriendBadgesProfileModel.fromJson(response.data);
       } else {
         throw Exception('Failed to load friend badges');
       }
@@ -154,7 +153,7 @@ class FriendRepository {
 
       if (response.statusCode == 200) {
         List<dynamic> data = response.data;
-        return data.map((json) => UserSearchResult.fromMap(json)).toList();
+        return data.map((json) => UserSearchResult.fromJson(json)).toList();
       } else {
         throw Exception('Failed to search user profile');
       }

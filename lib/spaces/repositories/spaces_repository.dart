@@ -20,12 +20,12 @@ class SpacesRepository {
         e["notificationTimes"] = rawTimes.map((key, value) =>
             MapEntry(key, (value as List).map((item) => item as int).toList()));
       }
-      return Spaces.fromMap(e);
+      return Spaces.fromJson(e);
     }).toList();
   }
 
   Future<ReturnModel> createSpace(Spaces space) async {
-    final Map<String, dynamic> jsonSpace = space.toMap();
+    final Map<String, dynamic> jsonSpace = space.toJson();
     jsonSpace.remove("id");
     jsonSpace.remove("tasks");
     jsonSpace.remove("categories");
@@ -35,7 +35,7 @@ class SpacesRepository {
       final data = newSpace.data;
 
       return ReturnModel(
-          data: Spaces.fromMap(data),
+          data: Spaces.fromJson(data),
           message: "Space created successfully",
           success: true);
     } catch (error) {
@@ -48,7 +48,7 @@ class SpacesRepository {
   }
 
   Future<ReturnModel> updateSpace(Spaces space) async {
-    final Map<String, dynamic> jsonSpace = space.toMap();
+    final Map<String, dynamic> jsonSpace = space.toJson();
     jsonSpace.remove("created_at");
     jsonSpace.remove("updatedAt");
 
@@ -60,7 +60,7 @@ class SpacesRepository {
       debugPrint("Updated space: $data");
 
       return ReturnModel(
-          data: Spaces.fromMap(data),
+          data: Spaces.fromJson(data),
           message: "Space updated successfully",
           success: true);
     } catch (error) {

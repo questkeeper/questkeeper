@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'subtasks_model.dart';
+part of 'spaces_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,73 +13,79 @@ part of 'subtasks_model.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$Subtask {
+mixin _$Spaces {
   int? get id;
   String get title;
-  int get priority;
-  bool get completed;
-  int get taskId;
+  DateTime? get updatedAt;
+  String get spaceType;
+  Map<String, List<int>> get notificationTimes;
 
-  /// Create a copy of Subtask
+  /// Create a copy of Spaces
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $SubtaskCopyWith<Subtask> get copyWith =>
-      _$SubtaskCopyWithImpl<Subtask>(this as Subtask, _$identity);
+  $SpacesCopyWith<Spaces> get copyWith =>
+      _$SpacesCopyWithImpl<Spaces>(this as Spaces, _$identity);
 
-  /// Serializes this Subtask to a JSON map.
+  /// Serializes this Spaces to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is Subtask &&
+            other is Spaces &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
-            (identical(other.priority, priority) ||
-                other.priority == priority) &&
-            (identical(other.completed, completed) ||
-                other.completed == completed) &&
-            (identical(other.taskId, taskId) || other.taskId == taskId));
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            (identical(other.spaceType, spaceType) ||
+                other.spaceType == spaceType) &&
+            const DeepCollectionEquality()
+                .equals(other.notificationTimes, notificationTimes));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, title, priority, completed, taskId);
+  int get hashCode => Object.hash(runtimeType, id, title, updatedAt, spaceType,
+      const DeepCollectionEquality().hash(notificationTimes));
 
   @override
   String toString() {
-    return 'Subtask(id: $id, title: $title, priority: $priority, completed: $completed, taskId: $taskId)';
+    return 'Spaces(id: $id, title: $title, updatedAt: $updatedAt, spaceType: $spaceType, notificationTimes: $notificationTimes)';
   }
 }
 
 /// @nodoc
-abstract mixin class $SubtaskCopyWith<$Res> {
-  factory $SubtaskCopyWith(Subtask value, $Res Function(Subtask) _then) =
-      _$SubtaskCopyWithImpl;
+abstract mixin class $SpacesCopyWith<$Res> {
+  factory $SpacesCopyWith(Spaces value, $Res Function(Spaces) _then) =
+      _$SpacesCopyWithImpl;
   @useResult
-  $Res call({int? id, String title, int priority, bool completed, int taskId});
+  $Res call(
+      {int? id,
+      String title,
+      DateTime? updatedAt,
+      String spaceType,
+      Map<String, List<int>> notificationTimes});
 }
 
 /// @nodoc
-class _$SubtaskCopyWithImpl<$Res> implements $SubtaskCopyWith<$Res> {
-  _$SubtaskCopyWithImpl(this._self, this._then);
+class _$SpacesCopyWithImpl<$Res> implements $SpacesCopyWith<$Res> {
+  _$SpacesCopyWithImpl(this._self, this._then);
 
-  final Subtask _self;
-  final $Res Function(Subtask) _then;
+  final Spaces _self;
+  final $Res Function(Spaces) _then;
 
-  /// Create a copy of Subtask
+  /// Create a copy of Spaces
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = freezed,
     Object? title = null,
-    Object? priority = null,
-    Object? completed = null,
-    Object? taskId = null,
+    Object? updatedAt = freezed,
+    Object? spaceType = null,
+    Object? notificationTimes = null,
   }) {
     return _then(_self.copyWith(
       id: freezed == id
@@ -90,24 +96,24 @@ class _$SubtaskCopyWithImpl<$Res> implements $SubtaskCopyWith<$Res> {
           ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      priority: null == priority
-          ? _self.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as int,
-      completed: null == completed
-          ? _self.completed
-          : completed // ignore: cast_nullable_to_non_nullable
-              as bool,
-      taskId: null == taskId
-          ? _self.taskId
-          : taskId // ignore: cast_nullable_to_non_nullable
-              as int,
+      updatedAt: freezed == updatedAt
+          ? _self.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      spaceType: null == spaceType
+          ? _self.spaceType
+          : spaceType // ignore: cast_nullable_to_non_nullable
+              as String,
+      notificationTimes: null == notificationTimes
+          ? _self.notificationTimes
+          : notificationTimes // ignore: cast_nullable_to_non_nullable
+              as Map<String, List<int>>,
     ));
   }
 }
 
-/// Adds pattern-matching-related methods to [Subtask].
-extension SubtaskPatterns on Subtask {
+/// Adds pattern-matching-related methods to [Spaces].
+extension SpacesPatterns on Spaces {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -122,12 +128,12 @@ extension SubtaskPatterns on Subtask {
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(_Subtask value)? $default, {
+    TResult Function(_Spaces value)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _Subtask() when $default != null:
+      case _Spaces() when $default != null:
         return $default(_that);
       case _:
         return orElse();
@@ -149,11 +155,11 @@ extension SubtaskPatterns on Subtask {
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(_Subtask value) $default,
+    TResult Function(_Spaces value) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _Subtask():
+      case _Spaces():
         return $default(_that);
       case _:
         throw StateError('Unexpected subclass');
@@ -174,11 +180,11 @@ extension SubtaskPatterns on Subtask {
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_Subtask value)? $default,
+    TResult? Function(_Spaces value)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _Subtask() when $default != null:
+      case _Spaces() when $default != null:
         return $default(_that);
       case _:
         return null;
@@ -199,16 +205,16 @@ extension SubtaskPatterns on Subtask {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(
-            int? id, String title, int priority, bool completed, int taskId)?
+    TResult Function(int? id, String title, DateTime? updatedAt,
+            String spaceType, Map<String, List<int>> notificationTimes)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _Subtask() when $default != null:
-        return $default(_that.id, _that.title, _that.priority, _that.completed,
-            _that.taskId);
+      case _Spaces() when $default != null:
+        return $default(_that.id, _that.title, _that.updatedAt, _that.spaceType,
+            _that.notificationTimes);
       case _:
         return orElse();
     }
@@ -229,15 +235,15 @@ extension SubtaskPatterns on Subtask {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(
-            int? id, String title, int priority, bool completed, int taskId)
+    TResult Function(int? id, String title, DateTime? updatedAt,
+            String spaceType, Map<String, List<int>> notificationTimes)
         $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _Subtask():
-        return $default(_that.id, _that.title, _that.priority, _that.completed,
-            _that.taskId);
+      case _Spaces():
+        return $default(_that.id, _that.title, _that.updatedAt, _that.spaceType,
+            _that.notificationTimes);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -257,15 +263,15 @@ extension SubtaskPatterns on Subtask {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(
-            int? id, String title, int priority, bool completed, int taskId)?
+    TResult? Function(int? id, String title, DateTime? updatedAt,
+            String spaceType, Map<String, List<int>> notificationTimes)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _Subtask() when $default != null:
-        return $default(_that.id, _that.title, _that.priority, _that.completed,
-            _that.taskId);
+      case _Spaces() when $default != null:
+        return $default(_that.id, _that.title, _that.updatedAt, _that.spaceType,
+            _that.notificationTimes);
       case _:
         return null;
     }
@@ -274,40 +280,44 @@ extension SubtaskPatterns on Subtask {
 
 /// @nodoc
 @JsonSerializable()
-class _Subtask implements Subtask {
-  const _Subtask(
+class _Spaces implements Spaces {
+  const _Spaces(
       {this.id,
       required this.title,
-      this.priority = 1,
-      this.completed = false,
-      required this.taskId});
-  factory _Subtask.fromJson(Map<String, dynamic> json) =>
-      _$SubtaskFromJson(json);
+      this.updatedAt,
+      required this.spaceType,
+      required final Map<String, List<int>> notificationTimes})
+      : _notificationTimes = notificationTimes;
+  factory _Spaces.fromJson(Map<String, dynamic> json) => _$SpacesFromJson(json);
 
   @override
   final int? id;
   @override
   final String title;
   @override
-  @JsonKey()
-  final int priority;
+  final DateTime? updatedAt;
   @override
-  @JsonKey()
-  final bool completed;
+  final String spaceType;
+  final Map<String, List<int>> _notificationTimes;
   @override
-  final int taskId;
+  Map<String, List<int>> get notificationTimes {
+    if (_notificationTimes is EqualUnmodifiableMapView)
+      return _notificationTimes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_notificationTimes);
+  }
 
-  /// Create a copy of Subtask
+  /// Create a copy of Spaces
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$SubtaskCopyWith<_Subtask> get copyWith =>
-      __$SubtaskCopyWithImpl<_Subtask>(this, _$identity);
+  _$SpacesCopyWith<_Spaces> get copyWith =>
+      __$SpacesCopyWithImpl<_Spaces>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$SubtaskToJson(
+    return _$SpacesToJson(
       this,
     );
   }
@@ -316,55 +326,61 @@ class _Subtask implements Subtask {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _Subtask &&
+            other is _Spaces &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
-            (identical(other.priority, priority) ||
-                other.priority == priority) &&
-            (identical(other.completed, completed) ||
-                other.completed == completed) &&
-            (identical(other.taskId, taskId) || other.taskId == taskId));
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            (identical(other.spaceType, spaceType) ||
+                other.spaceType == spaceType) &&
+            const DeepCollectionEquality()
+                .equals(other._notificationTimes, _notificationTimes));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, title, priority, completed, taskId);
+  int get hashCode => Object.hash(runtimeType, id, title, updatedAt, spaceType,
+      const DeepCollectionEquality().hash(_notificationTimes));
 
   @override
   String toString() {
-    return 'Subtask(id: $id, title: $title, priority: $priority, completed: $completed, taskId: $taskId)';
+    return 'Spaces(id: $id, title: $title, updatedAt: $updatedAt, spaceType: $spaceType, notificationTimes: $notificationTimes)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$SubtaskCopyWith<$Res> implements $SubtaskCopyWith<$Res> {
-  factory _$SubtaskCopyWith(_Subtask value, $Res Function(_Subtask) _then) =
-      __$SubtaskCopyWithImpl;
+abstract mixin class _$SpacesCopyWith<$Res> implements $SpacesCopyWith<$Res> {
+  factory _$SpacesCopyWith(_Spaces value, $Res Function(_Spaces) _then) =
+      __$SpacesCopyWithImpl;
   @override
   @useResult
-  $Res call({int? id, String title, int priority, bool completed, int taskId});
+  $Res call(
+      {int? id,
+      String title,
+      DateTime? updatedAt,
+      String spaceType,
+      Map<String, List<int>> notificationTimes});
 }
 
 /// @nodoc
-class __$SubtaskCopyWithImpl<$Res> implements _$SubtaskCopyWith<$Res> {
-  __$SubtaskCopyWithImpl(this._self, this._then);
+class __$SpacesCopyWithImpl<$Res> implements _$SpacesCopyWith<$Res> {
+  __$SpacesCopyWithImpl(this._self, this._then);
 
-  final _Subtask _self;
-  final $Res Function(_Subtask) _then;
+  final _Spaces _self;
+  final $Res Function(_Spaces) _then;
 
-  /// Create a copy of Subtask
+  /// Create a copy of Spaces
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $Res call({
     Object? id = freezed,
     Object? title = null,
-    Object? priority = null,
-    Object? completed = null,
-    Object? taskId = null,
+    Object? updatedAt = freezed,
+    Object? spaceType = null,
+    Object? notificationTimes = null,
   }) {
-    return _then(_Subtask(
+    return _then(_Spaces(
       id: freezed == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -373,18 +389,18 @@ class __$SubtaskCopyWithImpl<$Res> implements _$SubtaskCopyWith<$Res> {
           ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      priority: null == priority
-          ? _self.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as int,
-      completed: null == completed
-          ? _self.completed
-          : completed // ignore: cast_nullable_to_non_nullable
-              as bool,
-      taskId: null == taskId
-          ? _self.taskId
-          : taskId // ignore: cast_nullable_to_non_nullable
-              as int,
+      updatedAt: freezed == updatedAt
+          ? _self.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      spaceType: null == spaceType
+          ? _self.spaceType
+          : spaceType // ignore: cast_nullable_to_non_nullable
+              as String,
+      notificationTimes: null == notificationTimes
+          ? _self._notificationTimes
+          : notificationTimes // ignore: cast_nullable_to_non_nullable
+              as Map<String, List<int>>,
     ));
   }
 }
