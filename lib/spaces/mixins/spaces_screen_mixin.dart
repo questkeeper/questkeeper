@@ -43,6 +43,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
     }
     // Initialize the current page provider to 0
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       ref.read(currentPageProvider.notifier).setPage(0);
       setup();
     });
@@ -80,11 +81,13 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
   }
 
   void setGameStateToNull() {
+    if (!mounted) return;
     isGameInitialized = true;
     ref.read(gameProvider.notifier).setGame(null);
   }
 
   Future<void> initializeGame() async {
+    if (!mounted) return;
     if (!isGameInitialized &&
         Supabase.instance.client.auth.currentUser != null) {
       try {
@@ -144,6 +147,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
   }
 
   Future<void> handleRefresh() async {
+    if (!mounted) return;
     // ignore: unused_result
     ref.refresh(spacesManagerProvider);
     // ignore: unused_result
