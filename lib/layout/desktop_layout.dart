@@ -80,7 +80,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       },
     );
 
-    ref.read(commandPaletteVisibleProvider.notifier).state = willBeVisible;
+    ref.read(commandPaletteVisibleProvider.notifier).set(willBeVisible);
   }
 
   void _handleKeyEvent(RawKeyEvent event) {
@@ -109,7 +109,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
             'via': 'escape_key',
           },
         );
-        ref.read(commandPaletteVisibleProvider.notifier).state = false;
+        ref.read(commandPaletteVisibleProvider.notifier).set(false);
       }
 
       switch (event.logicalKey) {
@@ -404,7 +404,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                                     );
                                     ref
                                         .read(navRailExpandedProvider.notifier)
-                                        .state = willExpand;
+                                        .set(willExpand);
                                   },
                                 ),
 

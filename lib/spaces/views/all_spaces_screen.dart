@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/shared/extensions/string_extensions.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
 import 'package:questkeeper/spaces/mixins/spaces_screen_mixin.dart';
+import 'package:questkeeper/spaces/models/spaces_model.dart';
 import 'package:questkeeper/spaces/widgets/circle_tab_indicator.dart';
 import 'package:questkeeper/tabs/new_user_onboarding/onboarding_overlay.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -59,7 +60,7 @@ class _AllSpacesState extends SpacesScreenState<AllSpacesScreen> {
         );
         return Center(child: Text('Error: $error'));
       },
-      data: (spaces) {
+      data: (List<Spaces> spaces) {
         updateTabController(spaces.length + 1); // +1 for the "Create" tab
 
         return Scaffold(
@@ -143,8 +144,9 @@ class _AllSpacesState extends SpacesScreenState<AllSpacesScreen> {
 
                           currentPageValue.value = newPage;
                           // Update the global current page provider
-                          ref.read(currentPageProvider.notifier).state =
-                              newPage;
+                          ref
+                              .read(currentPageProvider.notifier)
+                              .setPage(newPage);
 
                           // Animate both the game and PageView
                           pageController.animateToPage(

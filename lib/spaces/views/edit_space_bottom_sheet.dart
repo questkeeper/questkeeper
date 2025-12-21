@@ -523,8 +523,7 @@ class _SpaceBottomSheetContentState extends State<_SpaceBottomSheetContent>
                           widget.nameController.clear();
 
                           if (!widget.isEditing) {
-                            widget.ref.read(gameHeightProvider.notifier).state =
-                                1.0;
+                            widget.ref.read(gameHeightProvider.notifier).setHeight(1.0);
                             final dateType = DateTime.now().getTimeOfDayType();
                             final game = widget.ref.read(gameProvider);
 

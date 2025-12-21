@@ -49,23 +49,24 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
   void _onScroll() {
     if (_scrollController.offset <= 0 && _isMinimized) {
       if (_scrollController.position.maxScrollExtent <= 0) {
-        ref.read(gameHeightProvider.notifier).state = 1.0;
+        ref.read(gameHeightProvider.notifier).setHeight(1.0);
         if (_isMinimized) setState(() => _isMinimized = false);
 
         return;
       }
-      ref.read(gameHeightProvider.notifier).state = 1.0;
+      ref.read(gameHeightProvider.notifier).setHeight(1.0);
       setState(() => _isMinimized = false);
     }
     // Check if we're scrolling down
     else if (_scrollController.offset > 0 && !_isMinimized) {
-      ref.read(gameHeightProvider.notifier).state =
-          0.3; // Minimized height factor
+      ref
+          .read(gameHeightProvider.notifier)
+          .setHeight(0.3); // Minimized height factor
       setState(() => _isMinimized = true);
     } else if (!_isMinimized &&
         _scrollController.offset <= 0 &&
         _scrollController.offset >= -10) {
-      ref.read(gameHeightProvider.notifier).state = 1.0;
+      ref.read(gameHeightProvider.notifier).setHeight(1.0);
       _resetScrollListener();
     }
 
@@ -126,8 +127,9 @@ class _SpaceCardState extends ConsumerState<SpaceCard> {
                         ? const Icon(LucideIcons.minimize_2)
                         : const Icon(LucideIcons.maximize_2),
                     onPressed: () {
-                      ref.read(gameHeightProvider.notifier).state =
-                          gameHeight > 0.3 ? 0.3 : 1.0;
+                      ref
+                          .read(gameHeightProvider.notifier)
+                          .setHeight(gameHeight > 0.3 ? 0.3 : 1.0);
                     },
                   ),
                 SpaceActionWidgets(space: space, ref: ref),

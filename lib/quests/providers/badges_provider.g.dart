@@ -6,22 +6,81 @@ part of 'badges_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$badgesManagerHash() => r'125e7bca8d9e4c6878e3d071257e04883189cc4f';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [BadgesManager].
 @ProviderFor(BadgesManager)
-final badgesManagerProvider = AutoDisposeAsyncNotifierProvider<BadgesManager,
-    (List<Badge>, List<UserBadge>)>.internal(
-  BadgesManager.new,
-  name: r'badgesManagerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$badgesManagerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const badgesManagerProvider = BadgesManagerProvider._();
 
-typedef _$BadgesManager
-    = AutoDisposeAsyncNotifier<(List<Badge>, List<UserBadge>)>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class BadgesManagerProvider extends $AsyncNotifierProvider<
+    BadgesManager,
+    (
+      List<Badge>,
+      List<UserBadge>,
+    )> {
+  const BadgesManagerProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'badgesManagerProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$badgesManagerHash();
+
+  @$internal
+  @override
+  BadgesManager create() => BadgesManager();
+}
+
+String _$badgesManagerHash() => r'da5dc8d5dcafd63259df9821a9285f1d7216e8c7';
+
+abstract class _$BadgesManager extends $AsyncNotifier<
+    (
+      List<Badge>,
+      List<UserBadge>,
+    )> {
+  FutureOr<
+      (
+        List<Badge>,
+        List<UserBadge>,
+      )> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<
+        AsyncValue<
+            (
+              List<Badge>,
+              List<UserBadge>,
+            )>,
+        (
+          List<Badge>,
+          List<UserBadge>,
+        )>;
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<
+            AsyncValue<
+                (
+                  List<Badge>,
+                  List<UserBadge>,
+                )>,
+            (
+              List<Badge>,
+              List<UserBadge>,
+            )>,
+        AsyncValue<
+            (
+              List<Badge>,
+              List<UserBadge>,
+            )>,
+        Object?,
+        Object?>;
+    element.handleValue(ref, created);
+  }
+}

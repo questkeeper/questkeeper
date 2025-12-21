@@ -42,8 +42,10 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
       appBarBackgroundColor!.value = defaultTopBackgroundColor;
     }
     // Initialize the current page provider to 0
-    ref.read(currentPageProvider.notifier).state = 0;
-    WidgetsBinding.instance.addPostFrameCallback((_) => setup());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(currentPageProvider.notifier).setPage(0);
+      setup();
+    });
   }
 
   void updateTabController(int length) {
@@ -62,7 +64,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
     if (!mounted) return;
 
     try {
-      ref.read(gameHeightProvider.notifier).state = 1.0;
+      ref.read(gameHeightProvider.notifier).setHeight(1.0);
       pageController.addListener(updatePage);
     } catch (e) {
       debugPrint('Error in setup: $e');
@@ -79,7 +81,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
 
   void setGameStateToNull() {
     isGameInitialized = true;
-    ref.read(gameProvider.notifier).state = null;
+    ref.read(gameProvider.notifier).setGame(null);
   }
 
   Future<void> initializeGame() async {
@@ -100,15 +102,15 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
             // Dispose of any existing game instance first
             final currentGame = ref.read(gameProvider);
             if (currentGame != null) {
-              ref.read(gameProvider.notifier).state = null;
+              ref.read(gameProvider.notifier).setGame(null);
             }
 
             // Create a new game instance after a short delay to ensure proper cleanup
             Future.delayed(const Duration(milliseconds: 50), () {
               if (mounted) {
                 isGameInitialized = true;
-                ref.read(gameProvider.notifier).state =
-                    FamiliarsWidgetGame(backgroundPath: initialBackgroundPath!);
+                ref.read(gameProvider.notifier).setGame(FamiliarsWidgetGame(
+                    backgroundPath: initialBackgroundPath!));
               }
             });
           }
@@ -129,7 +131,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
       if (currentPageValue.value != newPage) {
         currentPageValue.value = newPage;
         // Update the global current page provider to avoid PageController.page access issues
-        ref.read(currentPageProvider.notifier).state = newPage;
+        ref.read(currentPageProvider.notifier).setPage(newPage);
         tabController.animateTo(newPage);
 
         // updateBackgroundColors(
@@ -205,7 +207,7 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
       // Update current page value first
       currentPageValue.value = page;
       // Update the global current page provider to avoid PageController.page access issues
-      ref.read(currentPageProvider.notifier).state = page;
+      ref.read(currentPageProvider.notifier).setPage(page);
 
       // Update game background
       final spaceType = page >= spaces.length
@@ -241,10 +243,11 @@ abstract class SpacesScreenState<T extends ConsumerStatefulWidget>
       // Handle mobile-specific behaviors
       if (isMobile && page == spaces.length) {
         showSpaceBottomSheet(context: context, ref: ref);
-        ref.read(gameHeightProvider.notifier).state = 0.3;
+        ref.read(gameHeightProvider.notifier).setHeight(0.3);
       } else if (isMobile && !isForward && page == spaces.length - 1) {
-        ref.read(gameHeightProvider.notifier).state =
-            ref.read(gameHeightProvider) < 0.2 ? 0.3 : 1.0;
+        ref
+            .read(gameHeightProvider.notifier)
+            .setHeight(ref.read(gameHeightProvider) < 0.2 ? 0.3 : 1.0);
       }
 
       // Update background colors

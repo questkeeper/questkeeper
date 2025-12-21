@@ -100,7 +100,7 @@ class _CategoryDropdownFieldState extends ConsumerState<CategoryDropdownField> {
       categoryId = null;
     });
     widget.onCategoryChanged(null);
-    ref.read(contextPaneProvider.notifier).state = null;
+    ref.read(contextPaneProvider.notifier).set(null);
 
     final newPage = _pageController.page?.round() ?? 0;
     if (_lastKnownPage != newPage) {

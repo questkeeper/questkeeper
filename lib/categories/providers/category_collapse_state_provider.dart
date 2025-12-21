@@ -1,29 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/shared/utils/shared_preferences_manager.dart';
 
-class CategoryCollapseState extends StateNotifier<AsyncValue<Map<int, bool>>> {
+class CategoryCollapseState extends AsyncNotifier<Map<int, bool>> {
   static final SharedPreferencesManager prefs =
       SharedPreferencesManager.instance;
 
-  CategoryCollapseState() : super(const AsyncValue.loading()) {
-    loadState();
+  @override
+  Future<Map<int, bool>> build() async {
+    return _loadState();
   }
 
-  Future<void> loadState() async {
-    state = const AsyncValue.loading();
+  Future<Map<int, bool>> _loadState() async {
     try {
       final savedState = prefs.getStringList('categoryCollapseStateIds');
       if (savedState != null) {
         final collapsedState = savedState.map((e) => int.parse(e)).toList();
-        final newState = {
+        return {
           for (final id in collapsedState) id: true,
         };
-        state = AsyncValue.data(newState);
       } else {
-        state = const AsyncValue.data({});
+        return {};
       }
     } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
+      rethrow;
     }
   }
 
@@ -49,7 +48,5 @@ class CategoryCollapseState extends StateNotifier<AsyncValue<Map<int, bool>>> {
 }
 
 final categoryCollapseStateProvider =
-    StateNotifierProvider<CategoryCollapseState, AsyncValue<Map<int, bool>>>(
-        (ref) {
-  return CategoryCollapseState();
-});
+    AsyncNotifierProvider.autoDispose<CategoryCollapseState, Map<int, bool>>(
+        CategoryCollapseState.new);

@@ -36,6 +36,6 @@ class ExperimentsManager extends _$ExperimentsManager {
   }
 
   bool isEnabled(Experiments experiment) {
-    return state.valueOrNull?.contains(experiment) ?? false;
+    return state.value?.contains(experiment) ?? false;
   }
 }

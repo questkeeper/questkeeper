@@ -65,7 +65,7 @@ List<Command> buildCommandPaletteList(
                         final parentContext = Navigator.of(context).context;
                         dialogRef
                             .read(commandPaletteVisibleProvider.notifier)
-                            .state = false;
+                            .set(false);
 
                         final spacesList = dialogRef
                                 .read(spacesManagerProvider)
@@ -137,8 +137,7 @@ List<Command> buildCommandPaletteList(
       description: 'Expand or collapse the navigation rail',
       icon: LucideIcons.menu,
       onExecute: () {
-        ref.read(navRailExpandedProvider.notifier).state =
-            !ref.watch(navRailExpandedProvider);
+        ref.read(navRailExpandedProvider.notifier).toggle();
       },
     ),
     Command(
@@ -146,14 +145,13 @@ List<Command> buildCommandPaletteList(
       description: 'Enter zen mode and remove all distractions',
       icon: LucideIcons.menu,
       onExecute: () {
-        if (ref.read(zenModeProvider.notifier).state == false) {
-          ref.read(navRailExpandedProvider.notifier).state = false;
-          ref.read(zenModeProvider.notifier).state = true;
-          ref.read(isContextPaneCollapsedProvider.notifier).state = true;
+        if (ref.read(zenModeProvider) == false) {
+          ref.read(navRailExpandedProvider.notifier).set(false);
+          ref.read(zenModeProvider.notifier).set(true);
+          ref.read(isContextPaneCollapsedProvider.notifier).set(true);
         } else {
-          ref.read(zenModeProvider.notifier).state = false;
-          ref.read(navRailExpandedProvider.notifier).state =
-              !ref.watch(navRailExpandedProvider);
+          ref.read(zenModeProvider.notifier).set(false);
+          ref.read(navRailExpandedProvider.notifier).toggle();
         }
       },
     ),

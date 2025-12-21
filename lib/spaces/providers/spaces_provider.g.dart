@@ -6,21 +6,47 @@ part of 'spaces_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(SpacesManager)
+const spacesManagerProvider = SpacesManagerProvider._();
+
+final class SpacesManagerProvider
+    extends $AsyncNotifierProvider<SpacesManager, List<Spaces>> {
+  const SpacesManagerProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'spacesManagerProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$spacesManagerHash();
+
+  @$internal
+  @override
+  SpacesManager create() => SpacesManager();
+}
+
 String _$spacesManagerHash() => r'1fadc5e3bde2f11299172ee14e36db3b0dc961a5';
 
-/// See also [SpacesManager].
-@ProviderFor(SpacesManager)
-final spacesManagerProvider =
-    AutoDisposeAsyncNotifierProvider<SpacesManager, List<Spaces>>.internal(
-  SpacesManager.new,
-  name: r'spacesManagerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$spacesManagerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$SpacesManager = AutoDisposeAsyncNotifier<List<Spaces>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$SpacesManager extends $AsyncNotifier<List<Spaces>> {
+  FutureOr<List<Spaces>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<List<Spaces>>, List<Spaces>>;
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<AsyncValue<List<Spaces>>, List<Spaces>>,
+        AsyncValue<List<Spaces>>,
+        Object?,
+        Object?>;
+    element.handleValue(ref, created);
+  }
+}

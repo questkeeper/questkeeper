@@ -78,9 +78,9 @@ class _TaskCardState extends ConsumerState<TaskCard> {
       case 'edit':
         if (!isMobile && !isCompact) {
           // First set the state to null to trigger cleanup
-          ref.read(contextPaneProvider.notifier).state = null;
+          ref.read(contextPaneProvider.notifier).set(null);
           // Ensure the context pane is not collapsed
-          ref.read(isContextPaneCollapsedProvider.notifier).state = false;
+          ref.read(isContextPaneCollapsedProvider.notifier).set(false);
 
           // Wait for the next frame to ensure cleanup is complete
           await Future.microtask(() {});
@@ -94,7 +94,7 @@ class _TaskCardState extends ConsumerState<TaskCard> {
             ref: ref,
             existingTask: widget.task,
           );
-          ref.read(contextPaneProvider.notifier).state = contextPane;
+          ref.read(contextPaneProvider.notifier).set(contextPane);
         } else {
           showTaskDrawer(context: context, ref: ref, existingTask: widget.task);
         }

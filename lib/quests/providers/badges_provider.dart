@@ -42,7 +42,7 @@ class BadgesManager extends _$BadgesManager {
   Future<void> redeemBadge(int userBadgeId) async {
     try {
       // Get current state
-      final currentState = state.valueOrNull;
+      final currentState = state.value;
       if (currentState == null) return;
 
       final (badges, userBadges) = currentState;

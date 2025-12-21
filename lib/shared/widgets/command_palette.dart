@@ -81,7 +81,7 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
       color: Colors.black54,
       child: GestureDetector(
         onTap: () => setState(() {
-          ref.read(commandPaletteVisibleProvider.notifier).state = false;
+          ref.read(commandPaletteVisibleProvider.notifier).set(false);
         }),
         behavior: HitTestBehavior.opaque,
         child: Center(
@@ -107,8 +107,7 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
                 if (event is! KeyDownEvent) return KeyEventResult.ignored;
 
                 if (event.logicalKey == LogicalKeyboardKey.escape) {
-                  ref.read(commandPaletteVisibleProvider.notifier).state =
-                      false;
+                  ref.read(commandPaletteVisibleProvider.notifier).set(false);
                   return KeyEventResult.handled;
                 }
 
@@ -130,8 +129,7 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
                 } else if (event.logicalKey == LogicalKeyboardKey.enter &&
                     _filteredCommands.isNotEmpty) {
                   _filteredCommands[_selectedIndex].onExecute();
-                  ref.read(commandPaletteVisibleProvider.notifier).state =
-                      false;
+                  ref.read(commandPaletteVisibleProvider.notifier).set(false);
                   return KeyEventResult.handled;
                 }
 
@@ -158,8 +156,7 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
                     CommandPalettePills(
                       query: _searchController.text,
                       onClose: () {
-                        ref.read(commandPaletteVisibleProvider.notifier).state =
-                            false;
+                        ref.read(commandPaletteVisibleProvider.notifier).set(false);
                       },
                     )
                   else ...[
@@ -187,7 +184,7 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
                                 ref
                                     .read(
                                         commandPaletteVisibleProvider.notifier)
-                                    .state = false;
+                                    .set(false);
                               },
                               onHover: (_) {
                                 setState(() => _selectedIndex = index);

@@ -111,7 +111,7 @@ class _TabViewState extends ConsumerState<TabView> {
     });
 
     // Update the context pane provider when tab changes
-    ref.read(contextPaneProvider.notifier).state = _buildContextualPane(index);
+    ref.read(contextPaneProvider.notifier).set(_buildContextualPane(index));
   }
 
   @override

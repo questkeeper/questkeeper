@@ -414,8 +414,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
 
                     if (!isMobile && !isCompact) {
                       _cleanup();
-                      widget.ref.read(contextPaneProvider.notifier).state =
-                          null;
+                      widget.ref.read(contextPaneProvider.notifier).set(null);
                     }
 
                     if (context.mounted && Navigator.canPop(context)) {
@@ -429,8 +428,7 @@ class _TaskBottomSheetContentState extends State<_TaskBottomSheetContent> {
 
                     if (!isMobile && !isCompact) {
                       _cleanup();
-                      widget.ref.read(contextPaneProvider.notifier).state =
-                          null;
+                      widget.ref.read(contextPaneProvider.notifier).set(null);
                     }
 
                     if (context.mounted && Navigator.canPop(context)) {

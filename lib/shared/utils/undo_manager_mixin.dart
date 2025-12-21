@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/shared/widgets/snackbar.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:toastification/toastification.dart';
 
 enum ActionTiming { immediate, afterUndoPeriod }
@@ -32,12 +32,15 @@ class UndoAction<T> {
   static Future<void> _defaultPostUndoAction() async {}
 }
 
-mixin UndoManagerMixin<T> on AutoDisposeAsyncNotifier<T> {
+mixin UndoManagerMixin<T> {
+  AsyncValue<T> get state;
+  set state(AsyncValue<T> value);
+
   final Map<String, Timer> _pendingActions = {};
 
   void performActionWithUndo(UndoAction<T> action) {
-    final oldState = state.value;
-    if (oldState == null) return;
+    final oldState = state;
+    if (oldState.value == null) return;
 
     final actionId = DateTime.now().microsecondsSinceEpoch.toString();
     state = AsyncValue.data(action.newState);
@@ -70,7 +73,7 @@ mixin UndoManagerMixin<T> on AutoDisposeAsyncNotifier<T> {
     if (action.timing == ActionTiming.afterUndoPeriod) {
       final timer = Timer(action.undoPeriod, () {
         action.repositoryAction().catchError((error) {
-          state = AsyncValue.data(oldState);
+          state = oldState;
           SnackbarService.showErrorSnackbar("Failed to perform action");
         });
         _pendingActions.remove(actionId);
@@ -78,7 +81,7 @@ mixin UndoManagerMixin<T> on AutoDisposeAsyncNotifier<T> {
       _pendingActions[actionId] = timer;
     } else {
       action.repositoryAction().catchError((error) {
-        state = AsyncValue.data(oldState);
+        state = oldState;
         SnackbarService.showErrorSnackbar("Failed to perform action");
       });
     }

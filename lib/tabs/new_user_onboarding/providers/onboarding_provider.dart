@@ -42,12 +42,13 @@ class OnboardingState {
   }
 }
 
-class OnboardingNotifier extends StateNotifier<OnboardingState> {
+class OnboardingNotifier extends Notifier<OnboardingState> {
   static final SharedPreferencesManager _prefs =
       SharedPreferencesManager.instance;
 
-  OnboardingNotifier() : super(OnboardingState()) {
-    refresh();
+  @override
+  OnboardingState build() {
+    return OnboardingState();
   }
 
   void refresh() {
@@ -140,6 +141,5 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 }
 
 final onboardingProvider =
-    StateNotifierProvider<OnboardingNotifier, OnboardingState>((ref) {
-  return OnboardingNotifier();
-});
+    NotifierProvider<OnboardingNotifier, OnboardingState>(
+        OnboardingNotifier.new);

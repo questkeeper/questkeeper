@@ -24,9 +24,18 @@ enum AchievementFilter {
 }
 
 // Provider for tracking the current filter
-final achievementFilterProvider = StateProvider<AchievementFilter>((ref) {
-  return AchievementFilter.all;
-});
+final achievementFilterProvider =
+    NotifierProvider<AchievementFilterNotifier, AchievementFilter>(
+        AchievementFilterNotifier.new);
+
+class AchievementFilterNotifier extends Notifier<AchievementFilter> {
+  @override
+  AchievementFilter build() => AchievementFilter.all;
+
+  void setFilter(AchievementFilter filter) {
+    state = filter;
+  }
+}
 
 class AllAchievementsView extends ConsumerWidget {
   final List<(quest_models.Badge, UserBadge?)> achievements;
@@ -139,7 +148,7 @@ class AllAchievementsView extends ConsumerWidget {
       ),
       onSelected: (selected) {
         if (selected) {
-          ref.read(achievementFilterProvider.notifier).state = filter;
+          ref.read(achievementFilterProvider.notifier).setFilter(filter);
         }
       },
     );
@@ -241,7 +250,7 @@ class AllAchievementsView extends ConsumerWidget {
                       .findAncestorStateOfType<ConsumerState>()
                       ?.ref
                       .read(filterNotifier)
-                      .state = AchievementFilter.all;
+                      .setFilter(AchievementFilter.all);
                 }
               },
               child: const Text('Show All Achievements'),

@@ -13,17 +13,17 @@ class ConnectivityWrapper extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final connectivity = ref.watch(connectivityNotifierProvider);
-
-    return connectivity.when(
-      data: (hasConnection) {
-        if (!hasConnection) {
-          return const NetworkErrorScreen();
-        }
-        return child;
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => const NetworkErrorScreen(),
-    );
+    return ref.watch(connectivityProvider.select(
+      (value) => value.when(
+        data: (hasConnection) {
+          if (!hasConnection) {
+            return const NetworkErrorScreen();
+          }
+          return child;
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => const NetworkErrorScreen(),
+      ),
+    ));
   }
 }

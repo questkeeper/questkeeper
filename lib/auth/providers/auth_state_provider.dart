@@ -9,9 +9,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final authStateProvider =
-    StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
-  return AuthStateNotifier(ref);
-});
+    NotifierProvider<AuthStateNotifier, AuthState>(AuthStateNotifier.new);
 
 class AuthState {
   final bool isLoading;
@@ -45,25 +43,27 @@ class AuthState {
   }
 }
 
-class AuthStateNotifier extends StateNotifier<AuthState> {
-  final Ref ref;
+class AuthStateNotifier extends Notifier<AuthState> {
   static final SharedPreferencesManager prefs =
       SharedPreferencesManager.instance;
   static const _authKey = 'was_authenticated';
 
-  AuthStateNotifier(this.ref) : super(AuthState()) {
-    _initializeAuth();
+  @override
+  AuthState build() {
+    return _initializeState();
   }
 
-  Future<void> _initializeAuth() async {
+  AuthState _initializeState() {
     final wasAuthenticated = prefs.getBool(_authKey) ?? false;
     final cachedProfileJson = prefs.getString("user_profile");
+
+    AuthState initialState;
 
     // If we have a cached profile, use it for truly optimistic UI
     if (wasAuthenticated && cachedProfileJson != null) {
       try {
         final cachedProfile = Profile.fromJson(jsonDecode(cachedProfileJson));
-        state = state.copyWith(
+        initialState = AuthState(
           isLoading: false,
           isAuthenticated: true,
           profile: cachedProfile,
@@ -71,14 +71,14 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         );
       } catch (e) {
         // If profile parsing fails, still show as authenticated but without profile
-        state = state.copyWith(
+        initialState = AuthState(
           isLoading: false,
           isAuthenticated: true,
           isDeactivated: false,
         );
       }
     } else {
-      state = state.copyWith(
+      initialState = AuthState(
         isLoading: false,
         isAuthenticated: false,
         isDeactivated: false,
@@ -86,7 +86,9 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
 
     // Verify authentication in the background
-    await _verifyAuth();
+    _verifyAuth();
+
+    return initialState;
   }
 
   Future<void> _verifyAuth() async {

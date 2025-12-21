@@ -127,8 +127,7 @@ class _ResizablePaneContainerState
         child: GestureDetector(
           onTap: isContextPaneCollapsed
               ? () {
-                  ref.read(isContextPaneCollapsedProvider.notifier).state =
-                      false;
+                  ref.read(isContextPaneCollapsedProvider.notifier).set(false);
                 }
               : null,
           child: AnimatedContainer(
@@ -148,8 +147,8 @@ class _ResizablePaneContainerState
                       ? LucideIcons.chevron_right
                       : LucideIcons.chevron_left),
                   onPressed: () {
-                    ref.read(isContextPaneCollapsedProvider.notifier).state =
-                        !isContextPaneCollapsed;
+                    ref.read(isContextPaneCollapsedProvider.notifier).set(
+                        !isContextPaneCollapsed);
                   },
                 ),
                 Expanded(

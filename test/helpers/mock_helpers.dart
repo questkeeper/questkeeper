@@ -6,6 +6,7 @@ import 'package:questkeeper/quests/models/user_badge_model.dart';
 import 'package:questkeeper/quests/repositories/badges_repository.dart';
 import 'package:questkeeper/shared/models/return_model/return_model.dart';
 import 'package:questkeeper/shared/utils/http_service.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // Mock classes
 class MockBadgesRepository extends Mock implements BadgesRepository {}

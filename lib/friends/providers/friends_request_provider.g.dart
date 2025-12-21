@@ -6,23 +6,52 @@ part of 'friends_request_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(FriendsRequestManager)
+const friendsRequestManagerProvider = FriendsRequestManagerProvider._();
+
+final class FriendsRequestManagerProvider extends $AsyncNotifierProvider<
+    FriendsRequestManager, Map<String, List<UserSearchResult>>> {
+  const FriendsRequestManagerProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'friendsRequestManagerProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$friendsRequestManagerHash();
+
+  @$internal
+  @override
+  FriendsRequestManager create() => FriendsRequestManager();
+}
+
 String _$friendsRequestManagerHash() =>
     r'96c1d123aabdf05368280a1412e0afdac4f47027';
 
-/// See also [FriendsRequestManager].
-@ProviderFor(FriendsRequestManager)
-final friendsRequestManagerProvider = AutoDisposeAsyncNotifierProvider<
-    FriendsRequestManager, Map<String, List<UserSearchResult>>>.internal(
-  FriendsRequestManager.new,
-  name: r'friendsRequestManagerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$friendsRequestManagerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$FriendsRequestManager
-    = AutoDisposeAsyncNotifier<Map<String, List<UserSearchResult>>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$FriendsRequestManager
+    extends $AsyncNotifier<Map<String, List<UserSearchResult>>> {
+  FutureOr<Map<String, List<UserSearchResult>>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<
+        AsyncValue<Map<String, List<UserSearchResult>>>,
+        Map<String, List<UserSearchResult>>>;
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<AsyncValue<Map<String, List<UserSearchResult>>>,
+            Map<String, List<UserSearchResult>>>,
+        AsyncValue<Map<String, List<UserSearchResult>>>,
+        Object?,
+        Object?>;
+    element.handleValue(ref, created);
+  }
+}

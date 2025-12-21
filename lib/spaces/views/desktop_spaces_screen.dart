@@ -125,7 +125,7 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                                           ref
                                               .read(
                                                   currentPageProvider.notifier)
-                                              .state = index;
+                                              .setPage(index);
                                         },
                                       ),
                                     ),
@@ -185,10 +185,10 @@ class _DesktopSpacesScreenState extends SpacesScreenState<DesktopSpacesScreen> {
                         controller: pageController,
                         onPageChanged: (page) {
                           // Clear the context pane when switching spaces
-                          ref.read(contextPaneProvider.notifier).state = null;
+                          ref.read(contextPaneProvider.notifier).set(null);
                           ref
                               .read(isContextPaneCollapsedProvider.notifier)
-                              .state = false;
+                              .set(false);
                           handlePageChanged(page, spaces);
                         },
                         itemCount: spaces.length + 1,

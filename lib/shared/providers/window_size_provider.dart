@@ -30,14 +30,14 @@ class WindowSize {
   }
 }
 
-class WindowSizeNotifier extends StateNotifier<WindowSize> {
-  WindowSizeNotifier()
-      : super(const WindowSize(
-          width: 0,
-          height: 0,
-          isMobile: false,
-          isCompact: false,
-        ));
+class WindowSizeNotifier extends Notifier<WindowSize> {
+  @override
+  WindowSize build() => const WindowSize(
+        width: 0,
+        height: 0,
+        isMobile: false,
+        isCompact: false,
+      );
 
   void setSize(Size size) {
     state = WindowSize(
@@ -50,15 +50,8 @@ class WindowSizeNotifier extends StateNotifier<WindowSize> {
 }
 
 final windowSizeProvider =
-    StateNotifierProvider<WindowSizeNotifier, WindowSize>((ref) {
-  return WindowSizeNotifier();
-});
+    NotifierProvider<WindowSizeNotifier, WindowSize>(WindowSizeNotifier.new);
 
 // Convenience providers
-final isMobileProvider = Provider<bool>((ref) {
-  return ref.watch(windowSizeProvider).isMobile;
-});
-
-final isCompactProvider = Provider<bool>((ref) {
-  return ref.watch(windowSizeProvider).isCompact;
-});
+final isMobileProvider = windowSizeProvider.select((value) => value.isMobile);
+final isCompactProvider = windowSizeProvider.select((value) => value.isCompact);
