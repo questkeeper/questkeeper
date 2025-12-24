@@ -1,3 +1,7 @@
+// ignore_for_file: non_constant_identifier_names — my poor decision to use
+// snake_case and not camelCase while trying to understand
+// correct conventions for db stuff
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'profile_model.freezed.dart';
