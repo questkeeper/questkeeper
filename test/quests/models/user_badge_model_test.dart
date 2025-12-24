@@ -65,9 +65,8 @@ void main() {
     });
 
     test('toMap should convert UserBadge to a Map correctly', () {
-      final map = testUserBadge.toJson();
-
-      expect(map, {
+      // weird decode -> encode is to normalize the map with nested maps
+      expect(json.decode(json.encode(testUserBadge.toJson())), {
         'id': 1,
         'progress': 1,
         'monthYear': '8-2023',
@@ -210,7 +209,7 @@ void main() {
       final map = userBadgeWithNullEarnedAt.toJson();
       expect(map['earnedAt'], null);
 
-      final fromMap = UserBadge.fromJson(map);
+      final fromMap = UserBadge.fromJson(json.decode(json.encode(map)));
       expect(fromMap.earnedAt, null);
     });
   });

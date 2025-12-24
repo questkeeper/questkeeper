@@ -95,9 +95,8 @@ void main() {
 
     test('toJson should convert Badge to JSON string correctly', () {
       final jsonString = testBadge.toJson();
-      final decodedJson = json.encode(jsonString);
 
-      expect(decodedJson, {
+      expect(jsonString, {
         'id': 'badge1',
         'name': 'First Task',
         'description': 'Complete your first task',
