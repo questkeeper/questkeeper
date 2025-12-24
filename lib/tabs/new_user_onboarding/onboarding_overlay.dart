@@ -29,7 +29,7 @@ class OnboardingOverlay extends ConsumerWidget {
             children: [
               onboardingState.playIsCompletingAnimation
                   ? SizedBox.shrink()
-                  : const Icon(LucideIcons.circle_help),
+                  : const Icon(LucideIcons.circle_question_mark),
               const SizedBox(width: 8),
               Text(
                 onboardingState.playIsCompletingAnimation

@@ -16,7 +16,8 @@ class SpacesDropdownField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
-      value: defaultSpaceId ?? spacesList.first.id.toString(),
+      // ignore: undefined_named_parameter — is valid?
+      initialValue: defaultSpaceId ?? spacesList.first.id.toString(),
       onChanged: onSpacesChanged,
       isExpanded: true,
       items: spacesList

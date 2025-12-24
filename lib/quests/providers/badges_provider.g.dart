@@ -6,7 +6,7 @@ part of 'badges_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$badgesManagerHash() => r'8380f058d6c3a9451fde549a0187c567b0e8af62';
+String _$badgesManagerHash() => r'125e7bca8d9e4c6878e3d071257e04883189cc4f';
 
 /// See also [BadgesManager].
 @ProviderFor(BadgesManager)

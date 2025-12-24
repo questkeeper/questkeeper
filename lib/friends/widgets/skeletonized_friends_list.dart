@@ -26,7 +26,7 @@ class SkeletonizedFriendsList extends StatelessWidget {
       friend: Friend(
         userId: 'loading',
         username: 'Loading User',
-        points: 1000,
+        points: '1000',
       ),
       position: index + 1,
       onRemove: (_) {},
@@ -66,7 +66,7 @@ class SkeletonizedFriendsList extends StatelessWidget {
                 Friend(
                   userId: 'current_user',
                   username: currentUserProfile?.username ?? 'You',
-                  points: currentUserProfile?.points ?? 0,
+                  points: currentUserProfile?.points.toString() ?? '0',
                 )
               ];
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:questkeeper/profile/model/profile_model.dart';
 import 'package:questkeeper/profile/providers/profile_provider.dart';
@@ -60,7 +62,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     // If we have a cached profile, use it for truly optimistic UI
     if (wasAuthenticated && cachedProfileJson != null) {
       try {
-        final cachedProfile = Profile.fromJson(cachedProfileJson);
+        final cachedProfile = Profile.fromJson(jsonDecode(cachedProfileJson));
         state = state.copyWith(
           isLoading: false,
           isAuthenticated: true,
@@ -93,7 +95,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       final userProfile = await ref.read(profileManagerProvider.future);
 
       await prefs.setBool(_authKey, true);
-      await prefs.setString("user_profile", userProfile.toJson());
+      await prefs.setString("user_profile", jsonEncode(userProfile.toJson()));
 
       try {
         Analytics.instance.identify(

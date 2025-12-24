@@ -11,13 +11,13 @@ class GlobalQuestsRepository {
   // Get current global quest
   Future<GlobalQuest> getCurrentGlobalQuest() async {
     final response = await _httpService.get('/quests/global');
-    return GlobalQuest.fromMap(response.data);
+    return GlobalQuest.fromJson(response.data);
   }
 
   // Get user's contribution to current global quest
   Future<UserGlobalQuestContribution> getUserContribution() async {
     final response = await _httpService.get('/quests/global/contribution');
-    return UserGlobalQuestContribution.fromMap(response.data);
+    return UserGlobalQuestContribution.fromJson(response.data);
   }
 
   // Get global quest statistics
@@ -47,6 +47,6 @@ class GlobalQuestsRepository {
   Future<List<GlobalQuest>> getGlobalQuestHistory() async {
     final response = await _httpService.get('/quests/global/history');
     final List<dynamic> data = response.data;
-    return data.map((e) => GlobalQuest.fromMap(e)).toList();
+    return data.map((e) => GlobalQuest.fromJson(e)).toList();
   }
 }

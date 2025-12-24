@@ -4,7 +4,7 @@ part 'tasks_model.freezed.dart';
 part 'tasks_model.g.dart';
 
 @freezed
-class Tasks with _$Tasks {
+abstract class Tasks with _$Tasks {
   const factory Tasks({
     int? id,
     DateTime? createdAt,

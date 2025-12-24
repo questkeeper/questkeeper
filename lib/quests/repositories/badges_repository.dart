@@ -11,13 +11,13 @@ class BadgesRepository {
   Future<List<Badge>> getBadges() async {
     final response = await _httpService.get('/social/badges');
     final List<dynamic> data = response.data;
-    return data.map((e) => Badge.fromMap(e)).toList();
+    return data.map((e) => Badge.fromJson(e)).toList();
   }
 
   Future<List<UserBadge>> getUserBadges() async {
     final response = await _httpService.get('/social/badges/me');
     final List<dynamic> data = response.data;
-    return data.map((e) => UserBadge.fromMap(e)).toList();
+    return data.map((e) => UserBadge.fromJson(e)).toList();
   }
 
   Future<ReturnModel> redeemBadge(int userBadgeId) async {

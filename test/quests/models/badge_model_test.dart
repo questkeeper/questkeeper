@@ -55,7 +55,7 @@ void main() {
     });
 
     test('toMap should convert Badge to a Map correctly', () {
-      final map = testBadge.toMap();
+      final map = testBadge.toJson();
 
       expect(map, {
         'id': 'badge1',
@@ -81,7 +81,7 @@ void main() {
         'resetMonthly': false,
       };
 
-      final badge = Badge.fromMap(map);
+      final badge = Badge.fromJson(map);
 
       expect(badge.id, 'badge1');
       expect(badge.name, 'First Task');
@@ -95,9 +95,8 @@ void main() {
 
     test('toJson should convert Badge to JSON string correctly', () {
       final jsonString = testBadge.toJson();
-      final decodedJson = json.decode(jsonString);
 
-      expect(decodedJson, {
+      expect(jsonString, {
         'id': 'badge1',
         'name': 'First Task',
         'description': 'Complete your first task',
@@ -121,7 +120,7 @@ void main() {
         'resetMonthly': false,
       });
 
-      final badge = Badge.fromJson(jsonString);
+      final badge = Badge.fromJson(jsonDecode(jsonString));
 
       expect(badge.id, 'badge1');
       expect(badge.name, 'First Task');

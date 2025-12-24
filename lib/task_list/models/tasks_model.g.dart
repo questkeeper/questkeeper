@@ -6,7 +6,7 @@ part of 'tasks_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TasksImpl _$$TasksImplFromJson(Map<String, dynamic> json) => _$TasksImpl(
+_Tasks _$TasksFromJson(Map<String, dynamic> json) => _Tasks(
       id: (json['id'] as num?)?.toInt(),
       createdAt: json['createdAt'] == null
           ? null
@@ -23,8 +23,7 @@ _$TasksImpl _$$TasksImplFromJson(Map<String, dynamic> json) => _$TasksImpl(
       starred: json['starred'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$$TasksImplToJson(_$TasksImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$TasksToJson(_Tasks instance) => <String, dynamic>{
       'id': instance.id,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),

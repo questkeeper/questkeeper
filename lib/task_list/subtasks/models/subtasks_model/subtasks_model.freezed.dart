@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,176 +9,32 @@ part of 'subtasks_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-Subtask _$SubtaskFromJson(Map<String, dynamic> json) {
-  return _Subtask.fromJson(json);
-}
 
 /// @nodoc
 mixin _$Subtask {
-  int? get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  int get priority => throw _privateConstructorUsedError;
-  bool get completed => throw _privateConstructorUsedError;
-  int get taskId => throw _privateConstructorUsedError;
-
-  /// Serializes this Subtask to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  int? get id;
+  String get title;
+  int get priority;
+  bool get completed;
+  int get taskId;
 
   /// Create a copy of Subtask
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $SubtaskCopyWith<Subtask> get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $SubtaskCopyWith<$Res> {
-  factory $SubtaskCopyWith(Subtask value, $Res Function(Subtask) then) =
-      _$SubtaskCopyWithImpl<$Res, Subtask>;
-  @useResult
-  $Res call({int? id, String title, int priority, bool completed, int taskId});
-}
-
-/// @nodoc
-class _$SubtaskCopyWithImpl<$Res, $Val extends Subtask>
-    implements $SubtaskCopyWith<$Res> {
-  _$SubtaskCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of Subtask
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? title = null,
-    Object? priority = null,
-    Object? completed = null,
-    Object? taskId = null,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      priority: null == priority
-          ? _value.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as int,
-      completed: null == completed
-          ? _value.completed
-          : completed // ignore: cast_nullable_to_non_nullable
-              as bool,
-      taskId: null == taskId
-          ? _value.taskId
-          : taskId // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
-  }
-}
+  $SubtaskCopyWith<Subtask> get copyWith =>
+      _$SubtaskCopyWithImpl<Subtask>(this as Subtask, _$identity);
 
-/// @nodoc
-abstract class _$$SubtaskImplCopyWith<$Res> implements $SubtaskCopyWith<$Res> {
-  factory _$$SubtaskImplCopyWith(
-          _$SubtaskImpl value, $Res Function(_$SubtaskImpl) then) =
-      __$$SubtaskImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({int? id, String title, int priority, bool completed, int taskId});
-}
-
-/// @nodoc
-class __$$SubtaskImplCopyWithImpl<$Res>
-    extends _$SubtaskCopyWithImpl<$Res, _$SubtaskImpl>
-    implements _$$SubtaskImplCopyWith<$Res> {
-  __$$SubtaskImplCopyWithImpl(
-      _$SubtaskImpl _value, $Res Function(_$SubtaskImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of Subtask
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? title = null,
-    Object? priority = null,
-    Object? completed = null,
-    Object? taskId = null,
-  }) {
-    return _then(_$SubtaskImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      priority: null == priority
-          ? _value.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as int,
-      completed: null == completed
-          ? _value.completed
-          : completed // ignore: cast_nullable_to_non_nullable
-              as bool,
-      taskId: null == taskId
-          ? _value.taskId
-          : taskId // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$SubtaskImpl implements _Subtask {
-  const _$SubtaskImpl(
-      {this.id,
-      required this.title,
-      this.priority = 1,
-      this.completed = false,
-      required this.taskId});
-
-  factory _$SubtaskImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SubtaskImplFromJson(json);
-
-  @override
-  final int? id;
-  @override
-  final String title;
-  @override
-  @JsonKey()
-  final int priority;
-  @override
-  @JsonKey()
-  final bool completed;
-  @override
-  final int taskId;
-
-  @override
-  String toString() {
-    return 'Subtask(id: $id, title: $title, priority: $priority, completed: $completed, taskId: $taskId)';
-  }
+  /// Serializes this Subtask to a JSON map.
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SubtaskImpl &&
+            other is Subtask &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.priority, priority) ||
@@ -193,47 +49,344 @@ class _$SubtaskImpl implements _Subtask {
   int get hashCode =>
       Object.hash(runtimeType, id, title, priority, completed, taskId);
 
-  /// Create a copy of Subtask
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$SubtaskImplCopyWith<_$SubtaskImpl> get copyWith =>
-      __$$SubtaskImplCopyWithImpl<_$SubtaskImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$SubtaskImplToJson(
-      this,
-    );
+  String toString() {
+    return 'Subtask(id: $id, title: $title, priority: $priority, completed: $completed, taskId: $taskId)';
   }
 }
 
-abstract class _Subtask implements Subtask {
-  const factory _Subtask(
-      {final int? id,
-      required final String title,
-      final int priority,
-      final bool completed,
-      required final int taskId}) = _$SubtaskImpl;
+/// @nodoc
+abstract mixin class $SubtaskCopyWith<$Res> {
+  factory $SubtaskCopyWith(Subtask value, $Res Function(Subtask) _then) =
+      _$SubtaskCopyWithImpl;
+  @useResult
+  $Res call({int? id, String title, int priority, bool completed, int taskId});
+}
 
-  factory _Subtask.fromJson(Map<String, dynamic> json) = _$SubtaskImpl.fromJson;
+/// @nodoc
+class _$SubtaskCopyWithImpl<$Res> implements $SubtaskCopyWith<$Res> {
+  _$SubtaskCopyWithImpl(this._self, this._then);
+
+  final Subtask _self;
+  final $Res Function(Subtask) _then;
+
+  /// Create a copy of Subtask
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? title = null,
+    Object? priority = null,
+    Object? completed = null,
+    Object? taskId = null,
+  }) {
+    return _then(_self.copyWith(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      title: null == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      priority: null == priority
+          ? _self.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as int,
+      completed: null == completed
+          ? _self.completed
+          : completed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      taskId: null == taskId
+          ? _self.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [Subtask].
+extension SubtaskPatterns on Subtask {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_Subtask value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Subtask() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_Subtask value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Subtask():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_Subtask value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Subtask() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            int? id, String title, int priority, bool completed, int taskId)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Subtask() when $default != null:
+        return $default(_that.id, _that.title, _that.priority, _that.completed,
+            _that.taskId);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            int? id, String title, int priority, bool completed, int taskId)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Subtask():
+        return $default(_that.id, _that.title, _that.priority, _that.completed,
+            _that.taskId);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            int? id, String title, int priority, bool completed, int taskId)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Subtask() when $default != null:
+        return $default(_that.id, _that.title, _that.priority, _that.completed,
+            _that.taskId);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _Subtask implements Subtask {
+  const _Subtask(
+      {this.id,
+      required this.title,
+      this.priority = 1,
+      this.completed = false,
+      required this.taskId});
+  factory _Subtask.fromJson(Map<String, dynamic> json) =>
+      _$SubtaskFromJson(json);
 
   @override
-  int? get id;
+  final int? id;
   @override
-  String get title;
+  final String title;
   @override
-  int get priority;
+  @JsonKey()
+  final int priority;
   @override
-  bool get completed;
+  @JsonKey()
+  final bool completed;
   @override
-  int get taskId;
+  final int taskId;
 
   /// Create a copy of Subtask
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SubtaskImplCopyWith<_$SubtaskImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  _$SubtaskCopyWith<_Subtask> get copyWith =>
+      __$SubtaskCopyWithImpl<_Subtask>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$SubtaskToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _Subtask &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.priority, priority) ||
+                other.priority == priority) &&
+            (identical(other.completed, completed) ||
+                other.completed == completed) &&
+            (identical(other.taskId, taskId) || other.taskId == taskId));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, title, priority, completed, taskId);
+
+  @override
+  String toString() {
+    return 'Subtask(id: $id, title: $title, priority: $priority, completed: $completed, taskId: $taskId)';
+  }
 }
+
+/// @nodoc
+abstract mixin class _$SubtaskCopyWith<$Res> implements $SubtaskCopyWith<$Res> {
+  factory _$SubtaskCopyWith(_Subtask value, $Res Function(_Subtask) _then) =
+      __$SubtaskCopyWithImpl;
+  @override
+  @useResult
+  $Res call({int? id, String title, int priority, bool completed, int taskId});
+}
+
+/// @nodoc
+class __$SubtaskCopyWithImpl<$Res> implements _$SubtaskCopyWith<$Res> {
+  __$SubtaskCopyWithImpl(this._self, this._then);
+
+  final _Subtask _self;
+  final $Res Function(_Subtask) _then;
+
+  /// Create a copy of Subtask
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = freezed,
+    Object? title = null,
+    Object? priority = null,
+    Object? completed = null,
+    Object? taskId = null,
+  }) {
+    return _then(_Subtask(
+      id: freezed == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      title: null == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      priority: null == priority
+          ? _self.priority
+          : priority // ignore: cast_nullable_to_non_nullable
+              as int,
+      completed: null == completed
+          ? _self.completed
+          : completed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      taskId: null == taskId
+          ? _self.taskId
+          : taskId // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+// dart format on
