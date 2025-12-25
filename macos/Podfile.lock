@@ -17,33 +17,33 @@ PODS:
     - FlutterMacOS
   - dynamic_color (0.0.2):
     - FlutterMacOS
-  - Firebase/CoreOnly (12.4.0):
-    - FirebaseCore (~> 12.4.0)
-  - Firebase/Messaging (12.4.0):
+  - Firebase/CoreOnly (12.6.0):
+    - FirebaseCore (~> 12.6.0)
+  - Firebase/Messaging (12.6.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 12.4.0)
-  - firebase_core (4.2.1):
-    - Firebase/CoreOnly (~> 12.4.0)
+    - FirebaseMessaging (~> 12.6.0)
+  - firebase_core (4.3.0):
+    - Firebase/CoreOnly (~> 12.6.0)
     - FlutterMacOS
-  - firebase_messaging (16.0.4):
-    - Firebase/CoreOnly (~> 12.4.0)
-    - Firebase/Messaging (~> 12.4.0)
+  - firebase_messaging (16.1.0):
+    - Firebase/CoreOnly (~> 12.6.0)
+    - Firebase/Messaging (~> 12.6.0)
     - firebase_core
     - FlutterMacOS
-  - FirebaseCore (12.4.0):
-    - FirebaseCoreInternal (~> 12.4.0)
+  - FirebaseCore (12.6.0):
+    - FirebaseCoreInternal (~> 12.6.0)
     - GoogleUtilities/Environment (~> 8.1)
     - GoogleUtilities/Logger (~> 8.1)
-  - FirebaseCoreInternal (12.4.0):
+  - FirebaseCoreInternal (12.6.0):
     - "GoogleUtilities/NSData+zlib (~> 8.1)"
-  - FirebaseInstallations (12.4.0):
-    - FirebaseCore (~> 12.4.0)
+  - FirebaseInstallations (12.6.0):
+    - FirebaseCore (~> 12.6.0)
     - GoogleUtilities/Environment (~> 8.1)
     - GoogleUtilities/UserDefaults (~> 8.1)
     - PromisesObjC (~> 2.4)
-  - FirebaseMessaging (12.4.0):
-    - FirebaseCore (~> 12.4.0)
-    - FirebaseInstallations (~> 12.4.0)
+  - FirebaseMessaging (12.6.0):
+    - FirebaseCore (~> 12.6.0)
+    - FirebaseInstallations (~> 12.6.0)
     - GoogleDataTransport (~> 10.1)
     - GoogleUtilities/AppDelegateSwizzler (~> 8.1)
     - GoogleUtilities/Environment (~> 8.1)
@@ -104,14 +104,12 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - objective_c (0.0.1):
-    - FlutterMacOS
   - package_info_plus (0.0.1):
     - FlutterMacOS
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - PostHog (3.34.0)
+  - PostHog (3.36.2)
   - posthog_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -120,7 +118,7 @@ PODS:
   - rive_common (0.0.1):
     - FlutterMacOS
   - Sentry/HybridSDK (8.56.2)
-  - sentry_flutter (9.8.0):
+  - sentry_flutter (9.9.1):
     - Flutter
     - FlutterMacOS
     - Sentry/HybridSDK (= 8.56.2)
@@ -145,7 +143,6 @@ DEPENDENCIES:
   - flutter_local_notifications (from `Flutter/ephemeral/.symlinks/plugins/flutter_local_notifications/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - google_sign_in_ios (from `Flutter/ephemeral/.symlinks/plugins/google_sign_in_ios/darwin`)
-  - objective_c (from `Flutter/ephemeral/.symlinks/plugins/objective_c/macos`)
   - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - posthog_flutter (from `Flutter/ephemeral/.symlinks/plugins/posthog_flutter/macos`)
@@ -194,8 +191,6 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral
   google_sign_in_ios:
     :path: Flutter/ephemeral/.symlinks/plugins/google_sign_in_ios/darwin
-  objective_c:
-    :path: Flutter/ephemeral/.symlinks/plugins/objective_c/macos
   package_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
   path_provider_foundation:
@@ -222,13 +217,13 @@ SPEC CHECKSUMS:
   connectivity_plus: 4adf20a405e25b42b9c9f87feff8f4b6fde18a4e
   device_info_plus: 4fb280989f669696856f8b129e4a5e3cd6c48f76
   dynamic_color: cb7c2a300ee67ed3bd96c3e852df3af0300bf610
-  Firebase: f07b15ae5a6ec0f93713e30b923d9970d144af3e
-  firebase_core: e054894ab56033ef9bcbe2d9eac9395e5306e2fc
-  firebase_messaging: 373ac3a56e5aa37bb9aff4127f700aa5973c1168
-  FirebaseCore: bb595f3114953664e3c1dc032f008a244147cfd3
-  FirebaseCoreInternal: d7f5a043c2cd01a08103ab586587c1468047bca6
-  FirebaseInstallations: ae9f4902cb5bf1d0c5eaa31ec1f4e5495a0714e2
-  FirebaseMessaging: d33971b7bb252745ea6cd31ab190d1a1df4b8ed5
+  Firebase: a451a7b61536298fd5cbfe3a746fd40443a50679
+  firebase_core: 2ccd04fc130691db5f3d3cd9aa43ab430004c1e9
+  firebase_messaging: 80efbf2e975a91f612ce5b5d18c67e5a762fbdf8
+  FirebaseCore: 0e38ad5d62d980a47a64b8e9301ffa311457be04
+  FirebaseCoreInternal: 69bf1306a05b8ac43004f6cc1f804bb7b05b229e
+  FirebaseInstallations: 631b38da2e11a83daa4bfb482f79d286a5dfa7ad
+  FirebaseMessaging: a61bc42dcab3f7a346d94bbb54dab2c9435b18b2
   flutter_local_notifications: 4bf37a31afde695b56091b4ae3e4d9c7a7e6cda0
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   google_sign_in_ios: b48bb9af78576358a168361173155596c845f0b9
@@ -238,15 +233,14 @@ SPEC CHECKSUMS:
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  objective_c: ec13431e45ba099cb734eb2829a5c1cd37986cba
   package_info_plus: f0052d280d17aa382b932f399edf32507174e870
   path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
-  PostHog: bbb7eaecb2f5a286d9da3c833cbb18ae08799655
+  PostHog: 43ba4f42cc8dda909b33033e9ba0a1f64a2a8eb2
   posthog_flutter: 9535ac2d4ab65ccb9ace3886dcc0b3105198bad5
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   rive_common: ea79040f86acf053a2d5a75a2506175ee39796a5
   Sentry: b53951377b78e21a734f5dc8318e333dbfc682d7
-  sentry_flutter: 4c33648b7e83310aa1fdb1b10c5491027d9643f0
+  sentry_flutter: 580133c878f86698e23bb5dd7217a3387c4b79b5
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
   sign_in_with_apple: 6673c03c9e3643f6c8d33601943fbfa9ae99f94e
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
