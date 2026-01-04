@@ -96,6 +96,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
       throw Exception("Context not mounted");
     } catch (e) {
+      // Profile not found (404) or other errors - continue with signup flow
       if (mounted) {
         ref.read(authPageControllerProvider).nextPage(
               duration: const Duration(milliseconds: 300),

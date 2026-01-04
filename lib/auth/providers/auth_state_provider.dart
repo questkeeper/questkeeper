@@ -142,6 +142,15 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         );
       }
     } catch (error) {
+      // Handle profile not found (404) - this is expected during signup flow
+      // The user is authenticated but hasn't completed profile setup yet
+      if (error.toString().contains('Profile not found')) {
+        // User is authenticated but needs to complete signup
+        // Don't clear auth state, just leave profile as null
+        // The auth_screen.dart will handle navigation to username creation
+        return;
+      }
+      
       // Don't immediately clear auth state on error - only do it if we're sure the session is invalid
       if (error is AuthException || error.toString().contains('JWT')) {
         await prefs.setBool(_authKey, false);
