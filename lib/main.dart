@@ -109,7 +109,6 @@ Future<void> main() async {
         options.dsn =
             'https://87811f2d260a89b1fd9f3ccc4c3ee423@o4507823426895872.ingest.us.sentry.io/4507823429976064';
         options.tracesSampleRate = 1.0;
-        options.profilesSampleRate = 1.0;
         options.replay.sessionSampleRate = 0.1;
         options.replay.onErrorSampleRate = 1.0;
       },

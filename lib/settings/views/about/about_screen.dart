@@ -98,7 +98,7 @@ class AboutScreen extends StatelessWidget {
                 ListTile(
                   title: const Text("GitHub"),
                   textColor: primaryColor,
-                  leading: const Icon(LucideIcons.github),
+                  leading: const Icon(LucideIcons.git_branch),
                   onTap: () {
                     final uri =
                         Uri.parse("https://github.com/questkeeper/questkeeper");
