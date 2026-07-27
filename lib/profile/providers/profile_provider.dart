@@ -12,6 +12,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'profile_provider.g.dart';
 
+/// Exception thrown when a user profile does not exist (404)
+class ProfileNotFoundException implements Exception {
+  final String message;
+  ProfileNotFoundException([this.message = 'Profile not found']);
+
+  @override
+  String toString() => message;
+}
+
 @riverpod
 class ProfileManager extends _$ProfileManager {
   final ProfileRepository _repository;
@@ -48,6 +57,18 @@ class ProfileManager extends _$ProfileManager {
         response = await _repository.getProfile(username);
       }
 
+      // Check if the response was successful before parsing
+      if (!response.success) {
+        // Check if this is a 404 (profile doesn't exist)
+        if (response.data is Map && response.data['statusCode'] == 404) {
+          throw ProfileNotFoundException(
+            'Profile not found - user needs to complete signup'
+          );
+        }
+        // For other errors, throw a general exception
+        throw Exception(response.error ?? 'Error fetching profile');
+      }
+
       var profile = Profile.fromJson(response.data);
 
       // Cache my profile
@@ -67,12 +88,15 @@ class ProfileManager extends _$ProfileManager {
 
       return profile;
     } catch (e) {
-      Sentry.captureException(
-        e,
-        stackTrace: StackTrace.current,
-      );
+      // Don't capture ProfileNotFoundException to Sentry - it's expected during signup
+      if (e is! ProfileNotFoundException) {
+        Sentry.captureException(
+          e,
+          stackTrace: StackTrace.current,
+        );
+      }
       state = AsyncValue.error(e, StackTrace.current);
-      throw Exception("Error fetching profile: $e");
+      rethrow;
     }
   }
 

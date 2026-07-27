@@ -19,6 +19,7 @@ class ProfileRepository {
         return ReturnModel(
           message: "Error fetching profile",
           success: false,
+          data: {'statusCode': response.statusCode},
           error: response.data.toString(),
         );
       }
@@ -81,6 +82,7 @@ class ProfileRepository {
         return ReturnModel(
           message: "Error fetching profile",
           success: false,
+          data: {'statusCode': response.statusCode},
           error: response.data.toString(),
         );
       }
